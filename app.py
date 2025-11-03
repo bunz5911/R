@@ -117,7 +117,7 @@ if SUPABASE_AVAILABLE:
 
 # 전역 변수
 cached_content = None
-all_stories = {}  # {filename: content}
+story_files = {}  # {filename: filepath} - 메모리 절약: 경로만 저장
 
 # 동화 폴더 경로 (로컬/배포 환경 대응)
 DOC_FOLDER = os.environ.get('DOC_FOLDER')
@@ -157,40 +157,47 @@ def load_docx_file(file_path):
         return ""
 
 
-def load_all_stories():
-    """50개의 동화 파일을 모두 로드"""
-    global all_stories
+def scan_story_files():
+    """동화 파일 목록만 스캔 (메모리 절약)"""
+    global story_files
     
     if not os.path.exists(DOC_FOLDER):
-        print(f"❌ 폴더를 찾을 수 없습니다: {DOC_FOLDER}")
+        print(f"❌ 폴더를 찾을 수 없습니다: {DOC_FOLDER}", flush=True)
         return
     
     doc_files = sorted(glob.glob(os.path.join(DOC_FOLDER, "*.docx")))
-    print(f"📚 총 {len(doc_files)}개의 동화 발견")
+    print(f"📚 총 {len(doc_files)}개의 동화 발견", flush=True)
     
     for doc_path in doc_files:
         filename = os.path.basename(doc_path)[:-5]  # .docx 제거
-        content = load_docx_file(doc_path)
-        if content:
-            all_stories[filename] = content
-            print(f"  ✓ {filename}", flush=True)
+        story_files[filename] = doc_path
+        print(f"  ✓ {filename}", flush=True)
     
-    print(f"✅ 총 {len(all_stories)}개의 동화 로드 완료\n", flush=True)
+    print(f"✅ 총 {len(story_files)}개의 동화 파일 등록 완료\n", flush=True)
 
 
-# 앱 시작 시 동화 로드 (Gunicorn 환경 대응)
+def get_story_content(filename):
+    """필요할 때만 동화 파일을 읽음 (Lazy Loading)"""
+    if filename not in story_files:
+        return None
+    
+    file_path = story_files[filename]
+    return load_docx_file(file_path)
+
+
+# 앱 시작 시 동화 파일 스캔 (Gunicorn 환경 대응)
 print("\n" + "="*80, flush=True)
 print("🔥 K-Context Master 초기화 중...", flush=True)
 print("="*80, flush=True)
-load_all_stories()
+scan_story_files()
 print("="*80 + "\n", flush=True)
 
 
 def create_context_cache():
-    """50개 동화를 Gemini Context Cache에 저장"""
+    """50개 동화를 Gemini Context Cache에 저장 (사용하지 않음 - 메모리 절약)"""
     global cached_content
     
-    if not client or not all_stories:
+    if not client or not story_files:
         return None
     
     print("\n" + "="*80)
@@ -199,7 +206,10 @@ def create_context_cache():
     
     # 모든 동화를 하나의 텍스트로 결합
     combined_text = ""
-    for idx, (title, content) in enumerate(all_stories.items(), 1):
+    # 캐시 생성은 메모리 절약을 위해 비활성화
+    return None
+    
+    for idx, (title, filepath) in enumerate(story_files.items(), 1):
         combined_text += f"\n\n{'='*80}\n[동화 {idx}] {title}\n{'='*80}\n{content}\n"
     
     system_instruction = """
@@ -255,7 +265,7 @@ def home():
             "save_progress": "/api/user/progress",
             "dashboard": "/api/user/dashboard/<user_id>"
         },
-        "total_stories": len(all_stories)
+        "total_stories": len(story_files)
     })
 
 @app.route('/health', methods=['GET'])
@@ -266,16 +276,23 @@ def health_check():
         "gemini": client is not None,
         "tts": tts_client is not None,
         "supabase": supabase_client is not None,
-        "stories_loaded": len(all_stories)
+        "stories_loaded": len(story_files)
     })
 
 @app.route('/api/stories', methods=['GET'])
 def get_stories():
-    """50개 동화 목록 반환"""
-    story_list = [
-        {"id": i, "title": title, "preview": content[:100] + "..."}
-        for i, (title, content) in enumerate(all_stories.items(), 1)
-    ]
+    """50개 동화 목록 반환 (Lazy Loading)"""
+    story_list = []
+    for i, title in enumerate(story_files.keys(), 1):
+        # 필요할 때만 내용 로드 (메모리 절약)
+        content = get_story_content(title)
+        preview = content[:100] + "..." if content else ""
+        story_list.append({
+            "id": i,
+            "title": title,
+            "preview": preview
+        })
+    
     return jsonify({
         "total": len(story_list),
         "stories": story_list
@@ -284,12 +301,12 @@ def get_stories():
 
 @app.route('/api/story/<int:story_id>', methods=['GET'])
 def get_story(story_id):
-    """특정 동화의 전체 내용 반환"""
-    if story_id < 1 or story_id > len(all_stories):
+    """특정 동화의 전체 내용 반환 (Lazy Loading)"""
+    if story_id < 1 or story_id > len(story_files):
         return jsonify({"error": "동화를 찾을 수 없습니다"}), 404
     
-    title = list(all_stories.keys())[story_id - 1]
-    content = all_stories[title]
+    title = list(story_files.keys())[story_id - 1]
+    content = get_story_content(title)
     
     # 문단으로 분리
     paragraphs = [p.strip() for p in content.split('\n\n') if p.strip()]
@@ -308,14 +325,15 @@ def analyze_story(story_id):
     동화 분석 (8단계 학습 데이터 생성)
     POST body: { "level": "초급|중급|고급" }
     """
-    if story_id < 1 or story_id > len(all_stories):
+    if story_id < 1 or story_id > len(story_files):
         return jsonify({"error": "동화를 찾을 수 없습니다"}), 404
     
     data = request.get_json() or {}
     level = data.get('level', '초급')
     
-    title = list(all_stories.keys())[story_id - 1]
-    content = all_stories[title]
+    # 동화 로드 (Lazy Loading)
+    title = list(story_files.keys())[story_id - 1]
+    content = get_story_content(title)
     
     if not client:
         return jsonify({"error": "Gemini API가 설정되지 않았습니다"}), 500
@@ -562,15 +580,16 @@ def generate_quiz(story_id):
     동화 기반 퀴즈 생성
     POST body: { "level": "초급|중급|고급", "count": 15 }
     """
-    if story_id < 1 or story_id > len(all_stories):
+    if story_id < 1 or story_id > len(story_files):
         return jsonify({"error": "동화를 찾을 수 없습니다"}), 404
     
     data = request.get_json() or {}
     level = data.get('level', '초급')
     count = data.get('count', 15)
     
-    title = list(all_stories.keys())[story_id - 1]
-    content = all_stories[title]
+    # 동화 로드 (Lazy Loading)
+    title = list(story_files.keys())[story_id - 1]
+    content = get_story_content(title)
     
     if not client:
         return jsonify({"error": "Gemini API가 설정되지 않았습니다"}), 500
