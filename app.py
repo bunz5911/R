@@ -93,10 +93,21 @@ cached_content = None
 all_stories = {}  # {filename: content}
 
 # 동화 폴더 경로 (로컬/배포 환경 대응)
-DOC_FOLDER = os.environ.get('DOC_FOLDER', '/Users/hongbeomseog/Desktop/동화_doc')
-if not os.path.exists(DOC_FOLDER):
-    # 배포 환경에서는 stories 폴더 사용
-    DOC_FOLDER = os.path.join(os.path.dirname(__file__), 'stories')
+DOC_FOLDER = os.environ.get('DOC_FOLDER')
+
+if not DOC_FOLDER:
+    # 로컬 개발 환경
+    local_path = '/Users/hongbeomseog/Desktop/동화_doc'
+    if os.path.exists(local_path):
+        DOC_FOLDER = local_path
+    else:
+        # 배포 환경 - 프로젝트 내 stories 폴더
+        DOC_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'stories')
+
+print(f"📂 동화 폴더 경로: {DOC_FOLDER}")
+print(f"📂 폴더 존재 여부: {os.path.exists(DOC_FOLDER)}")
+if os.path.exists(DOC_FOLDER):
+    print(f"📂 폴더 내 파일 수: {len([f for f in os.listdir(DOC_FOLDER) if f.endswith('.docx')])}")
 
 
 # ============================================================================
