@@ -47,33 +47,59 @@ except Exception as e:
 
 # Google Cloud TTS 클라이언트 초기화
 tts_client = None
+print("\n" + "="*80, flush=True)
+print("🔊 Google Cloud TTS 초기화 시작...", flush=True)
+print("="*80, flush=True)
+
 try:
     # 방법 1: 파일 경로에서 읽기 (로컬)
     credentials_path = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
+    print(f"📁 GOOGLE_APPLICATION_CREDENTIALS: {credentials_path}", flush=True)
+    
     if credentials_path and os.path.exists(credentials_path):
+        print(f"✓ 인증 파일 발견: {credentials_path}", flush=True)
         tts_client = texttospeech.TextToSpeechClient()
-        print("✅ Google Cloud TTS 클라이언트 초기화 성공 (파일)")
-        print(f"   인증 파일: {credentials_path}")
+        print("✅ Google Cloud TTS 클라이언트 초기화 성공 (파일)", flush=True)
     # 방법 2: 환경변수에서 JSON 직접 읽기 (Render/배포)
     elif os.environ.get('GOOGLE_TTS_JSON'):
         import tempfile
+        import json
+        
+        print("✓ GOOGLE_TTS_JSON 환경변수 발견", flush=True)
         credentials_json = os.environ.get('GOOGLE_TTS_JSON')
+        print(f"✓ JSON 길이: {len(credentials_json)} 문자", flush=True)
+        
+        # JSON 유효성 검사
+        try:
+            json_data = json.loads(credentials_json)
+            print(f"✓ JSON 파싱 성공: project_id={json_data.get('project_id')}", flush=True)
+        except json.JSONDecodeError as je:
+            print(f"❌ JSON 파싱 실패: {je}", flush=True)
+            raise
         
         # 임시 파일로 저장
+        print("✓ 임시 파일 생성 시작...", flush=True)
         with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
             f.write(credentials_json)
             temp_path = f.name
+        print(f"✓ 임시 파일 생성 완료: {temp_path}", flush=True)
         
         os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = temp_path
+        print("✓ TTS 클라이언트 초기화 시작...", flush=True)
         tts_client = texttospeech.TextToSpeechClient()
-        print("✅ Google Cloud TTS 클라이언트 초기화 성공 (환경변수)")
+        print("✅ Google Cloud TTS 클라이언트 초기화 성공 (환경변수)", flush=True)
     else:
-        print("⚠️ Google Cloud TTS 인증 정보가 없습니다.")
-        print("   → Web Speech API를 대체로 사용합니다.")
+        print("⚠️ Google Cloud TTS 인증 정보가 없습니다.", flush=True)
+        print("   → Web Speech API를 대체로 사용합니다.", flush=True)
 except Exception as e:
     tts_client = None
-    print(f"⚠️ Google Cloud TTS 초기화 실패: {e}")
-    print("   → Web Speech API를 대체로 사용합니다.")
+    print(f"❌ Google Cloud TTS 초기화 실패: {type(e).__name__}", flush=True)
+    print(f"   에러 메시지: {str(e)}", flush=True)
+    import traceback
+    print(f"   상세 오류:\n{traceback.format_exc()}", flush=True)
+    print("   → Web Speech API를 대체로 사용합니다.", flush=True)
+
+print("="*80 + "\n", flush=True)
 
 # Supabase 클라이언트 초기화
 supabase_client = None
