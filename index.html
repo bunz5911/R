@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>K-Context Master - 한국어 동화 학습</title>
+    <style>
+        /* 아이폰 16 Pro Max 최적화 (430 x 932px) */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            max-width: 430px;
+            min-height: 932px;
+            margin: 0 auto;
+            background: white;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+        }
+
+        /* 헤더 */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 20px 30px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* 동화 목록 화면 */
+        .story-list-view {
+            padding: 20px;
+        }
+
+        .story-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .story-card:hover, .story-card:active {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .story-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .story-card-preview {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* 학습 화면 */
+        .learning-view {
+            display: none;
+            flex-direction: column;
+            height: calc(932px - 130px);
+        }
+
+        .back-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 12px 20px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .learning-tabs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .tab-button {
+            background: white;
+            border: 2px solid #e9ecef;
+            padding: 10px 8px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .tab-button:active {
+            transform: scale(0.95);
+        }
+
+        .learning-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .learning-section {
+            display: none;
+        }
+
+        .learning-section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 16px;
+        }
+
+        .content-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .paragraph-item {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .paragraph-num {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .vocabulary-item, .grammar-item {
+            background: white;
+            border-left: 4px solid #667eea;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+        }
+
+        .vocab-word {
+            font-size: 18px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 4px;
+        }
+
+        .vocab-meaning {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .vocab-example {
+            font-size: 14px;
+            color: #888;
+            font-style: italic;
+        }
+
+        /* 컨트롤 버튼들 */
+        .control-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 100px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn.playing {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            box-shadow: 0 4px 12px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            box-shadow: 0 4px 12px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            box-shadow: 0 4px 12px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn-icon {
+            font-size: 16px;
+        }
+
+        /* 녹음 관련 */
+        .recording-indicator {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            border-radius: 12px;
+            margin: 16px 0;
+            animation: pulse 1.5s infinite;
+        }
+
+        .recording-indicator.active {
+            display: block;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .recording-text {
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        /* 로딩 */
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: #667eea;
+            font-size: 16px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 레벨 선택 */
+        .level-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .level-btn {
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .level-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        /* 평가 결과 */
+        .evaluation-result {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 16px;
+        }
+
+        .score-display {
+            text-align: center;
+            font-size: 48px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 16px;
+        }
+
+        .feedback-text {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* 하단 여백 */
+        .bottom-spacer {
+            height: 80px;
+        }
+
+        /* 퀴즈 애니메이션 */
+        @keyframes flash {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            25% { transform: scale(1.05); opacity: 0.9; }
+            50% { transform: scale(1.1); opacity: 1; }
+            75% { transform: scale(1.05); opacity: 0.9; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+            20%, 40%, 60%, 80% { transform: translateX(10px); }
+        }
+
+        /* 원형 재생 버튼 전용 스타일 */
+        .play-btn-circle {
+            width: 45px !important;
+            height: 45px !important;
+            border-radius: 50% !important;
+            padding: 0 !important;
+            border: none !important;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white !important;
+            font-size: 16px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            cursor: pointer !important;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4) !important;
+            transition: all 0.3s !important;
+            min-width: auto !important;
+            flex-shrink: 0 !important;
+        }
+
+        .play-btn-circle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6);
+        }
+
+        .play-btn-circle:active {
+            transform: scale(0.9);
+        }
+
+        /* 음성 설정 버튼 */
+        .settings-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            border: 2px solid white;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+
+        .dashboard-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            border: 2px solid white;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+
+        /* 음성 설정 모달 */
+        .voice-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .voice-modal.active {
+            display: flex;
+        }
+
+        .voice-modal-content {
+            background: white;
+            max-width: 400px;
+            width: 90%;
+            max-height: 80vh;
+            border-radius: 20px;
+            padding: 24px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .voice-option {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .voice-option:hover {
+            background: #e9ecef;
+        }
+
+        .voice-option.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        }
+
+        .voice-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .voice-details {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .voice-test-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .modal-close-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 헤더 -->
+        <div class="header">
+            <button class="dashboard-btn" onclick="location.href='dashboard.html'">대시보드</button>
+            <h1>K-Context Master</h1>
+            <p>한국어 동화로 배우는 실전 한국어</p>
+            <button class="settings-btn" onclick="showVoiceSettings()">음성 설정</button>
+        </div>
+
+        <!-- 동화 목록 화면 -->
+        <div class="story-list-view" id="storyListView">
+            <div class="level-selector">
+                <button class="level-btn active" data-level="초급">초급</button>
+                <button class="level-btn" data-level="중급">중급</button>
+                <button class="level-btn" data-level="고급">고급</button>
+            </div>
+            <div id="storyList" class="loading">
+                <div class="spinner"></div>
+                <p>동화 목록을 불러오는 중...</p>
+            </div>
+        </div>
+
+        <!-- 학습 화면 -->
+        <div class="learning-view" id="learningView">
+            <button class="back-button" onclick="showStoryList()">← 동화 목록으로</button>
+            
+            <!-- 학습 탭 (2줄 4열 그리드) -->
+            <div class="learning-tabs">
+                <button class="tab-button active" data-tab="summary">요약</button>
+                <button class="tab-button" data-tab="full-story">전체듣기</button>
+                <button class="tab-button" data-tab="paragraphs">문단별학습</button>
+                <button class="tab-button" data-tab="real-life">실생활활용</button>
+                <button class="tab-button" data-tab="vocabulary">어휘문법</button>
+                <button class="tab-button" data-tab="wordbook">단어장</button>
+                <button class="tab-button" data-tab="quiz">이해도확인</button>
+                <button class="tab-button" data-tab="growth">성장기록</button>
+            </div>
+
+            <!-- 학습 콘텐츠 -->
+            <div class="learning-content" id="learningContent">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>학습 데이터를 분석하는 중...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 음성 설정 모달 -->
+        <div class="voice-modal" id="voiceModal">
+            <div class="voice-modal-content">
+                <div class="modal-title">음성 선택</div>
+                <div id="voiceList">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>음성 목록을 불러오는 중...</p>
+                    </div>
+                </div>
+                <button class="modal-close-btn" onclick="closeVoiceSettings()">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
