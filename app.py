@@ -7,8 +7,7 @@ K-Context Master: 한국어 동화 학습 앱
 
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
-from google import genai
-from google.genai import types
+import google.generativeai as genai
 from google.cloud import texttospeech
 import os
 import json
@@ -47,14 +46,27 @@ except Exception as e:
 # Google Cloud TTS 클라이언트 초기화
 tts_client = None
 try:
-    # 인증 파일 경로 확인
+    # 방법 1: 파일 경로에서 읽기 (로컬)
     credentials_path = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
     if credentials_path and os.path.exists(credentials_path):
         tts_client = texttospeech.TextToSpeechClient()
-        print("✅ Google Cloud TTS 클라이언트 초기화 성공")
+        print("✅ Google Cloud TTS 클라이언트 초기화 성공 (파일)")
         print(f"   인증 파일: {credentials_path}")
+    # 방법 2: 환경변수에서 JSON 직접 읽기 (Render/배포)
+    elif os.environ.get('GOOGLE_TTS_JSON'):
+        import tempfile
+        credentials_json = os.environ.get('GOOGLE_TTS_JSON')
+        
+        # 임시 파일로 저장
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+            f.write(credentials_json)
+            temp_path = f.name
+        
+        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = temp_path
+        tts_client = texttospeech.TextToSpeechClient()
+        print("✅ Google Cloud TTS 클라이언트 초기화 성공 (환경변수)")
     else:
-        print("⚠️ GOOGLE_APPLICATION_CREDENTIALS 환경변수가 설정되지 않았거나 파일이 없습니다.")
+        print("⚠️ Google Cloud TTS 인증 정보가 없습니다.")
         print("   → Web Speech API를 대체로 사용합니다.")
 except Exception as e:
     tts_client = None
