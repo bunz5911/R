@@ -3,7 +3,10 @@
  * 순수 JavaScript (No Framework)
  */
 
-const API_BASE = 'http://localhost:8080/api';
+// 배포 환경 감지: Netlify에서는 Render 백엔드 사용, 로컬에서는 localhost 사용
+const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:8080/api'
+    : 'https://r-6s57.onrender.com/api';
 
 // 전역 상태
 let currentStories = [];
