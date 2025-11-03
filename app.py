@@ -11,6 +11,7 @@ from google import genai
 from google.genai import types
 from google.cloud import texttospeech
 import os
+import sys
 import json
 import glob
 import re
@@ -104,10 +105,10 @@ if not DOC_FOLDER:
         # 배포 환경 - 프로젝트 내 stories 폴더
         DOC_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'stories')
 
-print(f"📂 동화 폴더 경로: {DOC_FOLDER}")
-print(f"📂 폴더 존재 여부: {os.path.exists(DOC_FOLDER)}")
+print(f"📂 동화 폴더 경로: {DOC_FOLDER}", flush=True)
+print(f"📂 폴더 존재 여부: {os.path.exists(DOC_FOLDER)}", flush=True)
 if os.path.exists(DOC_FOLDER):
-    print(f"📂 폴더 내 파일 수: {len([f for f in os.listdir(DOC_FOLDER) if f.endswith('.docx')])}")
+    print(f"📂 폴더 내 파일 수: {len([f for f in os.listdir(DOC_FOLDER) if f.endswith('.docx')])}", flush=True)
 
 
 # ============================================================================
@@ -146,9 +147,17 @@ def load_all_stories():
         content = load_docx_file(doc_path)
         if content:
             all_stories[filename] = content
-            print(f"  ✓ {filename}")
+            print(f"  ✓ {filename}", flush=True)
     
-    print(f"✅ 총 {len(all_stories)}개의 동화 로드 완료\n")
+    print(f"✅ 총 {len(all_stories)}개의 동화 로드 완료\n", flush=True)
+
+
+# 앱 시작 시 동화 로드 (Gunicorn 환경 대응)
+print("\n" + "="*80, flush=True)
+print("🔥 K-Context Master 초기화 중...", flush=True)
+print("="*80, flush=True)
+load_all_stories()
+print("="*80 + "\n", flush=True)
 
 
 def create_context_cache():
@@ -725,19 +734,8 @@ def evaluate_pronunciation(story_id):
 # [3] 서버 시작
 # ============================================================================
 if __name__ == '__main__':
-    print("\n" + "="*80)
-    print("🔥 K-Context Master: 한국어 동화 학습 앱")
-    print("="*80)
-    
-    # 동화 로드
-    load_all_stories()
-    
-    # Cache는 필요시에만 생성 (서버 시작 속도 개선)
-    # if client and all_stories:
-    #     create_context_cache()
-    
-    print(f"🌐 서버 주소: http://localhost:8080")
-    print(f"📱 동화 목록: http://localhost:8080/api/stories")
+    print("🌐 서버 주소: http://localhost:8080")
+    print("📱 동화 목록: http://localhost:8080/api/stories")
     print("="*80 + "\n")
     
     app.run(debug=True, port=8080, host='0.0.0.0')
