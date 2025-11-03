@@ -191,6 +191,38 @@ def create_context_cache():
 # [2] API 엔드포인트
 # ============================================================================
 
+@app.route('/', methods=['GET'])
+def home():
+    """루트 경로 - API 상태 확인"""
+    return jsonify({
+        "status": "online",
+        "service": "K-Context Master API",
+        "version": "1.0.0",
+        "endpoints": {
+            "stories": "/api/stories",
+            "story_detail": "/api/story/<id>",
+            "analyze": "/api/story/<id>/analyze",
+            "quiz": "/api/story/<id>/quiz",
+            "evaluate": "/api/story/<id>/evaluate",
+            "tts_voices": "/api/tts/voices",
+            "tts_speak": "/api/tts/speak",
+            "save_progress": "/api/user/progress",
+            "dashboard": "/api/user/dashboard/<user_id>"
+        },
+        "total_stories": len(all_stories)
+    })
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    """헬스체크 엔드포인트"""
+    return jsonify({
+        "status": "healthy",
+        "gemini": client is not None,
+        "tts": tts_client is not None,
+        "supabase": supabase_client is not None,
+        "stories_loaded": len(all_stories)
+    })
+
 @app.route('/api/stories', methods=['GET'])
 def get_stories():
     """50개 동화 목록 반환"""
