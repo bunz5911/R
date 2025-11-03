@@ -7,7 +7,8 @@ K-Context Master: 한국어 동화 학습 앱
 
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from google.cloud import texttospeech
 import os
 import json
@@ -90,7 +91,12 @@ if SUPABASE_AVAILABLE:
 # 전역 변수
 cached_content = None
 all_stories = {}  # {filename: content}
-DOC_FOLDER = "/Users/hongbeomseog/Desktop/동화_doc"
+
+# 동화 폴더 경로 (로컬/배포 환경 대응)
+DOC_FOLDER = os.environ.get('DOC_FOLDER', '/Users/hongbeomseog/Desktop/동화_doc')
+if not os.path.exists(DOC_FOLDER):
+    # 배포 환경에서는 stories 폴더 사용
+    DOC_FOLDER = os.path.join(os.path.dirname(__file__), 'stories')
 
 
 # ============================================================================
