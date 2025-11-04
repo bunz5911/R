@@ -34,7 +34,7 @@ except ImportError:
     DOCX_AVAILABLE = False
     print("⚠️ python-docx가 설치되지 않았습니다.")
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='.', static_url_path='')
 CORS(app)
 
 # Gemini 클라이언트 초기화
@@ -266,28 +266,12 @@ def create_context_cache():
 
 @app.route('/', methods=['GET'])
 def home():
-    """루트 경로 - API 상태 확인"""
-    return jsonify({
-        "status": "online",
-        "service": "K-Context Master API",
-        "version": "1.0.0",
-        "endpoints": {
-            "stories": "/api/stories",
-            "story_detail": "/api/story/<id>",
-            "analyze": "/api/story/<id>/analyze",
-            "quiz": "/api/story/<id>/quiz",
-            "evaluate": "/api/story/<id>/evaluate",
-            "tts_voices": "/api/tts/voices",
-            "tts_speak": "/api/tts/speak",
-            "save_progress": "/api/user/progress",
-            "dashboard": "/api/user/dashboard/<user_id>"
-        },
-        "total_stories": len(story_files)
-    })
+    """루트 경로 - index.html 제공"""
+    return send_file('index.html')
 
 @app.route('/health', methods=['GET'])
-def health_check():
-    """헬스체크 엔드포인트"""
+def health():
+    """API 상태 확인 및 헬스체크"""
     return jsonify({
         "status": "healthy",
         "gemini": client is not None,
@@ -321,14 +305,21 @@ def get_stories():
 @app.route('/api/story/<int:story_id>', methods=['GET'])
 def get_story(story_id):
     """특정 동화의 전체 내용 반환 (Lazy Loading)"""
+    print(f"📖 동화 요청 받음: story_id={story_id}", flush=True)
+    
     if story_id < 1 or story_id > len(story_files):
+        print(f"❌ 잘못된 story_id: {story_id}", flush=True)
         return jsonify({"error": "동화를 찾을 수 없습니다"}), 404
     
     title = list(story_files.keys())[story_id - 1]
+    print(f"📚 동화 제목: {title}", flush=True)
+    
     content = get_story_content(title)
+    print(f"✅ 동화 내용 로드 완료 (길이: {len(content)}자)", flush=True)
     
     # 문단으로 분리
     paragraphs = [p.strip() for p in content.split('\n\n') if p.strip()]
+    print(f"📝 문단 수: {len(paragraphs)}", flush=True)
     
     return jsonify({
         "id": story_id,
@@ -349,14 +340,21 @@ def analyze_story(story_id):
     2. Supabase 캐시 (빠름)
     3. Gemini API 실시간 분석 (느림, 최후 수단)
     """
+    print(f"\n{'='*80}", flush=True)
+    print(f"🔍 분석 요청 받음: story_id={story_id}", flush=True)
+    print(f"{'='*80}", flush=True)
+    
     if story_id < 1 or story_id > len(story_files):
+        print(f"❌ 잘못된 story_id: {story_id}", flush=True)
         return jsonify({"error": "동화를 찾을 수 없습니다"}), 404
     
     data = request.get_json() or {}
     level = data.get('level', '초급')
+    print(f"📊 요청된 레벨: {level}", flush=True)
     
     # 동화 제목 가져오기
     title = list(story_files.keys())[story_id - 1]
+    print(f"📚 동화 제목: {title}", flush=True)
     
     # ✅ 1순위: 사전 생성된 분석 데이터 확인 (0.1초 이내)
     if title in PRECOMPUTED_ANALYSIS and level in PRECOMPUTED_ANALYSIS[title]:
