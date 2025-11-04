@@ -416,6 +416,22 @@ function renderFullStory() {
     `;
 }
 
+/**
+ * 텍스트에서 첫 문장만 추출 (마침표, 물음표, 느낌표 기준)
+ */
+function extractFirstSentence(text) {
+    if (!text) return '';
+    
+    // 마침표, 물음표, 느낌표로 문장 분리
+    const match = text.match(/[^.!?]*[.!?]/);
+    if (match) {
+        return match[0].trim();
+    }
+    
+    // 문장 구분이 없으면 첫 50자만
+    return text.substring(0, 50).trim() + '...';
+}
+
 function renderParagraphs() {
     const contentEl = document.getElementById('learningContent');
     const paragraphs = currentAnalysis.paragraphs_analysis || [];
@@ -428,18 +444,37 @@ function renderParagraphs() {
     contentEl.innerHTML = `
         <div class="section-title">문단별 학습 + 읽기 평가</div>
         <div class="content-box" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; margin-bottom: 20px;">
-            <strong>🎤 각 문단을 읽고 AI 평가를 받아 코인을 획득하세요!</strong>
+            <strong>🎤 한 문장씩 읽고 AI 평가를 받아 코인을 획득하세요!</strong>
         </div>
-        ${paragraphs.map((p, idx) => `
+        ${paragraphs.map((p, idx) => {
+            // ✅ 첫 문장만 추출 (녹음용)
+            const firstSentence = extractFirstSentence(p.original_text || '');
+            const fullText = p.original_text || '';
+            
+            return `
             <div class="paragraph-item" id="paragraph${idx}">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
                     <span class="paragraph-num">문단 ${p.paragraph_num || idx + 1}</span>
-                    <button class="play-btn-circle" id="paraPlayBtn${idx}" onclick="togglePlay('para${idx}', '${escapeQuotes(p.original_text || '')}', this)">
+                    <button class="play-btn-circle" id="paraPlayBtn${idx}" onclick="togglePlay('para${idx}', '${escapeQuotes(fullText)}', this)">
                         ▶
                     </button>
                 </div>
-                <div style="font-weight: 600;">원문:</div>
-                <div style="margin-bottom: 12px;" id="originalText${idx}">${p.original_text || ''}</div>
+                
+                <!-- ✅ 녹음용 짧은 문장 (강조 표시) -->
+                <div style="background: #e3f2fd; border-left: 4px solid #2196f3; padding: 16px; margin-bottom: 12px; border-radius: 8px;">
+                    <div style="font-weight: 600; color: #1976d2; margin-bottom: 8px;">🎤 연습 문장 (이 부분을 읽으세요):</div>
+                    <div style="font-size: 18px; font-weight: 600; line-height: 1.8; color: #333;" id="practiceText${idx}">
+                        ${firstSentence}
+                    </div>
+                </div>
+                
+                <details style="margin-bottom: 12px;">
+                    <summary style="cursor: pointer; color: #667eea; font-weight: 600;">전체 원문 보기</summary>
+                    <div style="margin-top: 12px; padding: 12px; background: #f5f5f5; border-radius: 8px;" id="originalText${idx}">
+                        ${fullText}
+                    </div>
+                </details>
+                
                 <div style="font-weight: 600; color: #667eea;">쉬운 표현:</div>
                 <div style="margin-bottom: 12px;">${p.simplified_text || ''}</div>
                 <div style="font-weight: 600; color: #764ba2;">설명:</div>
@@ -447,7 +482,7 @@ function renderParagraphs() {
                 
                 <!-- ✅ 읽기 평가 버튼 -->
                 <div class="control-buttons" id="recordingButtons${idx}">
-                    <button class="btn" onclick="startParagraphRecording(${idx}, ${p.paragraph_num || idx + 1})">
+                    <button class="btn" onclick="startParagraphRecording(${idx}, ${p.paragraph_num || idx + 1}, '${escapeQuotes(firstSentence)}')">
                         🎤 녹음하고 평가받기
                     </button>
                 </div>
@@ -460,7 +495,8 @@ function renderParagraphs() {
                 <!-- 평가 결과 -->
                 <div id="evaluationResult${idx}"></div>
             </div>
-        `).join('')}
+        `;
+        }).join('')}
         <div class="bottom-spacer"></div>
     `;
 }
@@ -1483,13 +1519,15 @@ async function requestMicrophonePermission() {
     }
 }
 
-async function startParagraphRecording(paraIndex, paraNum) {
+async function startParagraphRecording(paraIndex, paraNum, practiceText) {
+    console.log(`🎙️ 녹음 시작 요청: para=${paraIndex}, num=${paraNum}`);
+    console.log(`📝 연습 문장: ${practiceText}`);
+    
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     
     // 브라우저 감지
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
     
     if (!SpeechRecognition) {
         let message = '이 브라우저는 음성 인식을 지원하지 않습니다.\n\n';
@@ -1510,10 +1548,13 @@ async function startParagraphRecording(paraIndex, paraNum) {
     
     // ✅ 마이크 권한 확인 및 요청
     if (!microphonePermissionGranted) {
+        console.log('🎤 마이크 권한 요청 중...');
         const permitted = await requestMicrophonePermission();
         if (!permitted) {
+            console.error('❌ 마이크 권한 거부됨');
             return;  // 권한 거부 시 중단
         }
+        console.log('✅ 마이크 권한 허용됨');
     }
     
     // ✅ 기존 녹음 완전히 중지 및 정리
@@ -1526,6 +1567,9 @@ async function startParagraphRecording(paraIndex, paraNum) {
             console.error('녹음 정리 오류:', e);
         }
         isRecording = false;
+        
+        // 0.5초 대기 후 재시작
+        await new Promise(resolve => setTimeout(resolve, 500));
     }
     
     // 타이머 정리
@@ -1540,27 +1584,43 @@ async function startParagraphRecording(paraIndex, paraNum) {
     paragraphRecordedText = '';
     
     // ✅ 매번 새로운 Recognition 객체 생성 (aborted 에러 방지!)
+    console.log('🆕 새 Recognition 객체 생성');
     paragraphRecognition = new SpeechRecognition();
     paragraphRecognition.lang = 'ko-KR';
+    paragraphRecognition.continuous = true;  // 모든 브라우저에서 true 시도
+    paragraphRecognition.interimResults = true;
+    paragraphRecognition.maxAlternatives = 1;
     
-    // Safari 호환성: continuous를 조건부로 설정
-    if (isSafari || isIOS) {
-        // Safari는 continuous=false가 더 안정적
-        paragraphRecognition.continuous = false;
-        paragraphRecognition.interimResults = false;
-        console.log('🍎 Safari 모드: continuous=false');
-    } else {
-        // Chrome은 continuous=true로 더 좋은 결과
-        paragraphRecognition.continuous = true;
-        paragraphRecognition.interimResults = true;
-        console.log('💻 Chrome 모드: continuous=true');
-    }
+    console.log(`🔧 Recognition 설정: continuous=true, interimResults=true`);
     
-    // 녹음 표시
+    // ✅ 녹음 중 안내 메시지 (명확하게!)
     const indicator = document.getElementById(`recordingIndicator${paraIndex}`);
+    const resultEl = document.getElementById(`evaluationResult${paraIndex}`);
+    
     if (indicator) {
         indicator.classList.add('active');
-        indicator.innerHTML = '<div class="recording-text">🎤 녹음 중... (15초 후 자동 중지)</div>';
+        indicator.innerHTML = '<div class="recording-text">🔴 녹음 중... 지금 말하세요!</div>';
+    }
+    
+    // 연습 문장 다시 표시
+    if (resultEl) {
+        resultEl.innerHTML = `
+            <div class="content-box" style="background: #fff3cd; border-left: 4px solid #ffc107; margin-top: 16px;">
+                <div style="font-size: 16px; font-weight: 700; color: #856404; margin-bottom: 8px;">
+                    🎤 지금 바로 말하세요!
+                </div>
+                <div style="font-size: 18px; font-weight: 600; color: #333; line-height: 1.8; padding: 12px; background: white; border-radius: 8px; margin-bottom: 12px;">
+                    ${practiceText}
+                </div>
+                <div style="font-size: 14px; color: #856404;">
+                    30초 후 자동 중지됩니다.<br>
+                    말하는 대로 텍스트가 아래에 표시됩니다.
+                </div>
+                <div id="liveTranscript${paraIndex}" style="margin-top: 12px; padding: 12px; background: #e8f5e9; border-radius: 8px; min-height: 50px; font-size: 16px; line-height: 1.6;">
+                    <em style="color: #999;">녹음 중...</em>
+                </div>
+            </div>
+        `;
     }
     
     // 버튼을 "중지" 버튼으로 변경
@@ -1670,14 +1730,35 @@ async function startParagraphRecording(paraIndex, paraNum) {
         if (indicator) {
             indicator.classList.remove('active');
         }
-        resetRecordingButton(paraIndex, paraNum);
+        
+        // practiceText 가져오기
+        const practiceTextEl = document.getElementById(`practiceText${paraIndex}`);
+        const practiceText = practiceTextEl ? practiceTextEl.textContent : '';
+        resetRecordingButton(paraIndex, paraNum, practiceText);
         
         // Recognition 객체 정리
         paragraphRecognition = null;
     };
     
-    // ✅ STT 결과 처리
+    // ✅ STT 시작 이벤트
+    paragraphRecognition.onstart = () => {
+        console.log('✅ Recognition 시작됨');
+        isRecording = true;
+    };
+    
+    // ✅ 음성 감지 시작
+    paragraphRecognition.onspeechstart = () => {
+        console.log('🎤 음성 감지 시작!');
+        const liveEl = document.getElementById(`liveTranscript${paraIndex}`);
+        if (liveEl) {
+            liveEl.innerHTML = '<em style="color: #4caf50;">✅ 음성이 감지되었습니다...</em>';
+        }
+    };
+    
+    // ✅ STT 결과 처리 (실시간 표시)
     paragraphRecognition.onresult = (event) => {
+        console.log('📝 onresult 이벤트 발생');
+        
         let interimTranscript = '';
         let finalTranscript = '';
         
@@ -1685,24 +1766,23 @@ async function startParagraphRecording(paraIndex, paraNum) {
             const transcript = event.results[i][0].transcript;
             if (event.results[i].isFinal) {
                 finalTranscript += transcript + ' ';
+                console.log('✅ Final:', transcript);
             } else {
                 interimTranscript += transcript;
+                console.log('⏳ Interim:', transcript);
             }
         }
         
         paragraphRecordedText = (finalTranscript || interimTranscript).trim();
         
-        console.log('녹음 중:', paragraphRecordedText);
+        console.log(`📝 현재 녹음 텍스트 (${paragraphRecordedText.length}자):`, paragraphRecordedText);
         
-        // 실시간 텍스트 표시
-        const resultEl = document.getElementById(`evaluationResult${paraIndex}`);
-        if (resultEl && paragraphRecordedText) {
-            resultEl.innerHTML = `
-                <div class="content-box" style="margin-top: 16px; background: #e8f5e9;">
-                    <strong>✅ 녹음 중...</strong><br>
-                    <div style="margin-top: 8px; font-size: 16px; line-height: 1.6;">
-                        ${paragraphRecordedText}
-                    </div>
+        // ✅ 실시간 텍스트 표시
+        const liveEl = document.getElementById(`liveTranscript${paraIndex}`);
+        if (liveEl && paragraphRecordedText) {
+            liveEl.innerHTML = `
+                <div style="color: #2e7d32; font-weight: 600;">
+                    ${paragraphRecordedText}
                 </div>
             `;
         }
@@ -1710,23 +1790,34 @@ async function startParagraphRecording(paraIndex, paraNum) {
     
     // ✅ 녹음 종료 이벤트
     paragraphRecognition.onend = () => {
-        console.log('📴 녹음 종료 이벤트 발생');
-        isRecording = false;
+        console.log('📴 Recognition onend 이벤트');
+        
+        // Safari에서는 자동 재시작될 수 있으므로 명시적으로 중단
+        if (isRecording && paragraphRecognition) {
+            isRecording = false;
+            console.log('⚠️ 녹음이 예상치 않게 종료됨');
+        }
+    };
+    
+    // ✅ 음성 감지 종료
+    paragraphRecognition.onspeechend = () => {
+        console.log('🔇 음성 감지 종료');
     };
     
     // ✅ 녹음 시작 (에러 처리 강화)
     try {
-        console.log('🎤 녹음 시작 시도...');
+        console.log('🎤 Recognition.start() 호출...');
         
         paragraphRecognition.start();
-        isRecording = true;
-        console.log('✅ 녹음 시작 성공');
+        console.log('✅ Recognition.start() 성공');
         
-        // 15초 후 자동 중지
+        // 30초 후 자동 중지 (더 넉넉하게)
         recordingTimeout = setTimeout(() => {
-            console.log('⏱️ 15초 타이머 만료 - 자동 중지');
-            stopParagraphRecording(paraIndex);
-        }, 15000);
+            console.log('⏱️ 30초 타이머 만료 - 자동 중지');
+            if (isRecording) {
+                stopParagraphRecording(paraIndex);
+            }
+        }, 30000);
         
     } catch (error) {
         console.error('❌ 녹음 시작 오류:', error);
@@ -1735,7 +1826,11 @@ async function startParagraphRecording(paraIndex, paraNum) {
         if (indicator) {
             indicator.classList.remove('active');
         }
-        resetRecordingButton(paraIndex, paraNum);
+        
+        // practiceText 가져오기
+        const practiceTextEl = document.getElementById(`practiceText${paraIndex}`);
+        const practiceTextForError = practiceTextEl ? practiceTextEl.textContent : '';
+        resetRecordingButton(paraIndex, paraNum, practiceTextForError);
         
         // 사용자에게 명확한 에러 메시지
         const resultEl = document.getElementById(`evaluationResult${paraIndex}`);
@@ -1785,41 +1880,58 @@ function stopParagraphRecording(paraIndex) {
     }
     
     // 버튼 복구
-    resetRecordingButton(paraIndex, currentParagraphNum);
+    const practiceTextEl = document.getElementById(`practiceText${paraIndex}`);
+    const practiceText = practiceTextEl ? practiceTextEl.textContent : '';
+    resetRecordingButton(paraIndex, currentParagraphNum, practiceText);
     
-    console.log('녹음된 텍스트:', paragraphRecordedText);
+    console.log(`📊 녹음 결과 - 텍스트 길이: ${paragraphRecordedText.length}자`);
+    console.log(`📝 녹음된 내용: "${paragraphRecordedText}"`);
     
-    // 평가 시작
+    // ✅ 평가 시작 (텍스트 길이 체크)
     if (paragraphRecordedText && paragraphRecordedText.trim().length > 0) {
-        console.log('평가 시작 - 텍스트 길이:', paragraphRecordedText.length);
+        console.log('✅ 평가 시작 - 텍스트 있음');
         evaluateParagraphReading(paraIndex);
     } else {
-        console.log('녹음된 텍스트 없음');
+        console.error('❌ 녹음된 텍스트 없음');
         const resultEl = document.getElementById(`evaluationResult${paraIndex}`);
         if (resultEl) {
             resultEl.innerHTML = `
-                <div class="content-box" style="color: red; margin-top: 16px;">
-                    ❌ 녹음된 텍스트가 없습니다.<br>
-                    <strong>해결 방법:</strong><br>
-                    1. 마이크 권한을 허용했는지 확인<br>
-                    2. 마이크가 제대로 작동하는지 확인<br>
-                    3. Chrome 브라우저를 사용 중인지 확인<br>
-                    4. 녹음 버튼을 누른 후 바로 말하기 시작<br>
-                    <br>
-                    <button class="btn" onclick="startParagraphRecording(${paraIndex}, ${currentParagraphNum})">
-                        🎤 다시 녹음하기
-                    </button>
+                <div class="content-box" style="background: #ffebee; border-left: 4px solid #f44336; margin-top: 16px;">
+                    <div style="font-size: 18px; font-weight: 700; color: #c62828; margin-bottom: 12px;">
+                        ❌ 녹음된 텍스트가 없습니다
+                    </div>
+                    <div style="font-size: 14px; color: #c62828; line-height: 1.8;">
+                        <strong>가능한 원인:</strong><br>
+                        1. 녹음 시작 후 즉시 말하지 않음<br>
+                        2. 마이크 볼륨이 너무 작음<br>
+                        3. 백그라운드 소음이 너무 큼<br>
+                        4. 브라우저가 음성을 인식하지 못함<br>
+                        <br>
+                        <strong>💡 해결 방법:</strong><br>
+                        • 녹음 버튼을 누른 후 <strong>즉시</strong> 말하기<br>
+                        • 마이크에 가까이 대고 <strong>또박또박</strong> 읽기<br>
+                        • 조용한 환경에서 시도<br>
+                        • <strong>브라우저 콘솔(F12)</strong>에서 로그 확인
+                    </div>
+                    <div style="margin-top: 16px; display: flex; gap: 8px;">
+                        <button class="btn" onclick="startParagraphRecording(${paraIndex}, ${currentParagraphNum}, '${escapeQuotes(practiceText)}')">
+                            🔄 다시 녹음하기
+                        </button>
+                        <button class="btn btn-secondary" onclick="location.reload()">
+                            🔄 페이지 새로고침
+                        </button>
+                    </div>
                 </div>
             `;
         }
     }
 }
 
-function resetRecordingButton(paraIndex, paraNum) {
+function resetRecordingButton(paraIndex, paraNum, practiceText) {
     const buttonContainer = document.getElementById(`recordingButtons${paraIndex}`);
     if (buttonContainer) {
         buttonContainer.innerHTML = `
-            <button class="btn" onclick="startParagraphRecording(${paraIndex}, ${paraNum})">
+            <button class="btn" onclick="startParagraphRecording(${paraIndex}, ${paraNum}, '${escapeQuotes(practiceText)}')">
                 🎤 녹음하고 평가받기
             </button>
         `;
@@ -1827,20 +1939,24 @@ function resetRecordingButton(paraIndex, paraNum) {
 }
 
 async function evaluateParagraphReading(paraIndex) {
-    const originalText = document.getElementById(`originalText${paraIndex}`).textContent;
+    // ✅ 연습 문장 (첫 문장)을 원문으로 사용
+    const practiceText = document.getElementById(`practiceText${paraIndex}`).textContent;
     const resultEl = document.getElementById(`evaluationResult${paraIndex}`);
+    
+    console.log(`📊 평가 시작 - 녹음된 텍스트 길이: ${paragraphRecordedText.length}`);
+    console.log(`📝 녹음된 내용: "${paragraphRecordedText}"`);
     
     // 로딩 표시
     resultEl.innerHTML = `
         <div class="loading" style="margin-top: 20px;">
             <img src="img/loading.png" alt="Loading" class="loading-image">
-            <p>데이터를 로드합니다...</p>
+            <p>AI가 평가하는 중...</p>
         </div>
     `;
     
     try {
         console.log(`📡 평가 API 호출: story=${currentStory.id}, para=${currentParagraphNum}`);
-        console.log(`📝 원문 길이: ${originalText.length}, 녹음 길이: ${paragraphRecordedText.length}`);
+        console.log(`📝 연습문장 길이: ${practiceText.length}, 녹음 길이: ${paragraphRecordedText.length}`);
         
         const response = await fetch(`${API_BASE}/story/${currentStory.id}/evaluate`, {
             method: 'POST',
@@ -1848,7 +1964,7 @@ async function evaluateParagraphReading(paraIndex) {
             body: JSON.stringify({
                 user_id: currentUserId,
                 paragraph_num: currentParagraphNum,
-                original_text: originalText,
+                original_text: practiceText,  // ✅ 첫 문장만 평가
                 user_text: paragraphRecordedText
             })
         });
