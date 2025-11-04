@@ -219,24 +219,35 @@ async function selectStory(storyId) {
         console.log(`📡 동화 내용 로드 시작: /story/${storyId}`);
         console.log(`🌐 API_BASE: ${API_BASE}`);
         
-        // ✅ 타임아웃 추가
+        // ✅ 타임아웃 설정 (60초로 증가)
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 30000);
+        const timeoutId = setTimeout(() => {
+            console.error('⏱️ 동화 로드 타임아웃 (60초 초과)');
+            controller.abort();
+        }, 60000);
         
         const storyResponse = await fetch(`${API_BASE}/story/${storyId}`, {
             signal: controller.signal
         });
         
         clearTimeout(timeoutId);
+        console.log(`✅ 동화 API 응답 받음: ${storyResponse.status}`);
         
         if (!storyResponse.ok) {
             throw new Error(`서버 오류 (${storyResponse.status})`);
         }
         
         currentStory = await storyResponse.json();
-        console.log(`✅ 동화 로드 완료: ${currentStory.title}`);
+        console.log(`✅ 동화 로드 완료:`, currentStory.title);
+        console.log(`📄 동화 정보:`, {
+            id: currentStory.id,
+            title: currentStory.title,
+            fullTextLength: currentStory.full_text?.length || 0,
+            paragraphsCount: currentStory.paragraphs?.length || 0
+        });
 
         // 학습 데이터 분석 시작
+        console.log(`🔍 분석 시작...`);
         await analyzeStory(storyId);
 
     } catch (error) {
@@ -247,8 +258,18 @@ async function selectStory(storyId) {
         let detailMsg = '';
         
         if (error.name === 'AbortError') {
-            errorMsg = '⏱️ 요청 시간이 초과되었습니다.';
-            detailMsg = '서버가 응답하지 않습니다. 서버 상태를 확인해주세요.';
+            errorMsg = '⏱️ 동화 로드 시간이 초과되었습니다 (60초).';
+            detailMsg = `
+                <strong>가능한 원인:</strong><br>
+                1. 서버가 응답이 느립니다<br>
+                2. 네트워크 연결이 불안정합니다<br>
+                3. 서버가 재시작 중입니다<br>
+                <br>
+                <strong>해결 방법:</strong><br>
+                • 페이지를 새로고침 (F5)하고 다시 시도<br>
+                • 서버 로그를 확인해주세요<br>
+                • 브라우저 콘솔(F12)에서 상세 로그 확인
+            `;
         } else if (error.message.includes('Failed to fetch')) {
             errorMsg = '🔌 서버에 연결할 수 없습니다.';
             
