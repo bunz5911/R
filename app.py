@@ -119,6 +119,23 @@ if SUPABASE_AVAILABLE:
 cached_content = None
 story_files = {}  # {filename: filepath} - 메모리 절약: 경로만 저장
 
+# ============================================================================
+# 🚀 미리 생성된 분석 데이터 로드 (속도 최적화)
+# ============================================================================
+PRECOMPUTED_ANALYSIS = {}
+analysis_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'analysis_data.json')
+
+try:
+    if os.path.exists(analysis_file_path):
+        with open(analysis_file_path, 'r', encoding='utf-8') as f:
+            PRECOMPUTED_ANALYSIS = json.load(f)
+        print(f"✅ 사전 생성된 분석 데이터 로드 완료: {len(PRECOMPUTED_ANALYSIS)}개 동화", flush=True)
+    else:
+        print("⚠️ analysis_data.json 파일이 없습니다. Gemini API를 사용합니다.", flush=True)
+except Exception as e:
+    print(f"⚠️ 분석 데이터 로드 실패: {e}", flush=True)
+    PRECOMPUTED_ANALYSIS = {}
+
 # 동화 폴더 경로 (로컬/배포 환경 대응)
 DOC_FOLDER = os.environ.get('DOC_FOLDER')
 
@@ -324,6 +341,11 @@ def analyze_story(story_id):
     """
     동화 분석 (8단계 학습 데이터 생성)
     POST body: { "level": "초급|중급|고급" }
+    
+    우선순위:
+    1. 사전 생성된 분석 데이터 (즉시 반환)
+    2. Supabase 캐시 (빠름)
+    3. Gemini API 실시간 분석 (느림, 최후 수단)
     """
     if story_id < 1 or story_id > len(story_files):
         return jsonify({"error": "동화를 찾을 수 없습니다"}), 404
@@ -331,18 +353,48 @@ def analyze_story(story_id):
     data = request.get_json() or {}
     level = data.get('level', '초급')
     
-    # 동화 로드 (Lazy Loading)
+    # 동화 제목 가져오기
     title = list(story_files.keys())[story_id - 1]
+    
+    # ✅ 1순위: 사전 생성된 분석 데이터 확인 (0.1초 이내)
+    if title in PRECOMPUTED_ANALYSIS and level in PRECOMPUTED_ANALYSIS[title]:
+        print(f"✅ [캐시 HIT] {title} - {level} (사전 생성 데이터)", flush=True)
+        result = PRECOMPUTED_ANALYSIS[title][level].copy()
+        result['story_id'] = story_id
+        result['title'] = title
+        result['level'] = level
+        result['cached'] = True
+        return jsonify(result)
+    
+    # ✅ 2순위: Supabase 캐시 확인
+    if supabase_client:
+        try:
+            cached = supabase_client.table('analysis_cache')\
+                .select('*')\
+                .eq('story_title', title)\
+                .eq('level', level)\
+                .execute()
+            
+            if cached.data and len(cached.data) > 0:
+                print(f"✅ [캐시 HIT] {title} - {level} (Supabase)", flush=True)
+                result = cached.data[0]['result']
+                result['story_id'] = story_id
+                result['title'] = title
+                result['level'] = level
+                result['cached'] = True
+                return jsonify(result)
+        except Exception as e:
+            print(f"⚠️ Supabase 캐시 조회 실패: {e}", flush=True)
+    
+    # ✅ 3순위: Gemini API 실시간 분석 (느림)
+    print(f"⚠️ [캐시 MISS] {title} - {level}, Gemini API 호출 중...", flush=True)
+    
     content = get_story_content(title)
     
     if not client:
         return jsonify({"error": "Gemini API가 설정되지 않았습니다"}), 500
     
-    # Cache 없이 빠르게 분석 (속도 개선)
-    # if not cached_content:
-    #     create_context_cache()
-    
-    # Gemini에게 분석 요청 (간소화된 프롬프트로 속도 개선)
+    # Gemini에게 분석 요청
     prompt = f"""
 {level} 학습자를 위한 동화 분석:
 
@@ -404,6 +456,20 @@ JSON 형식으로 응답:
         result['story_id'] = story_id
         result['title'] = title
         result['level'] = level
+        result['cached'] = False
+        
+        # ✅ Supabase에 결과 캐싱 (다음번에 빠르게 로드)
+        if supabase_client:
+            try:
+                supabase_client.table('analysis_cache').upsert({
+                    'story_title': title,
+                    'level': level,
+                    'result': result,
+                    'created_at': datetime.now().isoformat()
+                }, on_conflict='story_title,level').execute()
+                print(f"✅ Supabase에 분석 결과 캐싱 완료: {title} - {level}", flush=True)
+            except Exception as e:
+                print(f"⚠️ Supabase 캐싱 실패: {e}", flush=True)
         
         return jsonify(result)
         
@@ -722,31 +788,58 @@ def get_user_dashboard(user_id):
 @app.route('/api/story/<int:story_id>/evaluate', methods=['POST'])
 def evaluate_pronunciation(story_id):
     """
-    발음 평가 (녹음된 텍스트와 원문 비교)
-    POST body: { "original_text": "원문", "user_text": "사용자가 말한 텍스트" }
+    🚀 개선된 발음 평가 API (코인 시스템 통합)
+    POST body: { 
+        "user_id": "UUID",
+        "paragraph_num": 1,
+        "original_text": "원문", 
+        "user_text": "사용자가 말한 텍스트" 
+    }
+    
+    기능:
+    - AI가 발음/속도/정확도를 평가
+    - 점수에 따라 코인 지급 (90+점: 10코인, 80-89: 7코인, ...)
+    - 녹음 데이터는 서버에 저장하지 않음 (평가 후 즉시 삭제)
+    - 평가 결과와 획득 코인만 DB에 기록
     """
     data = request.get_json() or {}
+    user_id = data.get('user_id')
+    paragraph_num = data.get('paragraph_num', 1)
     original = data.get('original_text', '')
     user_text = data.get('user_text', '')
     
     if not original or not user_text:
-        return jsonify({"error": "텍스트가 필요합니다"}), 400
+        return jsonify({"error": "원문과 사용자 텍스트가 필요합니다"}), 400
+    
+    if not user_id:
+        return jsonify({"error": "user_id가 필요합니다"}), 400
     
     if not client:
-        return jsonify({
-            "score": 85,
-            "feedback": "Mock 평가: 발음이 좋습니다!",
-            "corrections": []
-        })
+        return jsonify({"error": "Gemini API가 설정되지 않았습니다"}), 500
     
+    # ✅ Gemini로 종합 평가 (발음, 속도, 정확도, 적절한 어휘 사용)
     prompt = f"""
 원문: {original}
 사용자가 읽은 텍스트: {user_text}
 
-위 두 텍스트를 비교하여 발음 평가를 JSON으로 제공하세요:
+위 두 텍스트를 비교하여 다음 기준으로 평가하세요:
+1. 발음 정확도 (단어가 제대로 인식되었는가)
+2. 속도 (너무 빠르거나 느리지 않은가)
+3. 문법 (문법적으로 올바른가)
+4. 어휘 사용 (적절한 단어를 사용했는가)
+
+평가 점수에 따른 코인 지급:
+- 90-100점: 10코인
+- 80-89점: 7코인
+- 70-79점: 5코인
+- 60-69점: 3코인
+- 60점 미만: 1코인
+
+JSON 형식으로 응답:
 {{
   "score": 0-100 점수,
-  "feedback": "종합 피드백",
+  "coins": 획득 코인 수,
+  "feedback": "종합 피드백 (격려와 개선점 포함)",
   "corrections": [
     {{
       "original": "원문 단어",
@@ -754,7 +847,8 @@ def evaluate_pronunciation(story_id):
       "suggestion": "교정 제안"
     }}
   ],
-  "pronunciation_tips": ["발음 팁 1", "발음 팁 2"]
+  "pronunciation_tips": ["발음 개선 팁 1", "발음 개선 팁 2"],
+  "strengths": ["잘한 점 1", "잘한 점 2"]
 }}
 """
     
@@ -769,10 +863,131 @@ def evaluate_pronunciation(story_id):
         )
         
         result = json.loads(response.text.strip())
+        score = result.get('score', 0)
+        coins = result.get('coins', 0)
+        
+        # ✅ 점수 기록 (녹음 데이터는 저장하지 않음!)
+        if supabase_client:
+            try:
+                # 발음 평가 기록 저장
+                supabase_client.table('pronunciation_scores').insert({
+                    'user_id': user_id,
+                    'story_id': story_id,
+                    'paragraph_num': paragraph_num,
+                    'score': score,
+                    'coins_earned': coins,
+                    'feedback': result.get('feedback', ''),
+                    'mistakes': json.dumps(result.get('corrections', []), ensure_ascii=False)
+                }).execute()
+                
+                # 코인 지급 (PostgreSQL 함수 호출)
+                coin_result = supabase_client.rpc('add_user_coins', {
+                    'p_user_id': user_id,
+                    'p_amount': coins,
+                    'p_type': 'reading_score',
+                    'p_story_id': story_id,
+                    'p_paragraph_num': paragraph_num,
+                    'p_description': f"문단 {paragraph_num} 읽기 평가 ({score}점)"
+                }).execute()
+                
+                # 새로운 총 코인 수 반환
+                if coin_result.data:
+                    result['total_coins'] = coin_result.data
+                
+                print(f"✅ 읽기 평가 완료: user={user_id}, story={story_id}, para={paragraph_num}, score={score}, coins={coins}", flush=True)
+                
+            except Exception as e:
+                print(f"⚠️ 평가 기록 저장 실패: {e}", flush=True)
+                # 에러가 나도 평가 결과는 반환
+        
+        # ✅ 녹음 데이터는 여기서 자동 삭제됨 (메모리에만 존재)
         return jsonify(result)
         
     except Exception as e:
+        print(f"❌ 평가 오류: {e}", flush=True)
         return jsonify({"error": f"평가 오류: {str(e)}"}), 500
+
+
+@app.route('/api/user/<user_id>/coins', methods=['GET'])
+def get_user_coins(user_id):
+    """사용자 코인 조회"""
+    if not supabase_client:
+        return jsonify({"total_coins": 0, "error": "Supabase가 설정되지 않았습니다"}), 503
+    
+    try:
+        result = supabase_client.table('user_coins')\
+            .select('total_coins')\
+            .eq('user_id', user_id)\
+            .execute()
+        
+        if result.data and len(result.data) > 0:
+            return jsonify({"total_coins": result.data[0]['total_coins']})
+        else:
+            # 사용자 코인 데이터가 없으면 0으로 초기화
+            supabase_client.table('user_coins').insert({
+                'user_id': user_id,
+                'total_coins': 0
+            }).execute()
+            return jsonify({"total_coins": 0})
+    except Exception as e:
+        return jsonify({"error": str(e), "total_coins": 0}), 500
+
+
+@app.route('/api/quiz/retry', methods=['POST'])
+def retry_quiz():
+    """
+    코인을 사용하여 퀴즈 재시도
+    POST body: { "user_id": "UUID", "story_id": 1 }
+    """
+    if not supabase_client:
+        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    
+    data = request.get_json() or {}
+    user_id = data.get('user_id')
+    story_id = data.get('story_id')
+    
+    RETRY_COST = 5  # 재시도 비용: 5코인
+    
+    try:
+        # 코인 확인
+        coin_result = supabase_client.table('user_coins')\
+            .select('total_coins')\
+            .eq('user_id', user_id)\
+            .execute()
+        
+        if not coin_result.data or len(coin_result.data) == 0:
+            return jsonify({
+                "success": False,
+                "message": "코인 정보를 찾을 수 없습니다."
+            }), 404
+        
+        current_coins = coin_result.data[0]['total_coins']
+        
+        if current_coins < RETRY_COST:
+            return jsonify({
+                "success": False,
+                "message": f"코인이 부족합니다. (보유: {current_coins}, 필요: {RETRY_COST})",
+                "current_coins": current_coins,
+                "required_coins": RETRY_COST
+            }), 400
+        
+        # 코인 차감
+        new_total = supabase_client.rpc('add_user_coins', {
+            'p_user_id': user_id,
+            'p_amount': -RETRY_COST,
+            'p_type': 'quiz_retry',
+            'p_story_id': story_id,
+            'p_description': f"동화 {story_id} 퀴즈 재시도"
+        }).execute()
+        
+        return jsonify({
+            "success": True,
+            "remaining_coins": new_total.data if new_total.data else current_coins - RETRY_COST,
+            "message": "퀴즈를 다시 시도할 수 있습니다."
+        })
+        
+    except Exception as e:
+        return jsonify({"error": str(e), "success": False}), 500
 
 
 # ============================================================================

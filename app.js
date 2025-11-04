@@ -8,6 +8,62 @@ const API_BASE = window.location.hostname === 'localhost' || window.location.hos
     ? 'http://localhost:8080/api'
     : 'https://r-6s57.onrender.com/api';
 
+// ============================================================================
+// 🚀 하드코딩된 동화 목록 (즉시 로딩용)
+// ============================================================================
+const PRELOADED_STORIES = [
+    { id: 1, title: "강아지 닥스훈트", preview: "강아지 닥스훈트에 관한 동화입니다..." },
+    { id: 2, title: "공룡발자국", preview: "공룡발자국에 관한 동화입니다..." },
+    { id: 3, title: "기린", preview: "기린에 관한 동화입니다..." },
+    { id: 4, title: "까치집", preview: "까치집에 관한 동화입니다..." },
+    { id: 5, title: "꿀벌", preview: "꿀벌에 관한 동화입니다..." },
+    { id: 6, title: "낡은노트", preview: "낡은노트에 관한 동화입니다..." },
+    { id: 7, title: "냉장고", preview: "냉장고에 관한 동화입니다..." },
+    { id: 8, title: "대나무", preview: "대나무에 관한 동화입니다..." },
+    { id: 9, title: "독수리", preview: "독수리에 관한 동화입니다..." },
+    { id: 10, title: "막대자석", preview: "막대자석에 관한 동화입니다..." },
+    { id: 11, title: "뭉게구름", preview: "뭉게구름에 관한 동화입니다..." },
+    { id: 12, title: "밍크고래", preview: "밍크고래에 관한 동화입니다..." },
+    { id: 13, title: "박물관", preview: "박물관에 관한 동화입니다..." },
+    { id: 14, title: "반코팅장갑", preview: "반코팅장갑에 관한 동화입니다..." },
+    { id: 15, title: "블랙다이아몬드", preview: "블랙다이아몬드에 관한 동화입니다..." },
+    { id: 16, title: "빨간신호등", preview: "빨간신호등에 관한 동화입니다..." },
+    { id: 17, title: "색과무늬", preview: "색과무늬에 관한 동화입니다..." },
+    { id: 18, title: "세탁소드라이클리너", preview: "세탁소드라이클리너에 관한 동화입니다..." },
+    { id: 19, title: "수영장 꽃무늬 투명 튜브", preview: "수영장 꽃무늬 투명 튜브에 관한 동화입니다..." },
+    { id: 20, title: "숫자2", preview: "숫자2에 관한 동화입니다..." },
+    { id: 21, title: "숲", preview: "숲에 관한 동화입니다..." },
+    { id: 22, title: "시간을파는자판기", preview: "시간을파는자판기에 관한 동화입니다..." },
+    { id: 23, title: "시내버스", preview: "시내버스에 관한 동화입니다..." },
+    { id: 24, title: "아기밥그릇", preview: "아기밥그릇에 관한 동화입니다..." },
+    { id: 25, title: "아기북극곰", preview: "아기북극곰에 관한 동화입니다..." },
+    { id: 26, title: "애벌레", preview: "애벌레에 관한 동화입니다..." },
+    { id: 27, title: "야구장빗자루", preview: "야구장빗자루에 관한 동화입니다..." },
+    { id: 28, title: "얼굴", preview: "얼굴에 관한 동화입니다..." },
+    { id: 29, title: "엘리베이터", preview: "엘리베이터에 관한 동화입니다..." },
+    { id: 30, title: "여자화장실", preview: "여자화장실에 관한 동화입니다..." },
+    { id: 31, title: "유리구슬", preview: "유리구슬에 관한 동화입니다..." },
+    { id: 32, title: "은수저", preview: "은수저에 관한 동화입니다..." },
+    { id: 33, title: "자동차바퀴", preview: "자동차바퀴에 관한 동화입니다..." },
+    { id: 34, title: "전기", preview: "전기에 관한 동화입니다..." },
+    { id: 35, title: "전기+-", preview: "전기+-에 관한 동화입니다..." },
+    { id: 36, title: "조개눈물", preview: "조개눈물에 관한 동화입니다..." },
+    { id: 37, title: "종이에이포", preview: "종이에이포에 관한 동화입니다..." },
+    { id: 38, title: "주방 가위", preview: "주방 가위에 관한 동화입니다..." },
+    { id: 39, title: "청바지와스커트", preview: "청바지와스커트에 관한 동화입니다..." },
+    { id: 40, title: "칭찬스티커", preview: "칭찬스티커에 관한 동화입니다..." },
+    { id: 41, title: "케이크", preview: "케이크에 관한 동화입니다..." },
+    { id: 42, title: "쿠션", preview: "쿠션에 관한 동화입니다..." },
+    { id: 43, title: "크레파스", preview: "크레파스에 관한 동화입니다..." },
+    { id: 44, title: "크리스마스트리", preview: "크리스마스트리에 관한 동화입니다..." },
+    { id: 45, title: "택배상자", preview: "택배상자에 관한 동화입니다..." },
+    { id: 46, title: "팬지꽃", preview: "팬지꽃에 관한 동화입니다..." },
+    { id: 47, title: "풍차날개", preview: "풍차날개에 관한 동화입니다..." },
+    { id: 48, title: "허수아비", preview: "허수아비에 관한 동화입니다..." },
+    { id: 49, title: "흔들바위", preview: "흔들바위에 관한 동화입니다..." },
+    { id: 50, title: "희망", preview: "희망에 관한 동화입니다..." }
+];
+
 // 전역 상태
 let currentStories = [];
 let currentStory = null;
@@ -18,6 +74,7 @@ let currentTab = 'summary';
 // 사용자 정보
 let currentUserId = localStorage.getItem('userId') || '00000000-0000-0000-0000-000000000001';  // 테스트 사용자
 let completedTabs = new Set();  // 완료한 탭 추적
+let userCoins = 0;  // 사용자 코인
 
 // TTS 설정
 let ttsVoice = null;
@@ -25,7 +82,8 @@ let allVoices = [];
 let selectedVoiceIndex = -1;
 let useGoogleTTS = false;  // Google Cloud TTS 사용 여부
 let googleTTSVoices = [];  // Google TTS 음성 목록
-let selectedGoogleVoice = 'ko-KR-Neural2-A';  // 기본 음성
+// ✅ 기본 음성: Neural2-C (부드럽고 다정한 여성 목소리, 동화 읽기에 최적)
+let selectedGoogleVoice = 'ko-KR-Neural2-C';
 let currentAudio = null;  // 현재 재생 중인 오디오
 let isPlaying = false;  // 재생 상태
 let currentPlayingButton = null;  // 현재 재생 버튼
@@ -39,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeTTS();
     initializeSTT();
     loadGoogleTTSVoices();  // Google TTS 음성 목록 로드
+    loadUserCoins();  // ✅ 사용자 코인 로드
     loadStories();
     setupEventListeners();
     loadVoicePreference();
@@ -63,21 +122,68 @@ function setupEventListeners() {
 }
 
 // ============================================================================
-// [2] 동화 목록 로드
+// [1-1] 사용자 코인 로드
+// ============================================================================
+async function loadUserCoins() {
+    try {
+        const response = await fetch(`${API_BASE}/user/${currentUserId}/coins`);
+        const data = await response.json();
+        userCoins = data.total_coins || 0;
+        updateCoinDisplay();
+    } catch (error) {
+        console.log('⚠️ 코인 로드 실패:', error.message);
+        userCoins = 0;
+    }
+}
+
+function updateCoinDisplay() {
+    // 헤더에 코인 표시 추가
+    const header = document.querySelector('.header');
+    let coinDisplay = document.getElementById('coinDisplay');
+    
+    if (!coinDisplay) {
+        coinDisplay = document.createElement('div');
+        coinDisplay.id = 'coinDisplay';
+        coinDisplay.style.cssText = `
+            position: absolute;
+            top: 20px;
+            right: 150px;
+            background: rgba(255, 255, 255, 0.3);
+            border: 2px solid white;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        `;
+        header.appendChild(coinDisplay);
+    }
+    
+    coinDisplay.innerHTML = `🪙 ${userCoins} 코인`;
+}
+
+// ============================================================================
+// [2] 동화 목록 로드 (하드코딩 데이터 즉시 표시)
 // ============================================================================
 async function loadStories() {
+    // ✅ 즉시 하드코딩된 목록 표시 (0.1초 이내)
+    currentStories = PRELOADED_STORIES;
+    renderStoryList();
+    
+    // 백그라운드에서 서버 데이터 동기화 (선택사항)
     try {
         const response = await fetch(`${API_BASE}/stories`);
         const data = await response.json();
-        currentStories = data.stories;
-        renderStoryList();
+        // 서버 데이터가 있으면 업데이트 (필요시)
+        if (data.stories && data.stories.length > 0) {
+            console.log('✅ 서버 동화 목록 동기화 완료');
+        }
     } catch (error) {
-        document.getElementById('storyList').innerHTML = `
-            <div style="color: red; text-align: center; padding: 20px;">
-                <p>서버에 연결할 수 없습니다.</p>
-                <p style="font-size: 14px; margin-top: 10px;">백엔드 서버가 실행 중인지 확인하세요.</p>
-            </div>
-        `;
+        console.log('⚠️ 서버 연결 실패, 로컬 데이터 사용 중:', error.message);
     }
 }
 
@@ -279,9 +385,12 @@ function renderParagraphs() {
     }
 
     contentEl.innerHTML = `
-        <div class="section-title">문단별 학습</div>
+        <div class="section-title">문단별 학습 + 읽기 평가</div>
+        <div class="content-box" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; margin-bottom: 20px;">
+            <strong>🎤 각 문단을 읽고 AI 평가를 받아 코인을 획득하세요!</strong>
+        </div>
         ${paragraphs.map((p, idx) => `
-            <div class="paragraph-item">
+            <div class="paragraph-item" id="paragraph${idx}">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
                     <span class="paragraph-num">문단 ${p.paragraph_num || idx + 1}</span>
                     <button class="play-btn-circle" id="paraPlayBtn${idx}" onclick="togglePlay('para${idx}', '${escapeQuotes(p.original_text || '')}', this)">
@@ -289,11 +398,26 @@ function renderParagraphs() {
                     </button>
                 </div>
                 <div style="font-weight: 600;">원문:</div>
-                <div style="margin-bottom: 12px;">${p.original_text || ''}</div>
+                <div style="margin-bottom: 12px;" id="originalText${idx}">${p.original_text || ''}</div>
                 <div style="font-weight: 600; color: #667eea;">쉬운 표현:</div>
                 <div style="margin-bottom: 12px;">${p.simplified_text || ''}</div>
                 <div style="font-weight: 600; color: #764ba2;">설명:</div>
-                <div>${p.explanation || ''}</div>
+                <div style="margin-bottom: 16px;">${p.explanation || ''}</div>
+                
+                <!-- ✅ 읽기 평가 버튼 -->
+                <div class="control-buttons">
+                    <button class="btn" onclick="startParagraphRecording(${idx}, ${p.paragraph_num || idx + 1})">
+                        🎤 녹음하고 평가받기
+                    </button>
+                </div>
+                
+                <!-- 녹음 상태 표시 -->
+                <div class="recording-indicator" id="recordingIndicator${idx}">
+                    <div class="recording-text">녹음 중...</div>
+                </div>
+                
+                <!-- 평가 결과 -->
+                <div id="evaluationResult${idx}"></div>
             </div>
         `).join('')}
         <div class="bottom-spacer"></div>
@@ -694,14 +818,17 @@ async function loadGoogleTTSVoices() {
         
         if (data.voices) {
             googleTTSVoices = data.voices;
-            selectedGoogleVoice = data.default || 'ko-KR-Neural2-A';
+            // ✅ 기본 음성: Neural2-C (동화 읽기에 최적화된 부드러운 목소리)
+            selectedGoogleVoice = 'ko-KR-Neural2-C';
             useGoogleTTS = true;  // Google TTS 사용 가능
             console.log('✅ Google Cloud TTS 사용 가능:', googleTTSVoices.length, '개 음성');
+            console.log('✅ 기본 음성: ko-KR-Neural2-C (동화 읽기 최적화)');
             
-            // 저장된 음성 설정 로드
+            // 저장된 음성 설정 로드 (사용자가 설정한 경우)
             const saved = localStorage.getItem('selectedGoogleVoice');
             if (saved) {
                 selectedGoogleVoice = saved;
+                console.log('✅ 사용자 설정 음성 로드:', saved);
             }
         }
     } catch (error) {
@@ -793,14 +920,32 @@ async function togglePlay(id, text, buttonElement) {
     await speakText(text);
 }
 
+/**
+ * 한국어만 추출하는 필터 함수
+ * 영어 단어는 TTS가 어색하게 읽으므로 제거
+ */
+function filterKoreanOnly(text) {
+    // 영어 알파벳만 제거 (숫자, 특수문자는 유지)
+    // 예: "Hello 안녕하세요" → "안녕하세요"
+    return text.replace(/[A-Za-z]+/g, '').trim();
+}
+
 async function speakText(text) {
+    // ✅ 한국어만 추출 (영어 제거)
+    const koreanOnlyText = filterKoreanOnly(text);
+    
+    if (!koreanOnlyText || koreanOnlyText.trim().length === 0) {
+        console.log('⚠️ 읽을 한국어 텍스트가 없습니다.');
+        return;
+    }
+    
     // Google Cloud TTS 사용
     if (useGoogleTTS) {
-        await speakWithGoogleTTS(text);
+        await speakWithGoogleTTS(koreanOnlyText);
     }
     // Web Speech API fallback
     else {
-        speakWithWebSpeech(text);
+        speakWithWebSpeech(koreanOnlyText);
     }
 }
 
@@ -1248,6 +1393,182 @@ function stopRecording() {
     if (recognition) {
         recognition.stop();
         document.getElementById('recordingIndicator').classList.remove('active');
+    }
+}
+
+// ============================================================================
+// [7-1] 문단별 녹음 및 평가 (신규)
+// ============================================================================
+let currentRecordingIndex = -1;
+let currentParagraphNum = -1;
+let paragraphRecordedText = '';
+
+function startParagraphRecording(paraIndex, paraNum) {
+    if (!recognition) {
+        alert('이 브라우저는 음성 인식을 지원하지 않습니다.');
+        return;
+    }
+    
+    currentRecordingIndex = paraIndex;
+    currentParagraphNum = paraNum;
+    paragraphRecordedText = '';
+    
+    // 녹음 시작
+    const indicator = document.getElementById(`recordingIndicator${paraIndex}`);
+    if (indicator) {
+        indicator.classList.add('active');
+    }
+    
+    // STT 설정 (문단별로 독립적으로 관리)
+    recognition.onresult = (event) => {
+        let interimTranscript = '';
+        let finalTranscript = '';
+        
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+            const transcript = event.results[i][0].transcript;
+            if (event.results[i].isFinal) {
+                finalTranscript += transcript + ' ';
+            } else {
+                interimTranscript += transcript;
+            }
+        }
+        
+        paragraphRecordedText = finalTranscript || interimTranscript;
+        
+        // 실시간 텍스트 표시
+        const resultEl = document.getElementById(`evaluationResult${paraIndex}`);
+        if (resultEl) {
+            resultEl.innerHTML = `
+                <div class="content-box" style="margin-top: 16px;">
+                    <strong>녹음 중...</strong><br>
+                    ${paragraphRecordedText}
+                </div>
+            `;
+        }
+    };
+    
+    recognition.start();
+    
+    // 10초 후 자동 중지 및 평가
+    setTimeout(() => {
+        stopParagraphRecording(paraIndex);
+    }, 10000);
+}
+
+function stopParagraphRecording(paraIndex) {
+    if (recognition) {
+        recognition.stop();
+    }
+    
+    const indicator = document.getElementById(`recordingIndicator${paraIndex}`);
+    if (indicator) {
+        indicator.classList.remove('active');
+    }
+    
+    // 평가 시작
+    if (paragraphRecordedText.trim().length > 0) {
+        evaluateParagraphReading(paraIndex);
+    } else {
+        const resultEl = document.getElementById(`evaluationResult${paraIndex}`);
+        if (resultEl) {
+            resultEl.innerHTML = `
+                <div class="content-box" style="color: red; margin-top: 16px;">
+                    녹음된 텍스트가 없습니다. 다시 시도해주세요.
+                </div>
+            `;
+        }
+    }
+}
+
+async function evaluateParagraphReading(paraIndex) {
+    const originalText = document.getElementById(`originalText${paraIndex}`).textContent;
+    const resultEl = document.getElementById(`evaluationResult${paraIndex}`);
+    
+    // 로딩 표시
+    resultEl.innerHTML = `
+        <div class="loading" style="margin-top: 20px;">
+            <div class="spinner"></div>
+            <p>AI가 읽기를 평가하는 중...</p>
+        </div>
+    `;
+    
+    try {
+        const response = await fetch(`${API_BASE}/story/${currentStory.id}/evaluate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: currentUserId,
+                paragraph_num: currentParagraphNum,
+                original_text: originalText,
+                user_text: paragraphRecordedText
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.error) {
+            resultEl.innerHTML = `
+                <div class="content-box" style="color: red; margin-top: 20px;">
+                    평가 오류: ${result.error}
+                </div>
+            `;
+            return;
+        }
+        
+        // ✅ 평가 결과 표시
+        resultEl.innerHTML = `
+            <div class="evaluation-result" style="margin-top: 20px;">
+                <div class="score-display">${result.score}점</div>
+                <div style="font-size: 24px; font-weight: 700; color: #f093fb; text-align: center; margin-bottom: 16px;">
+                    🪙 +${result.coins} 코인 획득!
+                </div>
+                <div class="feedback-text">
+                    <strong>AI 피드백:</strong><br>
+                    ${result.feedback}
+                </div>
+            </div>
+
+            ${result.strengths && result.strengths.length > 0 ? `
+                <div class="section-title" style="margin-top: 24px;">👍 잘한 점</div>
+                ${result.strengths.map(s => `
+                    <div class="content-box">${s}</div>
+                `).join('')}
+            ` : ''}
+
+            ${result.pronunciation_tips && result.pronunciation_tips.length > 0 ? `
+                <div class="section-title" style="margin-top: 24px;">💡 발음 개선 팁</div>
+                ${result.pronunciation_tips.map(tip => `
+                    <div class="content-box">${tip}</div>
+                `).join('')}
+            ` : ''}
+
+            ${result.corrections && result.corrections.length > 0 ? `
+                <div class="section-title" style="margin-top: 24px;">✏️ 교정 사항</div>
+                ${result.corrections.map(c => `
+                    <div class="vocabulary-item">
+                        <div class="vocab-word">원문: ${c.original}</div>
+                        <div class="vocab-meaning">발음: ${c.user}</div>
+                        <div class="vocab-example">제안: ${c.suggestion}</div>
+                    </div>
+                `).join('')}
+            ` : ''}
+        `;
+        
+        // ✅ 코인 업데이트
+        if (result.total_coins !== undefined) {
+            userCoins = result.total_coins;
+            updateCoinDisplay();
+        } else {
+            // 코인 다시 로드
+            loadUserCoins();
+        }
+        
+    } catch (error) {
+        resultEl.innerHTML = `
+            <div class="content-box" style="color: red; margin-top: 20px;">
+                평가 오류: ${error.message}
+            </div>
+        `;
     }
 }
 
