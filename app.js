@@ -201,20 +201,90 @@ function renderStoryList() {
 // [3] 동화 선택 및 학습 시작
 // ============================================================================
 async function selectStory(storyId) {
+    console.log(`📖 동화 선택: ID=${storyId}`);
+    
+    // ✅ 즉시 화면 전환 및 로딩 표시
+    document.getElementById('storyListView').style.display = 'none';
+    document.getElementById('learningView').style.display = 'flex';
+    
+    const contentEl = document.getElementById('learningContent');
+    contentEl.innerHTML = `
+        <div class="loading">
+            <img src="img/loading.png" alt="Loading" class="loading-image">
+            <p>동화를 불러오는 중...</p>
+        </div>
+    `;
+    
     try {
-        // 동화 내용 로드
-        const storyResponse = await fetch(`${API_BASE}/story/${storyId}`);
+        console.log(`📡 동화 내용 로드 시작: /story/${storyId}`);
+        console.log(`🌐 API_BASE: ${API_BASE}`);
+        
+        // ✅ 타임아웃 추가
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000);
+        
+        const storyResponse = await fetch(`${API_BASE}/story/${storyId}`, {
+            signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!storyResponse.ok) {
+            throw new Error(`서버 오류 (${storyResponse.status})`);
+        }
+        
         currentStory = await storyResponse.json();
-
-        // 화면 전환
-        document.getElementById('storyListView').style.display = 'none';
-        document.getElementById('learningView').style.display = 'flex';
+        console.log(`✅ 동화 로드 완료: ${currentStory.title}`);
 
         // 학습 데이터 분석 시작
         await analyzeStory(storyId);
 
     } catch (error) {
-        alert('동화를 불러오는데 실패했습니다: ' + error.message);
+        console.error('❌ 동화 로드 오류:', error);
+        
+        let isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        let errorMsg = error.message;
+        let detailMsg = '';
+        
+        if (error.name === 'AbortError') {
+            errorMsg = '⏱️ 요청 시간이 초과되었습니다.';
+            detailMsg = '서버가 응답하지 않습니다. 서버 상태를 확인해주세요.';
+        } else if (error.message.includes('Failed to fetch')) {
+            errorMsg = '🔌 서버에 연결할 수 없습니다.';
+            
+            if (isLocalhost) {
+                detailMsg = `
+                    <strong style="color: #d32f2f;">로컬 서버가 실행되지 않았습니다!</strong><br><br>
+                    새 터미널에서 다음 명령어를 실행하세요:<br>
+                    <code style="background: #000; color: #0f0; padding: 12px; display: block; margin: 12px 0; border-radius: 4px; font-family: monospace;">
+                    cd /Users/hongbeomseog/Desktop/RAKorean<br>
+                    python app.py
+                    </code>
+                `;
+            } else {
+                detailMsg = 'Render.com 서버 상태를 확인해주세요.';
+            }
+        }
+        
+        contentEl.innerHTML = `
+            <div style="padding: 20px; text-align: center;">
+                <div style="font-size: 48px; margin-bottom: 16px;">😔</div>
+                <div style="font-size: 20px; font-weight: 700; color: #c62828; margin-bottom: 12px;">
+                    ${errorMsg}
+                </div>
+                <div style="font-size: 14px; color: #666; line-height: 1.8; margin-bottom: 20px;">
+                    ${detailMsg}
+                </div>
+                <div style="margin-top: 20px;">
+                    <button class="btn" onclick="selectStory(${storyId})">
+                        🔄 다시 시도
+                    </button>
+                    <button class="btn btn-secondary" onclick="showStoryList()">
+                        ← 동화 목록으로
+                    </button>
+                </div>
+            </div>
+        `;
     }
 }
 
@@ -250,11 +320,18 @@ async function analyzeStory(storyId) {
         console.log(`📡 백엔드 API 호출 시작: /story/${storyId}/analyze`);
         console.log(`🌐 API_BASE: ${API_BASE}`);
         
+        // ✅ 타임아웃 설정 (60초)
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 60000);
+        
         const response = await fetch(`${API_BASE}/story/${storyId}/analyze`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ level: currentLevel })
+            body: JSON.stringify({ level: currentLevel }),
+            signal: controller.signal
         });
+        
+        clearTimeout(timeoutId);
 
         console.log(`📡 응답 상태: ${response.status}`);
 
@@ -282,35 +359,81 @@ async function analyzeStory(storyId) {
         
         let errorMessage = error.message;
         let suggestion = '';
+        let isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         
         // 에러 타입별 상세 안내
-        if (error.message.includes('Failed to fetch') || error.message.includes('load failed')) {
-            errorMessage = '백엔드 서버에 연결할 수 없습니다.';
+        if (error.name === 'AbortError') {
+            errorMessage = '⏱️ 요청 시간이 초과되었습니다 (60초).';
             suggestion = `
                 <strong>가능한 원인:</strong><br>
-                1. Render.com 서버가 sleep 상태 (무료 티어)<br>
-                   → 최대 1분 정도 기다려주세요. 서버가 깨어나는 중입니다.<br>
-                2. 인터넷 연결 확인<br>
-                3. 백엔드 서버 상태 확인<br>
+                1. 서버가 응답하지 않음<br>
+                2. Gemini API 응답이 너무 느림<br>
+                3. 네트워크 속도 문제<br>
                 <br>
-                <a href="${API_BASE.replace('/api', '')}/health" target="_blank" style="color: #667eea; text-decoration: underline;">
-                    서버 상태 확인하기 →
-                </a>
+                <strong>해결 방법:</strong><br>
+                • 잠시 후 다시 시도<br>
+                • 서버 상태 확인
             `;
+        } else if (error.message.includes('Failed to fetch') || error.message.includes('load failed') || error.message.includes('NetworkError')) {
+            errorMessage = '🔌 백엔드 서버에 연결할 수 없습니다.';
+            
+            if (isLocalhost) {
+                suggestion = `
+                    <strong style="color: #d32f2f;">⚠️ 로컬 서버가 실행되지 않았습니다!</strong><br><br>
+                    <strong>해결 방법:</strong><br>
+                    1. 새 터미널을 열어주세요<br>
+                    2. 다음 명령어 실행:<br>
+                    <code style="background: #f5f5f5; padding: 8px; display: block; margin: 8px 0; border-radius: 4px;">
+                    cd /Users/hongbeomseog/Desktop/RAKorean<br>
+                    export GEMINI_API_KEY="AIzaSyCImEwjwdp6i7Bo0ZShssNhfC9KDodUMmk"<br>
+                    export ELEVENLABS_API_KEY="sk_0f1ec..."<br>
+                    python app.py
+                    </code>
+                    3. 서버 시작 메시지 확인<br>
+                    4. 이 페이지 새로고침 (F5)
+                `;
+            } else {
+                suggestion = `
+                    <strong>가능한 원인:</strong><br>
+                    1. Render.com 배포 중<br>
+                    2. 서버 재시작 중<br>
+                    3. 인터넷 연결 문제<br>
+                    <br>
+                    <a href="${API_BASE.replace('/api', '')}/health" target="_blank" style="color: #667eea; text-decoration: underline;">
+                        서버 상태 확인하기 →
+                    </a>
+                `;
+            }
         } else if (error.message.includes('500')) {
-            errorMessage = 'Gemini API 오류가 발생했습니다.';
+            errorMessage = '💥 서버 내부 오류가 발생했습니다.';
             suggestion = `
                 <strong>가능한 원인:</strong><br>
                 1. Gemini API 키 설정 확인<br>
                 2. API 할당량 초과<br>
+                3. 서버 설정 오류<br>
+                <br>
+                Render.com 로그를 확인해주세요.
             `;
         }
         
         contentEl.innerHTML = `
             <div style="padding: 20px;">
-                <div class="content-box" style="color: red; margin-bottom: 16px;">
-                    <strong>❌ ${errorMessage}</strong><br><br>
-                    ${suggestion}
+                <div class="content-box" style="background: #ffebee; border-left: 4px solid #f44336; margin-bottom: 16px;">
+                    <div style="font-size: 20px; font-weight: 700; color: #c62828; margin-bottom: 12px;">
+                        ${errorMessage}
+                    </div>
+                    <div style="font-size: 14px; color: #c62828; line-height: 1.8;">
+                        ${suggestion}
+                    </div>
+                    <div style="margin-top: 16px; padding: 12px; background: #fff3cd; border-radius: 8px;">
+                        <strong style="color: #856404;">💡 디버깅 정보:</strong><br>
+                        <small style="color: #856404;">
+                        API URL: ${API_BASE}<br>
+                        Story ID: ${storyId}<br>
+                        Level: ${currentLevel}<br>
+                        브라우저 콘솔(F12)에서 상세 에러 확인
+                        </small>
+                    </div>
                 </div>
                 <button class="btn" onclick="analyzeStory(${storyId})" style="margin-top: 16px;">
                     🔄 다시 시도
@@ -318,6 +441,11 @@ async function analyzeStory(storyId) {
                 <button class="btn btn-secondary" onclick="showStoryList()" style="margin-top: 8px;">
                     ← 동화 목록으로
                 </button>
+                ${isLocalhost ? `
+                    <button class="btn" onclick="alert('터미널에서:\\ncd /Users/hongbeomseog/Desktop/RAKorean\\npython app.py')" style="margin-top: 8px; background: #ff9800;">
+                        📋 서버 실행 명령어 보기
+                    </button>
+                ` : ''}
             </div>
         `;
     }
