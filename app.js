@@ -247,17 +247,25 @@ async function analyzeStory(storyId) {
     `;
 
     try {
+        console.log(`📡 백엔드 API 호출 시작: /story/${storyId}/analyze`);
+        console.log(`🌐 API_BASE: ${API_BASE}`);
+        
         const response = await fetch(`${API_BASE}/story/${storyId}/analyze`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ level: currentLevel })
         });
 
+        console.log(`📡 응답 상태: ${response.status}`);
+
         if (!response.ok) {
-            throw new Error(`서버 오류: ${response.status}`);
+            const errorText = await response.text();
+            console.error('❌ 서버 에러 응답:', errorText);
+            throw new Error(`서버 오류 (${response.status}): ${errorText}`);
         }
 
         currentAnalysis = await response.json();
+        console.log('✅ 분석 데이터 수신 완료');
         
         if (currentAnalysis.error) {
             throw new Error(currentAnalysis.error);
@@ -268,12 +276,47 @@ async function analyzeStory(storyId) {
         console.log('💾 분석 결과 캐시 저장 완료');
         
         switchTab('summary'); // 요약 탭 표시
+        
     } catch (error) {
+        console.error('❌ 분석 오류:', error);
+        
+        let errorMessage = error.message;
+        let suggestion = '';
+        
+        // 에러 타입별 상세 안내
+        if (error.message.includes('Failed to fetch') || error.message.includes('load failed')) {
+            errorMessage = '백엔드 서버에 연결할 수 없습니다.';
+            suggestion = `
+                <strong>가능한 원인:</strong><br>
+                1. Render.com 서버가 sleep 상태 (무료 티어)<br>
+                   → 최대 1분 정도 기다려주세요. 서버가 깨어나는 중입니다.<br>
+                2. 인터넷 연결 확인<br>
+                3. 백엔드 서버 상태 확인<br>
+                <br>
+                <a href="${API_BASE.replace('/api', '')}/health" target="_blank" style="color: #667eea; text-decoration: underline;">
+                    서버 상태 확인하기 →
+                </a>
+            `;
+        } else if (error.message.includes('500')) {
+            errorMessage = 'Gemini API 오류가 발생했습니다.';
+            suggestion = `
+                <strong>가능한 원인:</strong><br>
+                1. Gemini API 키 설정 확인<br>
+                2. API 할당량 초과<br>
+            `;
+        }
+        
         contentEl.innerHTML = `
-            <div style="color: red; padding: 20px; text-align: center;">
-                <p>분석 오류: ${error.message}</p>
+            <div style="padding: 20px;">
+                <div class="content-box" style="color: red; margin-bottom: 16px;">
+                    <strong>❌ ${errorMessage}</strong><br><br>
+                    ${suggestion}
+                </div>
                 <button class="btn" onclick="analyzeStory(${storyId})" style="margin-top: 16px;">
-                    다시 시도
+                    🔄 다시 시도
+                </button>
+                <button class="btn btn-secondary" onclick="showStoryList()" style="margin-top: 8px;">
+                    ← 동화 목록으로
                 </button>
             </div>
         `;
@@ -1395,40 +1438,51 @@ function stopRecording() {
 }
 
 // ============================================================================
-// [7-1] 문단별 녹음 및 평가 (신규 - 개선)
+// [7-1] 문단별 녹음 및 평가 (완전히 재작성 - aborted 에러 해결)
 // ============================================================================
 let currentRecordingIndex = -1;
 let currentParagraphNum = -1;
 let paragraphRecordedText = '';
 let recordingTimeout = null;
 let isRecording = false;
+let paragraphRecognition = null;  // 문단별 독립 Recognition 객체
 
 function startParagraphRecording(paraIndex, paraNum) {
-    if (!recognition) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (!SpeechRecognition) {
         alert('이 브라우저는 음성 인식을 지원하지 않습니다.\n\nChrome 브라우저를 사용해주세요.');
         return;
     }
     
-    // 이미 녹음 중이면 중지
-    if (isRecording) {
-        console.log('이미 녹음 중입니다. 기존 녹음을 중지합니다.');
+    // ✅ 기존 녹음 완전히 중지 및 정리
+    if (isRecording && paragraphRecognition) {
+        console.log('⚠️ 기존 녹음 중지 및 정리');
         try {
-            recognition.stop();
+            paragraphRecognition.abort();
+            paragraphRecognition = null;
         } catch (e) {
-            console.error('녹음 중지 오류:', e);
+            console.error('녹음 정리 오류:', e);
         }
+        isRecording = false;
     }
     
-    currentRecordingIndex = paraIndex;
-    currentParagraphNum = paraNum;
-    paragraphRecordedText = '';
-    isRecording = true;
-    
-    // 기존 타이머 정리
+    // 타이머 정리
     if (recordingTimeout) {
         clearTimeout(recordingTimeout);
         recordingTimeout = null;
     }
+    
+    // 상태 초기화
+    currentRecordingIndex = paraIndex;
+    currentParagraphNum = paraNum;
+    paragraphRecordedText = '';
+    
+    // ✅ 매번 새로운 Recognition 객체 생성 (aborted 에러 방지!)
+    paragraphRecognition = new SpeechRecognition();
+    paragraphRecognition.lang = 'ko-KR';
+    paragraphRecognition.continuous = true;
+    paragraphRecognition.interimResults = true;
     
     // 녹음 표시
     const indicator = document.getElementById(`recordingIndicator${paraIndex}`);
@@ -1447,25 +1501,38 @@ function startParagraphRecording(paraIndex, paraNum) {
         `;
     }
     
-    // STT 에러 핸들링
-    recognition.onerror = (event) => {
-        console.error('음성 인식 오류:', event.error);
+    // ✅ STT 에러 핸들링
+    paragraphRecognition.onerror = (event) => {
+        console.error('❌ 음성 인식 오류:', event.error);
         isRecording = false;
         
         const resultEl = document.getElementById(`evaluationResult${paraIndex}`);
         if (resultEl) {
             let errorMessage = '음성 인식 오류가 발생했습니다.';
+            let suggestion = '';
             
             if (event.error === 'not-allowed' || event.error === 'permission-denied') {
-                errorMessage = '마이크 권한이 거부되었습니다.\n브라우저 설정에서 마이크 권한을 허용해주세요.';
+                errorMessage = '마이크 권한이 거부되었습니다.';
+                suggestion = '브라우저 설정에서 마이크 권한을 허용해주세요.';
             } else if (event.error === 'no-speech') {
-                errorMessage = '음성이 감지되지 않았습니다.\n마이크가 제대로 작동하는지 확인해주세요.';
+                errorMessage = '음성이 감지되지 않았습니다.';
+                suggestion = '마이크가 제대로 작동하는지 확인하고, 소리 내어 말씀해주세요.';
+            } else if (event.error === 'aborted') {
+                errorMessage = '녹음이 중단되었습니다.';
+                suggestion = '다시 시도해주세요.';
+            } else if (event.error === 'audio-capture') {
+                errorMessage = '마이크를 찾을 수 없습니다.';
+                suggestion = '마이크가 연결되어 있는지 확인해주세요.';
             }
             
             resultEl.innerHTML = `
                 <div class="content-box" style="color: red; margin-top: 16px;">
-                    ❌ ${errorMessage}<br>
-                    <small>에러 코드: ${event.error}</small>
+                    <strong>❌ ${errorMessage}</strong><br>
+                    ${suggestion}<br>
+                    <small style="color: #999; margin-top: 8px; display: block;">에러 코드: ${event.error}</small>
+                    <button class="btn" onclick="startParagraphRecording(${paraIndex}, ${paraNum})" style="margin-top: 12px;">
+                        🔄 다시 녹음하기
+                    </button>
                 </div>
             `;
         }
@@ -1475,10 +1542,13 @@ function startParagraphRecording(paraIndex, paraNum) {
             indicator.classList.remove('active');
         }
         resetRecordingButton(paraIndex, paraNum);
+        
+        // Recognition 객체 정리
+        paragraphRecognition = null;
     };
     
-    // STT 결과 처리
-    recognition.onresult = (event) => {
+    // ✅ STT 결과 처리
+    paragraphRecognition.onresult = (event) => {
         let interimTranscript = '';
         let finalTranscript = '';
         
@@ -1509,37 +1579,58 @@ function startParagraphRecording(paraIndex, paraNum) {
         }
     };
     
-    // 녹음 종료 이벤트
-    recognition.onend = () => {
-        console.log('녹음 종료 이벤트 발생');
-        // 자동 재시작 방지
+    // ✅ 녹음 종료 이벤트
+    paragraphRecognition.onend = () => {
+        console.log('📴 녹음 종료 이벤트 발생');
         isRecording = false;
     };
     
-    // 녹음 시작
+    // ✅ 녹음 시작 (에러 처리 강화)
     try {
-        console.log('녹음 시작...');
-        recognition.start();
+        console.log('🎤 녹음 시작 시도...');
         
-        // 15초 후 자동 중지 (더 넉넉하게)
+        paragraphRecognition.start();
+        isRecording = true;
+        console.log('✅ 녹음 시작 성공');
+        
+        // 15초 후 자동 중지
         recordingTimeout = setTimeout(() => {
-            console.log('15초 타이머 만료 - 자동 중지');
+            console.log('⏱️ 15초 타이머 만료 - 자동 중지');
             stopParagraphRecording(paraIndex);
         }, 15000);
         
     } catch (error) {
-        console.error('녹음 시작 오류:', error);
-        alert('녹음을 시작할 수 없습니다.\n' + error.message);
+        console.error('❌ 녹음 시작 오류:', error);
         isRecording = false;
+        
         if (indicator) {
             indicator.classList.remove('active');
         }
         resetRecordingButton(paraIndex, paraNum);
+        
+        // 사용자에게 명확한 에러 메시지
+        const resultEl = document.getElementById(`evaluationResult${paraIndex}`);
+        if (resultEl) {
+            resultEl.innerHTML = `
+                <div class="content-box" style="color: red; margin-top: 16px;">
+                    ❌ 녹음을 시작할 수 없습니다.<br>
+                    <strong>에러:</strong> ${error.message}<br><br>
+                    <strong>해결 방법:</strong><br>
+                    1. 페이지를 새로고침 (Ctrl + Shift + R)<br>
+                    2. 마이크 권한 다시 허용<br>
+                    3. Chrome 브라우저 사용<br>
+                    <br>
+                    <button class="btn" onclick="location.reload()">
+                        🔄 페이지 새로고침
+                    </button>
+                </div>
+            `;
+        }
     }
 }
 
 function stopParagraphRecording(paraIndex) {
-    console.log('녹음 중지 함수 호출');
+    console.log('⏹️ 녹음 중지 함수 호출');
     
     // 타이머 정리
     if (recordingTimeout) {
@@ -1547,12 +1638,13 @@ function stopParagraphRecording(paraIndex) {
         recordingTimeout = null;
     }
     
-    // 녹음 중지
-    if (recognition && isRecording) {
+    // ✅ 녹음 중지
+    if (paragraphRecognition && isRecording) {
         try {
-            recognition.stop();
+            paragraphRecognition.stop();
+            console.log('✅ Recognition 중지 성공');
         } catch (e) {
-            console.error('녹음 중지 오류:', e);
+            console.error('❌ 녹음 중지 오류:', e);
         }
     }
     isRecording = false;
@@ -1618,6 +1710,9 @@ async function evaluateParagraphReading(paraIndex) {
     `;
     
     try {
+        console.log(`📡 평가 API 호출: story=${currentStory.id}, para=${currentParagraphNum}`);
+        console.log(`📝 원문 길이: ${originalText.length}, 녹음 길이: ${paragraphRecordedText.length}`);
+        
         const response = await fetch(`${API_BASE}/story/${currentStory.id}/evaluate`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1629,15 +1724,19 @@ async function evaluateParagraphReading(paraIndex) {
             })
         });
         
+        console.log(`📡 응답 상태: ${response.status}`);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('❌ 서버 에러:', errorText);
+            throw new Error(`서버 오류 (${response.status})`);
+        }
+        
         const result = await response.json();
+        console.log('✅ 평가 결과 수신:', result);
         
         if (result.error) {
-            resultEl.innerHTML = `
-                <div class="content-box" style="color: red; margin-top: 20px;">
-                    평가 오류: ${result.error}
-                </div>
-            `;
-            return;
+            throw new Error(result.error);
         }
         
         // ✅ 평가 결과 표시
@@ -1683,15 +1782,42 @@ async function evaluateParagraphReading(paraIndex) {
         if (result.total_coins !== undefined) {
             userCoins = result.total_coins;
             updateCoinDisplay();
+            console.log('✅ 코인 업데이트 완료:', userCoins);
         } else {
             // 코인 다시 로드
             loadUserCoins();
         }
         
     } catch (error) {
+        console.error('❌ 평가 오류:', error);
+        
+        let errorMessage = error.message;
+        let suggestion = '';
+        
+        if (error.message.includes('Failed to fetch') || error.message.includes('load failed')) {
+            errorMessage = '백엔드 서버에 연결할 수 없습니다.';
+            suggestion = `
+                <strong>가능한 원인:</strong><br>
+                1. Render.com 서버가 sleep 상태<br>
+                2. 인터넷 연결 확인<br>
+                <br>
+                1분 후 다시 시도해주세요.
+            `;
+        } else if (error.message.includes('500')) {
+            errorMessage = 'AI 평가 중 오류가 발생했습니다.';
+            suggestion = 'Gemini API 상태를 확인해주세요.';
+        }
+        
         resultEl.innerHTML = `
             <div class="content-box" style="color: red; margin-top: 20px;">
-                평가 오류: ${error.message}
+                <strong>❌ ${errorMessage}</strong><br><br>
+                ${suggestion}<br>
+                <button class="btn" onclick="evaluateParagraphReading(${paraIndex})" style="margin-top: 12px;">
+                    🔄 평가 다시 시도
+                </button>
+                <button class="btn btn-secondary" onclick="startParagraphRecording(${paraIndex}, ${currentParagraphNum})" style="margin-top: 8px;">
+                    🎤 다시 녹음하기
+                </button>
             </div>
         `;
     }
