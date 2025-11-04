@@ -595,7 +595,7 @@ def get_tts_voices():
         }
     ]
     
-    return jsonify({"voices": voices, "default": "ko-KR-Neural2-A"})
+    return jsonify({"voices": voices, "default": "ko-KR-Studio-A"})
 
 
 @app.route('/api/tts/speak', methods=['POST'])
