@@ -1629,9 +1629,14 @@ let currentRecordingIndex = -1;
 let currentParagraphNum = -1;
 let paragraphRecordedText = '';
 let recordingTimeout = null;
+let silenceTimeout = null;  // 침묵 감지 타이머
 let isRecording = false;
 let paragraphRecognition = null;  // 문단별 독립 Recognition 객체
 let microphonePermissionGranted = false;  // 마이크 권한 상태
+let speechDetected = false;  // 음성 감지 여부
+
+// ✅ 침묵 감지 설정 (3-5초)
+const SILENCE_DURATION = 4000;  // 4초 침묵 시 자동 중지
 
 /**
  * 마이크 권한 요청 및 확인
@@ -1726,11 +1731,16 @@ async function startParagraphRecording(paraIndex, paraNum, practiceText) {
         clearTimeout(recordingTimeout);
         recordingTimeout = null;
     }
+    if (silenceTimeout) {
+        clearTimeout(silenceTimeout);
+        silenceTimeout = null;
+    }
     
     // 상태 초기화
     currentRecordingIndex = paraIndex;
     currentParagraphNum = paraNum;
     paragraphRecordedText = '';
+    speechDetected = false;
     
     // ✅ 매번 새로운 Recognition 객체 생성 (aborted 에러 방지!)
     console.log('🆕 새 Recognition 객체 생성');
@@ -1762,7 +1772,7 @@ async function startParagraphRecording(paraIndex, paraNum, practiceText) {
                     ${practiceText}
                 </div>
                 <div style="font-size: 14px; color: #856404;">
-                    30초 후 자동 중지됩니다.<br>
+                    <strong>✨ 자동 중지:</strong> 말을 멈춘 후 4초가 지나면 자동으로 평가가 시작됩니다.<br>
                     말하는 대로 텍스트가 아래에 표시됩니다.
                 </div>
                 <div id="liveTranscript${paraIndex}" style="margin-top: 12px; padding: 12px; background: #e8f5e9; border-radius: 8px; min-height: 50px; font-size: 16px; line-height: 1.6;">
@@ -1898,13 +1908,14 @@ async function startParagraphRecording(paraIndex, paraNum, practiceText) {
     // ✅ 음성 감지 시작
     paragraphRecognition.onspeechstart = () => {
         console.log('🎤 음성 감지 시작!');
+        speechDetected = true;  // 음성 감지됨
         const liveEl = document.getElementById(`liveTranscript${paraIndex}`);
         if (liveEl) {
             liveEl.innerHTML = '<em style="color: #4caf50;">✅ 음성이 감지되었습니다...</em>';
         }
     };
     
-    // ✅ STT 결과 처리 (실시간 표시)
+    // ✅ STT 결과 처리 (실시간 표시 + 침묵 감지)
     paragraphRecognition.onresult = (event) => {
         console.log('📝 onresult 이벤트 발생');
         
@@ -1935,6 +1946,22 @@ async function startParagraphRecording(paraIndex, paraNum, practiceText) {
                 </div>
             `;
         }
+        
+        // ✅ 침묵 감지 타이머 (음성 감지된 후에만)
+        if (speechDetected && paragraphRecordedText.length > 0) {
+            // 기존 타이머 취소
+            if (silenceTimeout) {
+                clearTimeout(silenceTimeout);
+            }
+            
+            // 새 타이머 시작 (4초 후 자동 중지)
+            silenceTimeout = setTimeout(() => {
+                console.log('⏱️ 침묵 감지 - 자동 중지');
+                if (isRecording) {
+                    stopParagraphRecording(paraIndex);
+                }
+            }, SILENCE_DURATION);
+        }
     };
     
     // ✅ 녹음 종료 이벤트
@@ -1960,13 +1987,13 @@ async function startParagraphRecording(paraIndex, paraNum, practiceText) {
         paragraphRecognition.start();
         console.log('✅ Recognition.start() 성공');
         
-        // 30초 후 자동 중지 (더 넉넉하게)
+        // ✅ 백업 타이머 (60초 - 침묵 감지가 우선)
         recordingTimeout = setTimeout(() => {
-            console.log('⏱️ 30초 타이머 만료 - 자동 중지');
+            console.log('⏱️ 60초 백업 타이머 만료 - 자동 중지');
             if (isRecording) {
                 stopParagraphRecording(paraIndex);
             }
-        }, 30000);
+        }, 60000);
         
     } catch (error) {
         console.error('❌ 녹음 시작 오류:', error);
@@ -2009,6 +2036,10 @@ function stopParagraphRecording(paraIndex) {
     if (recordingTimeout) {
         clearTimeout(recordingTimeout);
         recordingTimeout = null;
+    }
+    if (silenceTimeout) {
+        clearTimeout(silenceTimeout);
+        silenceTimeout = null;
     }
     
     // ✅ 녹음 중지
@@ -2187,16 +2218,35 @@ async function evaluateParagraphReading(paraIndex) {
         
         let errorMessage = error.message;
         let suggestion = '';
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         
         if (error.message.includes('Failed to fetch') || error.message.includes('load failed')) {
             errorMessage = '백엔드 서버에 연결할 수 없습니다.';
-            suggestion = `
-                <strong>가능한 원인:</strong><br>
-                1. Render.com 서버가 sleep 상태<br>
-                2. 인터넷 연결 확인<br>
-                <br>
-                1분 후 다시 시도해주세요.
-            `;
+            
+            if (!isLocalhost) {
+                suggestion = `
+                    <strong style="color: #d32f2f;">⚠️ 잘못된 접속 방법입니다!</strong><br><br>
+                    <strong>문제:</strong> index.html 파일을 직접 열었습니다.<br>
+                    <strong>해결 방법:</strong><br>
+                    1. 터미널에서 <code>./start_server.sh</code> 실행<br>
+                    2. 브라우저 주소창에 <strong style="color: #2e7d32;">http://localhost:8080</strong> 입력<br>
+                    3. 다시 녹음 시도<br>
+                    <br>
+                    <div style="background: #fff3cd; padding: 12px; border-radius: 8px; margin-top: 12px;">
+                        <strong>💡 Tip:</strong> 파일을 직접 열면 서버에 연결할 수 없습니다!
+                    </div>
+                `;
+            } else {
+                suggestion = `
+                    <strong>가능한 원인:</strong><br>
+                    1. Python 서버가 실행되지 않았습니다<br>
+                    2. 인터넷 연결 확인<br>
+                    <br>
+                    <strong>해결 방법:</strong><br>
+                    • 터미널에서 <code>./start_server.sh</code> 실행<br>
+                    • 서버 로그 확인<br>
+                `;
+            }
         } else if (error.message.includes('500')) {
             errorMessage = 'AI 평가 중 오류가 발생했습니다.';
             suggestion = 'Gemini API 상태를 확인해주세요.';
