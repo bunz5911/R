@@ -595,7 +595,7 @@ function renderParagraphs() {
         <div class="content-box" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; margin-bottom: 20px;">
             <strong>🎤 ${currentLevel}에 맞는 문장을 읽고 AI 평가를 받아 코인을 획득하세요!</strong><br>
             <small style="opacity: 0.9; margin-top: 8px; display: block;">
-                초급: 짧은 문장 | 중급: 2-4문장 | 고급: 긴 문장
+                📗 초급: 짧은 문장 (1-2문장) | 📘 중급: 적당한 길이 (2-4문장) | 📕 고급: 다른 표현으로 (패러프레이징)
             </small>
         </div>
         ${paragraphs.map((p, idx) => {
