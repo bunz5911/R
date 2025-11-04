@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>K-Context Master - 한국어 동화 학습</title>
+    <title>Read Aloud Korean - 한국어 동화 학습</title>
     <style>
         /* 아이폰 16 Pro Max 최적화 (430 x 932px) */
         * {
@@ -308,6 +308,22 @@
             font-size: 16px;
         }
 
+        .loading-image {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 16px;
+            animation: jump 0.8s ease-in-out infinite;
+        }
+
+        @keyframes jump {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
         .spinner {
             border: 4px solid #f3f3f3;
             border-top: 4px solid #667eea;
@@ -548,7 +564,7 @@
         <!-- 헤더 -->
         <div class="header">
             <button class="dashboard-btn" onclick="location.href='dashboard.html'">대시보드</button>
-            <h1>K-Context Master</h1>
+            <h1>Read Aloud Korean</h1>
             <p>한국어 동화로 배우는 실전 한국어</p>
             <button class="settings-btn" onclick="showVoiceSettings()">음성 설정</button>
         </div>
@@ -585,8 +601,8 @@
             <!-- 학습 콘텐츠 -->
             <div class="learning-content" id="learningContent">
                 <div class="loading">
-                    <div class="spinner"></div>
-                    <p>학습 데이터를 분석하는 중...</p>
+                    <img src="img/loading.png" alt="Loading" class="loading-image">
+                    <p>데이터를 로드합니다...</p>
                 </div>
             </div>
         </div>

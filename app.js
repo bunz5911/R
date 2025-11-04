@@ -241,10 +241,8 @@ async function analyzeStory(storyId) {
     // 캐시가 없으면 AI 분석 시작
     contentEl.innerHTML = `
         <div class="loading">
-            <div class="spinner"></div>
-            <p>AI가 동화를 분석하는 중입니다...</p>
-            <p style="font-size: 14px; color: #888; margin-top: 8px;">최초 1회만 소요 (5-10초)</p>
-            <p style="font-size: 13px; color: #667eea; margin-top: 4px;">다음부터는 즉시 표시됩니다!</p>
+            <img src="img/loading.png" alt="Loading" class="loading-image">
+            <p>데이터를 로드합니다...</p>
         </div>
     `;
 
@@ -306,7 +304,7 @@ function switchTab(tabName) {
     const contentEl = document.getElementById('learningContent');
     
     if (!currentAnalysis) {
-        contentEl.innerHTML = '<div class="loading"><p>학습 데이터를 불러오는 중...</p></div>';
+        contentEl.innerHTML = '<div class="loading"><img src="img/loading.png" alt="Loading" class="loading-image"><p>데이터를 로드합니다...</p></div>';
         return;
     }
 
@@ -578,8 +576,8 @@ function renderQuiz() {
         contentEl.innerHTML = `
             <div class="section-title">이해도 확인 (퀴즈)</div>
             <div class="loading">
-                <div class="spinner"></div>
-                <p>AI가 퀴즈를 생성하는 중...</p>
+                <img src="img/loading.png" alt="Loading" class="loading-image">
+                <p>데이터를 로드합니다...</p>
             </div>
         `;
         generateQuiz();
@@ -752,8 +750,8 @@ async function evaluateGrowth() {
     
     feedbackEl.innerHTML = `
         <div class="loading" style="margin-top: 20px;">
-            <div class="spinner"></div>
-            <p>AI가 발음을 평가하는 중...</p>
+            <img src="img/loading.png" alt="Loading" class="loading-image">
+            <p>데이터를 로드합니다...</p>
         </div>
     `;
     
@@ -1614,8 +1612,8 @@ async function evaluateParagraphReading(paraIndex) {
     // 로딩 표시
     resultEl.innerHTML = `
         <div class="loading" style="margin-top: 20px;">
-            <div class="spinner"></div>
-            <p>AI가 읽기를 평가하는 중...</p>
+            <img src="img/loading.png" alt="Loading" class="loading-image">
+            <p>데이터를 로드합니다...</p>
         </div>
     `;
     
