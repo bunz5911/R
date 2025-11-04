@@ -82,8 +82,8 @@ let allVoices = [];
 let selectedVoiceIndex = -1;
 let useGoogleTTS = false;  // Google Cloud TTS 사용 여부
 let googleTTSVoices = [];  // Google TTS 음성 목록
-// ✅ 기본 음성: Neural2-C (부드럽고 다정한 여성 목소리, 동화 읽기에 최적)
-let selectedGoogleVoice = 'ko-KR-Neural2-C';
+// ✅ 기본 음성: Studio-A (방송급 품질, 가장 자연스러운 여성 목소리)
+let selectedGoogleVoice = 'ko-KR-Studio-A';
 let currentAudio = null;  // 현재 재생 중인 오디오
 let isPlaying = false;  // 재생 상태
 let currentPlayingButton = null;  // 현재 재생 버튼
@@ -859,11 +859,11 @@ async function loadGoogleTTSVoices() {
         
         if (data.voices) {
             googleTTSVoices = data.voices;
-            // ✅ 기본 음성: Neural2-C (동화 읽기에 최적화된 부드러운 목소리)
-            selectedGoogleVoice = 'ko-KR-Neural2-C';
+            // ✅ 기본 음성: Studio-A (방송급 품질, 가장 자연스러운 여성 목소리)
+            selectedGoogleVoice = 'ko-KR-Studio-A';
             useGoogleTTS = true;  // Google TTS 사용 가능
             console.log('✅ Google Cloud TTS 사용 가능:', googleTTSVoices.length, '개 음성');
-            console.log('✅ 기본 음성: ko-KR-Neural2-C (동화 읽기 최적화)');
+            console.log('✅ 기본 음성: ko-KR-Studio-A (방송급 품질)');
             
             // 저장된 음성 설정 로드 (사용자가 설정한 경우)
             const saved = localStorage.getItem('selectedGoogleVoice');
@@ -1335,10 +1335,10 @@ function loadVoicePreference() {
     // Google TTS가 사용 가능하면 기본으로 설정
     if (googleTTSVoices.length > 0) {
         useGoogleTTS = true;
-        selectedGoogleVoice = 'ko-KR-Neural2-A';  // 기본값
+        selectedGoogleVoice = 'ko-KR-Studio-A';  // 기본값: 방송급 품질
         localStorage.setItem('useGoogleTTS', 'true');
         localStorage.setItem('selectedGoogleVoice', selectedGoogleVoice);
-        console.log('✅ Google Cloud TTS Neural2 음성으로 자동 설정');
+        console.log('✅ Google Cloud TTS Studio 음성으로 자동 설정 (방송급 품질)');
         return;
     }
     
@@ -1438,7 +1438,7 @@ function stopRecording() {
 }
 
 // ============================================================================
-// [7-1] 문단별 녹음 및 평가 (완전히 재작성 - aborted 에러 해결)
+// [7-1] 문단별 녹음 및 평가 (완전히 재작성 - Safari 호환)
 // ============================================================================
 let currentRecordingIndex = -1;
 let currentParagraphNum = -1;
@@ -1446,13 +1446,74 @@ let paragraphRecordedText = '';
 let recordingTimeout = null;
 let isRecording = false;
 let paragraphRecognition = null;  // 문단별 독립 Recognition 객체
+let microphonePermissionGranted = false;  // 마이크 권한 상태
 
-function startParagraphRecording(paraIndex, paraNum) {
+/**
+ * 마이크 권한 요청 및 확인
+ */
+async function requestMicrophonePermission() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach(track => track.stop()); // 즉시 해제
+        microphonePermissionGranted = true;
+        console.log('✅ 마이크 권한 허용됨');
+        return true;
+    } catch (error) {
+        console.error('❌ 마이크 권한 거부:', error);
+        
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        
+        let message = '🎤 마이크 권한이 필요합니다.\n\n';
+        
+        if (isIOS || isSafari) {
+            message += '📱 Safari 설정:\n' +
+                      '1. 설정 앱 → Safari\n' +
+                      '2. 웹사이트 설정 → 마이크\n' +
+                      '3. "허용" 선택';
+        } else {
+            message += '💻 Chrome 설정:\n' +
+                      '1. 주소창 왼쪽 자물쇠 아이콘 클릭\n' +
+                      '2. 사이트 설정 → 마이크\n' +
+                      '3. "허용" 선택';
+        }
+        
+        alert(message);
+        return false;
+    }
+}
+
+async function startParagraphRecording(paraIndex, paraNum) {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     
+    // 브라우저 감지
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+    
     if (!SpeechRecognition) {
-        alert('이 브라우저는 음성 인식을 지원하지 않습니다.\n\nChrome 브라우저를 사용해주세요.');
+        let message = '이 브라우저는 음성 인식을 지원하지 않습니다.\n\n';
+        
+        if (isIOS) {
+            message += '📱 iOS Safari는 음성 인식 지원이 제한적입니다.\n' +
+                      'Chrome 브라우저 사용을 권장합니다.';
+        } else if (isSafari) {
+            message += '🍎 Safari는 음성 인식 지원이 제한적입니다.\n' +
+                      'Chrome 브라우저 사용을 권장합니다.';
+        } else {
+            message += '💡 Chrome 브라우저를 사용해주세요.';
+        }
+        
+        alert(message);
         return;
+    }
+    
+    // ✅ 마이크 권한 확인 및 요청
+    if (!microphonePermissionGranted) {
+        const permitted = await requestMicrophonePermission();
+        if (!permitted) {
+            return;  // 권한 거부 시 중단
+        }
     }
     
     // ✅ 기존 녹음 완전히 중지 및 정리
@@ -1481,8 +1542,19 @@ function startParagraphRecording(paraIndex, paraNum) {
     // ✅ 매번 새로운 Recognition 객체 생성 (aborted 에러 방지!)
     paragraphRecognition = new SpeechRecognition();
     paragraphRecognition.lang = 'ko-KR';
-    paragraphRecognition.continuous = true;
-    paragraphRecognition.interimResults = true;
+    
+    // Safari 호환성: continuous를 조건부로 설정
+    if (isSafari || isIOS) {
+        // Safari는 continuous=false가 더 안정적
+        paragraphRecognition.continuous = false;
+        paragraphRecognition.interimResults = false;
+        console.log('🍎 Safari 모드: continuous=false');
+    } else {
+        // Chrome은 continuous=true로 더 좋은 결과
+        paragraphRecognition.continuous = true;
+        paragraphRecognition.interimResults = true;
+        console.log('💻 Chrome 모드: continuous=true');
+    }
     
     // 녹음 표시
     const indicator = document.getElementById(`recordingIndicator${paraIndex}`);
@@ -1501,38 +1573,95 @@ function startParagraphRecording(paraIndex, paraNum) {
         `;
     }
     
-    // ✅ STT 에러 핸들링
+    // ✅ STT 에러 핸들링 (브라우저별 상세 안내)
     paragraphRecognition.onerror = (event) => {
         console.error('❌ 음성 인식 오류:', event.error);
         isRecording = false;
         
         const resultEl = document.getElementById(`evaluationResult${paraIndex}`);
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        
         if (resultEl) {
             let errorMessage = '음성 인식 오류가 발생했습니다.';
             let suggestion = '';
+            let detailSteps = '';
             
             if (event.error === 'not-allowed' || event.error === 'permission-denied') {
-                errorMessage = '마이크 권한이 거부되었습니다.';
-                suggestion = '브라우저 설정에서 마이크 권한을 허용해주세요.';
+                errorMessage = '🔒 마이크 권한이 거부되었습니다.';
+                
+                if (isIOS || isSafari) {
+                    detailSteps = `
+                        <strong>📱 Safari/iOS 권한 설정:</strong><br>
+                        1. iPhone 설정 앱 열기<br>
+                        2. Safari → 웹사이트 설정<br>
+                        3. 마이크 → 허용<br>
+                        4. 페이지 새로고침
+                    `;
+                } else {
+                    detailSteps = `
+                        <strong>💻 Chrome 권한 설정:</strong><br>
+                        1. 주소창 왼쪽 🔒 아이콘 클릭<br>
+                        2. 사이트 설정 선택<br>
+                        3. 마이크 → 허용<br>
+                        4. 페이지 새로고침
+                    `;
+                }
             } else if (event.error === 'no-speech') {
-                errorMessage = '음성이 감지되지 않았습니다.';
-                suggestion = '마이크가 제대로 작동하는지 확인하고, 소리 내어 말씀해주세요.';
+                errorMessage = '🔇 음성이 감지되지 않았습니다.';
+                detailSteps = `
+                    <strong>해결 방법:</strong><br>
+                    1. 마이크가 음소거되지 않았는지 확인<br>
+                    2. 마이크에 가까이 대고 말하기<br>
+                    3. 조용한 환경에서 시도<br>
+                    4. 마이크 볼륨 확인
+                `;
             } else if (event.error === 'aborted') {
-                errorMessage = '녹음이 중단되었습니다.';
-                suggestion = '다시 시도해주세요.';
+                errorMessage = '⏹️ 녹음이 중단되었습니다.';
+                detailSteps = `
+                    <strong>가능한 원인:</strong><br>
+                    1. 녹음 중 다른 탭에서 마이크 사용<br>
+                    2. 브라우저 백그라운드 전환<br>
+                    3. 시스템 마이크 충돌<br>
+                    <br>
+                    다시 시도하면 정상 작동합니다.
+                `;
             } else if (event.error === 'audio-capture') {
-                errorMessage = '마이크를 찾을 수 없습니다.';
-                suggestion = '마이크가 연결되어 있는지 확인해주세요.';
+                errorMessage = '🎤 마이크를 찾을 수 없습니다.';
+                detailSteps = `
+                    <strong>해결 방법:</strong><br>
+                    1. 마이크가 연결되어 있는지 확인<br>
+                    2. 시스템 설정에서 마이크 활성화<br>
+                    3. 다른 앱이 마이크를 사용 중인지 확인
+                `;
+            } else {
+                detailSteps = `
+                    <strong>일반적인 해결 방법:</strong><br>
+                    1. 페이지 새로고침 (F5)<br>
+                    2. 브라우저 재시작<br>
+                    3. Chrome 브라우저 사용
+                `;
             }
             
             resultEl.innerHTML = `
-                <div class="content-box" style="color: red; margin-top: 16px;">
-                    <strong>❌ ${errorMessage}</strong><br>
-                    ${suggestion}<br>
-                    <small style="color: #999; margin-top: 8px; display: block;">에러 코드: ${event.error}</small>
-                    <button class="btn" onclick="startParagraphRecording(${paraIndex}, ${paraNum})" style="margin-top: 12px;">
-                        🔄 다시 녹음하기
-                    </button>
+                <div class="content-box" style="background: #fff3cd; border-left: 4px solid #ffc107; margin-top: 16px;">
+                    <div style="font-size: 18px; font-weight: 700; color: #856404; margin-bottom: 12px;">
+                        ${errorMessage}
+                    </div>
+                    <div style="font-size: 14px; color: #856404; line-height: 1.8;">
+                        ${detailSteps}
+                    </div>
+                    <small style="color: #999; margin-top: 12px; display: block; font-size: 12px;">
+                        에러 코드: ${event.error} | 브라우저: ${isSafari || isIOS ? 'Safari' : 'Chrome'}
+                    </small>
+                    <div style="margin-top: 16px; display: flex; gap: 8px;">
+                        <button class="btn" onclick="startParagraphRecording(${paraIndex}, ${paraNum})">
+                            🔄 다시 녹음하기
+                        </button>
+                        <button class="btn btn-secondary" onclick="location.reload()">
+                            🔄 페이지 새로고침
+                        </button>
+                    </div>
                 </div>
             `;
         }
