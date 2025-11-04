@@ -82,8 +82,8 @@ let allVoices = [];
 let selectedVoiceIndex = -1;
 let useGoogleTTS = false;  // Google Cloud TTS 사용 여부
 let googleTTSVoices = [];  // Google TTS 음성 목록
-// ✅ 기본 음성: Studio-A (방송급 품질, 가장 자연스러운 여성 목소리)
-let selectedGoogleVoice = 'ko-KR-Studio-A';
+// ✅ 기본 음성: ElevenLabs Anna (최고 품질, 프리미엄)
+let selectedGoogleVoice = 'uyVNoMrnUku1dZyVEXwD';
 let currentAudio = null;  // 현재 재생 중인 오디오
 let isPlaying = false;  // 재생 상태
 let currentPlayingButton = null;  // 현재 재생 버튼
@@ -895,11 +895,11 @@ async function loadGoogleTTSVoices() {
         
         if (data.voices) {
             googleTTSVoices = data.voices;
-            // ✅ 기본 음성: Studio-A (방송급 품질, 가장 자연스러운 여성 목소리)
-            selectedGoogleVoice = 'ko-KR-Studio-A';
-            useGoogleTTS = true;  // Google TTS 사용 가능
-            console.log('✅ Google Cloud TTS 사용 가능:', googleTTSVoices.length, '개 음성');
-            console.log('✅ 기본 음성: ko-KR-Studio-A (방송급 품질)');
+            // ✅ 기본 음성: ElevenLabs Anna (최고 품질, 프리미엄)
+            selectedGoogleVoice = data.default || 'uyVNoMrnUku1dZyVEXwD';
+            useGoogleTTS = true;
+            console.log('✅ TTS 음성 로드 완료:', googleTTSVoices.length, '개');
+            console.log('✅ 기본 음성: Anna (ElevenLabs 프리미엄)');
             
             // 저장된 음성 설정 로드 (사용자가 설정한 경우)
             const saved = localStorage.getItem('selectedGoogleVoice');
@@ -909,7 +909,7 @@ async function loadGoogleTTSVoices() {
             }
         }
     } catch (error) {
-        console.log('⚠️ Google Cloud TTS 사용 불가, Web Speech API 사용');
+        console.log('⚠️ 백엔드 TTS 사용 불가, Web Speech API 사용');
         useGoogleTTS = false;
     }
 }
@@ -1368,13 +1368,13 @@ function loadVoicePreference() {
         return;
     }
     
-    // Google TTS가 사용 가능하면 기본으로 설정
+    // TTS가 사용 가능하면 기본으로 설정
     if (googleTTSVoices.length > 0) {
         useGoogleTTS = true;
-        selectedGoogleVoice = 'ko-KR-Studio-A';  // 기본값: 방송급 품질
+        selectedGoogleVoice = 'uyVNoMrnUku1dZyVEXwD';  // 기본값: ElevenLabs Anna
         localStorage.setItem('useGoogleTTS', 'true');
         localStorage.setItem('selectedGoogleVoice', selectedGoogleVoice);
-        console.log('✅ Google Cloud TTS Studio 음성으로 자동 설정 (방송급 품질)');
+        console.log('✅ ElevenLabs Anna 음성으로 자동 설정 (최고 품질)');
         return;
     }
     

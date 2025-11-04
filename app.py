@@ -496,117 +496,60 @@ def get_tts_voices():
     if not tts_client:
         return jsonify({"error": "Google Cloud TTS가 설정되지 않았습니다"}), 503
     
-    # 한국어 고품질 음성 목록 (2024 최신)
+    # ============================================================================
+    # 음성 목록: Google TTS (fallback) + ElevenLabs (프리미엄)
+    # ============================================================================
     voices = [
-        # Studio 음성 (최고 품질)
+        # ✅ Google Cloud TTS - Studio A (Fallback용)
         {
             "id": "ko-KR-Studio-A",
-            "name": "Studio A (여성, 프리미엄)",
+            "name": "Google Studio A (여성)",
             "gender": "FEMALE",
-            "type": "Studio",
-            "description": "최고급 품질, 방송 수준의 자연스러운 여성 목소리"
+            "type": "Google",
+            "provider": "google",
+            "description": "방송 수준의 여성 목소리 (Fallback)"
+        },
+        
+        # ✅ ElevenLabs - 프리미엄 음성 (메인)
+        {
+            "id": "uyVNoMrnUku1dZyVEXwD",
+            "name": "Anna (여성, 프리미엄)",
+            "gender": "FEMALE",
+            "type": "ElevenLabs",
+            "provider": "elevenlabs",
+            "description": "부드럽고 차분한 여성 목소리 - 최고 품질"
         },
         {
-            "id": "ko-KR-Studio-B",
-            "name": "Studio B (남성, 프리미엄)",
+            "id": "BbsagRO6ohd8MKPS2Ob0",
+            "name": "Jin neon song (남성, 프리미엄)",
             "gender": "MALE",
-            "type": "Studio",
-            "description": "최고급 품질, 방송 수준의 자연스러운 남성 목소리"
-        },
-        # Neural2 음성 (고품질)
-        {
-            "id": "ko-KR-Neural2-A",
-            "name": "Neural2 A (여성, 밝고 명랑)",
-            "gender": "FEMALE",
-            "type": "Neural2",
-            "description": "밝고 명랑한 여성 목소리, 교육 콘텐츠에 최적"
+            "type": "ElevenLabs",
+            "provider": "elevenlabs",
+            "description": "활기찬 남성 목소리 - 최고 품질"
         },
         {
-            "id": "ko-KR-Neural2-B",
-            "name": "Neural2 B (남성, 차분함)",
+            "id": "nbrxrAz3eYm9NgojrmFK",
+            "name": "Min joon (남성, 프리미엄)",
             "gender": "MALE",
-            "type": "Neural2",
-            "description": "차분하고 신뢰감 있는 남성 목소리"
-        },
-        {
-            "id": "ko-KR-Neural2-C",
-            "name": "Neural2 C (여성, 부드러움)",
-            "gender": "FEMALE",
-            "type": "Neural2",
-            "description": "부드럽고 다정한 여성 목소리, 동화 읽기에 적합"
-        },
-        # Wavenet 음성 (표준 고품질)
-        {
-            "id": "ko-KR-Wavenet-A",
-            "name": "Wavenet A (여성)",
-            "gender": "FEMALE",
-            "type": "WaveNet",
-            "description": "자연스러운 여성 목소리"
-        },
-        {
-            "id": "ko-KR-Wavenet-B",
-            "name": "Wavenet B (여성)",
-            "gender": "FEMALE",
-            "type": "WaveNet",
-            "description": "다정한 여성 목소리"
-        },
-        {
-            "id": "ko-KR-Wavenet-C",
-            "name": "Wavenet C (남성)",
-            "gender": "MALE",
-            "type": "WaveNet",
-            "description": "신뢰감 있는 남성 목소리"
-        },
-        {
-            "id": "ko-KR-Wavenet-D",
-            "name": "Wavenet D (남성)",
-            "gender": "MALE",
-            "type": "WaveNet",
-            "description": "깊고 안정적인 남성 목소리"
-        },
-        # Standard 음성 (경제적)
-        {
-            "id": "ko-KR-Standard-A",
-            "name": "Standard A (여성, 경제적)",
-            "gender": "FEMALE",
-            "type": "Standard",
-            "description": "기본 품질 여성 목소리 (가장 저렴)"
-        },
-        {
-            "id": "ko-KR-Standard-B",
-            "name": "Standard B (여성, 경제적)",
-            "gender": "FEMALE",
-            "type": "Standard",
-            "description": "기본 품질 여성 목소리 (가장 저렴)"
-        },
-        {
-            "id": "ko-KR-Standard-C",
-            "name": "Standard C (남성, 경제적)",
-            "gender": "MALE",
-            "type": "Standard",
-            "description": "기본 품질 남성 목소리 (가장 저렴)"
-        },
-        {
-            "id": "ko-KR-Standard-D",
-            "name": "Standard D (남성, 경제적)",
-            "gender": "MALE",
-            "type": "Standard",
-            "description": "기본 품질 남성 목소리 (가장 저렴)"
+            "type": "ElevenLabs",
+            "provider": "elevenlabs",
+            "description": "차분한 남성 목소리 - 최고 품질"
         }
     ]
     
-    return jsonify({"voices": voices, "default": "ko-KR-Studio-A"})
+    # ✅ 기본 음성: ElevenLabs Anna (최고 품질)
+    return jsonify({"voices": voices, "default": "uyVNoMrnUku1dZyVEXwD"})
 
 
 @app.route('/api/tts/speak', methods=['POST'])
 def text_to_speech():
-    """텍스트를 음성으로 변환하여 반환"""
-    if not tts_client:
-        return jsonify({"error": "Google Cloud TTS가 설정되지 않았습니다"}), 503
-    
+    """
+    텍스트를 음성으로 변환하여 반환
+    Google TTS (fallback) + ElevenLabs (프리미엄)
+    """
     data = request.get_json() or {}
     text = data.get('text', '')
-    voice_id = data.get('voice', 'ko-KR-Neural2-A')
+    voice_id = data.get('voice', 'uyVNoMrnUku1dZyVEXwD')  # 기본: Anna
     speaking_rate = data.get('speed', 1.0)
     
     if not text:
@@ -616,41 +559,114 @@ def text_to_speech():
     if len(text) > 5000:
         text = text[:5000]
     
-    try:
-        # 음성 합성 입력 설정
-        synthesis_input = texttospeech.SynthesisInput(text=text)
+    # ✅ Voice ID로 Provider 감지
+    is_elevenlabs = not voice_id.startswith('ko-KR')
+    
+    # ============================================================================
+    # ElevenLabs TTS (프리미엄)
+    # ============================================================================
+    if is_elevenlabs:
+        try:
+            import requests as http_requests
+            
+            elevenlabs_api_key = os.environ.get('ELEVENLABS_API_KEY')
+            if not elevenlabs_api_key:
+                print("⚠️ ELEVENLABS_API_KEY 없음, Google TTS로 fallback", flush=True)
+                # Fallback to Google
+                voice_id = 'ko-KR-Studio-A'
+                is_elevenlabs = False
+            else:
+                print(f"🎤 ElevenLabs TTS 호출: voice={voice_id}", flush=True)
+                
+                url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
+                headers = {
+                    "xi-api-key": elevenlabs_api_key,
+                    "Content-Type": "application/json"
+                }
+                payload = {
+                    "text": text,
+                    "model_id": "eleven_multilingual_v2",
+                    "voice_settings": {
+                        "stability": 0.6,
+                        "similarity_boost": 0.8,
+                        "style": 0.0,
+                        "use_speaker_boost": True
+                    }
+                }
+                
+                response = http_requests.post(url, json=payload, headers=headers, timeout=30)
+                
+                if response.status_code == 200:
+                    # MP3 데이터를 Base64로 인코딩
+                    audio_base64 = base64.b64encode(response.content).decode('utf-8')
+                    print(f"✅ ElevenLabs 음성 생성 완료: {len(text)}자", flush=True)
+                    
+                    return jsonify({
+                        "audio": audio_base64,
+                        "voice": voice_id,
+                        "provider": "elevenlabs",
+                        "text_length": len(text)
+                    })
+                else:
+                    print(f"❌ ElevenLabs API 오류: {response.status_code}", flush=True)
+                    print(f"응답: {response.text}", flush=True)
+                    # Fallback to Google
+                    voice_id = 'ko-KR-Studio-A'
+                    is_elevenlabs = False
+                    
+        except Exception as e:
+            print(f"❌ ElevenLabs 오류: {e}", flush=True)
+            # Fallback to Google
+            voice_id = 'ko-KR-Studio-A'
+            is_elevenlabs = False
+    
+    # ============================================================================
+    # Google Cloud TTS (Fallback)
+    # ============================================================================
+    if not is_elevenlabs:
+        if not tts_client:
+            return jsonify({"error": "TTS 서비스가 설정되지 않았습니다"}), 503
         
-        # 음성 설정
-        voice = texttospeech.VoiceSelectionParams(
-            language_code="ko-KR",
-            name=voice_id
-        )
-        
-        # 오디오 설정
-        audio_config = texttospeech.AudioConfig(
-            audio_encoding=texttospeech.AudioEncoding.MP3,
-            speaking_rate=speaking_rate,
-            pitch=0.0
-        )
-        
-        # 음성 합성 요청
-        response = tts_client.synthesize_speech(
-            input=synthesis_input,
-            voice=voice,
-            audio_config=audio_config
-        )
-        
-        # Base64로 인코딩하여 반환
-        audio_base64 = base64.b64encode(response.audio_content).decode('utf-8')
-        
-        return jsonify({
-            "audio": audio_base64,
-            "voice": voice_id,
-            "text_length": len(text)
-        })
-        
-    except Exception as e:
-        return jsonify({"error": f"음성 합성 오류: {str(e)}"}), 500
+        try:
+            print(f"🎤 Google TTS 호출: voice={voice_id}", flush=True)
+            
+            # 음성 합성 입력 설정
+            synthesis_input = texttospeech.SynthesisInput(text=text)
+            
+            # 음성 설정
+            voice = texttospeech.VoiceSelectionParams(
+                language_code="ko-KR",
+                name=voice_id
+            )
+            
+            # 오디오 설정
+            audio_config = texttospeech.AudioConfig(
+                audio_encoding=texttospeech.AudioEncoding.MP3,
+                speaking_rate=speaking_rate,
+                pitch=0.0
+            )
+            
+            # 음성 합성 요청
+            response = tts_client.synthesize_speech(
+                input=synthesis_input,
+                voice=voice,
+                audio_config=audio_config
+            )
+            
+            # Base64로 인코딩하여 반환
+            audio_base64 = base64.b64encode(response.audio_content).decode('utf-8')
+            print(f"✅ Google TTS 음성 생성 완료: {len(text)}자", flush=True)
+            
+            return jsonify({
+                "audio": audio_base64,
+                "voice": voice_id,
+                "provider": "google",
+                "text_length": len(text)
+            })
+            
+        except Exception as e:
+            print(f"❌ Google TTS 오류: {e}", flush=True)
+            return jsonify({"error": f"음성 합성 오류: {str(e)}"}), 500
 
 
 @app.route('/api/story/<int:story_id>/quiz', methods=['POST'])

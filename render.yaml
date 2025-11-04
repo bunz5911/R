@@ -8,7 +8,9 @@ services:
     envVars:
       - key: GEMINI_API_KEY
         sync: false
-      - key: GOOGLE_APPLICATION_CREDENTIALS
+      - key: ELEVENLABS_API_KEY
+        sync: false
+      - key: GOOGLE_TTS_JSON
         sync: false
       - key: SUPABASE_URL
         sync: false
