@@ -604,7 +604,7 @@ function renderParagraphs() {
             <div class="paragraph-item" id="paragraph${idx}">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
                     <span class="paragraph-num">문단 ${p.paragraph_num || idx + 1}</span>
-                    <button class="play-btn-circle" id="paraPlayBtn${idx}" onclick="togglePlay('para${idx}', '${escapeQuotes(fullText)}', this)">
+                    <button class="play-btn-circle" id="paraPlayBtn${idx}" onclick="togglePlay('para${idx}', '${escapeQuotes(firstSentence)}', this)">
                         ▶
                     </button>
                 </div>
