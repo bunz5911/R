@@ -405,7 +405,7 @@ function renderParagraphs() {
                 <div style="margin-bottom: 16px;">${p.explanation || ''}</div>
                 
                 <!-- ✅ 읽기 평가 버튼 -->
-                <div class="control-buttons">
+                <div class="control-buttons" id="recordingButtons${idx}">
                     <button class="btn" onclick="startParagraphRecording(${idx}, ${p.paragraph_num || idx + 1})">
                         🎤 녹음하고 평가받기
                     </button>
@@ -1397,29 +1397,89 @@ function stopRecording() {
 }
 
 // ============================================================================
-// [7-1] 문단별 녹음 및 평가 (신규)
+// [7-1] 문단별 녹음 및 평가 (신규 - 개선)
 // ============================================================================
 let currentRecordingIndex = -1;
 let currentParagraphNum = -1;
 let paragraphRecordedText = '';
+let recordingTimeout = null;
+let isRecording = false;
 
 function startParagraphRecording(paraIndex, paraNum) {
     if (!recognition) {
-        alert('이 브라우저는 음성 인식을 지원하지 않습니다.');
+        alert('이 브라우저는 음성 인식을 지원하지 않습니다.\n\nChrome 브라우저를 사용해주세요.');
         return;
+    }
+    
+    // 이미 녹음 중이면 중지
+    if (isRecording) {
+        console.log('이미 녹음 중입니다. 기존 녹음을 중지합니다.');
+        try {
+            recognition.stop();
+        } catch (e) {
+            console.error('녹음 중지 오류:', e);
+        }
     }
     
     currentRecordingIndex = paraIndex;
     currentParagraphNum = paraNum;
     paragraphRecordedText = '';
+    isRecording = true;
     
-    // 녹음 시작
+    // 기존 타이머 정리
+    if (recordingTimeout) {
+        clearTimeout(recordingTimeout);
+        recordingTimeout = null;
+    }
+    
+    // 녹음 표시
     const indicator = document.getElementById(`recordingIndicator${paraIndex}`);
     if (indicator) {
         indicator.classList.add('active');
+        indicator.innerHTML = '<div class="recording-text">🎤 녹음 중... (15초 후 자동 중지)</div>';
     }
     
-    // STT 설정 (문단별로 독립적으로 관리)
+    // 버튼을 "중지" 버튼으로 변경
+    const buttonContainer = document.getElementById(`recordingButtons${paraIndex}`);
+    if (buttonContainer) {
+        buttonContainer.innerHTML = `
+            <button class="btn btn-secondary" onclick="stopParagraphRecording(${paraIndex})">
+                ⏹️ 녹음 중지 및 평가받기
+            </button>
+        `;
+    }
+    
+    // STT 에러 핸들링
+    recognition.onerror = (event) => {
+        console.error('음성 인식 오류:', event.error);
+        isRecording = false;
+        
+        const resultEl = document.getElementById(`evaluationResult${paraIndex}`);
+        if (resultEl) {
+            let errorMessage = '음성 인식 오류가 발생했습니다.';
+            
+            if (event.error === 'not-allowed' || event.error === 'permission-denied') {
+                errorMessage = '마이크 권한이 거부되었습니다.\n브라우저 설정에서 마이크 권한을 허용해주세요.';
+            } else if (event.error === 'no-speech') {
+                errorMessage = '음성이 감지되지 않았습니다.\n마이크가 제대로 작동하는지 확인해주세요.';
+            }
+            
+            resultEl.innerHTML = `
+                <div class="content-box" style="color: red; margin-top: 16px;">
+                    ❌ ${errorMessage}<br>
+                    <small>에러 코드: ${event.error}</small>
+                </div>
+            `;
+        }
+        
+        // UI 복구
+        if (indicator) {
+            indicator.classList.remove('active');
+        }
+        resetRecordingButton(paraIndex, paraNum);
+    };
+    
+    // STT 결과 처리
     recognition.onresult = (event) => {
         let interimTranscript = '';
         let finalTranscript = '';
@@ -1433,50 +1493,117 @@ function startParagraphRecording(paraIndex, paraNum) {
             }
         }
         
-        paragraphRecordedText = finalTranscript || interimTranscript;
+        paragraphRecordedText = (finalTranscript || interimTranscript).trim();
+        
+        console.log('녹음 중:', paragraphRecordedText);
         
         // 실시간 텍스트 표시
         const resultEl = document.getElementById(`evaluationResult${paraIndex}`);
-        if (resultEl) {
+        if (resultEl && paragraphRecordedText) {
             resultEl.innerHTML = `
-                <div class="content-box" style="margin-top: 16px;">
-                    <strong>녹음 중...</strong><br>
-                    ${paragraphRecordedText}
+                <div class="content-box" style="margin-top: 16px; background: #e8f5e9;">
+                    <strong>✅ 녹음 중...</strong><br>
+                    <div style="margin-top: 8px; font-size: 16px; line-height: 1.6;">
+                        ${paragraphRecordedText}
+                    </div>
                 </div>
             `;
         }
     };
     
-    recognition.start();
+    // 녹음 종료 이벤트
+    recognition.onend = () => {
+        console.log('녹음 종료 이벤트 발생');
+        // 자동 재시작 방지
+        isRecording = false;
+    };
     
-    // 10초 후 자동 중지 및 평가
-    setTimeout(() => {
-        stopParagraphRecording(paraIndex);
-    }, 10000);
+    // 녹음 시작
+    try {
+        console.log('녹음 시작...');
+        recognition.start();
+        
+        // 15초 후 자동 중지 (더 넉넉하게)
+        recordingTimeout = setTimeout(() => {
+            console.log('15초 타이머 만료 - 자동 중지');
+            stopParagraphRecording(paraIndex);
+        }, 15000);
+        
+    } catch (error) {
+        console.error('녹음 시작 오류:', error);
+        alert('녹음을 시작할 수 없습니다.\n' + error.message);
+        isRecording = false;
+        if (indicator) {
+            indicator.classList.remove('active');
+        }
+        resetRecordingButton(paraIndex, paraNum);
+    }
 }
 
 function stopParagraphRecording(paraIndex) {
-    if (recognition) {
-        recognition.stop();
+    console.log('녹음 중지 함수 호출');
+    
+    // 타이머 정리
+    if (recordingTimeout) {
+        clearTimeout(recordingTimeout);
+        recordingTimeout = null;
     }
     
+    // 녹음 중지
+    if (recognition && isRecording) {
+        try {
+            recognition.stop();
+        } catch (e) {
+            console.error('녹음 중지 오류:', e);
+        }
+    }
+    isRecording = false;
+    
+    // UI 업데이트
     const indicator = document.getElementById(`recordingIndicator${paraIndex}`);
     if (indicator) {
         indicator.classList.remove('active');
     }
     
+    // 버튼 복구
+    resetRecordingButton(paraIndex, currentParagraphNum);
+    
+    console.log('녹음된 텍스트:', paragraphRecordedText);
+    
     // 평가 시작
-    if (paragraphRecordedText.trim().length > 0) {
+    if (paragraphRecordedText && paragraphRecordedText.trim().length > 0) {
+        console.log('평가 시작 - 텍스트 길이:', paragraphRecordedText.length);
         evaluateParagraphReading(paraIndex);
     } else {
+        console.log('녹음된 텍스트 없음');
         const resultEl = document.getElementById(`evaluationResult${paraIndex}`);
         if (resultEl) {
             resultEl.innerHTML = `
                 <div class="content-box" style="color: red; margin-top: 16px;">
-                    녹음된 텍스트가 없습니다. 다시 시도해주세요.
+                    ❌ 녹음된 텍스트가 없습니다.<br>
+                    <strong>해결 방법:</strong><br>
+                    1. 마이크 권한을 허용했는지 확인<br>
+                    2. 마이크가 제대로 작동하는지 확인<br>
+                    3. Chrome 브라우저를 사용 중인지 확인<br>
+                    4. 녹음 버튼을 누른 후 바로 말하기 시작<br>
+                    <br>
+                    <button class="btn" onclick="startParagraphRecording(${paraIndex}, ${currentParagraphNum})">
+                        🎤 다시 녹음하기
+                    </button>
                 </div>
             `;
         }
+    }
+}
+
+function resetRecordingButton(paraIndex, paraNum) {
+    const buttonContainer = document.getElementById(`recordingButtons${paraIndex}`);
+    if (buttonContainer) {
+        buttonContainer.innerHTML = `
+            <button class="btn" onclick="startParagraphRecording(${paraIndex}, ${paraNum})">
+                🎤 녹음하고 평가받기
+            </button>
+        `;
     }
 }
 
