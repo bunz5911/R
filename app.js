@@ -591,29 +591,32 @@ function renderParagraphs() {
     }
 
     contentEl.innerHTML = `
-        <div class="section-title">문단별 학습 + 읽기 평가</div>
+        <div class="section-title">문단별 학습 + 읽기 평가 (${currentLevel} 레벨)</div>
         <div class="content-box" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; margin-bottom: 20px;">
-            <strong>🎤 한 문장씩 읽고 AI 평가를 받아 코인을 획득하세요!</strong>
+            <strong>🎤 ${currentLevel}에 맞는 문장을 읽고 AI 평가를 받아 코인을 획득하세요!</strong><br>
+            <small style="opacity: 0.9; margin-top: 8px; display: block;">
+                초급: 짧은 문장 | 중급: 2-4문장 | 고급: 긴 문장
+            </small>
         </div>
         ${paragraphs.map((p, idx) => {
-            // ✅ 첫 문장만 추출 (녹음용)
-            const firstSentence = extractFirstSentence(p.original_text || '');
+            // ✅ 연습용 텍스트: AI가 레벨별로 선택한 텍스트 (없으면 첫 문장 추출)
+            const practiceText = p.practice_text || extractFirstSentence(p.original_text || '');
             const fullText = p.original_text || '';
             
             return `
             <div class="paragraph-item" id="paragraph${idx}">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
                     <span class="paragraph-num">문단 ${p.paragraph_num || idx + 1}</span>
-                    <button class="play-btn-circle" id="paraPlayBtn${idx}" onclick="togglePlay('para${idx}', '${escapeQuotes(firstSentence)}', this)">
+                    <button class="play-btn-circle" id="paraPlayBtn${idx}" onclick="togglePlay('para${idx}', '${escapeQuotes(practiceText)}', this)">
                         ▶
                     </button>
                 </div>
                 
-                <!-- ✅ 녹음용 짧은 문장 (강조 표시) -->
+                <!-- ✅ 레벨별 연습 문장 (AI가 선택한 적절한 길이) -->
                 <div style="background: #e3f2fd; border-left: 4px solid #2196f3; padding: 16px; margin-bottom: 12px; border-radius: 8px;">
                     <div style="font-weight: 600; color: #1976d2; margin-bottom: 8px;">🎤 연습 문장 (이 부분을 읽으세요):</div>
                     <div style="font-size: 18px; font-weight: 600; line-height: 1.8; color: #333;" id="practiceText${idx}">
-                        ${firstSentence}
+                        ${practiceText}
                     </div>
                 </div>
                 
@@ -631,7 +634,7 @@ function renderParagraphs() {
                 
                 <!-- ✅ 읽기 평가 버튼 -->
                 <div class="control-buttons" id="recordingButtons${idx}">
-                    <button class="btn" onclick="startParagraphRecording(${idx}, ${p.paragraph_num || idx + 1}, '${escapeQuotes(firstSentence)}')">
+                    <button class="btn" onclick="startParagraphRecording(${idx}, ${p.paragraph_num || idx + 1}, '${escapeQuotes(practiceText)}')">
                         🎤 녹음하고 평가받기
                     </button>
                 </div>
