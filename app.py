@@ -406,7 +406,8 @@ JSON 형식으로 응답:
   "paragraphs_analysis": [
     {{
       "paragraph_num": 1,
-      "original_text": "원문",
+      "original_text": "원문 전체 (그대로 유지)",
+      "practice_text": "{level}에 적절한 연습용 텍스트 - 초급: 1-2문장, 중급: 2-4문장, 고급: 전체 또는 긴 문장",
       "simplified_text": "{level} 학습자가 이해할 수 있도록 쉽게 바꾼 텍스트",
       "explanation": "이 문단의 의미와 문맥 설명"
     }}
