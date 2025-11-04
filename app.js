@@ -320,9 +320,9 @@ async function analyzeStory(storyId) {
         console.log(`📡 백엔드 API 호출 시작: /story/${storyId}/analyze`);
         console.log(`🌐 API_BASE: ${API_BASE}`);
         
-        // ✅ 타임아웃 설정 (60초)
+        // ✅ 타임아웃 설정 (120초 - Gemini API 응답 대기)
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 60000);
+        const timeoutId = setTimeout(() => controller.abort(), 120000);
         
         const response = await fetch(`${API_BASE}/story/${storyId}/analyze`, {
             method: 'POST',
