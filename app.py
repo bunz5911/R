@@ -293,7 +293,9 @@ def health_check():
         "gemini": client is not None,
         "tts": tts_client is not None,
         "supabase": supabase_client is not None,
-        "stories_loaded": len(story_files)
+        "stories_loaded": len(story_files),
+        "precomputed_analysis": len(PRECOMPUTED_ANALYSIS),
+        "cache_sample": list(PRECOMPUTED_ANALYSIS.keys())[:5] if PRECOMPUTED_ANALYSIS else []
     })
 
 @app.route('/api/stories', methods=['GET'])
