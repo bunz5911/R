@@ -437,14 +437,18 @@ JSON 형식으로 응답:
 """
     
     try:
+        print(f"🤖 Gemini API 호출 시작: {title} - {level}", flush=True)
+        
         response = client.models.generate_content(
             model='gemini-2.0-flash-exp',
             contents=[prompt],
             config=types.GenerateContentConfig(
-                temperature=0.5,  # 속도 개선을 위해 상향
+                temperature=0.5,
                 response_mime_type="application/json"
             )
         )
+        
+        print(f"✅ Gemini API 응답 수신 완료", flush=True)
         
         response_text = response.text.strip()
         if response_text.startswith('```json'):
@@ -457,6 +461,8 @@ JSON 형식으로 응답:
         result['title'] = title
         result['level'] = level
         result['cached'] = False
+        
+        print(f"✅ JSON 파싱 성공", flush=True)
         
         # ✅ Supabase에 결과 캐싱 (다음번에 빠르게 로드)
         if supabase_client:
@@ -473,7 +479,14 @@ JSON 형식으로 응답:
         
         return jsonify(result)
         
+    except json.JSONDecodeError as e:
+        print(f"❌ JSON 파싱 오류: {e}", flush=True)
+        print(f"응답 텍스트: {response_text[:200]}...", flush=True)
+        return jsonify({"error": f"응답 형식 오류: {str(e)}"}), 500
     except Exception as e:
+        print(f"❌ Gemini API 오류: {type(e).__name__}: {str(e)}", flush=True)
+        import traceback
+        print(traceback.format_exc(), flush=True)
         return jsonify({"error": f"분석 오류: {str(e)}"}), 500
 
 
@@ -862,9 +875,19 @@ JSON 형식으로 응답:
             )
         )
         
-        result = json.loads(response.text.strip())
+        print(f"✅ Gemini 평가 응답 수신", flush=True)
+        
+        response_text = response.text.strip()
+        if response_text.startswith('```json'):
+            response_text = response_text[7:-3].strip()
+        elif response_text.startswith('```'):
+            response_text = response_text[3:-3].strip()
+        
+        result = json.loads(response_text)
         score = result.get('score', 0)
         coins = result.get('coins', 0)
+        
+        print(f"✅ 평가 결과: 점수={score}, 코인={coins}", flush=True)
         
         # ✅ 점수 기록 (녹음 데이터는 저장하지 않음!)
         if supabase_client:
@@ -880,6 +903,8 @@ JSON 형식으로 응답:
                     'mistakes': json.dumps(result.get('corrections', []), ensure_ascii=False)
                 }).execute()
                 
+                print(f"✅ 평가 기록 저장 완료", flush=True)
+                
                 # 코인 지급 (PostgreSQL 함수 호출)
                 coin_result = supabase_client.rpc('add_user_coins', {
                     'p_user_id': user_id,
@@ -890,21 +915,31 @@ JSON 형식으로 응답:
                     'p_description': f"문단 {paragraph_num} 읽기 평가 ({score}점)"
                 }).execute()
                 
+                print(f"✅ 코인 지급 완료", flush=True)
+                
                 # 새로운 총 코인 수 반환
                 if coin_result.data:
                     result['total_coins'] = coin_result.data
+                    print(f"✅ 총 코인: {coin_result.data}", flush=True)
                 
                 print(f"✅ 읽기 평가 완료: user={user_id}, story={story_id}, para={paragraph_num}, score={score}, coins={coins}", flush=True)
                 
             except Exception as e:
                 print(f"⚠️ 평가 기록 저장 실패: {e}", flush=True)
+                import traceback
+                print(traceback.format_exc(), flush=True)
                 # 에러가 나도 평가 결과는 반환
         
         # ✅ 녹음 데이터는 여기서 자동 삭제됨 (메모리에만 존재)
         return jsonify(result)
         
+    except json.JSONDecodeError as e:
+        print(f"❌ JSON 파싱 오류: {e}", flush=True)
+        return jsonify({"error": f"응답 형식 오류: {str(e)}"}), 500
     except Exception as e:
-        print(f"❌ 평가 오류: {e}", flush=True)
+        print(f"❌ 평가 오류: {type(e).__name__}: {str(e)}", flush=True)
+        import traceback
+        print(traceback.format_exc(), flush=True)
         return jsonify({"error": f"평가 오류: {str(e)}"}), 500
 
 
