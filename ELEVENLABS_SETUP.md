@@ -33,8 +33,9 @@
 3. **입력**:
    ```
    Key: ELEVENLABS_API_KEY
-   Value: sk_0f1ecfbebf44c0ea781095442db17f1d2e866097865e2541
+   Value: YOUR_ELEVENLABS_API_KEY_HERE
    ```
+   ⚠️ 실제 API 키로 변경하세요 (https://elevenlabs.io/app/settings/api-keys)
 4. **"Save Changes"** 클릭
 
 ### STEP 3: 재배포 (자동)
@@ -137,8 +138,11 @@ git push origin main
 ### 로컬 테스트:
 
 ```bash
-# 환경변수 설정
-export ELEVENLABS_API_KEY="sk_0f1ecfbebf44c0ea781095442db17f1d2e866097865e2541"
+# 환경변수 설정 (실제 API 키로 변경하세요!)
+export ELEVENLABS_API_KEY="YOUR_ELEVENLABS_API_KEY_HERE"
+
+# 또는 start_server.sh 사용
+./start_server.sh
 
 # 서버 실행
 python app.py

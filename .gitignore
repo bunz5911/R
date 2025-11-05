@@ -1,8 +1,10 @@
-# 환경 변수
+# 환경 변수 및 API 키
 .env
 *.json
 !package.json
 !stories/*.docx
+start_server.sh
+cloudtext2speechapi.json
 
 # Python
 __pycache__/
