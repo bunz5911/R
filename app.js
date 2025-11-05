@@ -406,8 +406,12 @@ async function analyzeStory(storyId) {
                     2. 다음 명령어 실행:<br>
                     <code style="background: #f5f5f5; padding: 8px; display: block; margin: 8px 0; border-radius: 4px;">
                     cd /Users/hongbeomseog/Desktop/RAKorean<br>
-                    export GEMINI_API_KEY="AIzaSyCImEwjwdp6i7Bo0ZShssNhfC9KDodUMmk"<br>
-                    export ELEVENLABS_API_KEY="sk_0f1ec..."<br>
+                    ./start_server.sh
+                    </code>
+                    또는:<br>
+                    <code style="background: #f5f5f5; padding: 8px; display: block; margin: 8px 0; border-radius: 4px;">
+                    export GEMINI_API_KEY="YOUR_API_KEY"<br>
+                    export ELEVENLABS_API_KEY="YOUR_API_KEY"<br>
                     python app.py
                     </code>
                     3. 서버 시작 메시지 확인<br>

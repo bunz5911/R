@@ -1,0 +1,27 @@
+#!/bin/bash
+# K-Context Master 서버 시작 스크립트 (템플릿)
+
+# ⚠️ 사용 방법:
+# 1. 이 파일을 복사하세요: cp start_server.sh.example start_server.sh
+# 2. start_server.sh를 열어서 아래 YOUR_KEY_HERE를 실제 API 키로 변경하세요
+# 3. ./start_server.sh 로 서버 실행
+
+# ElevenLabs API 키 설정 (프리미엄 TTS)
+# https://elevenlabs.io/app/settings/api-keys 에서 발급
+export ELEVENLABS_API_KEY="YOUR_ELEVENLABS_API_KEY_HERE"
+
+# Gemini API 키 설정 (AI 분석)
+# https://aistudio.google.com/app/apikey 에서 발급
+export GEMINI_API_KEY="YOUR_GEMINI_API_KEY_HERE"
+
+# Google Cloud TTS (선택사항)
+# export GOOGLE_APPLICATION_CREDENTIALS="cloudtext2speechapi.json"
+
+echo "🚀 K-Context Master 서버 시작..."
+echo "✅ ElevenLabs API 키 설정 완료"
+echo "✅ Gemini API 키 설정 완료"
+echo ""
+
+# Python 서버 실행
+python app.py
+
