@@ -493,25 +493,13 @@ JSON 형식으로 응답:
 
 @app.route('/api/tts/voices', methods=['GET'])
 def get_tts_voices():
-    """사용 가능한 Google Cloud TTS 음성 목록 반환"""
-    if not tts_client:
-        return jsonify({"error": "Google Cloud TTS가 설정되지 않았습니다"}), 503
+    """사용 가능한 TTS 음성 목록 반환 (ElevenLabs + Google)"""
     
     # ============================================================================
-    # 음성 목록: Google TTS (fallback) + ElevenLabs (프리미엄)
+    # 음성 목록: ElevenLabs (프리미엄) + Google TTS (fallback)
     # ============================================================================
     voices = [
-        # ✅ Google Cloud TTS - Studio A (Fallback용)
-        {
-            "id": "ko-KR-Studio-A",
-            "name": "Google Studio A (여성)",
-            "gender": "FEMALE",
-            "type": "Google",
-            "provider": "google",
-            "description": "방송 수준의 여성 목소리 (Fallback)"
-        },
-        
-        # ✅ ElevenLabs - 프리미엄 음성 (메인)
+        # ✅ ElevenLabs - 프리미엄 음성 (메인, 항상 표시)
         {
             "id": "uyVNoMrnUku1dZyVEXwD",
             "name": "Anna (여성, 프리미엄)",
@@ -537,6 +525,17 @@ def get_tts_voices():
             "description": "차분한 남성 목소리 - 최고 품질"
         }
     ]
+    
+    # ✅ Google Cloud TTS 음성 추가 (있는 경우에만)
+    if tts_client:
+        voices.insert(0, {
+            "id": "ko-KR-Studio-A",
+            "name": "Google Studio A (여성)",
+            "gender": "FEMALE",
+            "type": "Google",
+            "provider": "google",
+            "description": "방송 수준의 여성 목소리 (Fallback)"
+        })
     
     # ✅ 기본 음성: ElevenLabs Anna (최고 품질)
     return jsonify({"voices": voices, "default": "uyVNoMrnUku1dZyVEXwD"})
