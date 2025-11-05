@@ -37,31 +37,43 @@ pip
 pip install -r requirements.txt
 ```
 
-### 3. 환경 변수 설정
-`.env` 파일 생성:
+### 3. API 키 발급
+
+#### 🔑 Gemini API (무료)
+1. https://aistudio.google.com/app/apikey 접속
+2. **Create API Key** 클릭
+3. 키 복사 → 안전한 곳에 저장
+
+#### 🔑 ElevenLabs API (무료 티어)
+1. https://elevenlabs.io/app/settings/api-keys 접속
+2. **Generate** 클릭
+3. 키 복사 → 안전한 곳에 저장
+
+⚠️ **중요**: API 키는 절대 Git에 올리지 마세요!
+
+### 4. 서버 시작 스크립트 설정
+
 ```bash
-# Gemini API
-GEMINI_API_KEY=your_gemini_api_key
+# 1. 템플릿 복사
+cp start_server.sh.example start_server.sh
 
-# Google Cloud TTS
-GOOGLE_APPLICATION_CREDENTIALS=/path/to/cloudtext2speechapi.json
+# 2. 파일 편집 (실제 API 키로 변경)
+nano start_server.sh
 
-# Supabase (선택사항)
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_KEY=your_supabase_anon_key
-```
+# 3. 실행 권한 부여
+chmod +x start_server.sh
 
-### 4. 서버 실행
-```bash
-export GEMINI_API_KEY=your_key
-export GOOGLE_APPLICATION_CREDENTIALS=/path/to/cloudtext2speechapi.json
-python app.py
+# 4. 서버 시작
+./start_server.sh
 ```
 
 ### 5. 브라우저에서 열기
 ```
-http://localhost:8080/index.html
+http://localhost:8080
 ```
+
+### 📖 더 자세한 보안 가이드
+👉 **[SECURITY_SETUP.md](./SECURITY_SETUP.md)** 참고
 
 ---
 
