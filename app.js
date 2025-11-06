@@ -70,6 +70,7 @@ let currentStory = null;
 let currentAnalysis = null;
 let currentLevel = '초급';
 let currentTab = 'summary';
+let userDifficultyPreference = null;  // 사용자 난이도 선호도
 
 // 사용자 정보
 let currentUserId = localStorage.getItem('userId') || '00000000-0000-0000-0000-000000000001';  // 테스트 사용자
@@ -94,6 +95,9 @@ let recordedText = '';
 // [1] 초기화
 // ============================================================================
 document.addEventListener('DOMContentLoaded', () => {
+    // ✅ 온보딩 체크 (첫 방문자)
+    checkOnboarding();
+    
     initializeTTS();
     initializeSTT();
     loadGoogleTTSVoices();  // Google TTS 음성 목록 로드
@@ -102,6 +106,18 @@ document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
     loadVoicePreference();
 });
+
+// ============================================================================
+// [0] 온보딩 체크
+// ============================================================================
+function checkOnboarding() {
+    const hasSeenOnboarding = localStorage.getItem('onboarding_complete');
+    
+    if (!hasSeenOnboarding) {
+        // 온보딩 페이지로 리다이렉트
+        window.location.href = 'onboarding.html';
+    }
+}
 
 function setupEventListeners() {
     // 레벨 선택
@@ -246,9 +262,8 @@ async function selectStory(storyId) {
             paragraphsCount: currentStory.paragraphs?.length || 0
         });
 
-        // 학습 데이터 분석 시작
-        console.log(`🔍 분석 시작...`);
-        await analyzeStory(storyId);
+        // ✅ 개인화된 로드맵: 난이도 체크 먼저
+        await showDifficultyCheck(storyId);
 
     } catch (error) {
         console.error('❌ 동화 로드 오류:', error);
@@ -307,6 +322,68 @@ async function selectStory(storyId) {
             </div>
         `;
     }
+}
+
+// ============================================================================
+// [3-1] 개인화된 로드맵: 난이도 체크
+// ============================================================================
+async function showDifficultyCheck(storyId) {
+    const contentEl = document.getElementById('learningContent');
+    
+    // 첫 문장 추출 (샘플로 보여주기)
+    const sampleText = currentStory.paragraphs?.[0] || currentStory.full_text?.substring(0, 100) || '';
+    
+    contentEl.innerHTML = `
+        <div style="padding: 20px;">
+            <div class="section-title">🎯 나에게 맞는 레벨을 찾아볼까요?</div>
+            
+            <div class="content-box" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #2d3436; margin-bottom: 20px;">
+                <strong>이 동화의 첫 문장입니다:</strong>
+            </div>
+            
+            <div class="content-box" style="font-size: 20px; line-height: 1.8; font-weight: 600; background: #f8f9fa; padding: 24px;">
+                ${sampleText}
+            </div>
+            
+            <div class="section-title" style="margin-top: 30px; font-size: 18px;">이 문장이 어떻게 느껴지나요?</div>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px;">
+                <button class="btn" onclick="adjustDifficultyAndStart('easier')" style="background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); font-size: 16px; padding: 20px;">
+                    😰 너무 어려워요 → 더 쉬운 표현으로
+                </button>
+                <button class="btn" onclick="adjustDifficultyAndStart('same')" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); font-size: 16px; padding: 20px;">
+                    😊 적당해요 → 지금 그대로
+                </button>
+                <button class="btn" onclick="adjustDifficultyAndStart('harder')" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); font-size: 16px; padding: 20px;">
+                    🤓 더 어렵게 해주세요 → 고급 표현으로
+                </button>
+            </div>
+            
+            <button class="btn btn-secondary" onclick="showStoryList()" style="margin-top: 20px; width: 100%;">
+                ← 동화 목록으로
+            </button>
+        </div>
+    `;
+}
+
+async function adjustDifficultyAndStart(preference) {
+    userDifficultyPreference = preference;
+    console.log(`🎯 사용자 난이도 선호: ${preference}`);
+    
+    // 선호도에 따라 레벨 자동 조정
+    if (preference === 'easier') {
+        currentLevel = '초급';
+        document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector('[data-level="초급"]')?.classList.add('active');
+    } else if (preference === 'harder') {
+        currentLevel = '고급';
+        document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector('[data-level="고급"]')?.classList.add('active');
+    }
+    
+    // 학습 데이터 분석 시작
+    console.log(`🔍 분석 시작... (레벨: ${currentLevel})`);
+    await analyzeStory(currentStory.id);
 }
 
 async function analyzeStory(storyId) {
@@ -618,7 +695,14 @@ function renderParagraphs() {
                 
                 <!-- ✅ 레벨별 연습 문장 (AI가 선택한 적절한 길이) -->
                 <div style="background: #e3f2fd; border-left: 4px solid #2196f3; padding: 16px; margin-bottom: 12px; border-radius: 8px;">
-                    <div style="font-weight: 600; color: #1976d2; margin-bottom: 8px;">🎤 연습 문장 (이 부분을 읽으세요):</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div style="font-weight: 600; color: #1976d2;">🎤 연습 문장 (이 부분을 읽으세요):</div>
+                        <div style="display: flex; gap: 4px;">
+                            <button onclick="adjustParagraphDifficulty(${idx}, 'easier')" style="background: #84fab0; color: white; border: none; padding: 4px 8px; border-radius: 12px; font-size: 11px; cursor: pointer;" title="더 쉽게">⬇️</button>
+                            <button onclick="adjustParagraphDifficulty(${idx}, 'harder')" style="background: #fa709a; color: white; border: none; padding: 4px 8px; border-radius: 12px; font-size: 11px; cursor: pointer;" title="더 어렵게">⬆️</button>
+                            <button onclick="adjustParagraphDifficulty(${idx}, 'realistic')" style="background: #667eea; color: white; border: none; padding: 4px 8px; border-radius: 12px; font-size: 11px; cursor: pointer;" title="현실적 표현">💬</button>
+                        </div>
+                    </div>
                     <div style="font-size: 18px; font-weight: 600; line-height: 1.8; color: #333;" id="practiceText${idx}">
                         ${practiceText}
                     </div>
@@ -2361,6 +2445,73 @@ async function saveProgress(additionalData = {}) {
     } catch (error) {
         console.log('학습 기록 저장 오류:', error);
     }
+}
+
+// ============================================================================
+// [9-1] 개인화된 로드맵: 실시간 난이도 조정
+// ============================================================================
+async function adjustParagraphDifficulty(paraIndex, direction) {
+    const practiceTextEl = document.getElementById(`practiceText${paraIndex}`);
+    const currentText = practiceTextEl.textContent;
+    
+    // 로딩 표시
+    practiceTextEl.innerHTML = `<em style="color: #999;">AI가 텍스트를 조정하는 중...</em>`;
+    
+    try {
+        const response = await fetch(`${API_BASE}/adjust-difficulty`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                text: currentText,
+                direction: direction,  // easier, harder, realistic
+                current_level: currentLevel
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.adjusted_text) {
+            // 조정된 텍스트로 업데이트
+            practiceTextEl.textContent = result.adjusted_text;
+            
+            // 성공 알림
+            showToast(`✨ ${direction === 'easier' ? '더 쉬운' : direction === 'harder' ? '더 어려운' : '현실적인'} 표현으로 변경되었습니다!`);
+        } else {
+            throw new Error('텍스트 조정 실패');
+        }
+        
+    } catch (error) {
+        console.error('❌ 난이도 조정 오류:', error);
+        practiceTextEl.textContent = currentText;  // 원래대로 복구
+        showToast('⚠️ 텍스트 조정에 실패했습니다. 다시 시도해주세요.');
+    }
+}
+
+function showToast(message) {
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        position: fixed;
+        top: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 25px;
+        font-size: 14px;
+        font-weight: 600;
+        z-index: 10000;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    `;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
 }
 
 // ============================================================================
