@@ -119,6 +119,13 @@ function checkOnboarding() {
     }
 }
 
+function resetOnboarding() {
+    // 온보딩 완료 상태 초기화
+    localStorage.removeItem('onboarding_complete');
+    // 온보딩 페이지로 이동
+    window.location.href = 'onboarding.html';
+}
+
 function setupEventListeners() {
     // 레벨 선택
     document.querySelectorAll('.level-btn').forEach(btn => {
