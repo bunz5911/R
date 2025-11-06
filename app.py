@@ -1041,6 +1041,98 @@ def retry_quiz():
         return jsonify({"error": str(e), "success": False}), 500
 
 
+@app.route('/api/adjust-difficulty', methods=['POST'])
+def adjust_difficulty():
+    """
+    텍스트 난이도를 실시간으로 조정
+    POST body: {
+        "text": "원문",
+        "direction": "easier|harder|realistic",
+        "current_level": "초급|중급|고급"
+    }
+    """
+    data = request.get_json()
+    text = data.get('text', '')
+    direction = data.get('direction', 'same')
+    current_level = data.get('current_level', '초급')
+    
+    if not text:
+        return jsonify({"error": "텍스트가 필요합니다"}), 400
+    
+    if not client:
+        return jsonify({"error": "Gemini API가 설정되지 않았습니다"}), 500
+    
+    # Gemini에게 텍스트 조정 요청
+    if direction == 'easier':
+        prompt = f"""
+다음 한국어 문장을 더 쉽게 바꿔주세요:
+
+원문: {text}
+
+요구사항:
+- 초등학생도 이해할 수 있는 쉬운 단어 사용
+- 짧고 간단한 문장 구조
+- 의미는 그대로 유지
+- 한국어로만 응답
+
+쉬운 문장:"""
+    
+    elif direction == 'harder':
+        prompt = f"""
+다음 한국어 문장을 고급 표현으로 바꿔주세요:
+
+원문: {text}
+
+요구사항:
+- 고급 어휘 사용
+- 복잡한 문장 구조
+- 의미는 그대로 유지
+- 격식 있는 표현 사용
+- 한국어로만 응답
+
+고급 문장:"""
+    
+    elif direction == 'realistic':
+        prompt = f"""
+다음 한국어 문장을 실제 대화에서 쓰는 자연스러운 표현으로 바꿔주세요:
+
+원문: {text}
+
+요구사항:
+- 실제 한국인이 일상에서 쓰는 표현
+- 구어체 활용
+- 의미는 그대로 유지
+- 자연스럽고 편한 느낌
+- 한국어로만 응답
+
+자연스러운 표현:"""
+    
+    else:
+        return jsonify({"adjusted_text": text})
+    
+    try:
+        response = client.models.generate_content(
+            model='gemini-2.0-flash-exp',
+            contents=[prompt]
+        )
+        
+        adjusted_text = response.text.strip()
+        
+        print(f"✅ 난이도 조정 완료: {direction}", flush=True)
+        print(f"   원문: {text[:50]}...", flush=True)
+        print(f"   조정: {adjusted_text[:50]}...", flush=True)
+        
+        return jsonify({
+            "adjusted_text": adjusted_text,
+            "direction": direction,
+            "original_text": text
+        })
+        
+    except Exception as e:
+        print(f"❌ 난이도 조정 오류: {e}", flush=True)
+        return jsonify({"error": str(e)}), 500
+
+
 # ============================================================================
 # [3] 서버 시작
 # ============================================================================
