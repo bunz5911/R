@@ -263,7 +263,12 @@ async function selectStory(storyId) {
         });
 
         // ✅ 개인화된 로드맵: 난이도 체크 먼저
-        await showDifficultyCheck(storyId);
+        // TODO: Git push 후 활성화
+        // await showDifficultyCheck(storyId);
+        
+        // 임시: 바로 분석 시작
+        console.log(`🔍 분석 시작...`);
+        await analyzeStory(storyId);
 
     } catch (error) {
         console.error('❌ 동화 로드 오류:', error);
@@ -2454,6 +2459,15 @@ async function adjustParagraphDifficulty(paraIndex, direction) {
     const practiceTextEl = document.getElementById(`practiceText${paraIndex}`);
     const currentText = practiceTextEl.textContent;
     
+    // 로컬 서버 체크
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    
+    if (!isLocalhost) {
+        // Netlify에서는 아직 API 미배포
+        showToast('⚠️ 이 기능은 곧 배포될 예정입니다! (로컬에서만 작동)');
+        return;
+    }
+    
     // 로딩 표시
     practiceTextEl.innerHTML = `<em style="color: #999;">AI가 텍스트를 조정하는 중...</em>`;
     
@@ -2467,6 +2481,10 @@ async function adjustParagraphDifficulty(paraIndex, direction) {
                 current_level: currentLevel
             })
         });
+        
+        if (!response.ok) {
+            throw new Error(`서버 오류 (${response.status})`);
+        }
         
         const result = await response.json();
         
@@ -2483,7 +2501,7 @@ async function adjustParagraphDifficulty(paraIndex, direction) {
     } catch (error) {
         console.error('❌ 난이도 조정 오류:', error);
         practiceTextEl.textContent = currentText;  // 원래대로 복구
-        showToast('⚠️ 텍스트 조정에 실패했습니다. 다시 시도해주세요.');
+        showToast('⚠️ 텍스트 조정에 실패했습니다. Git push 후 다시 시도해주세요.');
     }
 }
 
