@@ -449,9 +449,9 @@
             background: white;
             border: 1px solid #E0E0E0;
             color: #333;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 14px;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 11px;
             font-weight: 600;
             cursor: pointer;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
@@ -470,9 +470,9 @@
             background: white;
             border: 1px solid #E0E0E0;
             color: #333;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 14px;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 11px;
             font-weight: 600;
             cursor: pointer;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
@@ -482,6 +482,20 @@
         .dashboard-btn:hover {
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
             transform: translateY(-1px);
+        }
+
+        .coin-display {
+            position: absolute;
+            top: 20px;
+            right: 110px;
+            background: white;
+            border: 1px solid #E0E0E0;
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
         }
 
         /* 음성 설정 모달 */
@@ -587,6 +601,7 @@
             <button class="dashboard-btn" onclick="resetOnboarding()" style="left: 100px;">📚 온보딩</button>
             <h1>Read Aloud Korean</h1>
             <p>한국어 동화로 배우는 실전 한국어</p>
+            <div id="coin-display" class="coin-display">🪙 0 코인</div>
             <button class="settings-btn" onclick="showVoiceSettings()">음성 설정</button>
         </div>
 
