@@ -15,7 +15,14 @@ export ELEVENLABS_API_KEY="YOUR_ELEVENLABS_API_KEY_HERE"
 export GEMINI_API_KEY="YOUR_GEMINI_API_KEY_HERE"
 
 # Google Cloud TTS (선택사항)
-# export GOOGLE_APPLICATION_CREDENTIALS="cloudtext2speechapi.json"
+# 1) 서비스 계정 JSON 파일 경로 지정
+# export GOOGLE_APPLICATION_CREDENTIALS="/absolute/path/to/cloudtext2speechapi.json"
+# 2) 또는 환경변수에 JSON 내용을 직접 넣기
+# export GOOGLE_TTS_JSON='{"type":"service_account", ... }'
+
+# Supabase 연동 (선택사항)
+# export SUPABASE_URL="YOUR_SUPABASE_URL_HERE"
+# export SUPABASE_KEY="YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE"
 
 echo "🚀 K-Context Master 서버 시작..."
 echo "✅ ElevenLabs API 키 설정 완료"
