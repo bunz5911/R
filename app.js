@@ -75,7 +75,7 @@ let userDifficultyPreference = null;  // 사용자 난이도 선호도
 // 사용자 정보
 let currentUserId = localStorage.getItem('userId') || '00000000-0000-0000-0000-000000000001';  // 테스트 사용자
 let completedTabs = new Set();  // 완료한 탭 추적
-let userCoins = 0;  // 사용자 코인
+let userCoins = 100;  // 사용자 코인 (초기: 100개)
 
 // TTS 설정
 let ttsVoice = null;
@@ -101,6 +101,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ✅ 온보딩 체크 (첫 방문자)
     checkOnboarding();
     
+    // ✅ 코인 초기화 (localStorage에서 로드 또는 100으로 시작)
+    const savedCoins = localStorage.getItem('userCoins');
+    if (savedCoins !== null) {
+        userCoins = parseInt(savedCoins);
+    } else {
+        userCoins = 100;  // 초기 코인
+        localStorage.setItem('userCoins', userCoins);
+    }
+    updateCoinDisplay();
+    console.log('💰 초기 코인:', userCoins);
+    
     initializeTTS();
     initializeSTT();
     
@@ -114,7 +125,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         voicesCount: googleTTSVoices.length
     });
     
-    loadUserCoins();  // ✅ 사용자 코인 로드
+    loadUserCoins();  // ✅ 사용자 코인 로드 (Supabase)
     loadStories();
     setupEventListeners();
     // loadVoicePreference() 제거 - loadGoogleTTSVoices()에서 처리됨
@@ -173,8 +184,17 @@ async function loadUserCoins() {
 }
 
 function updateCoinDisplay() {
-    // 코인 표시 제거됨 - 표시하지 않음
-    console.log('현재 코인:', userCoins);
+    const coinDisplay = document.getElementById('coinDisplay');
+    if (coinDisplay) {
+        coinDisplay.textContent = `🪙 ${userCoins}`;
+        console.log('💰 코인 업데이트:', userCoins);
+        
+        // 코인 변화 애니메이션
+        coinDisplay.style.animation = 'none';
+        setTimeout(() => {
+            coinDisplay.style.animation = 'pulse 0.5s ease';
+        }, 10);
+    }
 }
 
 // ============================================================================
@@ -928,6 +948,8 @@ function removeFromWordbook(index) {
 let quizData = [];
 let currentQuizIndex = 0;
 let correctCount = 0;
+let wrongCount = 0;  // 틀린 횟수 추적
+let quizBlocked = false;  // 퀴즈 막힘 상태
 
 function renderQuiz() {
     const contentEl = document.getElementById('learningContent');
@@ -948,6 +970,8 @@ function renderQuiz() {
     quizData = currentAnalysis.quiz_questions;
     currentQuizIndex = 0;
     correctCount = 0;
+    wrongCount = 0;  // 틀린 횟수 초기화
+    quizBlocked = false;  // 막힘 해제
     showQuizQuestion();
 }
 
@@ -1004,17 +1028,23 @@ function showQuizQuestion() {
 }
 
 function checkAnswer(selectedIndex, correctIndex) {
+    // 퀴즈가 막힌 상태면 무시
+    if (quizBlocked) return;
+    
     const optionEl = document.getElementById(`option${selectedIndex}`);
     const feedbackEl = document.getElementById('quizFeedback');
+    const q = quizData[currentQuizIndex];
     
     if (selectedIndex === correctIndex) {
         // 정답!
         correctCount++;
+        wrongCount = 0;  // 정답 시 틀린 횟수 초기화
+        
         optionEl.style.background = 'linear-gradient(135deg, #55efc4 0%, #81ecec 100%)';
         optionEl.style.animation = 'flash 0.5s ease-in-out';
         feedbackEl.innerHTML = `
             <div class="content-box" style="background: #55efc4; color: white; font-weight: 700; text-align: center;">
-                정답입니다!
+                ✅ 정답입니다!
             </div>
         `;
         
@@ -1023,21 +1053,136 @@ function checkAnswer(selectedIndex, correctIndex) {
             showQuizQuestion();
         }, 1500);
     } else {
-        // 오답
+        // 오답 - 코인 차감
+        wrongCount++;
+        userCoins = Math.max(0, userCoins - 2);
+        localStorage.setItem('userCoins', userCoins);
+        updateCoinDisplay();
+        
         optionEl.style.background = '#ff7675';
         optionEl.style.animation = 'shake 0.5s ease-in-out';
-        feedbackEl.innerHTML = `
-            <div class="content-box" style="background: #ff7675; color: white; font-weight: 700; text-align: center;">
-                다시 시도해보세요!
-            </div>
-        `;
         
-        setTimeout(() => {
-            optionEl.style.background = '';
-            optionEl.style.animation = '';
-            feedbackEl.innerHTML = '';
-        }, 1000);
+        // 3번 틀리면 막힘
+        if (wrongCount >= 3) {
+            quizBlocked = true;
+            feedbackEl.innerHTML = `
+                <div class="content-box" style="background: #ff7675; color: white; font-weight: 700; text-align: center; padding: 20px;">
+                    <div style="font-size: 24px; margin-bottom: 12px;">❌</div>
+                    <div style="font-size: 18px; margin-bottom: 16px;">3번 틀렸습니다!</div>
+                    <div style="font-size: 14px; opacity: 0.9; margin-bottom: 20px;">
+                        더 이상 진행할 수 없습니다.<br>
+                        10 코인을 사용하여 계속하거나<br>
+                        1 코인으로 정답 해설을 확인하세요.
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-top: 16px;">
+                        <button class="btn" onclick="showCorrectAnswer(${correctIndex})" style="flex: 1; background: #6FCF97;">
+                            💡 정답 해설 보기<br><span style="font-size: 11px;">(-1 코인)</span>
+                        </button>
+                        <button class="btn" onclick="continueWithCoins()" style="flex: 1; background: #4A90E2;">
+                            ▶️ 계속하기<br><span style="font-size: 11px;">(-10 코인)</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+        } else {
+            feedbackEl.innerHTML = `
+                <div class="content-box" style="background: #ff7675; color: white; font-weight: 700; text-align: center;">
+                    ❌ 틀렸습니다! (-2 코인)<br>
+                    <span style="font-size: 13px; opacity: 0.9;">${3 - wrongCount}번 더 시도 가능</span>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                optionEl.style.background = '';
+                optionEl.style.animation = '';
+                feedbackEl.innerHTML = '';
+            }, 2000);
+        }
     }
+}
+
+// ============================================================================
+// [퀴즈] 정답 해설 보기 & 계속하기 (코인 사용)
+// ============================================================================
+function showCorrectAnswer(correctIndex) {
+    // 코인 부족 체크
+    if (userCoins < 1) {
+        showCoinShop();
+        return;
+    }
+    
+    // 1코인 차감
+    userCoins--;
+    localStorage.setItem('userCoins', userCoins);
+    updateCoinDisplay();
+    
+    const q = quizData[currentQuizIndex];
+    const correctOption = q.options[correctIndex];
+    const feedbackEl = document.getElementById('quizFeedback');
+    
+    feedbackEl.innerHTML = `
+        <div class="content-box" style="background: #6FCF97; color: white; font-weight: 700; text-align: center; padding: 20px;">
+            <div style="font-size: 24px; margin-bottom: 12px;">💡</div>
+            <div style="font-size: 16px; margin-bottom: 16px;">정답 해설 (-1 코인)</div>
+            <div style="font-size: 14px; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; margin-bottom: 16px;">
+                정답: <strong>${correctOption}</strong>
+            </div>
+            <div style="font-size: 13px; opacity: 0.9; line-height: 1.6;">
+                ${q.explanation || '이 문제는 동화의 내용을 잘 이해했는지 확인하는 문제입니다.'}
+            </div>
+            <button class="btn" onclick="continueAfterExplanation()" style="margin-top: 16px; background: white; color: #6FCF97;">
+                다음 문제로
+            </button>
+        </div>
+    `;
+    
+    quizBlocked = false;  // 해설 본 후 계속 가능
+}
+
+function continueAfterExplanation() {
+    wrongCount = 0;  // 틀린 횟수 초기화
+    currentQuizIndex++;
+    showQuizQuestion();
+}
+
+function continueWithCoins() {
+    // 코인 부족 체크
+    if (userCoins < 10) {
+        showCoinShop();
+        return;
+    }
+    
+    // 10코인 차감
+    userCoins -= 10;
+    localStorage.setItem('userCoins', userCoins);
+    updateCoinDisplay();
+    
+    console.log('💰 10코인 사용하여 계속하기');
+    
+    // 틀린 횟수 초기화하고 다음 문제로
+    wrongCount = 0;
+    quizBlocked = false;
+    currentQuizIndex++;
+    showQuizQuestion();
+}
+
+function showCoinShop() {
+    const feedbackEl = document.getElementById('quizFeedback');
+    feedbackEl.innerHTML = `
+        <div class="content-box" style="background: #FFD700; color: white; font-weight: 700; text-align: center; padding: 20px;">
+            <div style="font-size: 32px; margin-bottom: 12px;">🪙</div>
+            <div style="font-size: 18px; margin-bottom: 16px;">코인이 부족합니다!</div>
+            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 20px;">
+                현재 코인: ${userCoins}개
+            </div>
+            <button class="btn" onclick="location.href='coin-shop.html'" style="background: white; color: #FFD700;">
+                🛒 코인 스토어 가기
+            </button>
+            <button class="btn" onclick="switchTab('summary')" style="margin-top: 8px; background: rgba(255,255,255,0.3); color: white;">
+                학습 계속하기
+            </button>
+        </div>
+    `;
 }
 
 async function generateQuiz() {

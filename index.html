@@ -537,7 +537,7 @@
         .dashboard-btn {
             position: absolute;
             top: 20px;
-            left: 20px;
+            left: 100px;
             background: white;
             border: 1px solid #E0E0E0;
             color: #333;
@@ -553,6 +553,21 @@
         .dashboard-btn:hover {
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
             transform: translateY(-1px);
+        }
+
+        /* 코인 표시 */
+        .coin-display-header {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(255, 165, 0, 0.4);
+            z-index: 101;
         }
 
         /* 음성 설정 모달 */
@@ -662,7 +677,8 @@
     <div class="app-container">
         <!-- 헤더 -->
         <div class="header">
-            <button class="dashboard-btn" onclick="location.href='dashboard.html'">대시보드</button>
+            <div id="coinDisplay" class="coin-display-header">🪙 100</div>
+            <button class="dashboard-btn" onclick="location.href='dashboard.html'" style="left: 100px;">대시보드</button>
             <h1>Read Aloud Korean</h1>
             <p>한국어 동화로 배우는 실전 한국어</p>
             <button class="settings-btn" onclick="showVoiceSettings()">음성 설정</button>
@@ -721,6 +737,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=20251107-3"></script>
+    <script src="app.js?v=20251107-4"></script>
 </body>
 </html>
