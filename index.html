@@ -62,16 +62,77 @@
             background: white;
             border-radius: 12px;
             padding: 20px;
-            margin-bottom: 16px;
+            margin-bottom: -20px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            border: none;
+            transition: all 0.5s ease;
+            position: relative;
+            border-left: 3px solid transparent;
         }
 
         .story-card:hover, .story-card:active {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            transform: translateY(-15px) scale(1.1);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            z-index: 100;
+            border-left: 3px solid #A8E6CF;
+            background: linear-gradient(to right, #F0FFF4 0%, white 10%);
+        }
+
+        /* z-index 계층 구조 - 위에서 아래로 (50개 동화 대응) */
+        .story-card:nth-child(1) { z-index: 50; }
+        .story-card:nth-child(2) { z-index: 49; }
+        .story-card:nth-child(3) { z-index: 48; }
+        .story-card:nth-child(4) { z-index: 47; }
+        .story-card:nth-child(5) { z-index: 46; }
+        .story-card:nth-child(6) { z-index: 45; }
+        .story-card:nth-child(7) { z-index: 44; }
+        .story-card:nth-child(8) { z-index: 43; }
+        .story-card:nth-child(9) { z-index: 42; }
+        .story-card:nth-child(10) { z-index: 41; }
+        .story-card:nth-child(11) { z-index: 40; }
+        .story-card:nth-child(12) { z-index: 39; }
+        .story-card:nth-child(13) { z-index: 38; }
+        .story-card:nth-child(14) { z-index: 37; }
+        .story-card:nth-child(15) { z-index: 36; }
+        .story-card:nth-child(16) { z-index: 35; }
+        .story-card:nth-child(17) { z-index: 34; }
+        .story-card:nth-child(18) { z-index: 33; }
+        .story-card:nth-child(19) { z-index: 32; }
+        .story-card:nth-child(20) { z-index: 31; }
+        .story-card:nth-child(21) { z-index: 30; }
+        .story-card:nth-child(22) { z-index: 29; }
+        .story-card:nth-child(23) { z-index: 28; }
+        .story-card:nth-child(24) { z-index: 27; }
+        .story-card:nth-child(25) { z-index: 26; }
+        .story-card:nth-child(26) { z-index: 25; }
+        .story-card:nth-child(27) { z-index: 24; }
+        .story-card:nth-child(28) { z-index: 23; }
+        .story-card:nth-child(29) { z-index: 22; }
+        .story-card:nth-child(30) { z-index: 21; }
+        .story-card:nth-child(31) { z-index: 20; }
+        .story-card:nth-child(32) { z-index: 19; }
+        .story-card:nth-child(33) { z-index: 18; }
+        .story-card:nth-child(34) { z-index: 17; }
+        .story-card:nth-child(35) { z-index: 16; }
+        .story-card:nth-child(36) { z-index: 15; }
+        .story-card:nth-child(37) { z-index: 14; }
+        .story-card:nth-child(38) { z-index: 13; }
+        .story-card:nth-child(39) { z-index: 12; }
+        .story-card:nth-child(40) { z-index: 11; }
+        .story-card:nth-child(41) { z-index: 10; }
+        .story-card:nth-child(42) { z-index: 9; }
+        .story-card:nth-child(43) { z-index: 8; }
+        .story-card:nth-child(44) { z-index: 7; }
+        .story-card:nth-child(45) { z-index: 6; }
+        .story-card:nth-child(46) { z-index: 5; }
+        .story-card:nth-child(47) { z-index: 4; }
+        .story-card:nth-child(48) { z-index: 3; }
+        .story-card:nth-child(49) { z-index: 2; }
+        .story-card:nth-child(50) { z-index: 1; }
+
+        /* 마지막 카드는 여백 정상화 */
+        .story-card:last-child {
+            margin-bottom: 16px;
         }
 
         .story-card-title {
