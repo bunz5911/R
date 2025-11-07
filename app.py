@@ -7,8 +7,12 @@ K-Context Master: 한국어 동화 학습 앱
 
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
-from google import genai
-from google.genai import types
+try:
+    from google import genai
+    from google.genai import types
+except ImportError:
+    import google.generativeai as genai
+    from google.generativeai import types
 from google.cloud import texttospeech
 import os
 import sys
@@ -117,7 +121,10 @@ if SUPABASE_AVAILABLE:
 
 # 전역 변수
 cached_content = None
-story_files = {}  # {filename: filepath} - 메모리 절약: 경로만 저장
+story_files = {}  # {display_title: filepath}
+story_titles = []  # display_title 목록 (정렬된 순서)
+story_title_base_map = {}  # {display_title: base_title}
+story_base_to_display_map = {}  # {base_title: display_title}
 
 # ============================================================================
 # 🚀 미리 생성된 분석 데이터 로드 (속도 최적화)
@@ -176,7 +183,12 @@ def load_docx_file(file_path):
 
 def scan_story_files():
     """동화 파일 목록만 스캔 (메모리 절약)"""
-    global story_files
+    global story_files, story_titles, story_title_base_map, story_base_to_display_map
+    
+    story_files.clear()
+    story_titles.clear()
+    story_title_base_map.clear()
+    story_base_to_display_map.clear()
     
     if not os.path.exists(DOC_FOLDER):
         print(f"❌ 폴더를 찾을 수 없습니다: {DOC_FOLDER}", flush=True)
@@ -186,17 +198,25 @@ def scan_story_files():
     print(f"📚 총 {len(doc_files)}개의 동화 발견", flush=True)
     
     for doc_path in doc_files:
-        filename = os.path.basename(doc_path)[:-5]  # .docx 제거
-        story_files[filename] = doc_path
-        print(f"  ✓ {filename}", flush=True)
+        base_title = os.path.basename(doc_path)[:-5]  # .docx 제거
+        display_title = base_title if base_title.endswith("의 비밀") else f"{base_title}의 비밀"
+        
+        story_files[display_title] = doc_path
+        story_titles.append(display_title)
+        story_title_base_map[display_title] = base_title
+        story_base_to_display_map[base_title] = display_title
+        print(f"  ✓ {base_title} → {display_title}", flush=True)
     
-    print(f"✅ 총 {len(story_files)}개의 동화 파일 등록 완료\n", flush=True)
+    print(f"✅ 총 {len(story_titles)}개의 동화 파일 등록 완료\n", flush=True)
 
 
 def get_story_content(filename):
     """필요할 때만 동화 파일을 읽음 (Lazy Loading)"""
     if filename not in story_files:
-        return None
+        # base_title로 요청된 경우 display_title로 변환
+        filename = story_base_to_display_map.get(filename, filename)
+        if filename not in story_files:
+            return None
     
     file_path = story_files[filename]
     return load_docx_file(file_path)
@@ -277,7 +297,7 @@ def health():
         "gemini": client is not None,
         "tts": tts_client is not None,
         "supabase": supabase_client is not None,
-        "stories_loaded": len(story_files),
+        "stories_loaded": len(story_titles),
         "precomputed_analysis": len(PRECOMPUTED_ANALYSIS),
         "cache_sample": list(PRECOMPUTED_ANALYSIS.keys())[:5] if PRECOMPUTED_ANALYSIS else []
     })
@@ -286,7 +306,7 @@ def health():
 def get_stories():
     """50개 동화 목록 반환 (Lazy Loading)"""
     story_list = []
-    for i, title in enumerate(story_files.keys(), 1):
+    for i, title in enumerate(story_titles, 1):
         # 필요할 때만 내용 로드 (메모리 절약)
         content = get_story_content(title)
         preview = content[:100] + "..." if content else ""
@@ -307,11 +327,11 @@ def get_story(story_id):
     """특정 동화의 전체 내용 반환 (Lazy Loading)"""
     print(f"📖 동화 요청 받음: story_id={story_id}", flush=True)
     
-    if story_id < 1 or story_id > len(story_files):
+    if story_id < 1 or story_id > len(story_titles):
         print(f"❌ 잘못된 story_id: {story_id}", flush=True)
         return jsonify({"error": "동화를 찾을 수 없습니다"}), 404
     
-    title = list(story_files.keys())[story_id - 1]
+    title = story_titles[story_id - 1]
     print(f"📚 동화 제목: {title}", flush=True)
     
     content = get_story_content(title)
@@ -344,7 +364,7 @@ def analyze_story(story_id):
     print(f"🔍 분석 요청 받음: story_id={story_id}", flush=True)
     print(f"{'='*80}", flush=True)
     
-    if story_id < 1 or story_id > len(story_files):
+    if story_id < 1 or story_id > len(story_titles):
         print(f"❌ 잘못된 story_id: {story_id}", flush=True)
         return jsonify({"error": "동화를 찾을 수 없습니다"}), 404
     
@@ -353,13 +373,14 @@ def analyze_story(story_id):
     print(f"📊 요청된 레벨: {level}", flush=True)
     
     # 동화 제목 가져오기
-    title = list(story_files.keys())[story_id - 1]
-    print(f"📚 동화 제목: {title}", flush=True)
+    title = story_titles[story_id - 1]
+    base_title = story_title_base_map.get(title, title)
+    print(f"📚 동화 제목: {title} (원본: {base_title})", flush=True)
     
     # ✅ 1순위: 사전 생성된 분석 데이터 확인 (0.1초 이내)
-    if title in PRECOMPUTED_ANALYSIS and level in PRECOMPUTED_ANALYSIS[title]:
-        print(f"✅ [캐시 HIT] {title} - {level} (사전 생성 데이터)", flush=True)
-        result = PRECOMPUTED_ANALYSIS[title][level].copy()
+    if base_title in PRECOMPUTED_ANALYSIS and level in PRECOMPUTED_ANALYSIS[base_title]:
+        print(f"✅ [캐시 HIT] {base_title} - {level} (사전 생성 데이터)", flush=True)
+        result = PRECOMPUTED_ANALYSIS[base_title][level].copy()
         result['story_id'] = story_id
         result['title'] = title
         result['level'] = level
@@ -371,12 +392,12 @@ def analyze_story(story_id):
         try:
             cached = supabase_client.table('analysis_cache')\
                 .select('*')\
-                .eq('story_title', title)\
+                .eq('story_title', base_title)\
                 .eq('level', level)\
                 .execute()
             
             if cached.data and len(cached.data) > 0:
-                print(f"✅ [캐시 HIT] {title} - {level} (Supabase)", flush=True)
+                print(f"✅ [캐시 HIT] {base_title} - {level} (Supabase)", flush=True)
                 result = cached.data[0]['result']
                 result['story_id'] = story_id
                 result['title'] = title
@@ -387,7 +408,7 @@ def analyze_story(story_id):
             print(f"⚠️ Supabase 캐시 조회 실패: {e}", flush=True)
     
     # ✅ 3순위: Gemini API 실시간 분석 (느림)
-    print(f"⚠️ [캐시 MISS] {title} - {level}, Gemini API 호출 중...", flush=True)
+    print(f"⚠️ [캐시 MISS] {base_title} - {level}, Gemini API 호출 중...", flush=True)
     
     content = get_story_content(title)
     
@@ -438,7 +459,7 @@ JSON 형식으로 응답:
 """
     
     try:
-        print(f"🤖 Gemini API 호출 시작: {title} - {level}", flush=True)
+        print(f"🤖 Gemini API 호출 시작: {base_title} - {level}", flush=True)
         
         response = client.models.generate_content(
             model='gemini-2.0-flash-exp',
@@ -469,12 +490,12 @@ JSON 형식으로 응답:
         if supabase_client:
             try:
                 supabase_client.table('analysis_cache').upsert({
-                    'story_title': title,
+                    'story_title': base_title,
                     'level': level,
                     'result': result,
                     'created_at': datetime.now().isoformat()
                 }, on_conflict='story_title,level').execute()
-                print(f"✅ Supabase에 분석 결과 캐싱 완료: {title} - {level}", flush=True)
+                print(f"✅ Supabase에 분석 결과 캐싱 완료: {base_title} - {level}", flush=True)
             except Exception as e:
                 print(f"⚠️ Supabase 캐싱 실패: {e}", flush=True)
         
@@ -675,7 +696,7 @@ def generate_quiz(story_id):
     동화 기반 퀴즈 생성
     POST body: { "level": "초급|중급|고급", "count": 15 }
     """
-    if story_id < 1 or story_id > len(story_files):
+    if story_id < 1 or story_id > len(story_titles):
         return jsonify({"error": "동화를 찾을 수 없습니다"}), 404
     
     data = request.get_json() or {}
@@ -683,7 +704,7 @@ def generate_quiz(story_id):
     count = data.get('count', 15)
     
     # 동화 로드 (Lazy Loading)
-    title = list(story_files.keys())[story_id - 1]
+    title = story_titles[story_id - 1]
     content = get_story_content(title)
     
     if not client:
