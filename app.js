@@ -12,56 +12,56 @@ const API_BASE = window.location.hostname === 'localhost' || window.location.hos
 // 🚀 하드코딩된 동화 목록 (즉시 로딩용)
 // ============================================================================
 const PRELOADED_STORIES = [
-    { id: 1, title: "강아지 닥스훈트", preview: "" },
-    { id: 2, title: "공룡발자국", preview: "" },
-    { id: 3, title: "기린", preview: "" },
-    { id: 4, title: "까치집", preview: "" },
-    { id: 5, title: "꿀벌", preview: "" },
-    { id: 6, title: "낡은노트", preview: "" },
-    { id: 7, title: "냉장고", preview: "" },
-    { id: 8, title: "대나무", preview: "" },
-    { id: 9, title: "독수리", preview: "" },
-    { id: 10, title: "막대자석", preview: "" },
-    { id: 11, title: "뭉게구름", preview: "" },
-    { id: 12, title: "밍크고래", preview: "" },
-    { id: 13, title: "박물관", preview: "" },
-    { id: 14, title: "반코팅장갑", preview: "" },
-    { id: 15, title: "블랙다이아몬드", preview: "" },
-    { id: 16, title: "빨간신호등", preview: "" },
-    { id: 17, title: "색과무늬", preview: "" },
-    { id: 18, title: "세탁소드라이클리너", preview: "" },
-    { id: 19, title: "수영장 꽃무늬 투명 튜브", preview: "" },
-    { id: 20, title: "숫자2", preview: "" },
-    { id: 21, title: "숲", preview: "" },
-    { id: 22, title: "시간을파는자판기", preview: "" },
-    { id: 23, title: "시내버스", preview: "" },
-    { id: 24, title: "아기밥그릇", preview: "" },
-    { id: 25, title: "아기북극곰", preview: "" },
-    { id: 26, title: "애벌레", preview: "" },
-    { id: 27, title: "야구장빗자루", preview: "" },
-    { id: 28, title: "얼굴", preview: "" },
-    { id: 29, title: "엘리베이터", preview: "" },
-    { id: 30, title: "여자화장실", preview: "" },
-    { id: 31, title: "유리구슬", preview: "" },
-    { id: 32, title: "은수저", preview: "" },
-    { id: 33, title: "자동차바퀴", preview: "" },
-    { id: 34, title: "전기", preview: "" },
-    { id: 35, title: "전기+-", preview: "" },
-    { id: 36, title: "조개눈물", preview: "" },
-    { id: 37, title: "종이에이포", preview: "" },
-    { id: 38, title: "주방 가위", preview: "" },
-    { id: 39, title: "청바지와스커트", preview: "" },
-    { id: 40, title: "칭찬스티커", preview: "" },
-    { id: 41, title: "케이크", preview: "" },
-    { id: 42, title: "쿠션", preview: "" },
-    { id: 43, title: "크레파스", preview: "" },
-    { id: 44, title: "크리스마스트리", preview: "" },
-    { id: 45, title: "택배상자", preview: "" },
-    { id: 46, title: "팬지꽃", preview: "" },
-    { id: 47, title: "풍차날개", preview: "" },
-    { id: 48, title: "허수아비", preview: "" },
-    { id: 49, title: "흔들바위", preview: "" },
-    { id: 50, title: "희망", preview: "" }
+    { id: 1, title: "강아지 닥스훈트의 비밀", preview: "", image: "img/stories/story-1.jpg" },
+    { id: 2, title: "공룡발자국의 비밀", preview: "", image: "img/stories/story-2.jpg" },
+    { id: 3, title: "기린의 비밀", preview: "", image: "img/stories/story-3.jpg" },
+    { id: 4, title: "까치집의 비밀", preview: "", image: "img/stories/story-4.jpg" },
+    { id: 5, title: "꿀벌의 비밀", preview: "", image: "img/stories/story-5.jpg" },
+    { id: 6, title: "낡은노트의 비밀", preview: "", image: "img/stories/story-6.jpg" },
+    { id: 7, title: "냉장고의 비밀", preview: "", image: "img/stories/story-7.jpg" },
+    { id: 8, title: "대나무의 비밀", preview: "", image: "img/stories/story-8.jpg" },
+    { id: 9, title: "독수리의 비밀", preview: "", image: "img/stories/story-9.jpg" },
+    { id: 10, title: "막대자석의 비밀", preview: "", image: "img/stories/story-10.jpg" },
+    { id: 11, title: "뭉게구름의 비밀", preview: "", image: "img/stories/story-11.jpg" },
+    { id: 12, title: "밍크고래의 비밀", preview: "", image: "img/stories/story-12.jpg" },
+    { id: 13, title: "박물관의 비밀", preview: "", image: "img/stories/story-13.jpg" },
+    { id: 14, title: "반코팅장갑의 비밀", preview: "", image: "img/stories/story-14.jpg" },
+    { id: 15, title: "블랙다이아몬드의 비밀", preview: "", image: "img/stories/story-15.jpg" },
+    { id: 16, title: "빨간신호등의 비밀", preview: "", image: "img/stories/story-16.jpg" },
+    { id: 17, title: "색과무늬의 비밀", preview: "", image: "img/stories/story-17.jpg" },
+    { id: 18, title: "세탁소드라이클리너의 비밀", preview: "", image: "img/stories/story-18.jpg" },
+    { id: 19, title: "수영장 꽃무늬 투명 튜브의 비밀", preview: "", image: "img/stories/story-19.jpg" },
+    { id: 20, title: "숫자2의 비밀", preview: "", image: "img/stories/story-20.jpg" },
+    { id: 21, title: "숲의 비밀", preview: "", image: "img/stories/story-21.jpg" },
+    { id: 22, title: "시간을파는자판기의 비밀", preview: "", image: "img/stories/story-22.jpg" },
+    { id: 23, title: "시내버스의 비밀", preview: "", image: "img/stories/story-23.jpg" },
+    { id: 24, title: "아기밥그릇의 비밀", preview: "", image: "img/stories/story-24.jpg" },
+    { id: 25, title: "아기북극곰의 비밀", preview: "", image: "img/stories/story-25.jpg" },
+    { id: 26, title: "애벌레의 비밀", preview: "", image: "img/stories/story-26.jpg" },
+    { id: 27, title: "야구장빗자루의 비밀", preview: "", image: "img/stories/story-27.jpg" },
+    { id: 28, title: "얼굴의 비밀", preview: "", image: "img/stories/story-28.jpg" },
+    { id: 29, title: "엘리베이터의 비밀", preview: "", image: "img/stories/story-29.jpg" },
+    { id: 30, title: "여자화장실의 비밀", preview: "", image: "img/stories/story-30.jpg" },
+    { id: 31, title: "유리구슬의 비밀", preview: "", image: "img/stories/story-31.jpg" },
+    { id: 32, title: "은수저의 비밀", preview: "", image: "img/stories/story-32.jpg" },
+    { id: 33, title: "자동차바퀴의 비밀", preview: "", image: "img/stories/story-33.jpg" },
+    { id: 34, title: "전기의 비밀", preview: "", image: "img/stories/story-34.jpg" },
+    { id: 35, title: "전기+-의 비밀", preview: "", image: "img/stories/story-35.jpg" },
+    { id: 36, title: "조개눈물의 비밀", preview: "", image: "img/stories/story-36.jpg" },
+    { id: 37, title: "종이에이포의 비밀", preview: "", image: "img/stories/story-37.jpg" },
+    { id: 38, title: "주방 가위의 비밀", preview: "", image: "img/stories/story-38.jpg" },
+    { id: 39, title: "청바지와스커트의 비밀", preview: "", image: "img/stories/story-39.jpg" },
+    { id: 40, title: "칭찬스티커의 비밀", preview: "", image: "img/stories/story-40.jpg" },
+    { id: 41, title: "케이크의 비밀", preview: "", image: "img/stories/story-41.jpg" },
+    { id: 42, title: "쿠션의 비밀", preview: "", image: "img/stories/story-42.jpg" },
+    { id: 43, title: "크레파스의 비밀", preview: "", image: "img/stories/story-43.jpg" },
+    { id: 44, title: "크리스마스트리의 비밀", preview: "", image: "img/stories/story-44.jpg" },
+    { id: 45, title: "택배상자의 비밀", preview: "", image: "img/stories/story-45.jpg" },
+    { id: 46, title: "팬지꽃의 비밀", preview: "", image: "img/stories/story-46.jpg" },
+    { id: 47, title: "풍차날개의 비밀", preview: "", image: "img/stories/story-47.jpg" },
+    { id: 48, title: "허수아비의 비밀", preview: "", image: "img/stories/story-48.jpg" },
+    { id: 49, title: "흔들바위의 비밀", preview: "", image: "img/stories/story-49.jpg" },
+    { id: 50, title: "희망의 비밀", preview: "", image: "img/stories/story-50.jpg" }
 ];
 
 // 전역 상태
@@ -101,11 +101,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ✅ 온보딩 체크 (첫 방문자)
     checkOnboarding();
     
-    // ✅ 코인 초기화 - 무조건 100으로 리셋 (테스트)
+    // ✅ 코인 초기화 - 무조건 100으로 리셋
     userCoins = 100;
     localStorage.setItem('userCoins', '100');
-    console.log('💰 코인 강제 초기화:', userCoins);
-    updateCoinDisplay();
+    
+    // 즉시 헤더에 표시
+    const coinDisplay = document.getElementById('coinDisplay');
+    if (coinDisplay) {
+        coinDisplay.innerHTML = `<span style="font-size: 16px;">🟡</span> ${userCoins}`;
+        console.log('💰 코인 강제 초기화 & 표시:', userCoins);
+    } else {
+        console.error('❌ coinDisplay 요소를 찾을 수 없음!');
+    }
     
     initializeTTS();
     initializeSTT();
@@ -249,8 +256,13 @@ function renderStoryList() {
     const listEl = document.getElementById('storyList');
     listEl.innerHTML = currentStories.map(story => `
         <div class="story-card" onclick="selectStory(${story.id})">
-            <div class="story-card-title">${story.id}. ${story.title}</div>
-            <div class="story-card-preview">${story.preview}</div>
+            <div class="story-card-image">
+                <img src="${story.image}" alt="${story.title}" onerror="this.style.display='none'">
+                <div class="story-card-overlay">
+                    <div class="story-card-number">${story.id}</div>
+                    <h3 class="story-card-title-overlay">${story.title}</h3>
+                </div>
+            </div>
         </div>
     `).join('');
 }
