@@ -165,6 +165,37 @@ function updateCoinDisplay() {
 }
 
 // ============================================================================
+// [1-2] 학습 기록을 Supabase에 저장
+// ============================================================================
+async function recordStudySession(data) {
+    try {
+        const response = await fetch(`${API_BASE}/user/record-study`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: currentUserId,
+                story_id: currentStory.id,
+                story_title: currentStory.title,
+                level: currentLevel,
+                paragraph_num: data.paragraph_num || null,
+                quiz_score: data.quiz_score || null,
+                pronunciation_score: data.pronunciation_score || null,
+                session_type: data.session_type || 'reading' // 'reading', 'quiz', 'pronunciation'
+            })
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            console.log('✅ 학습 기록 저장 완료:', result);
+        } else {
+            console.log('⚠️ 학습 기록 저장 실패 (Supabase 미설정 가능)');
+        }
+    } catch (error) {
+        console.log('⚠️ 학습 기록 저장 오류:', error.message);
+    }
+}
+
+// ============================================================================
 // [2] 동화 목록 로드 (하드코딩 데이터 즉시 표시)
 // ============================================================================
 async function loadStories() {
@@ -436,6 +467,11 @@ async function analyzeStory(storyId) {
         // 분석 결과를 캐시에 저장
         localStorage.setItem(cacheKey, JSON.stringify(currentAnalysis));
         console.log('💾 분석 결과 캐시 저장 완료');
+        
+        // ✅ 학습 기록 저장 (Supabase)
+        recordStudySession({
+            session_type: 'reading'
+        });
         
         switchTab('summary'); // 요약 탭 표시
         
@@ -2342,6 +2378,13 @@ async function evaluateParagraphReading(paraIndex) {
             // 코인 다시 로드
             loadUserCoins();
         }
+        
+        // ✅ 학습 기록 저장 (Supabase)
+        recordStudySession({
+            paragraph_num: currentParagraphNum,
+            pronunciation_score: result.score,
+            session_type: 'pronunciation'
+        });
         
     } catch (error) {
         console.error('❌ 평가 오류:', error);
