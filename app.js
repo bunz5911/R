@@ -1154,25 +1154,38 @@ async function evaluateGrowth() {
 // ============================================================================
 async function loadGoogleTTSVoices() {
     try {
-        const response = await fetch(`${API_BASE}/tts/voices`);
-        const data = await response.json();
+        console.log('🔊 TTS 음성 로드 시도:', `${API_BASE}/tts/voices`);
+        const response = await fetch(`${API_BASE}/tts/voices`, {
+            timeout: 5000  // 5초 타임아웃
+        });
         
-        if (data.voices) {
+        console.log('📡 TTS API 응답 상태:', response.status);
+        
+        if (!response.ok) {
+            throw new Error(`API 응답 오류: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('📦 TTS 데이터 수신:', data);
+        
+        if (data.voices && data.voices.length > 0) {
             googleTTSVoices = data.voices;
             // ✅ 기본 음성: ElevenLabs Anna (최고 품질, 프리미엄)
-            selectedGoogleVoice = data.default || 'uyVNoMrnUku1dZyVEXwD';
+            selectedGoogleVoice = 'uyVNoMrnUku1dZyVEXwD';  // Anna 강제 설정
             useGoogleTTS = true;
-            console.log('✅ TTS 음성 로드 완료:', googleTTSVoices.length, '개');
-            console.log('✅ 기본 음성: Anna (ElevenLabs 프리미엄)');
             
-            // ✅ 기본 음성을 Anna로 강제 설정
-            selectedGoogleVoice = 'uyVNoMrnUku1dZyVEXwD';  // Anna
             localStorage.setItem('selectedGoogleVoice', selectedGoogleVoice);
             localStorage.setItem('useGoogleTTS', 'true');
-            console.log('✅ 기본 음성 강제 설정: Anna (ElevenLabs)');
+            
+            console.log('✅ TTS 음성 로드 완료:', googleTTSVoices.length, '개');
+            console.log('✅ Anna (ElevenLabs 프리미엄) 설정 완료');
+            console.log('🎤 useGoogleTTS:', useGoogleTTS);
+        } else {
+            throw new Error('음성 목록이 비어있음');
         }
     } catch (error) {
-        console.log('⚠️ 백엔드 TTS 사용 불가, Web Speech API 사용');
+        console.error('❌ 백엔드 TTS 로드 실패:', error.message);
+        console.log('⚠️ Fallback: Web Speech API 사용');
         useGoogleTTS = false;
     }
 }
@@ -1241,6 +1254,7 @@ async function togglePlay(id, text, buttonElement) {
     if (isPlaying && currentPlayingButton === buttonElement) {
         stopTTS();
         buttonElement.textContent = '▶';
+        buttonElement.style.animation = '';
         isPlaying = false;
         currentPlayingButton = null;
         return;
@@ -1249,24 +1263,41 @@ async function togglePlay(id, text, buttonElement) {
     // 다른 버튼이 재생 중이면 먼저 정지
     if (currentPlayingButton && currentPlayingButton !== buttonElement) {
         currentPlayingButton.textContent = '▶';
+        currentPlayingButton.style.animation = '';
     }
     
     // 재생 시작
     stopTTS();  // 기존 재생 정지
     currentPlayingButton = buttonElement;
     
-    // 로딩 인디케이터 표시
-    const originalText = buttonElement.textContent;
-    buttonElement.textContent = '🔊';
-    buttonElement.style.opacity = '0.6';
-    isPlaying = true;
+    // ✅ 캐시 확인 (Anna 음성 + 텍스트)
+    const koreanOnlyText = filterKoreanOnly(text);
+    const cacheKey = `${selectedGoogleVoice}_${koreanOnlyText}`;
     
-    await speakText(text);
-    
-    // 로딩 완료 (재생 중 표시)
-    if (currentPlayingButton === buttonElement) {
+    if (audioCache[cacheKey]) {
+        // 캐시에 있으면 바로 재생 (애니메이션 없음)
+        console.log('⚡ 캐시에서 즉시 재생!');
         buttonElement.textContent = '■';
-        buttonElement.style.opacity = '1';
+        isPlaying = true;
+        await speakText(text);
+    } else {
+        // 캐시 없으면 로딩 표시
+        console.log('🔊 음성 데이터 생성 중...');
+        buttonElement.textContent = '⏳';
+        buttonElement.style.animation = 'pulse 1s infinite';
+        
+        // 로딩 메시지 표시 (버튼 근처에)
+        showLoadingMessage(buttonElement);
+        
+        isPlaying = true;
+        await speakText(text);
+        
+        // 로딩 완료 (재생 중 표시)
+        if (currentPlayingButton === buttonElement) {
+            buttonElement.textContent = '■';
+            buttonElement.style.animation = '';
+            hideLoadingMessage();
+        }
     }
 }
 
@@ -1435,8 +1466,55 @@ function stopTTS() {
     if (currentPlayingButton) {
         currentPlayingButton.textContent = '▶';
         currentPlayingButton.style.opacity = '1';
+        currentPlayingButton.style.animation = '';
         isPlaying = false;
         currentPlayingButton = null;
+    }
+    
+    // 로딩 메시지 숨김
+    hideLoadingMessage();
+}
+
+// ============================================================================
+// [6-3] 로딩 메시지 표시/숨김
+// ============================================================================
+function showLoadingMessage(buttonElement) {
+    // 기존 로딩 메시지 제거
+    hideLoadingMessage();
+    
+    // 새 로딩 메시지 생성
+    const loadingDiv = document.createElement('div');
+    loadingDiv.id = 'ttsLoadingMessage';
+    loadingDiv.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.85);
+        color: white;
+        padding: 20px 30px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        z-index: 9999;
+        text-align: center;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        animation: fadeIn 0.3s ease;
+    `;
+    loadingDiv.innerHTML = `
+        <div style="font-size: 32px; margin-bottom: 8px;">🔊</div>
+        <div>음성 데이터를 로드합니다...</div>
+        <div style="font-size: 12px; opacity: 0.8; margin-top: 8px;">Anna (프리미엄 음성)</div>
+    `;
+    
+    document.body.appendChild(loadingDiv);
+}
+
+function hideLoadingMessage() {
+    const loadingDiv = document.getElementById('ttsLoadingMessage');
+    if (loadingDiv) {
+        loadingDiv.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => loadingDiv.remove(), 300);
     }
 }
 
