@@ -2,6 +2,7 @@
 .env
 *.json
 !package.json
+!analysis_data.json
 !stories/*.docx
 start_server.sh
 cloudtext2speechapi.json
