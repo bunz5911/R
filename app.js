@@ -668,10 +668,16 @@ function renderFullStory() {
     const contentEl = document.getElementById('learningContent');
     const fullText = currentStory.full_text || '';
     
+    console.log('📖 전체 이야기 렌더링:', {
+        textLength: fullText.length,
+        useGoogleTTS: useGoogleTTS,
+        selectedVoice: selectedGoogleVoice
+    });
+    
     contentEl.innerHTML = `
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
             <div class="section-title" style="margin-bottom: 0;">전체 이야기 듣기</div>
-            <button class="play-btn-circle" id="fullStoryPlayBtn" onclick="togglePlay('fullStory', '${escapeQuotes(fullText)}', this)">
+            <button class="play-btn-circle" id="fullStoryPlayBtn" onclick="console.log('🎯 전체듣기 버튼 클릭!'); togglePlay('fullStory', '${escapeQuotes(fullText)}', this)">
                 ▶
             </button>
         </div>
@@ -1262,6 +1268,9 @@ function initializeTTS() {
 
 // 재생/정지 토글 함수
 async function togglePlay(id, text, buttonElement) {
+    console.log(`🎯 togglePlay 호출 - ID: ${id}, 텍스트 길이: ${text.length}`);
+    console.log(`🎤 현재 TTS 상태: useGoogleTTS=${useGoogleTTS}, voice=${selectedGoogleVoice}`);
+    
     // 이미 재생 중이면 정지
     if (isPlaying && currentPlayingButton === buttonElement) {
         stopTTS();
@@ -1286,6 +1295,8 @@ async function togglePlay(id, text, buttonElement) {
     const koreanOnlyText = filterKoreanOnly(text);
     const cacheKey = `${selectedGoogleVoice}_${koreanOnlyText}`;
     
+    console.log(`📝 필터링된 텍스트 길이: ${koreanOnlyText.length}`);
+    
     if (audioCache[cacheKey]) {
         // 캐시에 있으면 바로 재생 (애니메이션 없음)
         console.log('⚡ 캐시에서 즉시 재생!');
@@ -1294,7 +1305,7 @@ async function togglePlay(id, text, buttonElement) {
         await speakText(text);
     } else {
         // 캐시 없으면 로딩 표시
-        console.log('🔊 음성 데이터 생성 중...');
+        console.log(`🔊 음성 데이터 생성 중... (ID: ${id})`);
         buttonElement.textContent = '⏳';
         buttonElement.style.animation = 'pulse 1s infinite';
         
