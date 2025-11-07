@@ -101,19 +101,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ✅ 온보딩 체크 (첫 방문자)
     checkOnboarding();
     
-    // ✅ 코인 초기화 (localStorage에서 로드 또는 100으로 시작)
-    const savedCoins = localStorage.getItem('userCoins');
-    if (savedCoins !== null && parseInt(savedCoins) > 0) {
-        userCoins = parseInt(savedCoins);
-        console.log('💰 저장된 코인 로드:', userCoins);
-    } else {
-        // 코인이 없거나 0이면 100으로 초기화
-        userCoins = 100;
-        localStorage.setItem('userCoins', userCoins);
-        console.log('💰 초기 코인 지급:', userCoins);
-    }
+    // ✅ 코인 초기화 - 무조건 100으로 리셋 (테스트)
+    userCoins = 100;
+    localStorage.setItem('userCoins', '100');
+    console.log('💰 코인 강제 초기화:', userCoins);
     updateCoinDisplay();
-    console.log('💰 현재 코인:', userCoins);
     
     initializeTTS();
     initializeSTT();
@@ -189,7 +181,8 @@ async function loadUserCoins() {
 function updateCoinDisplay() {
     const coinDisplay = document.getElementById('coinDisplay');
     if (coinDisplay) {
-        coinDisplay.textContent = `🪙 ${userCoins}`;
+        // ✨ 황금 동전 아이콘
+        coinDisplay.innerHTML = `<span style="font-size: 16px;">🟡</span> ${userCoins}`;
         console.log('💰 코인 업데이트:', userCoins);
         
         // 코인 변화 애니메이션
@@ -1009,7 +1002,7 @@ function showQuizQuestion() {
                 ${bonusCoins > 0 ? `
                     <div style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: white; padding: 16px; border-radius: 12px; margin-top: 16px; font-weight: 700; text-align: center;">
                         🎉 90점 이상 달성!<br>
-                        <span style="font-size: 24px;">🪙 +${bonusCoins} 코인 획득!</span>
+                        <span style="font-size: 24px;">🟡 +${bonusCoins} 코인 획득!</span>
                     </div>
                 ` : ''}
             </div>
@@ -1189,7 +1182,7 @@ function showCoinShop() {
     const feedbackEl = document.getElementById('quizFeedback');
     feedbackEl.innerHTML = `
         <div class="content-box" style="background: #FFD700; color: white; font-weight: 700; text-align: center; padding: 20px;">
-            <div style="font-size: 32px; margin-bottom: 12px;">🪙</div>
+            <div style="font-size: 32px; margin-bottom: 12px;">🟡</div>
             <div style="font-size: 18px; margin-bottom: 16px;">코인이 부족합니다!</div>
             <div style="font-size: 14px; opacity: 0.9; margin-bottom: 20px;">
                 현재 코인: ${userCoins}개
@@ -2668,7 +2661,7 @@ async function evaluateParagraphReading(paraIndex) {
             <div class="evaluation-result" style="margin-top: 20px;">
                 <div class="score-display">${result.score}점</div>
                 <div style="font-size: 24px; font-weight: 700; color: #f093fb; text-align: center; margin-bottom: 16px;">
-                    🪙 +${result.coins} 코인 획득!
+                    🟡 +${result.coins} 코인 획득!
                 </div>
                 <div class="feedback-text">
                     <strong>AI 피드백:</strong><br>

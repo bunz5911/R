@@ -176,9 +176,9 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🪙 코인 스토어</h1>
+            <h1>🟡 코인 스토어</h1>
             <p style="color: #666; font-size: 14px;">학습을 계속하기 위한 코인을 구매하세요</p>
-            <div class="current-coins" id="currentCoins">🪙 0</div>
+            <div class="current-coins" id="currentCoins">🟡 0</div>
         </div>
 
         <div class="info-box">
@@ -192,7 +192,7 @@
 
         <div class="coin-packages">
             <div class="coin-package" onclick="buyCoinPackage('starter', 50, 1000)">
-                <div class="coin-amount">🪙 50</div>
+                <div class="coin-amount">🟡 50</div>
                 <div class="coin-price">₩1,000</div>
                 <div class="coin-description">
                     • 기본 패키지<br>
@@ -203,7 +203,7 @@
 
             <div class="coin-package popular" onclick="buyCoinPackage('standard', 120, 2000)">
                 <div class="popular-badge">🔥 인기</div>
-                <div class="coin-amount">🪙 120</div>
+                <div class="coin-amount">🟡 120</div>
                 <div class="coin-price">₩2,000</div>
                 <div class="coin-bonus">+20% 보너스</div>
                 <div class="coin-description">
@@ -215,7 +215,7 @@
             </div>
 
             <div class="coin-package" onclick="buyCoinPackage('premium', 300, 5000)">
-                <div class="coin-amount">🪙 300</div>
+                <div class="coin-amount">🟡 300</div>
                 <div class="coin-price">₩5,000</div>
                 <div class="coin-bonus">+50% 보너스</div>
                 <div class="coin-description">
@@ -227,7 +227,7 @@
             </div>
 
             <div class="coin-package" onclick="buyCoinPackage('unlimited', 1000, 10000)">
-                <div class="coin-amount">🪙 1000</div>
+                <div class="coin-amount">🟡 1000</div>
                 <div class="coin-price">₩10,000</div>
                 <div class="coin-bonus">+100% 보너스!</div>
                 <div class="coin-description">
@@ -245,7 +245,7 @@
     <script>
         // 현재 코인 표시
         const savedCoins = localStorage.getItem('userCoins') || 100;
-        document.getElementById('currentCoins').textContent = `🪙 ${savedCoins}`;
+        document.getElementById('currentCoins').textContent = `🟡 ${savedCoins}`;
 
         function buyCoinPackage(packageType, coins, price) {
             alert(`🚧 결제 시스템 준비 중입니다.\n\n패키지: ${coins} 코인\n가격: ₩${price.toLocaleString()}\n\n실제 결제 기능은 추후 추가될 예정입니다.`);
@@ -255,7 +255,7 @@
                 let currentCoins = parseInt(localStorage.getItem('userCoins') || 100);
                 currentCoins += coins;
                 localStorage.setItem('userCoins', currentCoins);
-                document.getElementById('currentCoins').textContent = `🪙 ${currentCoins}`;
+                document.getElementById('currentCoins').textContent = `🟡 ${currentCoins}`;
                 alert(`✅ ${coins} 코인이 추가되었습니다!\n현재 코인: ${currentCoins}개`);
             }
         }
