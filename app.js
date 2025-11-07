@@ -982,6 +982,16 @@ function showQuizQuestion() {
         // 퀴즈 완료
         const score = Math.round((correctCount / quizData.length) * 100);
         
+        // ✅ 90점 이상 시 5코인 보상
+        let bonusCoins = 0;
+        if (score >= 90) {
+            bonusCoins = 5;
+            userCoins += bonusCoins;
+            localStorage.setItem('userCoins', userCoins);
+            updateCoinDisplay();
+            console.log('🎉 퀴즈 90점 이상! +5 코인 보상!');
+        }
+        
         // 학습 기록 저장
         saveProgress({ quiz_score: score });
         
@@ -993,6 +1003,12 @@ function showQuizQuestion() {
                     ${correctCount}/${quizData.length} 정답!<br>
                     ${score >= 80 ? '훌륭합니다!' : score >= 60 ? '잘했어요! 조금만 더 연습해보세요.' : '다시 한번 학습해보세요!'}
                 </div>
+                ${bonusCoins > 0 ? `
+                    <div style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: white; padding: 16px; border-radius: 12px; margin-top: 16px; font-weight: 700; text-align: center;">
+                        🎉 90점 이상 달성!<br>
+                        <span style="font-size: 24px;">🪙 +${bonusCoins} 코인 획득!</span>
+                    </div>
+                ` : ''}
             </div>
             <div class="control-buttons" style="margin-top: 24px;">
                 <button class="btn" onclick="renderQuiz()">
