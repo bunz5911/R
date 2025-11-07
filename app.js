@@ -103,14 +103,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // ✅ 코인 초기화 (localStorage에서 로드 또는 100으로 시작)
     const savedCoins = localStorage.getItem('userCoins');
-    if (savedCoins !== null) {
+    if (savedCoins !== null && parseInt(savedCoins) > 0) {
         userCoins = parseInt(savedCoins);
+        console.log('💰 저장된 코인 로드:', userCoins);
     } else {
-        userCoins = 100;  // 초기 코인
+        // 코인이 없거나 0이면 100으로 초기화
+        userCoins = 100;
         localStorage.setItem('userCoins', userCoins);
+        console.log('💰 초기 코인 지급:', userCoins);
     }
     updateCoinDisplay();
-    console.log('💰 초기 코인:', userCoins);
+    console.log('💰 현재 코인:', userCoins);
     
     initializeTTS();
     initializeSTT();
