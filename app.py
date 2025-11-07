@@ -814,6 +814,45 @@ def get_user_dashboard(user_id):
         return jsonify({"error": str(e)}), 500
 
 
+@app.route('/api/user/record-study', methods=['POST'])
+def record_study_session():
+    """학습 기록 저장"""
+    if not supabase_client:
+        print("⚠️ Supabase 미설정 - 학습 기록 저장 생략", flush=True)
+        return jsonify({"message": "Supabase not configured"}), 200
+    
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id')
+        story_id = data.get('story_id')
+        story_title = data.get('story_title')
+        level = data.get('level')
+        paragraph_num = data.get('paragraph_num')
+        quiz_score = data.get('quiz_score')
+        pronunciation_score = data.get('pronunciation_score')
+        session_type = data.get('session_type', 'reading')
+        
+        # Supabase에 저장
+        result = supabase_client.table('learning_records').insert({
+            'user_id': user_id,
+            'story_id': story_id,
+            'story_title': story_title,
+            'level': level,
+            'paragraph_num': paragraph_num,
+            'quiz_score': quiz_score,
+            'pronunciation_score': pronunciation_score,
+            'session_type': session_type,
+            'study_date': 'now()'
+        }).execute()
+        
+        print(f"✅ 학습 기록 저장 완료: {story_title} ({session_type})", flush=True)
+        return jsonify({"success": True, "message": "Study session recorded"})
+        
+    except Exception as e:
+        print(f"❌ 학습 기록 저장 오류: {e}", flush=True)
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route('/api/story/<int:story_id>/evaluate', methods=['POST'])
 def evaluate_pronunciation(story_id):
     """

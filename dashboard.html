@@ -113,7 +113,7 @@
     <div class="container">
         <div class="header">
             <h1>나의 학습 대시보드</h1>
-            <p id="userName">테스트 사용자</p>
+            <p id="userName">User</p>
         </div>
 
         <div class="stats-grid">
@@ -193,19 +193,15 @@
         }
 
         function loadLocalData() {
-            // Supabase 없이 localStorage 데이터 표시
-            const keys = Object.keys(localStorage);
-            const analysisKeys = keys.filter(k => k.startsWith('analysis_'));
-            
-            document.getElementById('totalStories').textContent = analysisKeys.length;
-            document.getElementById('totalSessions').textContent = analysisKeys.length;
+            // Supabase 없이 로컬 데이터 표시
+            document.getElementById('totalStories').textContent = '0';
+            document.getElementById('totalSessions').textContent = '0';
             document.getElementById('avgQuiz').textContent = '-';
             document.getElementById('avgPronunciation').textContent = '-';
             
             document.getElementById('recentRecords').innerHTML = `
                 <p style="color: #888; text-align: center;">
-                    ${analysisKeys.length}개 동화 캐시됨<br>
-                    (Supabase 연결 시 상세 기록 표시)
+                    아직 학습 기록이 없습니다.
                 </p>
             `;
         }
