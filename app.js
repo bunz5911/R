@@ -160,33 +160,8 @@ async function loadUserCoins() {
 }
 
 function updateCoinDisplay() {
-    // 헤더에 코인 표시 추가
-    const header = document.querySelector('.header');
-    let coinDisplay = document.getElementById('coinDisplay');
-    
-    if (!coinDisplay) {
-        coinDisplay = document.createElement('div');
-        coinDisplay.id = 'coinDisplay';
-        coinDisplay.style.cssText = `
-            position: absolute;
-            top: 20px;
-            right: 150px;
-            background: rgba(255, 255, 255, 0.3);
-            border: 2px solid white;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 16px;
-            font-weight: 600;
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        `;
-        header.appendChild(coinDisplay);
-    }
-    
-    coinDisplay.innerHTML = `🪙 ${userCoins} 코인`;
+    // 코인 표시 제거됨 - 표시하지 않음
+    console.log('현재 코인:', userCoins);
 }
 
 // ============================================================================

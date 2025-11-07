@@ -34,13 +34,23 @@
         .header {
             background: white;
             color: #333;
-            padding: 15px 20px;
+            padding: 50px 20px 20px;
             text-align: center;
             position: sticky;
             top: 0;
             z-index: 100;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            height: 50px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
         }
 
         /* 동화 목록 화면 */
@@ -81,7 +91,7 @@
         .learning-view {
             display: none;
             flex-direction: column;
-            height: calc(932px - 50px);
+            height: calc(932px - 130px);
         }
 
         .back-button {
@@ -434,7 +444,7 @@
         /* 음성 설정 버튼 */
         .settings-btn {
             position: absolute;
-            top: 12px;
+            top: 20px;
             right: 20px;
             background: white;
             border: 1px solid #E0E0E0;
@@ -455,7 +465,7 @@
 
         .dashboard-btn {
             position: absolute;
-            top: 12px;
+            top: 20px;
             left: 20px;
             background: white;
             border: 1px solid #E0E0E0;
@@ -574,7 +584,8 @@
         <!-- 헤더 -->
         <div class="header">
             <button class="dashboard-btn" onclick="location.href='dashboard.html'">대시보드</button>
-            <button class="dashboard-btn" onclick="resetOnboarding()" style="left: 110px;">📚 온보딩</button>
+            <h1>Read Aloud Korean</h1>
+            <p>한국어 동화로 배우는 실전 한국어</p>
             <button class="settings-btn" onclick="showVoiceSettings()">음성 설정</button>
         </div>
 
