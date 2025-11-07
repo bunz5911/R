@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>코인 스토어 - Read Aloud Korean</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #FDFBF7;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 430px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-top: 20px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            color: #FFD700;
+        }
+
+        .current-coins {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 20px;
+            font-size: 20px;
+            font-weight: 700;
+            display: inline-block;
+            margin-top: 16px;
+            box-shadow: 0 4px 12px rgba(255, 165, 0, 0.4);
+        }
+
+        .coin-packages {
+            display: grid;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .coin-package {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 2px solid #E8EEDF;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .coin-package:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            border-color: #FFD700;
+        }
+
+        .coin-package.popular {
+            border-color: #FFD700;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+        }
+
+        .coin-amount {
+            font-size: 32px;
+            font-weight: 700;
+            color: #FFD700;
+            margin-bottom: 8px;
+        }
+
+        .coin-price {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .coin-bonus {
+            background: #FF6B6B;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .coin-description {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .popular-badge {
+            background: #FF6B6B;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .buy-btn {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
+            box-shadow: 0 2px 8px rgba(255, 165, 0, 0.3);
+            transition: all 0.3s;
+        }
+
+        .buy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 165, 0, 0.5);
+        }
+
+        .back-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .info-box {
+            background: #E8F5E9;
+            border-left: 4px solid #6FCF97;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .info-title {
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #2E7D32;
+        }
+
+        .info-text {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🪙 코인 스토어</h1>
+            <p style="color: #666; font-size: 14px;">학습을 계속하기 위한 코인을 구매하세요</p>
+            <div class="current-coins" id="currentCoins">🪙 0</div>
+        </div>
+
+        <div class="info-box">
+            <div class="info-title">💡 코인 사용처</div>
+            <div class="info-text">
+                • 퀴즈 3번 틀렸을 때 계속하기: <strong>10 코인</strong><br>
+                • 틀린 문제 정답 해설 보기: <strong>1 코인</strong><br>
+                • 문제 틀릴 때마다: <strong>-2 코인</strong>
+            </div>
+        </div>
+
+        <div class="coin-packages">
+            <div class="coin-package" onclick="buyCoinPackage('starter', 50, 1000)">
+                <div class="coin-amount">🪙 50</div>
+                <div class="coin-price">₩1,000</div>
+                <div class="coin-description">
+                    • 기본 패키지<br>
+                    • 퀴즈 5회 계속하기 가능
+                </div>
+                <button class="buy-btn">구매하기</button>
+            </div>
+
+            <div class="coin-package popular" onclick="buyCoinPackage('standard', 120, 2000)">
+                <div class="popular-badge">🔥 인기</div>
+                <div class="coin-amount">🪙 120</div>
+                <div class="coin-price">₩2,000</div>
+                <div class="coin-bonus">+20% 보너스</div>
+                <div class="coin-description">
+                    • 가장 인기있는 패키지<br>
+                    • 퀴즈 12회 계속하기 가능<br>
+                    • 20 코인 추가 제공
+                </div>
+                <button class="buy-btn">구매하기</button>
+            </div>
+
+            <div class="coin-package" onclick="buyCoinPackage('premium', 300, 5000)">
+                <div class="coin-amount">🪙 300</div>
+                <div class="coin-price">₩5,000</div>
+                <div class="coin-bonus">+50% 보너스</div>
+                <div class="coin-description">
+                    • 프리미엄 패키지<br>
+                    • 퀴즈 30회 계속하기 가능<br>
+                    • 100 코인 추가 제공
+                </div>
+                <button class="buy-btn">구매하기</button>
+            </div>
+
+            <div class="coin-package" onclick="buyCoinPackage('unlimited', 1000, 10000)">
+                <div class="coin-amount">🪙 1000</div>
+                <div class="coin-price">₩10,000</div>
+                <div class="coin-bonus">+100% 보너스!</div>
+                <div class="coin-description">
+                    • 최고급 패키지<br>
+                    • 무제한 학습 가능<br>
+                    • 500 코인 추가 제공
+                </div>
+                <button class="buy-btn">구매하기</button>
+            </div>
+        </div>
+
+        <button class="back-btn" onclick="goBack()">← 학습으로 돌아가기</button>
+    </div>
+
+    <script>
+        // 현재 코인 표시
+        const savedCoins = localStorage.getItem('userCoins') || 100;
+        document.getElementById('currentCoins').textContent = `🪙 ${savedCoins}`;
+
+        function buyCoinPackage(packageType, coins, price) {
+            alert(`🚧 결제 시스템 준비 중입니다.\n\n패키지: ${coins} 코인\n가격: ₩${price.toLocaleString()}\n\n실제 결제 기능은 추후 추가될 예정입니다.`);
+            
+            // 테스트용: 코인 즉시 추가
+            if (confirm('테스트용으로 코인을 추가하시겠습니까?')) {
+                let currentCoins = parseInt(localStorage.getItem('userCoins') || 100);
+                currentCoins += coins;
+                localStorage.setItem('userCoins', currentCoins);
+                document.getElementById('currentCoins').textContent = `🪙 ${currentCoins}`;
+                alert(`✅ ${coins} 코인이 추가되었습니다!\n현재 코인: ${currentCoins}개`);
+            }
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>
+
