@@ -88,6 +88,7 @@ let selectedGoogleVoice = 'uyVNoMrnUku1dZyVEXwD';
 let currentAudio = null;  // 현재 재생 중인 오디오
 let isPlaying = false;  // 재생 상태
 let currentPlayingButton = null;  // 현재 재생 버튼
+let audioCache = {};  // 오디오 캐시 (텍스트 → Blob URL)
 let recognition = null;
 let recordedText = '';
 
@@ -1253,10 +1254,20 @@ async function togglePlay(id, text, buttonElement) {
     // 재생 시작
     stopTTS();  // 기존 재생 정지
     currentPlayingButton = buttonElement;
-    buttonElement.textContent = '■';
+    
+    // 로딩 인디케이터 표시
+    const originalText = buttonElement.textContent;
+    buttonElement.textContent = '🔊';
+    buttonElement.style.opacity = '0.6';
     isPlaying = true;
     
     await speakText(text);
+    
+    // 로딩 완료 (재생 중 표시)
+    if (currentPlayingButton === buttonElement) {
+        buttonElement.textContent = '■';
+        buttonElement.style.opacity = '1';
+    }
 }
 
 /**
@@ -1301,6 +1312,30 @@ async function speakWithGoogleTTS(text) {
             text = text.substring(0, 5000);
         }
         
+        // ✅ 캐시 키 생성 (음성 ID + 텍스트)
+        const cacheKey = `${selectedGoogleVoice}_${text}`;
+        
+        // ✅ 캐시에 있으면 즉시 재생 (0.1초!)
+        if (audioCache[cacheKey]) {
+            console.log('⚡ 캐시에서 즉시 재생!');
+            currentAudio = new Audio(audioCache[cacheKey]);
+            currentAudio.play();
+            
+            // 재생 완료 후 처리
+            currentAudio.onended = () => {
+                if (currentPlayingButton) {
+                    currentPlayingButton.textContent = '▶';
+                    currentPlayingButton.style.opacity = '1';
+                    isPlaying = false;
+                    currentPlayingButton = null;
+                }
+            };
+            return;
+        }
+        
+        // ✅ 캐시 없으면 API 호출 (6-12초)
+        console.log('🔊 음성 생성 중... (최초 1회만)');
+        
         const response = await fetch(`${API_BASE}/tts/speak`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1329,17 +1364,21 @@ async function speakWithGoogleTTS(text) {
         }
         const audioBlob = new Blob([arrayBuffer], { type: 'audio/mp3' });
         
-        // 오디오 재생
+        // ✅ Blob URL 생성 및 캐시 저장
         const audioUrl = URL.createObjectURL(audioBlob);
+        audioCache[cacheKey] = audioUrl;
+        console.log(`💾 오디오 캐시 저장 완료 (총 ${Object.keys(audioCache).length}개)`);
+        
+        // 오디오 재생
         currentAudio = new Audio(audioUrl);
         currentAudio.play();
         
         // 재생 완료 후 처리
         currentAudio.onended = () => {
-            URL.revokeObjectURL(audioUrl);
             // 버튼 상태 복구
             if (currentPlayingButton) {
                 currentPlayingButton.textContent = '▶';
+                currentPlayingButton.style.opacity = '1';
                 isPlaying = false;
                 currentPlayingButton = null;
             }
@@ -1395,6 +1434,7 @@ function stopTTS() {
     // 버튼 상태 복구
     if (currentPlayingButton) {
         currentPlayingButton.textContent = '▶';
+        currentPlayingButton.style.opacity = '1';
         isPlaying = false;
         currentPlayingButton = null;
     }
