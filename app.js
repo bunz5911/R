@@ -1401,6 +1401,39 @@ function renderVoiceList() {
                     <span style="font-size: 12px; color: #888;">모든 재생 버튼에 적용됨</span>
                 </div>
             ` : ''}
+            
+            <!-- 스타 보이스 섹션 -->
+            <div style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: white; padding: 12px; border-radius: 12px; margin-bottom: 12px; text-align: center;">
+                <strong>⭐ Star Voice</strong><br>
+                <span style="font-size: 13px; opacity: 0.9;">K-POP 아티스트 음성 (Coming Soon)</span>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
+                <div class="star-voice-btn" onclick="selectStarVoice('jungkook')" style="background: white; border: 2px solid #E8EEDF; padding: 16px; border-radius: 10px; text-align: center; cursor: pointer; transition: all 0.3s;">
+                    <div style="font-size: 20px; margin-bottom: 4px;">🎤</div>
+                    <div style="font-weight: 600; color: #333; font-size: 14px;">방탄소년단</div>
+                    <div style="font-size: 12px; color: #666;">정국</div>
+                </div>
+                
+                <div class="star-voice-btn" onclick="selectStarVoice('jennie')" style="background: white; border: 2px solid #E8EEDF; padding: 16px; border-radius: 10px; text-align: center; cursor: pointer; transition: all 0.3s;">
+                    <div style="font-size: 20px; margin-bottom: 4px;">💎</div>
+                    <div style="font-weight: 600; color: #333; font-size: 14px;">블랙핑크</div>
+                    <div style="font-size: 12px; color: #666;">제니</div>
+                </div>
+                
+                <div class="star-voice-btn" onclick="selectStarVoice('bangchan')" style="background: white; border: 2px solid #E8EEDF; padding: 16px; border-radius: 10px; text-align: center; cursor: pointer; transition: all 0.3s;">
+                    <div style="font-size: 20px; margin-bottom: 4px;">🎸</div>
+                    <div style="font-weight: 600; color: #333; font-size: 14px;">스트레이키즈</div>
+                    <div style="font-size: 12px; color: #666;">방찬</div>
+                </div>
+                
+                <div class="star-voice-btn" onclick="selectStarVoice('taeyeon')" style="background: white; border: 2px solid #E8EEDF; padding: 16px; border-radius: 10px; text-align: center; cursor: pointer; transition: all 0.3s;">
+                    <div style="font-size: 20px; margin-bottom: 4px;">✨</div>
+                    <div style="font-weight: 600; color: #333; font-size: 14px;">소녀시대</div>
+                    <div style="font-size: 12px; color: #666;">태연</div>
+                </div>
+            </div>
+            
             <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px; border-radius: 12px; margin-bottom: 16px; text-align: center;">
                 <strong>Google Cloud TTS</strong><br>
                 <span style="font-size: 13px; opacity: 0.9;">Neural2 고품질 AI 음성</span>
@@ -1491,6 +1524,25 @@ function renderWebSpeechVoices() {
             </div>
         `;
     }).join('');
+}
+
+// ============================================================================
+// [6-2] 스타 보이스 선택 (Coming Soon)
+// ============================================================================
+function selectStarVoice(starId) {
+    const starNames = {
+        'jungkook': '방탄소년단 정국',
+        'jennie': '블랙핑크 제니',
+        'bangchan': '스트레이키즈 방찬',
+        'taeyeon': '소녀시대 태연'
+    };
+    
+    const starName = starNames[starId] || starId;
+    
+    console.log(`⭐ 스타 보이스 선택: ${starName}`);
+    
+    // 사용자 피드백
+    alert(`⭐ ${starName} 음성은 SM Entertainment와의 미팅 후 제공될 예정입니다.\n\n현재는 선택만 가능하며, 실제 음성은 정식 허락 및 Voice ID 획득 후 구현됩니다.`);
 }
 
 function selectGoogleVoice(voiceId) {
