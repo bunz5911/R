@@ -81,7 +81,7 @@ let userCoins = 0;  // 사용자 코인
 let ttsVoice = null;
 let allVoices = [];
 let selectedVoiceIndex = -1;
-let useGoogleTTS = false;  // Google Cloud TTS 사용 여부
+let useGoogleTTS = true;  // Google Cloud TTS 사용 여부 (기본: Anna)
 let googleTTSVoices = [];  // Google TTS 음성 목록
 // ✅ 기본 음성: ElevenLabs Anna (최고 품질, 프리미엄)
 let selectedGoogleVoice = 'uyVNoMrnUku1dZyVEXwD';
@@ -1164,12 +1164,11 @@ async function loadGoogleTTSVoices() {
             console.log('✅ TTS 음성 로드 완료:', googleTTSVoices.length, '개');
             console.log('✅ 기본 음성: Anna (ElevenLabs 프리미엄)');
             
-            // 저장된 음성 설정 로드 (사용자가 설정한 경우)
-            const saved = localStorage.getItem('selectedGoogleVoice');
-            if (saved) {
-                selectedGoogleVoice = saved;
-                console.log('✅ 사용자 설정 음성 로드:', saved);
-            }
+            // ✅ 기본 음성을 Anna로 강제 설정
+            selectedGoogleVoice = 'uyVNoMrnUku1dZyVEXwD';  // Anna
+            localStorage.setItem('selectedGoogleVoice', selectedGoogleVoice);
+            localStorage.setItem('useGoogleTTS', 'true');
+            console.log('✅ 기본 음성 강제 설정: Anna (ElevenLabs)');
         }
     } catch (error) {
         console.log('⚠️ 백엔드 TTS 사용 불가, Web Speech API 사용');
