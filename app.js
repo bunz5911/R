@@ -106,12 +106,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     localStorage.setItem('userCoins', '100');
     
     // 즉시 헤더에 표시
-    const coinDisplay = document.getElementById('coinDisplay');
-    if (coinDisplay) {
-        coinDisplay.innerHTML = `<span style="font-size: 16px;">🟡</span> ${userCoins}`;
+    const coinAmount = document.getElementById('coinAmount');
+    if (coinAmount) {
+        coinAmount.textContent = userCoins;
         console.log('💰 코인 강제 초기화 & 표시:', userCoins);
     } else {
-        console.error('❌ coinDisplay 요소를 찾을 수 없음!');
+        console.error('❌ coinAmount 요소를 찾을 수 없음!');
     }
     
     initializeTTS();
@@ -186,17 +186,20 @@ async function loadUserCoins() {
 }
 
 function updateCoinDisplay() {
+    const coinAmount = document.getElementById('coinAmount');
     const coinDisplay = document.getElementById('coinDisplay');
-    if (coinDisplay) {
-        // ✨ 황금 동전 아이콘
-        coinDisplay.innerHTML = `<span style="font-size: 16px;">🟡</span> ${userCoins}`;
+    
+    if (coinAmount) {
+        coinAmount.textContent = userCoins;
         console.log('💰 코인 업데이트:', userCoins);
         
         // 코인 변화 애니메이션
-        coinDisplay.style.animation = 'none';
-        setTimeout(() => {
-            coinDisplay.style.animation = 'pulse 0.5s ease';
-        }, 10);
+        if (coinDisplay) {
+            coinDisplay.style.animation = 'none';
+            setTimeout(() => {
+                coinDisplay.style.animation = 'pulse 0.5s ease';
+            }, 10);
+        }
     }
 }
 
