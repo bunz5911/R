@@ -95,17 +95,29 @@ let recordedText = '';
 // ============================================================================
 // [1] 초기화
 // ============================================================================
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('🚀 앱 초기화 시작...');
+    
     // ✅ 온보딩 체크 (첫 방문자)
     checkOnboarding();
     
     initializeTTS();
     initializeSTT();
-    loadGoogleTTSVoices();  // Google TTS 음성 목록 로드
+    
+    // ✅ Anna 음성 로드 (반드시 완료 대기)
+    await loadGoogleTTSVoices();
+    
+    // ✅ 초기화 후 설정 확인
+    console.log('🎤 초기화 완료 - TTS 설정:', {
+        useGoogleTTS: useGoogleTTS,
+        selectedGoogleVoice: selectedGoogleVoice,
+        voicesCount: googleTTSVoices.length
+    });
+    
     loadUserCoins();  // ✅ 사용자 코인 로드
     loadStories();
     setupEventListeners();
-    loadVoicePreference();
+    // loadVoicePreference() 제거 - loadGoogleTTSVoices()에서 처리됨
 });
 
 // ============================================================================
@@ -1320,12 +1332,21 @@ async function speakText(text) {
         return;
     }
     
+    // ✅ 디버그: 현재 TTS 설정 확인
+    console.log('🎤 TTS 설정 확인:', {
+        useGoogleTTS: useGoogleTTS,
+        selectedGoogleVoice: selectedGoogleVoice,
+        textLength: koreanOnlyText.length
+    });
+    
     // Google Cloud TTS 사용
     if (useGoogleTTS) {
+        console.log('✅ Anna (ElevenLabs) 음성 사용 중...');
         await speakWithGoogleTTS(koreanOnlyText);
     }
     // Web Speech API fallback
     else {
+        console.log('⚠️ Web Speech API 사용 중 (Anna 아님!)');
         speakWithWebSpeech(koreanOnlyText);
     }
 }
@@ -1357,6 +1378,7 @@ async function speakWithGoogleTTS(text) {
                 if (currentPlayingButton) {
                     currentPlayingButton.textContent = '▶';
                     currentPlayingButton.style.opacity = '1';
+                    currentPlayingButton.style.animation = '';
                     isPlaying = false;
                     currentPlayingButton = null;
                 }
@@ -1366,6 +1388,11 @@ async function speakWithGoogleTTS(text) {
         
         // ✅ 캐시 없으면 API 호출 (6-12초)
         console.log('🔊 음성 생성 중... (최초 1회만)');
+        console.log('📡 API 호출:', {
+            url: `${API_BASE}/tts/speak`,
+            voice: selectedGoogleVoice,
+            textLength: text.length
+        });
         
         const response = await fetch(`${API_BASE}/tts/speak`, {
             method: 'POST',
@@ -1377,11 +1404,23 @@ async function speakWithGoogleTTS(text) {
             })
         });
         
+        console.log('📡 TTS API 응답:', response.status);
+        
         const data = await response.json();
         
+        console.log('📦 TTS 응답 데이터:', data);
+        
         if (data.error) {
-            console.error('TTS 오류:', data.error);
+            console.error('❌ TTS 오류:', data.error);
+            console.log('⚠️ Web Speech API로 Fallback');
             // Fallback to Web Speech API
+            speakWithWebSpeech(text);
+            return;
+        }
+        
+        if (!data.audio) {
+            console.error('❌ 오디오 데이터 없음!');
+            console.log('⚠️ Web Speech API로 Fallback');
             speakWithWebSpeech(text);
             return;
         }
@@ -1416,8 +1455,10 @@ async function speakWithGoogleTTS(text) {
         };
         
     } catch (error) {
-        console.error('Google TTS 오류:', error);
+        console.error('❌ Google TTS 심각한 오류:', error);
+        console.log('⚠️ Web Speech API로 Fallback (Anna 실패)');
         // Fallback to Web Speech API
+        hideLoadingMessage();  // 로딩 메시지 숨김
         speakWithWebSpeech(text);
     }
 }
