@@ -12,56 +12,56 @@ const API_BASE = window.location.hostname === 'localhost' || window.location.hos
 // 🚀 하드코딩된 동화 목록 (즉시 로딩용)
 // ============================================================================
 const PRELOADED_STORIES = [
-    { id: 1, title: "강아지 닥스훈트의 비밀", preview: "", image: "img/stories/story-1.jpg" },
-    { id: 2, title: "공룡발자국의 비밀", preview: "", image: "img/stories/story-2.jpg" },
-    { id: 3, title: "기린의 비밀", preview: "", image: "img/stories/story-3.jpg" },
-    { id: 4, title: "까치집의 비밀", preview: "", image: "img/stories/story-4.jpg" },
-    { id: 5, title: "꿀벌의 비밀", preview: "", image: "img/stories/story-5.jpg" },
-    { id: 6, title: "낡은노트의 비밀", preview: "", image: "img/stories/story-6.jpg" },
-    { id: 7, title: "냉장고의 비밀", preview: "", image: "img/stories/story-7.jpg" },
-    { id: 8, title: "대나무의 비밀", preview: "", image: "img/stories/story-8.jpg" },
-    { id: 9, title: "독수리의 비밀", preview: "", image: "img/stories/story-9.jpg" },
-    { id: 10, title: "막대자석의 비밀", preview: "", image: "img/stories/story-10.jpg" },
-    { id: 11, title: "뭉게구름의 비밀", preview: "", image: "img/stories/story-11.jpg" },
-    { id: 12, title: "밍크고래의 비밀", preview: "", image: "img/stories/story-12.jpg" },
-    { id: 13, title: "박물관의 비밀", preview: "", image: "img/stories/story-13.jpg" },
-    { id: 14, title: "반코팅장갑의 비밀", preview: "", image: "img/stories/story-14.jpg" },
-    { id: 15, title: "블랙다이아몬드의 비밀", preview: "", image: "img/stories/story-15.jpg" },
-    { id: 16, title: "빨간신호등의 비밀", preview: "", image: "img/stories/story-16.jpg" },
-    { id: 17, title: "색과무늬의 비밀", preview: "", image: "img/stories/story-17.jpg" },
-    { id: 18, title: "세탁소드라이클리너의 비밀", preview: "", image: "img/stories/story-18.jpg" },
-    { id: 19, title: "수영장 꽃무늬 투명 튜브의 비밀", preview: "", image: "img/stories/story-19.jpg" },
-    { id: 20, title: "숫자2의 비밀", preview: "", image: "img/stories/story-20.jpg" },
-    { id: 21, title: "숲의 비밀", preview: "", image: "img/stories/story-21.jpg" },
-    { id: 22, title: "시간을파는자판기의 비밀", preview: "", image: "img/stories/story-22.jpg" },
-    { id: 23, title: "시내버스의 비밀", preview: "", image: "img/stories/story-23.jpg" },
-    { id: 24, title: "아기밥그릇의 비밀", preview: "", image: "img/stories/story-24.jpg" },
-    { id: 25, title: "아기북극곰의 비밀", preview: "", image: "img/stories/story-25.jpg" },
-    { id: 26, title: "애벌레의 비밀", preview: "", image: "img/stories/story-26.jpg" },
-    { id: 27, title: "야구장빗자루의 비밀", preview: "", image: "img/stories/story-27.jpg" },
-    { id: 28, title: "얼굴의 비밀", preview: "", image: "img/stories/story-28.jpg" },
-    { id: 29, title: "엘리베이터의 비밀", preview: "", image: "img/stories/story-29.jpg" },
-    { id: 30, title: "여자화장실의 비밀", preview: "", image: "img/stories/story-30.jpg" },
-    { id: 31, title: "유리구슬의 비밀", preview: "", image: "img/stories/story-31.jpg" },
-    { id: 32, title: "은수저의 비밀", preview: "", image: "img/stories/story-32.jpg" },
-    { id: 33, title: "자동차바퀴의 비밀", preview: "", image: "img/stories/story-33.jpg" },
-    { id: 34, title: "전기의 비밀", preview: "", image: "img/stories/story-34.jpg" },
-    { id: 35, title: "전기+-의 비밀", preview: "", image: "img/stories/story-35.jpg" },
-    { id: 36, title: "조개눈물의 비밀", preview: "", image: "img/stories/story-36.jpg" },
-    { id: 37, title: "종이에이포의 비밀", preview: "", image: "img/stories/story-37.jpg" },
-    { id: 38, title: "주방 가위의 비밀", preview: "", image: "img/stories/story-38.jpg" },
-    { id: 39, title: "청바지와스커트의 비밀", preview: "", image: "img/stories/story-39.jpg" },
-    { id: 40, title: "칭찬스티커의 비밀", preview: "", image: "img/stories/story-40.jpg" },
-    { id: 41, title: "케이크의 비밀", preview: "", image: "img/stories/story-41.jpg" },
-    { id: 42, title: "쿠션의 비밀", preview: "", image: "img/stories/story-42.jpg" },
-    { id: 43, title: "크레파스의 비밀", preview: "", image: "img/stories/story-43.jpg" },
-    { id: 44, title: "크리스마스트리의 비밀", preview: "", image: "img/stories/story-44.jpg" },
-    { id: 45, title: "택배상자의 비밀", preview: "", image: "img/stories/story-45.jpg" },
-    { id: 46, title: "팬지꽃의 비밀", preview: "", image: "img/stories/story-46.jpg" },
-    { id: 47, title: "풍차날개의 비밀", preview: "", image: "img/stories/story-47.jpg" },
-    { id: 48, title: "허수아비의 비밀", preview: "", image: "img/stories/story-48.jpg" },
-    { id: 49, title: "흔들바위의 비밀", preview: "", image: "img/stories/story-49.jpg" },
-    { id: 50, title: "희망의 비밀", preview: "", image: "img/stories/story-50.jpg" }
+    { id: 1, title: "강아지닥스훈트의비밀", preview: "", image: "img/stories/story-1.jpg" },
+    { id: 2, title: "공룡발자국의비밀", preview: "", image: "img/stories/story-2.jpg" },
+    { id: 3, title: "기린의비밀", preview: "", image: "img/stories/story-3.jpg" },
+    { id: 4, title: "까치집의비밀", preview: "", image: "img/stories/story-4.jpg" },
+    { id: 5, title: "꿀벌의비밀", preview: "", image: "img/stories/story-5.jpg" },
+    { id: 6, title: "낡은노트의비밀", preview: "", image: "img/stories/story-6.jpg" },
+    { id: 7, title: "냉장고의비밀", preview: "", image: "img/stories/story-7.jpg" },
+    { id: 8, title: "대나무의비밀", preview: "", image: "img/stories/story-8.jpg" },
+    { id: 9, title: "독수리의비밀", preview: "", image: "img/stories/story-9.jpg" },
+    { id: 10, title: "막대자석의비밀", preview: "", image: "img/stories/story-10.jpg" },
+    { id: 11, title: "뭉게구름의비밀", preview: "", image: "img/stories/story-11.jpg" },
+    { id: 12, title: "밍크고래의비밀", preview: "", image: "img/stories/story-12.jpg" },
+    { id: 13, title: "박물관의비밀", preview: "", image: "img/stories/story-13.jpg" },
+    { id: 14, title: "반코팅장갑의비밀", preview: "", image: "img/stories/story-14.jpg" },
+    { id: 15, title: "블랙다이아몬드의비밀", preview: "", image: "img/stories/story-15.jpg" },
+    { id: 16, title: "빨간신호등의비밀", preview: "", image: "img/stories/story-16.jpg" },
+    { id: 17, title: "색과무늬의비밀", preview: "", image: "img/stories/story-17.jpg" },
+    { id: 18, title: "세탁소드라이클리너의비밀", preview: "", image: "img/stories/story-18.jpg" },
+    { id: 19, title: "수영장꽃무늬투명튜브의비밀", preview: "", image: "img/stories/story-19.jpg" },
+    { id: 20, title: "숫자2의비밀", preview: "", image: "img/stories/story-20.jpg" },
+    { id: 21, title: "숲의비밀", preview: "", image: "img/stories/story-21.jpg" },
+    { id: 22, title: "시간을파는자판기의비밀", preview: "", image: "img/stories/story-22.jpg" },
+    { id: 23, title: "시내버스의비밀", preview: "", image: "img/stories/story-23.jpg" },
+    { id: 24, title: "아기밥그릇의비밀", preview: "", image: "img/stories/story-24.jpg" },
+    { id: 25, title: "아기북극곰의비밀", preview: "", image: "img/stories/story-25.jpg" },
+    { id: 26, title: "애벌레의비밀", preview: "", image: "img/stories/story-26.jpg" },
+    { id: 27, title: "야구장빗자루의비밀", preview: "", image: "img/stories/story-27.jpg" },
+    { id: 28, title: "얼굴의비밀", preview: "", image: "img/stories/story-28.jpg" },
+    { id: 29, title: "엘리베이터의비밀", preview: "", image: "img/stories/story-29.jpg" },
+    { id: 30, title: "여자화장실의비밀", preview: "", image: "img/stories/story-30.jpg" },
+    { id: 31, title: "유리구슬의비밀", preview: "", image: "img/stories/story-31.jpg" },
+    { id: 32, title: "은수저의비밀", preview: "", image: "img/stories/story-32.jpg" },
+    { id: 33, title: "자동차바퀴의비밀", preview: "", image: "img/stories/story-33.jpg" },
+    { id: 34, title: "전기의비밀", preview: "", image: "img/stories/story-34.jpg" },
+    { id: 35, title: "전기+-의비밀", preview: "", image: "img/stories/story-35.jpg" },
+    { id: 36, title: "조개눈물의비밀", preview: "", image: "img/stories/story-36.jpg" },
+    { id: 37, title: "종이에이포의비밀", preview: "", image: "img/stories/story-37.jpg" },
+    { id: 38, title: "주방가위의비밀", preview: "", image: "img/stories/story-38.jpg" },
+    { id: 39, title: "청바지와스커트의비밀", preview: "", image: "img/stories/story-39.jpg" },
+    { id: 40, title: "칭찬스티커의비밀", preview: "", image: "img/stories/story-40.jpg" },
+    { id: 41, title: "케이크의비밀", preview: "", image: "img/stories/story-41.jpg" },
+    { id: 42, title: "쿠션의비밀", preview: "", image: "img/stories/story-42.jpg" },
+    { id: 43, title: "크레파스의비밀", preview: "", image: "img/stories/story-43.jpg" },
+    { id: 44, title: "크리스마스트리의비밀", preview: "", image: "img/stories/story-44.jpg" },
+    { id: 45, title: "택배상자의비밀", preview: "", image: "img/stories/story-45.jpg" },
+    { id: 46, title: "팬지꽃의비밀", preview: "", image: "img/stories/story-46.jpg" },
+    { id: 47, title: "풍차날개의비밀", preview: "", image: "img/stories/story-47.jpg" },
+    { id: 48, title: "허수아비의비밀", preview: "", image: "img/stories/story-48.jpg" },
+    { id: 49, title: "흔들바위의비밀", preview: "", image: "img/stories/story-49.jpg" },
+    { id: 50, title: "희망의비밀", preview: "", image: "img/stories/story-50.jpg" }
 ];
 
 // 전역 상태
@@ -71,6 +71,7 @@ let currentAnalysis = null;
 let currentLevel = '초급';
 let currentTab = 'summary';
 let userDifficultyPreference = null;  // 사용자 난이도 선호도
+let PRECOMPUTED_ANALYSIS = {};  // 하드코딩된 분석 데이터 (즉시 로드용)
 
 // 사용자 정보
 let currentUserId = localStorage.getItem('userId') || '00000000-0000-0000-0000-000000000001';  // 테스트 사용자
@@ -89,14 +90,54 @@ let currentAudio = null;  // 현재 재생 중인 오디오
 let isPlaying = false;  // 재생 상태
 let currentPlayingButton = null;  // 현재 재생 버튼
 let audioCache = {};  // 오디오 캐시 (텍스트 → Blob URL)
+let fullStoryAudio = null;  // 전체 이야기 듣기 전용 오디오 객체
 let recognition = null;
 let recordedText = '';
+
+// ============================================================================
+// [0] 하드코딩된 분석 데이터 로드
+// ============================================================================
+async function loadPrecomputedAnalysis() {
+    try {
+        console.log('📦 하드코딩된 분석 데이터 로드 시작...');
+        // ✅ 최종 파일: 모든 키 공백 제거 완료
+        const response = await fetch('stories_data_final.json?v=' + Date.now());
+        if (!response.ok) {
+            throw new Error(`stories_data_final.json 로드 실패: ${response.status}`);
+        }
+        const jsonData = await response.json();
+        console.log('📦 JSON 파싱 완료, 타입:', typeof jsonData, '키 개수:', Object.keys(jsonData).length);
+        
+        PRECOMPUTED_ANALYSIS = jsonData;
+        
+        console.log(`✅ 하드코딩된 분석 데이터 로드 완료: ${Object.keys(PRECOMPUTED_ANALYSIS).length}개 동화`);
+        console.log('📋 로드된 동화 목록 (처음 5개):', Object.keys(PRECOMPUTED_ANALYSIS).slice(0, 5));
+        console.log('📋 첫 번째 동화의 레벨:', Object.keys(PRECOMPUTED_ANALYSIS)[0], Object.keys(PRECOMPUTED_ANALYSIS[Object.keys(PRECOMPUTED_ANALYSIS)[0]]));
+        
+        // ✅ 전역 변수 확인
+        console.log('🔍 PRECOMPUTED_ANALYSIS 전역 변수 확인:', typeof PRECOMPUTED_ANALYSIS, Object.keys(PRECOMPUTED_ANALYSIS).length);
+        
+        // 🔍 디버그: 30번째 키 확인 (여자화장실)
+        const allKeys = Object.keys(PRECOMPUTED_ANALYSIS);
+        console.log('🔍 30번째 키 (index 29):', allKeys[29]);
+        console.log('🔍 "여자화장실의비밀" 존재 여부:', allKeys.includes('여자화장실의비밀'));
+        
+        return true;
+    } catch (error) {
+        console.error('❌ 하드코딩 데이터 로드 실패:', error);
+        console.error('📁 파일 경로 확인: stories_data_final.json이 루트에 있어야 합니다');
+        return false;
+    }
+}
 
 // ============================================================================
 // [1] 초기화
 // ============================================================================
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 앱 초기화 시작...');
+    
+    // ✅ 하드코딩된 분석 데이터 먼저 로드 (즉시 표시용)
+    await loadPrecomputedAnalysis();
     
     // ✅ 온보딩 체크 (첫 방문자)
     checkOnboarding();
@@ -451,28 +492,66 @@ async function adjustDifficultyAndStart(preference) {
 async function analyzeStory(storyId) {
     const contentEl = document.getElementById('learningContent');
     
-    // 캐시 키 생성 (동화ID + 레벨)
+    // ✅ 핵심: 서버에서 받은 제목의 모든 공백 제거 (내부 키와 100% 일치시키기)
+    const originalTitle = currentStory.title;  // 화면 표시용 (원본)
+    const internalKey = originalTitle.replace(/\s+/g, '');  // 내부 매칭용 (공백 완전 제거)
+    
+    console.log('🔍 하드코딩 데이터 확인:', {
+        originalTitle: originalTitle,
+        internalKey: internalKey,
+        currentLevel: currentLevel,
+        precomputedKeysCount: Object.keys(PRECOMPUTED_ANALYSIS).length
+    });
+    
+    // ✅ 공백 제거한 키로 직접 매칭 (100% 일치 보장)
+    let matchedData = PRECOMPUTED_ANALYSIS[internalKey];
+    
+    if (!matchedData) {
+        console.error('❌ 매칭 실패!');
+        console.error('찾는 키 (공백 제거):', internalKey);
+        console.error('원본 제목:', originalTitle);
+        console.error('전체 키 개수:', Object.keys(PRECOMPUTED_ANALYSIS).length);
+        console.error('첫 5개 키:', Object.keys(PRECOMPUTED_ANALYSIS).slice(0, 5));
+    } else {
+        console.log('✅ 직접 매칭 성공! (공백 제거 방식)');
+    }
+    
+    // ✅ matchedData 사용 (이미 찾은 데이터)
+    if (matchedData && matchedData[currentLevel]) {
+        console.log(`✅ 하드코딩 데이터 사용: ${internalKey} - ${currentLevel} (즉시 로드)`);
+        currentAnalysis = matchedData[currentLevel];
+        currentAnalysis.story_id = storyId;
+        currentAnalysis.title = currentStory.title;  // 화면 표시용은 원본 제목 사용
+        currentAnalysis.level = currentLevel;
+        switchTab('summary');
+        return;
+    }
+    
+    console.log('⚠️ 하드코딩 데이터 없음, API 호출 필요');
+    
+    // ✅ 2순위: LocalStorage 캐시 확인
     const cacheKey = `analysis_${storyId}_${currentLevel}`;
     const cachedAnalysis = localStorage.getItem(cacheKey);
     
-    // 캐시된 분석 결과가 있으면 즉시 표시
     if (cachedAnalysis) {
         try {
             currentAnalysis = JSON.parse(cachedAnalysis);
-            console.log('✅ 캐시된 분석 결과 로드 (즉시 표시)');
+            console.log('✅ LocalStorage 캐시 로드 (즉시 표시)');
             switchTab('summary');
             return;
         } catch (e) {
-            console.log('캐시 파싱 오류, 새로 분석합니다.');
+            console.log('⚠️ 캐시 파싱 오류, 새로 분석합니다.');
             localStorage.removeItem(cacheKey);
         }
     }
     
-    // 캐시가 없으면 AI 분석 시작
+    // ✅ 캐시가 없으면 로딩 표시 후 AI 분석 시작
+    console.log('📊 AI 분석 시작 (캐시 없음)');
     contentEl.innerHTML = `
         <div class="loading">
             <img src="img/loading.png" alt="Loading" class="loading-image">
-            <p>데이터를 로드합니다...</p>
+            <p>AI가 동화를 분석하는 중...</p>
+            <p style="font-size: 14px; color: #999; margin-top: 8px;">처음 로드 시에만 시간이 걸립니다</p>
         </div>
     `;
 
@@ -643,11 +722,13 @@ function switchTab(tabName) {
     // 콘텐츠 렌더링
     const contentEl = document.getElementById('learningContent');
     
+    // ✅ currentAnalysis가 없을 때만 로딩 표시 (즉시 렌더링 우선)
     if (!currentAnalysis) {
-        contentEl.innerHTML = '<div class="loading"><img src="img/loading.png" alt="Loading" class="loading-image"><p>데이터를 로드합니다...</p></div>';
+        contentEl.innerHTML = '<div class="loading"><img src="img/loading.png" alt="Loading" class="loading-image"><p>분석 중...</p></div>';
         return;
     }
 
+    // ✅ 즉시 렌더링 (로딩 없음)
     switch(tabName) {
         case 'summary':
             renderSummary();
@@ -680,35 +761,36 @@ function switchTab(tabName) {
 // [5] 각 탭 렌더링
 // ============================================================================
 function renderSummary() {
+    console.log('📄 요약 렌더링 시작 (즉시 표시)');
     const contentEl = document.getElementById('learningContent');
+    
+    // ✅ 음성 재생 버튼 제거 (텍스트만 표시)
     contentEl.innerHTML = `
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-            <div class="section-title" style="margin-bottom: 0;">이야기 요약</div>
-            <button class="play-btn-circle" id="summaryPlayBtn" onclick="togglePlay('summary', '${escapeQuotes(currentAnalysis.summary)}', this)">
-                ▶
-            </button>
-        </div>
+        <div class="section-title">이야기 요약</div>
         <div class="content-box">
             ${currentAnalysis.summary || '요약 정보가 없습니다.'}
         </div>
         <div class="bottom-spacer"></div>
     `;
+    
+    console.log('✅ 요약 렌더링 완료 (텍스트만, 음성 버튼 없음)');
 }
 
 function renderFullStory() {
     const contentEl = document.getElementById('learningContent');
     const fullText = currentStory.full_text || '';
+    const storyId = currentStory.id;
     
     console.log('📖 전체 이야기 렌더링:', {
+        storyId: storyId,
         textLength: fullText.length,
-        useGoogleTTS: useGoogleTTS,
-        selectedVoice: selectedGoogleVoice
+        audioPath: `audio/full-stories/story-${storyId}.mp3`
     });
     
     contentEl.innerHTML = `
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
             <div class="section-title" style="margin-bottom: 0;">전체 이야기 듣기</div>
-            <button class="play-btn-circle" id="fullStoryPlayBtn" onclick="console.log('🎯 전체듣기 버튼 클릭!'); togglePlay('fullStory', '${escapeQuotes(fullText)}', this)">
+            <button class="play-btn-circle" id="fullStoryPlayBtn" onclick="playFullStoryAudio(${storyId}, this)">
                 ▶
             </button>
         </div>
@@ -1697,6 +1779,76 @@ function stopTTS() {
     
     // 로딩 메시지 숨김
     hideLoadingMessage();
+}
+
+/**
+ * 전체 이야기 듣기 전용 - 로컬 MP3 파일 재생
+ * 다른 TTS 기능(문단별 읽기, 어휘, 문법)은 ElevenLabs API를 계속 사용
+ */
+function playFullStoryAudio(storyId, buttonElement) {
+    const audioPath = `audio/full-stories/story-${storyId}.mp3`;
+    
+    console.log(`🎵 전체 듣기 MP3 재생 시작: ${audioPath}`);
+    
+    // 이미 재생 중이면 정지
+    if (fullStoryAudio && !fullStoryAudio.paused) {
+        console.log('⏸ 재생 중지');
+        fullStoryAudio.pause();
+        fullStoryAudio.currentTime = 0;
+        fullStoryAudio = null;
+        buttonElement.innerHTML = '▶';
+        return;
+    }
+    
+    // 새 오디오 객체 생성
+    fullStoryAudio = new Audio(audioPath);
+    
+    // 로딩 중 표시
+    buttonElement.innerHTML = '⏳';
+    buttonElement.disabled = true;
+    
+    // 재생 준비 완료
+    fullStoryAudio.addEventListener('canplaythrough', () => {
+        console.log('✅ 오디오 로드 완료, 재생 가능');
+        buttonElement.innerHTML = '⏸';
+        buttonElement.disabled = false;
+    }, { once: true });
+    
+    // 재생 시작
+    fullStoryAudio.play()
+        .then(() => {
+            console.log('✅ 재생 시작됨');
+            buttonElement.innerHTML = '⏸';
+            buttonElement.disabled = false;
+        })
+        .catch(error => {
+            console.error('❌ 오디오 재생 실패:', error);
+            alert(`오디오 파일을 재생할 수 없습니다.\n파일 경로: ${audioPath}\n\n파일이 존재하는지 확인해 주세요.`);
+            buttonElement.innerHTML = '▶';
+            buttonElement.disabled = false;
+            fullStoryAudio = null;
+        });
+    
+    // 재생 완료 시
+    fullStoryAudio.addEventListener('ended', () => {
+        console.log('✅ 재생 완료');
+        buttonElement.innerHTML = '▶';
+        fullStoryAudio = null;
+    }, { once: true });
+    
+    // 에러 처리
+    fullStoryAudio.addEventListener('error', (e) => {
+        console.error('❌ 오디오 로드 에러:', e);
+        console.error('에러 상세:', {
+            error: e.target.error,
+            code: e.target.error?.code,
+            message: e.target.error?.message
+        });
+        alert(`오디오 파일을 찾을 수 없습니다.\n\n파일명: story-${storyId}.mp3\n경로: audio/full-stories/\n\nMP3 파일을 해당 폴더에 추가해 주세요.`);
+        buttonElement.innerHTML = '▶';
+        buttonElement.disabled = false;
+        fullStoryAudio = null;
+    }, { once: true });
 }
 
 // ============================================================================
