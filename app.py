@@ -378,9 +378,13 @@ def analyze_story(story_id):
     print(f"📚 동화 제목: {title} (원본: {base_title})", flush=True)
     
     # ✅ 1순위: 사전 생성된 분석 데이터 확인 (0.1초 이내)
-    if base_title in PRECOMPUTED_ANALYSIS and level in PRECOMPUTED_ANALYSIS[base_title]:
-        print(f"✅ [캐시 HIT] {base_title} - {level} (사전 생성 데이터)", flush=True)
-        result = PRECOMPUTED_ANALYSIS[base_title][level].copy()
+    # 매칭 키 생성: 공백 제거 + "의비밀" 추가
+    matching_key = base_title.replace(" ", "") + ("의비밀" if not base_title.endswith("의 비밀") else "")
+    print(f"🔑 매칭 키: '{matching_key}' (원본: '{base_title}')", flush=True)
+    
+    if matching_key in PRECOMPUTED_ANALYSIS and level in PRECOMPUTED_ANALYSIS[matching_key]:
+        print(f"✅ [캐시 HIT] {matching_key} - {level} (사전 생성 데이터)", flush=True)
+        result = PRECOMPUTED_ANALYSIS[matching_key][level].copy()
         result['story_id'] = story_id
         result['title'] = title
         result['level'] = level
@@ -859,11 +863,9 @@ def record_study_session():
             'story_id': story_id,
             'story_title': story_title,
             'level': level,
-            'paragraph_num': paragraph_num,
             'quiz_score': quiz_score,
-            'pronunciation_score': pronunciation_score,
-            'session_type': session_type,
-            'study_date': 'now()'
+            'pronunciation_score': pronunciation_score
+            # study_date와 created_at은 Supabase에서 자동 생성 (DEFAULT NOW())
         }).execute()
         
         print(f"✅ 학습 기록 저장 완료: {story_title} ({session_type})", flush=True)
@@ -1023,7 +1025,7 @@ JSON 형식으로 응답:
 def get_user_coins(user_id):
     """사용자 코인 조회"""
     if not supabase_client:
-        return jsonify({"total_coins": 0, "error": "Supabase가 설정되지 않았습니다"}), 503
+        return jsonify({"coins": 100, "error": "Supabase가 설정되지 않았습니다"}), 503
     
     try:
         result = supabase_client.table('user_coins')\
@@ -1032,16 +1034,79 @@ def get_user_coins(user_id):
             .execute()
         
         if result.data and len(result.data) > 0:
-            return jsonify({"total_coins": result.data[0]['total_coins']})
+            return jsonify({"coins": result.data[0]['total_coins']})
         else:
-            # 사용자 코인 데이터가 없으면 0으로 초기화
+            # 코인 데이터가 없으면 생성 (초기 100 코인)
             supabase_client.table('user_coins').insert({
                 'user_id': user_id,
-                'total_coins': 0
+                'total_coins': 100
             }).execute()
-            return jsonify({"total_coins": 0})
+            return jsonify({"coins": 100})
     except Exception as e:
-        return jsonify({"error": str(e), "total_coins": 0}), 500
+        print(f"❌ 코인 조회 오류: {e}", flush=True)
+        return jsonify({"error": str(e), "coins": 100}), 500
+
+
+@app.route('/api/user/<user_id>/coins', methods=['POST'])
+def update_user_coins(user_id):
+    """사용자 코인 업데이트"""
+    if not supabase_client:
+        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    
+    data = request.get_json() or {}
+    amount = data.get('amount', 0)  # 양수: 획득, 음수: 소비
+    transaction_type = data.get('type', 'manual')
+    description = data.get('description', '')
+    story_id = data.get('story_id')
+    paragraph_num = data.get('paragraph_num')
+    
+    try:
+        # 현재 코인 조회
+        result = supabase_client.table('user_coins')\
+            .select('total_coins')\
+            .eq('user_id', user_id)\
+            .execute()
+        
+        if not result.data or len(result.data) == 0:
+            # 코인 데이터 생성
+            supabase_client.table('user_coins').insert({
+                'user_id': user_id,
+                'total_coins': 100
+            }).execute()
+            current_coins = 100
+        else:
+            current_coins = result.data[0]['total_coins']
+        
+        new_coins = max(0, current_coins + amount)
+        
+        # 코인 업데이트
+        supabase_client.table('user_coins')\
+            .update({'total_coins': new_coins, 'updated_at': datetime.now().isoformat()})\
+            .eq('user_id', user_id)\
+            .execute()
+        
+        # 거래 내역 저장
+        supabase_client.table('coin_transactions').insert({
+            'user_id': user_id,
+            'amount': amount,
+            'type': transaction_type,
+            'description': description,
+            'story_id': story_id,
+            'paragraph_num': paragraph_num
+        }).execute()
+        
+        print(f"💰 코인 업데이트: {current_coins} → {new_coins} ({amount:+d})", flush=True)
+        
+        return jsonify({
+            "success": True,
+            "coins": new_coins,
+            "previous": current_coins,
+            "change": amount
+        })
+        
+    except Exception as e:
+        print(f"❌ 코인 업데이트 오류: {e}", flush=True)
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route('/api/quiz/retry', methods=['POST'])
