@@ -1,11 +1,20 @@
-# 환경 변수 및 API 키
+# 환경 변수 및 API 키 (절대 커밋 금지!)
 .env
+.env.*
+start_server.sh
+cloudtext2speechapi.json
+*_api_key*
+*credentials*.json
+*.pem
+*.key
+
+# JSON 파일 (분석 데이터는 예외)
 *.json
 !package.json
 !analysis_data.json
+!stories_data_final.json
+!stories_precomputed.json
 !stories/*.docx
-start_server.sh
-cloudtext2speechapi.json
 
 # Python
 __pycache__/
