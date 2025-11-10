@@ -13,7 +13,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #6FCF97 0%, #4A90E2 100%);
+            background: #000;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -190,10 +190,36 @@
             font-size: 14px;
             font-weight: 600;
             backdrop-filter: blur(10px);
+            z-index: 10;
         }
 
         .skip-btn:hover {
             background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            z-index: 10;
+            display: none;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .back-btn.visible {
+            display: block;
         }
 
         /* 애니메이션 */
@@ -220,6 +246,7 @@
 </head>
 <body>
     <div class="onboarding-container">
+        <button class="back-btn" id="backBtn" onclick="prevSlide()">← 뒤로</button>
         <button class="skip-btn" onclick="skipOnboarding()">건너뛰기</button>
         
         <div class="slides-wrapper" id="slidesWrapper">
@@ -336,6 +363,14 @@
             dots.forEach((dot, index) => {
                 dot.classList.toggle('active', index === currentSlide);
             });
+            
+            // 뒤로가기 버튼 표시 제어 (첫 페이지가 아닐 때만 표시)
+            const backBtn = document.getElementById('backBtn');
+            if (currentSlide > 0) {
+                backBtn.classList.add('visible');
+            } else {
+                backBtn.classList.remove('visible');
+            }
         }
 
         function skipOnboarding() {
