@@ -82,9 +82,10 @@ let userCoins = 50;  // 사용자 코인 (초기: 50개)
 let ttsVoice = null;
 let allVoices = [];
 let selectedVoiceIndex = -1;
-let useGoogleTTS = true;  // Google Cloud TTS 사용 여부 (기본: Anna)
-let googleTTSVoices = [];  // Google TTS 음성 목록
+let useGoogleTTS = true;  // 백엔드 TTS 사용 여부 (true: ElevenLabs/Google, false: 브라우저 기본)
+let googleTTSVoices = [];  // 백엔드 TTS 음성 목록 (ElevenLabs + Google)
 // ✅ 기본 음성: ElevenLabs Anna (최고 품질, 프리미엄)
+// ❌ Google Cloud TTS는 사용하지 않음 (환경변수 미설정)
 let selectedGoogleVoice = 'uyVNoMrnUku1dZyVEXwD';
 let currentAudio = null;  // 현재 재생 중인 오디오
 let isPlaying = false;  // 재생 상태

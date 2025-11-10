@@ -570,7 +570,7 @@ def get_tts_voices():
 def text_to_speech():
     """
     텍스트를 음성으로 변환하여 반환
-    Google TTS (fallback) + ElevenLabs (프리미엄)
+    ElevenLabs TTS만 사용 (Google TTS 제거)
     """
     data = request.get_json() or {}
     text = data.get('text', '')
@@ -584,114 +584,60 @@ def text_to_speech():
     if len(text) > 5000:
         text = text[:5000]
     
-    # ✅ Voice ID로 Provider 감지
-    is_elevenlabs = not voice_id.startswith('ko-KR')
-    
     # ============================================================================
-    # ElevenLabs TTS (프리미엄)
+    # ElevenLabs TTS (유일한 TTS)
     # ============================================================================
-    if is_elevenlabs:
-        try:
-            import requests as http_requests
-            
-            elevenlabs_api_key = os.environ.get('ELEVENLABS_API_KEY')
-            if not elevenlabs_api_key:
-                print("⚠️ ELEVENLABS_API_KEY 없음, Google TTS로 fallback", flush=True)
-                # Fallback to Google
-                voice_id = 'ko-KR-Studio-A'
-                is_elevenlabs = False
-            else:
-                print(f"🎤 ElevenLabs TTS 호출: voice={voice_id}", flush=True)
-                
-                url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
-                headers = {
-                    "xi-api-key": elevenlabs_api_key,
-                    "Content-Type": "application/json"
-                }
-                payload = {
-                    "text": text,
-                    "model_id": "eleven_multilingual_v2",
-                    "voice_settings": {
-                        "stability": 0.6,
-                        "similarity_boost": 0.8,
-                        "style": 0.0,
-                        "use_speaker_boost": True
-                    }
-                }
-                
-                response = http_requests.post(url, json=payload, headers=headers, timeout=30)
-                
-                if response.status_code == 200:
-                    # MP3 데이터를 Base64로 인코딩
-                    audio_base64 = base64.b64encode(response.content).decode('utf-8')
-                    print(f"✅ ElevenLabs 음성 생성 완료: {len(text)}자", flush=True)
-                    
-                    return jsonify({
-                        "audio": audio_base64,
-                        "voice": voice_id,
-                        "provider": "elevenlabs",
-                        "text_length": len(text)
-                    })
-                else:
-                    print(f"❌ ElevenLabs API 오류: {response.status_code}", flush=True)
-                    print(f"응답: {response.text}", flush=True)
-                    # Fallback to Google
-                    voice_id = 'ko-KR-Studio-A'
-                    is_elevenlabs = False
-                    
-        except Exception as e:
-            print(f"❌ ElevenLabs 오류: {e}", flush=True)
-            # Fallback to Google
-            voice_id = 'ko-KR-Studio-A'
-            is_elevenlabs = False
-    
-    # ============================================================================
-    # Google Cloud TTS (Fallback)
-    # ============================================================================
-    if not is_elevenlabs:
-        if not tts_client:
-            return jsonify({"error": "TTS 서비스가 설정되지 않았습니다"}), 503
+    try:
+        import requests as http_requests
         
-        try:
-            print(f"🎤 Google TTS 호출: voice={voice_id}", flush=True)
-            
-            # 음성 합성 입력 설정
-            synthesis_input = texttospeech.SynthesisInput(text=text)
-            
-            # 음성 설정
-            voice = texttospeech.VoiceSelectionParams(
-                language_code="ko-KR",
-                name=voice_id
-            )
-            
-            # 오디오 설정
-            audio_config = texttospeech.AudioConfig(
-                audio_encoding=texttospeech.AudioEncoding.MP3,
-                speaking_rate=speaking_rate,
-                pitch=0.0
-            )
-            
-            # 음성 합성 요청
-            response = tts_client.synthesize_speech(
-                input=synthesis_input,
-                voice=voice,
-                audio_config=audio_config
-            )
-            
-            # Base64로 인코딩하여 반환
-            audio_base64 = base64.b64encode(response.audio_content).decode('utf-8')
-            print(f"✅ Google TTS 음성 생성 완료: {len(text)}자", flush=True)
+        elevenlabs_api_key = os.environ.get('ELEVENLABS_API_KEY')
+        if not elevenlabs_api_key:
+            print("❌ ELEVENLABS_API_KEY 없음", flush=True)
+            return jsonify({"error": "ElevenLabs API 키가 설정되지 않았습니다"}), 503
+        
+        print(f"🎤 ElevenLabs TTS 호출: voice={voice_id}, text={len(text)}자", flush=True)
+        
+        url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
+        headers = {
+            "xi-api-key": elevenlabs_api_key,
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "text": text,
+            "model_id": "eleven_multilingual_v2",
+            "voice_settings": {
+                "stability": 0.6,
+                "similarity_boost": 0.8,
+                "style": 0.0,
+                "use_speaker_boost": True
+            }
+        }
+        
+        response = http_requests.post(url, json=payload, headers=headers, timeout=30)
+        
+        if response.status_code == 200:
+            # MP3 데이터를 Base64로 인코딩
+            audio_base64 = base64.b64encode(response.content).decode('utf-8')
+            print(f"✅ ElevenLabs 음성 생성 완료: {len(text)}자", flush=True)
             
             return jsonify({
                 "audio": audio_base64,
                 "voice": voice_id,
-                "provider": "google",
+                "provider": "elevenlabs",
                 "text_length": len(text)
             })
-            
-        except Exception as e:
-            print(f"❌ Google TTS 오류: {e}", flush=True)
-            return jsonify({"error": f"음성 합성 오류: {str(e)}"}), 500
+        else:
+            error_msg = f"ElevenLabs API 오류: {response.status_code}"
+            print(f"❌ {error_msg}", flush=True)
+            print(f"응답: {response.text}", flush=True)
+            return jsonify({"error": error_msg, "details": response.text}), response.status_code
+                
+    except Exception as e:
+        error_msg = f"ElevenLabs TTS 오류: {str(e)}"
+        print(f"❌ {error_msg}", flush=True)
+        import traceback
+        print(traceback.format_exc(), flush=True)
+        return jsonify({"error": error_msg}), 500
 
 
 @app.route('/api/story/<int:story_id>/quiz', methods=['POST'])
