@@ -1584,12 +1584,23 @@ async function togglePlay(id, text, buttonElement) {
 
 /**
  * 한국어만 추출하는 필터 함수
- * 영어 단어는 TTS가 어색하게 읽으므로 제거
+ * 영어 단어와 괄호 안의 번역을 TTS가 어색하게 읽으므로 제거
  */
 function filterKoreanOnly(text) {
-    // 영어 알파벳만 제거 (숫자, 특수문자는 유지)
-    // 예: "Hello 안녕하세요" → "안녕하세요"
-    return text.replace(/[A-Za-z]+/g, '').trim();
+    // 1. 괄호와 그 안의 내용을 모두 제거 (영문 번역 제거)
+    // 예: "나는 그림을 잘 그려. (I'm good at drawing)" → "나는 그림을 잘 그려."
+    text = text.replace(/\([^)]*\)/g, '');
+    
+    // 2. 대괄호와 그 안의 내용도 제거 (혹시 모를 경우 대비)
+    text = text.replace(/\[[^\]]*\]/g, '');
+    
+    // 3. 영어 알파벳 제거
+    text = text.replace(/[A-Za-z]+/g, '');
+    
+    // 4. 연속된 공백을 하나로
+    text = text.replace(/\s+/g, ' ');
+    
+    return text.trim();
 }
 
 async function speakText(text) {
