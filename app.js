@@ -76,7 +76,7 @@ let PRECOMPUTED_ANALYSIS = {};  // 하드코딩된 분석 데이터 (즉시 로�
 // 사용자 정보
 let currentUserId = localStorage.getItem('userId') || '00000000-0000-0000-0000-000000000001';  // 테스트 사용자
 let completedTabs = new Set();  // 완료한 탭 추적
-let userCoins = 100;  // 사용자 코인 (초기: 100개)
+let userCoins = 50;  // 사용자 코인 (초기: 50개)
 
 // TTS 설정
 let ttsVoice = null;
@@ -142,9 +142,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ✅ 온보딩 체크 (첫 방문자)
     checkOnboarding();
     
-    // ✅ 코인 초기화 - 무조건 100으로 리셋
-    userCoins = 100;
-    localStorage.setItem('userCoins', '100');
+    // ✅ 코인 초기화 - 서버에서 코인 불러오기
+    await loadUserCoins();
     
     // 즉시 헤더에 표시
     const coinAmount = document.getElementById('coinAmount');
@@ -218,11 +217,15 @@ async function loadUserCoins() {
     try {
         const response = await fetch(`${API_BASE}/user/${currentUserId}/coins`);
         const data = await response.json();
-        userCoins = data.total_coins || 0;
+        userCoins = data.coins || 50;  // 서버에서 받은 코인 (기본 50)
+        localStorage.setItem('userCoins', userCoins);
         updateCoinDisplay();
+        console.log('💰 코인 로드 완료:', userCoins);
     } catch (error) {
         console.log('⚠️ 코인 로드 실패:', error.message);
-        userCoins = 0;
+        userCoins = 50;  // 실패 시 기본 50 코인
+        localStorage.setItem('userCoins', '50');
+        updateCoinDisplay();
     }
 }
 
