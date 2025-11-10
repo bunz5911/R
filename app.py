@@ -1023,9 +1023,9 @@ JSON 형식으로 응답:
 
 @app.route('/api/user/<user_id>/coins', methods=['GET'])
 def get_user_coins(user_id):
-    """사용자 코인 조회"""
+    """사용자 코인 조회 (초기 50코인)"""
     if not supabase_client:
-        return jsonify({"coins": 100, "error": "Supabase가 설정되지 않았습니다"}), 503
+        return jsonify({"coins": 50, "error": "Supabase가 설정되지 않았습니다"}), 503
     
     try:
         result = supabase_client.table('user_coins')\
@@ -1034,17 +1034,29 @@ def get_user_coins(user_id):
             .execute()
         
         if result.data and len(result.data) > 0:
-            return jsonify({"coins": result.data[0]['total_coins']})
+            current_coins = result.data[0]['total_coins']
+            
+            # ✅ 코인이 0이면 50으로 리셋 (신규 사용자 또는 초기화)
+            if current_coins == 0:
+                supabase_client.table('user_coins')\
+                    .update({'total_coins': 50})\
+                    .eq('user_id', user_id)\
+                    .execute()
+                print(f"💰 사용자 {user_id} 코인 초기화: 0 → 50", flush=True)
+                return jsonify({"coins": 50})
+            
+            return jsonify({"coins": current_coins})
         else:
-            # 코인 데이터가 없으면 생성 (초기 100 코인)
+            # 코인 데이터가 없으면 생성 (초기 50 코인)
             supabase_client.table('user_coins').insert({
                 'user_id': user_id,
-                'total_coins': 100
+                'total_coins': 50
             }).execute()
-            return jsonify({"coins": 100})
+            print(f"💰 신규 사용자 {user_id} 코인 생성: 50개", flush=True)
+            return jsonify({"coins": 50})
     except Exception as e:
         print(f"❌ 코인 조회 오류: {e}", flush=True)
-        return jsonify({"error": str(e), "coins": 100}), 500
+        return jsonify({"error": str(e), "coins": 50}), 500
 
 
 @app.route('/api/user/<user_id>/coins', methods=['POST'])
@@ -1068,12 +1080,12 @@ def update_user_coins(user_id):
             .execute()
         
         if not result.data or len(result.data) == 0:
-            # 코인 데이터 생성
+            # 코인 데이터 생성 (초기 50코인)
             supabase_client.table('user_coins').insert({
                 'user_id': user_id,
-                'total_coins': 100
+                'total_coins': 50
             }).execute()
-            current_coins = 100
+            current_coins = 50
         else:
             current_coins = result.data[0]['total_coins']
         
