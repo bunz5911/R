@@ -3,6 +3,7 @@
 .env.*
 start_server.sh
 cloudtext2speechapi.json
+config.js
 *_api_key*
 *credentials*.json
 *.pem

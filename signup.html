@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원가입 - Read Aloud Korean</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
     <style>
         * {
             margin: 0;
@@ -411,6 +413,74 @@
 
     <script>
         const API_BASE = 'http://localhost:8080/api';
+        
+        let supabase = null;
+        
+        // Supabase 초기화 (설정된 경우만)
+        if (typeof CONFIG !== 'undefined' && CONFIG.SUPABASE_URL && CONFIG.SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
+            supabase = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+            console.log('✅ Supabase 클라이언트 초기화 완료');
+            
+            // OAuth 콜백 처리
+            handleOAuthCallback();
+        }
+
+        // OAuth 콜백 처리 (Google 회원가입 후 리다이렉트)
+        async function handleOAuthCallback() {
+            if (!supabase) return;
+            
+            const hashParams = new URLSearchParams(window.location.hash.substring(1));
+            const accessToken = hashParams.get('access_token');
+            const refreshToken = hashParams.get('refresh_token');
+            
+            if (accessToken) {
+                try {
+                    const { data: { user }, error } = await supabase.auth.getUser(accessToken);
+                    
+                    if (user && !error) {
+                        // 프로필 확인/생성
+                        const { data: profiles } = await supabase
+                            .from('profiles')
+                            .select('*')
+                            .eq('id', user.id);
+                        
+                        if (!profiles || profiles.length === 0) {
+                            // 신규 Google 사용자 - 프로필 생성
+                            await supabase.from('profiles').insert({
+                                id: user.id,
+                                email: user.email,
+                                display_name: user.user_metadata?.full_name || user.email.split('@')[0],
+                                avatar_url: user.user_metadata?.avatar_url,
+                                plan: 'free',
+                                coins: 10,
+                                role: 'user'
+                            });
+                            
+                            await supabase.from('user_coins').insert({
+                                user_id: user.id,
+                                total_coins: 10
+                            });
+                        }
+                        
+                        localStorage.setItem('access_token', accessToken);
+                        localStorage.setItem('refresh_token', refreshToken);
+                        localStorage.setItem('userId', user.id);
+                        localStorage.setItem('userEmail', user.email);
+                        localStorage.setItem('displayName', user.user_metadata?.full_name || user.email.split('@')[0]);
+                        localStorage.setItem('userPlan', profiles && profiles.length > 0 ? profiles[0].plan : 'free');
+                        
+                        // 플랜 선택 화면 표시
+                        showPlanSelection({
+                            id: user.id,
+                            email: user.email,
+                            display_name: user.user_metadata?.full_name || user.email.split('@')[0]
+                        });
+                    }
+                } catch (error) {
+                    console.error('OAuth 콜백 처리 오류:', error);
+                }
+            }
+        }
 
         // 회원가입 폼 제출
         document.getElementById('signupForm').addEventListener('submit', async (e) => {
@@ -530,14 +600,33 @@
 
         // Google 회원가입
         async function signupWithGoogle() {
-            showError('Google 회원가입은 준비 중입니다');
-            // TODO: Supabase Google OAuth 구현
+            if (!supabase) {
+                showError('Google 로그인 설정이 필요합니다. config.js 파일을 확인하세요.');
+                return;
+            }
+            
+            try {
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: window.location.origin + '/signup.html'
+                    }
+                });
+                
+                if (error) {
+                    console.error('Google 회원가입 오류:', error);
+                    showError('Google 회원가입에 실패했습니다: ' + error.message);
+                }
+                // 성공 시 Google 로그인 페이지로 자동 리다이렉트됨
+            } catch (error) {
+                console.error('Google 회원가입 오류:', error);
+                showError('Google 회원가입에 실패했습니다');
+            }
         }
 
         // 카카오 회원가입
         async function signupWithKakao() {
-            showError('카카오 회원가입은 준비 중입니다');
-            // TODO: 카카오 OAuth 구현
+            alert('카카오 회원가입은 곧 출시됩니다!\n\n현재는 Google 또는 이메일로 가입해주세요.');
         }
 
         // 에러 메시지 표시
