@@ -3354,6 +3354,9 @@ async function evaluatePronunciation() {
 
         const result = await response.json();
         
+        // 문장 연습 미션 진행도 체크 (발음 평가 완료)
+        await checkMissionProgress('sentence', 1);
+        
         const contentEl = document.getElementById('learningContent');
         contentEl.innerHTML = `
             <div class="section-title">발음 평가 결과</div>
@@ -3759,6 +3762,9 @@ async function analyzeKContent() {
         hideLoadingMessage();
         showKContentResult(analysisData, contentText, sourceTitle);
         
+        // K-콘텐츠 미션 진행도 체크
+        await checkMissionProgress('k_content', 1);
+        
         // 코인 지급 (K-콘텐츠 추가 보상)
         await updateCoins(10, 'k_content_added', 'K-콘텐츠 추가');
         showToast('💰 +10 코인 획득!');
@@ -4145,6 +4151,7 @@ async function checkAuthStatus() {
 function updateAuthUI() {
     const authBtn = document.getElementById('authBtn');
     const userInfo = document.getElementById('userInfo');
+    const adminBtn = document.getElementById('adminBtn');
     
     if (!authBtn) return;
     
@@ -4158,6 +4165,11 @@ function updateAuthUI() {
             userInfo.textContent = `${currentDisplayName}님`;
             userInfo.style.display = 'block';
         }
+        
+        // 관리자 버튼 표시 (bunz5911@gmail.com만)
+        if (adminBtn && currentUserEmail === 'bunz5911@gmail.com') {
+            adminBtn.style.display = 'block';
+        }
     } else {
         // 비로그인 상태
         authBtn.textContent = '로그인';
@@ -4166,6 +4178,11 @@ function updateAuthUI() {
         
         if (userInfo) {
             userInfo.style.display = 'none';
+        }
+        
+        // 관리자 버튼 숨김
+        if (adminBtn) {
+            adminBtn.style.display = 'none';
         }
     }
 }
@@ -4440,5 +4457,116 @@ function closeCheckinModal() {
     if (modal) {
         modal.remove();
     }
+}
+
+// 미션 자동 완료 검증
+async function checkMissionProgress(missionType, count = 1) {
+    // 로그인하지 않았으면 스킵
+    if (!isAuthenticated) return;
+    
+    try {
+        // 오늘의 미션 조회
+        const response = await fetch(`${API_BASE}/missions/daily?user_id=${currentUserId}`);
+        const data = await response.json();
+        
+        if (!data.success || !data.missions) return;
+        
+        // 해당 타입의 미션 찾기
+        const mission = data.missions.find(m => m.mission_type === missionType && !m.completed);
+        
+        if (!mission) return;
+        
+        // 미션 진행도 업데이트
+        const completeResponse = await fetch(`${API_BASE}/missions/complete`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: currentUserId,
+                mission_id: mission.id,
+                progress: count
+            })
+        });
+        
+        const completeData = await completeResponse.json();
+        
+        if (completeData.success && completeData.completed) {
+            // 미션 완료 알림
+            showMissionCompleteNotification(mission.title, completeData.coins_earned);
+            
+            // 코인 업데이트
+            await loadUserCoins();
+        }
+        
+    } catch (error) {
+        console.error('미션 진행도 체크 오류:', error);
+    }
+}
+
+// 미션 완료 알림
+function showMissionCompleteNotification(missionTitle, coins) {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        color: white;
+        padding: 16px 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4);
+        z-index: 9999;
+        animation: slideInRight 0.3s ease;
+        max-width: 300px;
+    `;
+    
+    notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="font-size: 32px;">✓</div>
+            <div>
+                <div style="font-size: 14px; font-weight: 700; margin-bottom: 4px;">미션 완료!</div>
+                <div style="font-size: 13px; opacity: 0.95;">${missionTitle}</div>
+                <div style="font-size: 13px; opacity: 0.95; margin-top: 4px;">🟡 +${coins}코인</div>
+            </div>
+        </div>
+    `;
+    
+    // 애니메이션 추가
+    if (!document.getElementById('slideInRightAnimation')) {
+        const style = document.createElement('style');
+        style.id = 'slideInRightAnimation';
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    document.body.appendChild(notification);
+    
+    // 3초 후 제거
+    setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease';
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 3000);
 }
 

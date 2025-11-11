@@ -2086,6 +2086,245 @@ def complete_mission():
 
 
 # ============================================================================
+# 관리자 API (bunz5911@gmail.com 전용)
+# ============================================================================
+
+def check_admin_permission(user_id):
+    """관리자 권한 확인"""
+    if not supabase_client:
+        return False
+    
+    try:
+        profile_result = supabase_client.table('profiles')\
+            .select('email, role')\
+            .eq('id', user_id)\
+            .execute()
+        
+        if profile_result.data and len(profile_result.data) > 0:
+            profile = profile_result.data[0]
+            return profile.get('email') == 'bunz5911@gmail.com' and profile.get('role') == 'supervisor'
+        
+        return False
+    except Exception as e:
+        print(f"⚠️ 권한 확인 오류: {e}", flush=True)
+        return False
+
+
+@app.route('/api/admin/users', methods=['GET'])
+def admin_get_users():
+    """
+    관리자 전용: 회원 목록 조회
+    Query params: page, limit, search
+    Header: Authorization: Bearer <access_token>
+    """
+    if not supabase_client:
+        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    
+    # 권한 확인
+    auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return jsonify({"error": "인증이 필요합니다"}), 401
+    
+    try:
+        access_token = auth_header.replace('Bearer ', '')
+        user_response = supabase_client.auth.get_user(access_token)
+        
+        if not user_response or not user_response.user:
+            return jsonify({"error": "유효하지 않은 토큰입니다"}), 401
+        
+        user_id = user_response.user.id
+        
+        # 관리자 권한 확인
+        if not check_admin_permission(user_id):
+            return jsonify({"error": "관리자 권한이 필요합니다"}), 403
+        
+        # 회원 목록 조회
+        page = int(request.args.get('page', 1))
+        limit = int(request.args.get('limit', 50))
+        search = request.args.get('search', '')
+        
+        offset = (page - 1) * limit
+        
+        query = supabase_client.table('profiles').select('*')
+        
+        if search:
+            query = query.or_(f'email.ilike.%{search}%,display_name.ilike.%{search}%')
+        
+        result = query.order('created_at', desc=True)\
+            .range(offset, offset + limit - 1)\
+            .execute()
+        
+        # 전체 회원 수
+        count_result = supabase_client.table('profiles')\
+            .select('id', count='exact')\
+            .execute()
+        
+        total = count_result.count if count_result.count else 0
+        
+        return jsonify({
+            "success": True,
+            "users": result.data,
+            "total": total,
+            "page": page,
+            "limit": limit
+        })
+        
+    except Exception as e:
+        print(f"❌ 회원 목록 조회 오류: {e}", flush=True)
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/admin/stats', methods=['GET'])
+def admin_get_stats():
+    """
+    관리자 전용: 통계 조회
+    Header: Authorization: Bearer <access_token>
+    """
+    if not supabase_client:
+        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    
+    # 권한 확인
+    auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return jsonify({"error": "인증이 필요합니다"}), 401
+    
+    try:
+        access_token = auth_header.replace('Bearer ', '')
+        user_response = supabase_client.auth.get_user(access_token)
+        
+        if not user_response or not user_response.user:
+            return jsonify({"error": "유효하지 않은 토큰입니다"}), 401
+        
+        user_id = user_response.user.id
+        
+        # 관리자 권한 확인
+        if not check_admin_permission(user_id):
+            return jsonify({"error": "관리자 권한이 필요합니다"}), 403
+        
+        from datetime import date, timedelta
+        today = date.today()
+        last_30_days = today - timedelta(days=30)
+        
+        # 전체 회원 수
+        total_users = supabase_client.table('profiles')\
+            .select('id', count='exact')\
+            .execute()
+        
+        # 신규 회원 (최근 30일)
+        new_users = supabase_client.table('profiles')\
+            .select('id', count='exact')\
+            .gte('created_at', last_30_days.isoformat())\
+            .execute()
+        
+        # 플랜별 회원 수
+        free_users = supabase_client.table('profiles')\
+            .select('id', count='exact')\
+            .eq('plan', 'free')\
+            .execute()
+        
+        pro_users = supabase_client.table('profiles')\
+            .select('id', count='exact')\
+            .eq('plan', 'pro')\
+            .execute()
+        
+        premier_users = supabase_client.table('profiles')\
+            .select('id', count='exact')\
+            .eq('plan', 'premier')\
+            .execute()
+        
+        # 활성 사용자 (최근 7일 내 출석)
+        last_7_days = today - timedelta(days=7)
+        active_users = supabase_client.table('streak_history')\
+            .select('user_id', count='exact')\
+            .gte('date', last_7_days.isoformat())\
+            .execute()
+        
+        # 총 코인 발행량
+        total_coins_result = supabase_client.table('coin_transactions')\
+            .select('amount')\
+            .gte('amount', 0)\
+            .execute()
+        
+        total_coins_issued = sum(t['amount'] for t in total_coins_result.data) if total_coins_result.data else 0
+        
+        # 월 매출 추정 (Pro: $13.99, Premier: $29.99)
+        monthly_revenue = (pro_users.count or 0) * 13.99 + (premier_users.count or 0) * 29.99
+        
+        return jsonify({
+            "success": True,
+            "stats": {
+                "total_users": total_users.count or 0,
+                "new_users_30d": new_users.count or 0,
+                "active_users_7d": len(set(t['user_id'] for t in active_users.data)) if active_users.data else 0,
+                "free_users": free_users.count or 0,
+                "pro_users": pro_users.count or 0,
+                "premier_users": premier_users.count or 0,
+                "total_coins_issued": total_coins_issued,
+                "monthly_revenue": round(monthly_revenue, 2)
+            }
+        })
+        
+    except Exception as e:
+        print(f"❌ 통계 조회 오류: {e}", flush=True)
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/admin/user/<user_id>/update', methods=['POST'])
+def admin_update_user(user_id):
+    """
+    관리자 전용: 회원 정보 수정
+    Header: Authorization: Bearer <access_token>
+    POST body: { "plan": "pro", "coins": 100 }
+    """
+    if not supabase_client:
+        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    
+    # 권한 확인
+    auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return jsonify({"error": "인증이 필요합니다"}), 401
+    
+    try:
+        access_token = auth_header.replace('Bearer ', '')
+        user_response = supabase_client.auth.get_user(access_token)
+        
+        if not user_response or not user_response.user:
+            return jsonify({"error": "유효하지 않은 토큰입니다"}), 401
+        
+        admin_id = user_response.user.id
+        
+        # 관리자 권한 확인
+        if not check_admin_permission(admin_id):
+            return jsonify({"error": "관리자 권한이 필요합니다"}), 403
+        
+        data = request.get_json() or {}
+        update_data = {}
+        
+        if 'plan' in data:
+            update_data['plan'] = data['plan']
+        
+        if 'coins' in data:
+            update_data['coins'] = data['coins']
+        
+        if update_data:
+            supabase_client.table('profiles')\
+                .update(update_data)\
+                .eq('id', user_id)\
+                .execute()
+            
+            print(f"✅ 관리자 회원 수정: {user_id}, {update_data}", flush=True)
+        
+        return jsonify({
+            "success": True,
+            "message": "회원 정보가 수정되었습니다"
+        })
+        
+    except Exception as e:
+        print(f"❌ 회원 수정 오류: {e}", flush=True)
+        return jsonify({"error": str(e)}), 500
+
+
+# ============================================================================
 # [3] 서버 시작
 # ============================================================================
 if __name__ == '__main__':
