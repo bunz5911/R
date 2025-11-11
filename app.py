@@ -1777,6 +1777,7 @@ def kakao_login():
 def check_story_access(story_id):
     """
     동화 접근 권한 확인
+    - bunz5911@gmail.com: 모든 동화 무제한 (특별 관리자)
     - Free (비회원): 1번만
     - Free (회원): 1-3번
     - Pro: 1-10번
@@ -1786,6 +1787,25 @@ def check_story_access(story_id):
     Query param: user_id (optional)
     """
     user_id = request.args.get('user_id')
+    
+    # 🔑 bunz5911@gmail.com은 모든 동화 무제한 접근
+    if user_id and supabase_client:
+        try:
+            profile_result = supabase_client.table('profiles')\
+                .select('email')\
+                .eq('id', user_id)\
+                .execute()
+            
+            if profile_result.data and len(profile_result.data) > 0:
+                email = profile_result.data[0].get('email')
+                if email == 'bunz5911@gmail.com':
+                    return jsonify({
+                        "access": True,
+                        "reason": "super_admin",
+                        "message": "관리자 무제한 접근"
+                    })
+        except Exception as e:
+            print(f"⚠️ 관리자 체크 오류: {e}", flush=True)
     
     # 21-50번은 시즌 2 (아직 미오픈)
     if story_id >= 21:
