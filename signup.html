@@ -329,15 +329,15 @@
     <div class="signup-container">
         <div class="logo">
             <h1>Read Aloud Korean</h1>
-            <p>100코인과 함께 시작하세요!</p>
+            <p>10코인으로 시작하세요!</p>
         </div>
 
         <div class="benefits">
-            <h3>🎁 회원가입 혜택</h3>
+            <h3>🎁 무료 회원 혜택</h3>
             <ul>
-                <li>가입 즉시 100코인 지급</li>
-                <li>50개 동화 무제한 학습</li>
-                <li>K-콘텐츠 무제한 추가</li>
+                <li>가입 즉시 10코인 지급</li>
+                <li>1-3번 동화 무료 학습</li>
+                <li>K-콘텐츠 추가 기능</li>
                 <li>성장 그래프 및 분석 제공</li>
             </ul>
         </div>
@@ -448,12 +448,8 @@
                 const data = await response.json();
                 
                 if (response.ok && data.success) {
-                    // 회원가입 성공
-                    showSuccess('회원가입 성공! 로그인 페이지로 이동합니다...');
-                    
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 2000);
+                    // 회원가입 성공 - 플랜 선택 화면 표시
+                    showPlanSelection(data.user);
                 } else {
                     showError(data.error || '회원가입에 실패했습니다');
                     signupBtn.disabled = false;
@@ -567,6 +563,52 @@
         function hideMessages() {
             document.getElementById('errorMessage').classList.remove('show');
             document.getElementById('successMessage').classList.remove('show');
+        }
+
+        // 플랜 선택 화면 표시
+        function showPlanSelection(user) {
+            document.querySelector('.signup-container').innerHTML = `
+                <div style="text-align: center;">
+                    <div style="font-size: 64px; margin-bottom: 20px;">🎉</div>
+                    <h1 style="font-size: 28px; font-weight: 800; margin-bottom: 12px;">회원가입 완료!</h1>
+                    <p style="font-size: 15px; color: #666; margin-bottom: 40px;">
+                        환영합니다, <strong>${user.display_name}</strong>님!<br>
+                        이제 한국어 학습을 시작할 준비가 되었습니다.
+                    </p>
+                    
+                    <div style="background: #f8f9fa; border-radius: 16px; padding: 24px; margin-bottom: 32px; text-align: left;">
+                        <h3 style="font-size: 16px; font-weight: 700; color: #333; margin-bottom: 16px;">✨ 무료 회원 혜택</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            <li style="font-size: 14px; color: #666; margin-bottom: 10px; padding-left: 24px; position: relative;">
+                                <span style="position: absolute; left: 0; color: #27ae60; font-weight: bold;">✓</span>
+                                10코인 지급
+                            </li>
+                            <li style="font-size: 14px; color: #666; margin-bottom: 10px; padding-left: 24px; position: relative;">
+                                <span style="position: absolute; left: 0; color: #27ae60; font-weight: bold;">✓</span>
+                                1-3번 동화 무료 학습
+                            </li>
+                            <li style="font-size: 14px; color: #666; margin-bottom: 10px; padding-left: 24px; position: relative;">
+                                <span style="position: absolute; left: 0; color: #27ae60; font-weight: bold;">✓</span>
+                                K-콘텐츠 추가 기능
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <button onclick="location.href='index.html'" style="width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
+                            무료 회원으로 시작하기
+                        </button>
+                        
+                        <button onclick="location.href='pricing.html'" style="width: 100%; padding: 16px; background: white; color: #667eea; border: 2px solid #667eea; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer;">
+                            유료 플랜 보기 (Pro/Premier)
+                        </button>
+                    </div>
+                    
+                    <p style="font-size: 13px; color: #999; margin-top: 24px;">
+                        나중에 언제든지 업그레이드할 수 있습니다
+                    </p>
+                </div>
+            `;
         }
 
         // 이미 로그인 상태면 홈으로 리다이렉트

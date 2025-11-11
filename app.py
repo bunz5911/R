@@ -1494,14 +1494,14 @@ def auth_signup():
                     'email': email,
                     'display_name': display_name or email.split('@')[0],
                     'plan': 'free',
-                    'coins': 100,  # 신규 회원 100코인
+                    'coins': 10,  # 신규 무료 회원 10코인
                     'role': 'user'
                 }).execute()
                 
                 # user_coins 테이블에도 초기화
                 supabase_client.table('user_coins').insert({
                     'user_id': user.id,
-                    'total_coins': 100
+                    'total_coins': 10
                 }).execute()
                 
                 print(f"✅ 신규 회원 가입: {email}", flush=True)
@@ -1666,12 +1666,26 @@ def auth_logout():
 def check_story_access(story_id):
     """
     동화 접근 권한 확인
-    - story_id가 1이면 누구나 접근 가능 (비회원 OK)
-    - story_id가 2 이상이면 로그인 필요
+    - Free (비회원): 1번만
+    - Free (회원): 1-3번
+    - Pro: 1-10번
+    - Premier: 1-20번
+    - Season 2 (21-50번): 2026년 2월 오픈 예정
     
     Query param: user_id (optional)
     """
-    # 1번 동화는 항상 접근 가능
+    user_id = request.args.get('user_id')
+    
+    # 21-50번은 시즌 2 (아직 미오픈)
+    if story_id >= 21:
+        return jsonify({
+            "access": False,
+            "reason": "season_2",
+            "message": "시즌 2는 2026년 2월에 오픈됩니다",
+            "required_plan": "season_2"
+        }), 403
+    
+    # 1번 동화는 누구나 접근 가능
     if story_id == 1:
         return jsonify({
             "access": True,
@@ -1679,23 +1693,75 @@ def check_story_access(story_id):
             "message": "누구나 읽을 수 있는 동화입니다"
         })
     
-    # 2번 이상은 로그인 필요
-    user_id = request.args.get('user_id')
-    
+    # 비회원 또는 테스트 사용자
     if not user_id or user_id == '00000000-0000-0000-0000-000000000001':
-        # 비회원 또는 테스트 사용자
         return jsonify({
             "access": False,
             "reason": "login_required",
-            "message": "로그인이 필요합니다"
+            "message": "로그인이 필요합니다",
+            "required_plan": "free"
         }), 403
     
-    # 로그인한 사용자는 모든 동화 접근 가능
-    return jsonify({
-        "access": True,
-        "reason": "authenticated",
-        "message": "접근 가능합니다"
-    })
+    # 로그인한 사용자 - 플랜 확인
+    if supabase_client:
+        try:
+            profile_result = supabase_client.table('profiles')\
+                .select('plan')\
+                .eq('id', user_id)\
+                .execute()
+            
+            if profile_result.data and len(profile_result.data) > 0:
+                plan = profile_result.data[0].get('plan', 'free')
+                
+                # 플랜별 접근 제한
+                if plan == 'free':
+                    # Free 회원: 1-3번
+                    if story_id <= 3:
+                        return jsonify({"access": True, "reason": "free_member"})
+                    else:
+                        return jsonify({
+                            "access": False,
+                            "reason": "upgrade_required",
+                            "message": "Pro 플랜이 필요합니다",
+                            "required_plan": "pro"
+                        }), 403
+                        
+                elif plan == 'pro':
+                    # Pro 회원: 1-10번
+                    if story_id <= 10:
+                        return jsonify({"access": True, "reason": "pro_member"})
+                    else:
+                        return jsonify({
+                            "access": False,
+                            "reason": "upgrade_required",
+                            "message": "Premier 플랜이 필요합니다",
+                            "required_plan": "premier"
+                        }), 403
+                        
+                elif plan == 'premier':
+                    # Premier 회원: 1-20번
+                    if story_id <= 20:
+                        return jsonify({"access": True, "reason": "premier_member"})
+                    else:
+                        return jsonify({
+                            "access": False,
+                            "reason": "season_2",
+                            "message": "시즌 2는 2026년 2월에 오픈됩니다",
+                            "required_plan": "season_2"
+                        }), 403
+        except Exception as e:
+            print(f"⚠️ 플랜 조회 오류: {e}", flush=True)
+    
+    # 기본: Free 회원으로 처리 (1-3번)
+    if story_id <= 3:
+        return jsonify({"access": True, "reason": "default_free"})
+    else:
+        return jsonify({
+            "access": False,
+            "reason": "upgrade_required",
+            "message": "Pro 플랜이 필요합니다",
+            "required_plan": "pro"
+        }), 403
 
 
 # ============================================================================
