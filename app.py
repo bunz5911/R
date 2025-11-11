@@ -1662,6 +1662,117 @@ def auth_logout():
         return jsonify({"error": "로그아웃 실패"}), 400
 
 
+@app.route('/api/auth/kakao-login', methods=['POST'])
+def kakao_login():
+    """
+    카카오 로그인/회원가입
+    POST body: { 
+        "kakao_id": 12345678, 
+        "email": "user@kakao.com",
+        "display_name": "홍길동",
+        "avatar_url": "https://...",
+        "access_token": "kakao_access_token"
+    }
+    """
+    if not supabase_client:
+        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    
+    data = request.get_json() or {}
+    kakao_id = str(data.get('kakao_id'))
+    email = data.get('email')
+    display_name = data.get('display_name', '카카오 사용자')
+    avatar_url = data.get('avatar_url')
+    
+    if not kakao_id:
+        return jsonify({"error": "kakao_id가 필요합니다"}), 400
+    
+    try:
+        import uuid
+        
+        # 카카오 ID로 기존 사용자 확인 (email에 kakao_id 저장)
+        kakao_email = f"kakao_{kakao_id}@kakao.auth"
+        
+        # 기존 사용자 확인
+        profile_result = supabase_client.table('profiles')\
+            .select('*')\
+            .eq('email', kakao_email)\
+            .execute()
+        
+        if profile_result.data and len(profile_result.data) > 0:
+            # 기존 사용자 - 로그인
+            user = profile_result.data[0]
+            user_id = user['id']
+            
+            # 카카오 로그인용 임시 토큰 (user_id 기반)
+            fake_access_token = f"kakao_{user_id}"
+            fake_refresh_token = f"kakao_refresh_{user_id}"
+            
+            print(f"✅ 카카오 로그인 (기존 사용자): {display_name} ({kakao_id})", flush=True)
+            
+            return jsonify({
+                "success": True,
+                "user": {
+                    "id": user_id,
+                    "email": email or kakao_email,
+                    "display_name": user.get('display_name', display_name),
+                    "avatar_url": user.get('avatar_url', avatar_url),
+                    "plan": user.get('plan', 'free'),
+                    "coins": user.get('coins', 10)
+                },
+                "session": {
+                    "access_token": fake_access_token,
+                    "refresh_token": fake_refresh_token
+                },
+                "is_new_user": False
+            })
+        else:
+            # 신규 사용자 - 회원가입
+            new_user_id = str(uuid.uuid4())
+            
+            # profiles 테이블에 생성
+            supabase_client.table('profiles').insert({
+                'id': new_user_id,
+                'email': kakao_email,
+                'display_name': display_name,
+                'avatar_url': avatar_url,
+                'plan': 'free',
+                'coins': 10,
+                'role': 'user'
+            }).execute()
+            
+            # user_coins 초기화
+            supabase_client.table('user_coins').insert({
+                'user_id': new_user_id,
+                'total_coins': 10
+            }).execute()
+            
+            fake_access_token = f"kakao_{new_user_id}"
+            fake_refresh_token = f"kakao_refresh_{new_user_id}"
+            
+            print(f"✅ 카카오 신규 회원가입: {display_name} ({kakao_id})", flush=True)
+            
+            return jsonify({
+                "success": True,
+                "user": {
+                    "id": new_user_id,
+                    "email": email or kakao_email,
+                    "display_name": display_name,
+                    "avatar_url": avatar_url,
+                    "plan": 'free',
+                    "coins": 10
+                },
+                "session": {
+                    "access_token": fake_access_token,
+                    "refresh_token": fake_refresh_token
+                },
+                "is_new_user": True
+            })
+            
+    except Exception as e:
+        print(f"❌ 카카오 로그인 오류: {e}", flush=True)
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route('/api/story/access-check/<int:story_id>', methods=['GET'])
 def check_story_access(story_id):
     """
@@ -2082,6 +2193,111 @@ def complete_mission():
         
     except Exception as e:
         print(f"❌ 미션 완료 처리 오류: {e}", flush=True)
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/subscription/cancel', methods=['POST'])
+def cancel_subscription():
+    """
+    구독 해지
+    POST body: { "user_id": "UUID" }
+    Header: Authorization: Bearer <access_token>
+    """
+    if not supabase_client:
+        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    
+    # 권한 확인
+    auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return jsonify({"error": "인증이 필요합니다"}), 401
+    
+    data = request.get_json() or {}
+    user_id = data.get('user_id')
+    
+    if not user_id:
+        return jsonify({"error": "user_id가 필요합니다"}), 400
+    
+    try:
+        # 프로필 업데이트 (구독 상태 변경)
+        supabase_client.table('profiles').update({
+            'subscription_status': 'canceled',
+            'subscription_end': datetime.now().isoformat()
+        }).eq('id', user_id).execute()
+        
+        print(f"✅ 구독 해지: {user_id}", flush=True)
+        
+        return jsonify({
+            "success": True,
+            "message": "구독이 해지되었습니다"
+        })
+        
+    except Exception as e:
+        print(f"❌ 구독 해지 오류: {e}", flush=True)
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/account/delete', methods=['POST'])
+def delete_account():
+    """
+    회원 탈퇴
+    POST body: { "user_id": "UUID" }
+    Header: Authorization: Bearer <access_token>
+    """
+    if not supabase_client:
+        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    
+    # 권한 확인
+    auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return jsonify({"error": "인증이 필요합니다"}), 401
+    
+    data = request.get_json() or {}
+    user_id = data.get('user_id')
+    
+    if not user_id:
+        return jsonify({"error": "user_id가 필요합니다"}), 400
+    
+    try:
+        # 관련 데이터 삭제 (CASCADE로 자동 삭제되지만 명시적으로)
+        # 1. 학습 기록
+        supabase_client.table('learning_records').delete().eq('user_id', user_id).execute()
+        
+        # 2. 코인 거래
+        supabase_client.table('coin_transactions').delete().eq('user_id', user_id).execute()
+        
+        # 3. 코인
+        supabase_client.table('user_coins').delete().eq('user_id', user_id).execute()
+        
+        # 4. K-콘텐츠
+        supabase_client.table('user_k_content').delete().eq('user_id', user_id).execute()
+        
+        # 5. 출석 기록
+        supabase_client.table('streak_history').delete().eq('user_id', user_id).execute()
+        
+        # 6. 일일 미션
+        supabase_client.table('daily_missions').delete().eq('user_id', user_id).execute()
+        
+        # 7. 단어장
+        supabase_client.table('wordbook').delete().eq('user_id', user_id).execute()
+        
+        # 8. 발음 점수
+        supabase_client.table('pronunciation_scores').delete().eq('user_id', user_id).execute()
+        
+        # 9. 진도
+        supabase_client.table('user_progress').delete().eq('user_id', user_id).execute()
+        
+        # 10. 프로필 (마지막)
+        supabase_client.table('profiles').delete().eq('id', user_id).execute()
+        
+        print(f"✅ 회원 탈퇴 완료: {user_id}", flush=True)
+        
+        return jsonify({
+            "success": True,
+            "message": "회원 탈퇴가 완료되었습니다"
+        })
+        
+    except Exception as e:
+        print(f"❌ 회원 탈퇴 오류: {e}", flush=True)
         return jsonify({"error": str(e)}), 500
 
 
