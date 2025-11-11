@@ -77,9 +77,10 @@ let PRECOMPUTED_ANALYSIS = {};  // 하드코딩된 분석 데이터 (즉시 로�
 let currentUserId = localStorage.getItem('userId') || '00000000-0000-0000-0000-000000000001';  // 테스트 사용자
 let currentUserEmail = localStorage.getItem('userEmail') || null;
 let currentDisplayName = localStorage.getItem('displayName') || null;
+let currentUserPlan = localStorage.getItem('userPlan') || 'free';  // 사용자 플랜
 let isAuthenticated = !!localStorage.getItem('access_token');  // 로그인 상태
 let completedTabs = new Set();  // 완료한 탭 추적
-let userCoins = 50;  // 사용자 코인 (초기: 50개)
+let userCoins = 10;  // 사용자 코인 (초기: 10개 - 무료 회원)
 
 // TTS 설정
 let ttsVoice = null;
@@ -306,11 +307,50 @@ async function loadStories() {
 function renderStoryList() {
     const listEl = document.getElementById('storyList');
     listEl.innerHTML = currentStories.map(story => {
-        // 1번 동화는 누구나 접근 가능, 2번부터는 로그인 필요
-        const isLocked = story.id > 1 && !isAuthenticated;
+        // 접근 권한 확인
+        let isLocked = false;
+        let lockMessage = '';
+        let isSeason2 = false;
+        
+        // 시즌 2 (21-50번)
+        if (story.id >= 21) {
+            isLocked = true;
+            isSeason2 = true;
+            lockMessage = '🔜 Season 2 - 2026년 2월';
+        }
+        // 비회원
+        else if (!isAuthenticated) {
+            if (story.id > 1) {
+                isLocked = true;
+                lockMessage = '🔒 로그인 필요';
+            }
+        }
+        // 로그인 상태 - 플랜별 제한
+        else {
+            if (currentUserPlan === 'free') {
+                // Free: 1-3번만
+                if (story.id > 3) {
+                    isLocked = true;
+                    lockMessage = '🔒 Pro 필요';
+                }
+            } else if (currentUserPlan === 'pro') {
+                // Pro: 1-10번만
+                if (story.id > 10) {
+                    isLocked = true;
+                    lockMessage = '🔒 Premier 필요';
+                }
+            } else if (currentUserPlan === 'premier') {
+                // Premier: 1-20번만
+                if (story.id > 20) {
+                    isLocked = true;
+                    lockMessage = '🔜 Season 2';
+                }
+            }
+        }
+        
         const lockIcon = isLocked ? '<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 48px; z-index: 10;">🔒</div>' : '';
         const lockedStyle = isLocked ? 'opacity: 0.6; cursor: pointer;' : '';
-        const clickHandler = isLocked ? `checkStoryAccess(${story.id})` : `selectStory(${story.id})`;
+        const clickHandler = isLocked ? (isSeason2 ? `showSeason2Modal()` : `checkStoryAccess(${story.id})`) : `selectStory(${story.id})`;
         
         return `
             <div class="story-card" onclick="${clickHandler}" style="${lockedStyle}">
@@ -320,7 +360,7 @@ function renderStoryList() {
                     <div class="story-card-overlay">
                         <div class="story-card-number">${story.id}</div>
                         <h3 class="story-card-title-overlay">${story.title}</h3>
-                        ${isLocked ? '<div style="margin-top: 8px; font-size: 12px; background: rgba(255,255,255,0.9); color: #333; padding: 4px 8px; border-radius: 4px;">🔒 로그인 필요</div>' : ''}
+                        ${isLocked ? `<div style="margin-top: 8px; font-size: 12px; background: rgba(255,255,255,0.9); color: #333; padding: 4px 8px; border-radius: 4px;">${lockMessage}</div>` : ''}
                     </div>
                 </div>
             </div>
@@ -334,26 +374,57 @@ function renderStoryList() {
 
 // 동화 접근 권한 체크
 function checkStoryAccess(storyId) {
+    // 시즌 2 (21-50번)
+    if (storyId >= 21) {
+        showSeason2Modal();
+        return;
+    }
+    
     // 1번 동화는 누구나 접근 가능
     if (storyId === 1) {
         selectStory(storyId);
         return;
     }
     
-    // 2번 이상은 로그인 필요
+    // 비회원 - 로그인 필요
     if (!isAuthenticated) {
         showLoginModal(storyId);
         return;
     }
     
-    // 로그인 상태면 접근 허용
-    selectStory(storyId);
+    // 로그인 상태 - 플랜별 체크
+    if (currentUserPlan === 'free') {
+        if (storyId <= 3) {
+            selectStory(storyId);
+        } else {
+            showUpgradeModal('pro');
+        }
+    } else if (currentUserPlan === 'pro') {
+        if (storyId <= 10) {
+            selectStory(storyId);
+        } else {
+            showUpgradeModal('premier');
+        }
+    } else if (currentUserPlan === 'premier') {
+        if (storyId <= 20) {
+            selectStory(storyId);
+        } else {
+            showSeason2Modal();
+        }
+    } else {
+        // 기본값: Free 플랜으로 처리
+        if (storyId <= 3) {
+            selectStory(storyId);
+        } else {
+            showUpgradeModal('pro');
+        }
+    }
 }
 
 // 로그인 필요 모달 표시
 function showLoginModal(storyId) {
     const modal = document.createElement('div');
-    modal.id = 'loginModal';
+    modal.id = 'accessModal';
     modal.style.cssText = `
         position: fixed;
         top: 0;
@@ -374,7 +445,7 @@ function showLoginModal(storyId) {
             <h2 style="font-size: 24px; font-weight: 800; color: #333; margin-bottom: 12px;">로그인이 필요합니다</h2>
             <p style="font-size: 15px; color: #666; line-height: 1.6; margin-bottom: 32px;">
                 2번째 동화부터는 회원만 이용할 수 있습니다.<br>
-                <strong style="color: #667eea;">가입하고 100코인을 받으세요!</strong>
+                <strong style="color: #667eea;">가입하고 10코인을 받으세요!</strong>
             </p>
             
             <div style="display: flex; gap: 12px; margin-bottom: 16px;">
@@ -386,7 +457,7 @@ function showLoginModal(storyId) {
                 </button>
             </div>
             
-            <button onclick="closeLoginModal()" style="width: 100%; padding: 12px; background: #f0f0f0; color: #666; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer;">
+            <button onclick="closeAccessModal()" style="width: 100%; padding: 12px; background: #f0f0f0; color: #666; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer;">
                 취소
             </button>
         </div>
@@ -412,12 +483,128 @@ function showLoginModal(storyId) {
     document.body.appendChild(modal);
 }
 
-// 로그인 모달 닫기
-function closeLoginModal() {
-    const modal = document.getElementById('loginModal');
+// 업그레이드 필요 모달 표시 (Free → Pro, Pro → Premier)
+function showUpgradeModal(requiredPlan) {
+    const planInfo = {
+        pro: {
+            name: 'Pro',
+            price: '$13.99/월',
+            coins: '100코인',
+            stories: '1-10번 동화'
+        },
+        premier: {
+            name: 'Premier',
+            price: '$29.99/월',
+            coins: '300코인',
+            stories: '1-20번 동화'
+        }
+    };
+    
+    const info = planInfo[requiredPlan];
+    
+    const modal = document.createElement('div');
+    modal.id = 'accessModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        animation: fadeIn 0.3s;
+    `;
+    
+    modal.innerHTML = `
+        <div style="background: white; border-radius: 24px; padding: 40px; max-width: 420px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: slideUp 0.3s;">
+            <div style="font-size: 64px; margin-bottom: 20px;">⬆️</div>
+            <h2 style="font-size: 24px; font-weight: 800; color: #333; margin-bottom: 12px;">${info.name} 플랜이 필요합니다</h2>
+            <p style="font-size: 15px; color: #666; line-height: 1.6; margin-bottom: 24px;">
+                이 동화는 ${info.name} 플랜에서 이용할 수 있습니다.
+            </p>
+            
+            <div style="background: #f8f9fa; border-radius: 16px; padding: 20px; margin-bottom: 24px; text-align: left;">
+                <h3 style="font-size: 16px; font-weight: 700; color: #333; margin-bottom: 12px;">${info.name} 혜택</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="font-size: 14px; color: #666; margin-bottom: 8px;">✓ ${info.coins} 지급</li>
+                    <li style="font-size: 14px; color: #666; margin-bottom: 8px;">✓ ${info.stories} 학습</li>
+                    <li style="font-size: 14px; color: #666; margin-bottom: 8px;">✓ K-콘텐츠 무제한</li>
+                </ul>
+            </div>
+            
+            <button onclick="location.href='pricing.html'" style="width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); margin-bottom: 12px;">
+                ${info.name} 시작하기 (${info.price})
+            </button>
+            
+            <button onclick="closeAccessModal()" style="width: 100%; padding: 12px; background: #f0f0f0; color: #666; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer;">
+                취소
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+// 시즌 2 Coming Soon 모달
+function showSeason2Modal() {
+    const modal = document.createElement('div');
+    modal.id = 'accessModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        animation: fadeIn 0.3s;
+    `;
+    
+    modal.innerHTML = `
+        <div style="background: white; border-radius: 24px; padding: 40px; max-width: 480px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: slideUp 0.3s;">
+            <div style="font-size: 64px; margin-bottom: 20px;">🎬</div>
+            <h2 style="font-size: 28px; font-weight: 800; color: #333; margin-bottom: 12px;">Season 2 Coming Soon!</h2>
+            <p style="font-size: 15px; color: #666; line-height: 1.8; margin-bottom: 28px;">
+                K-드라마 & K-POP 더빙 챌린지가 포함된<br>
+                시즌 2가 <strong style="color: #667eea;">2026년 2월</strong>에 찾아옵니다!
+            </p>
+            
+            <div style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: white; padding: 20px; border-radius: 16px; margin-bottom: 24px;">
+                <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 8px;">🐦 Early Bird 특별가</h3>
+                <div style="font-size: 32px; font-weight: 800; margin-bottom: 8px;">$299.99/년</div>
+                <p style="font-size: 13px; opacity: 0.95;">정가 $359.88 대비 17% 할인</p>
+            </div>
+            
+            <button onclick="location.href='pricing.html'" style="width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); margin-bottom: 12px;">
+                자세히 보기
+            </button>
+            
+            <button onclick="closeAccessModal()" style="width: 100%; padding: 12px; background: #f0f0f0; color: #666; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer;">
+                닫기
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+// 접근 모달 닫기
+function closeAccessModal() {
+    const modal = document.getElementById('accessModal');
     if (modal) {
         modal.remove();
     }
+}
+
+// 이전 호환성
+function closeLoginModal() {
+    closeAccessModal();
 }
 
 async function selectStory(storyId) {
@@ -3927,14 +4114,16 @@ async function checkAuthStatus() {
                 currentUserId = data.user.id;
                 currentUserEmail = data.user.email;
                 currentDisplayName = data.user.display_name;
+                currentUserPlan = data.user.plan || 'free';
                 
                 // localStorage 업데이트
                 localStorage.setItem('userId', data.user.id);
                 localStorage.setItem('userEmail', data.user.email);
                 localStorage.setItem('displayName', data.user.display_name);
+                localStorage.setItem('userPlan', currentUserPlan);
                 
                 updateAuthUI();
-                console.log('✅ 로그인 상태 확인:', currentDisplayName);
+                console.log('✅ 로그인 상태 확인:', currentDisplayName, `(${currentUserPlan})`);
                 return true;
             }
         }
@@ -3989,12 +4178,14 @@ function logout() {
     localStorage.removeItem('userId');
     localStorage.removeItem('userEmail');
     localStorage.removeItem('displayName');
+    localStorage.removeItem('userPlan');
     
     // 상태 초기화
     isAuthenticated = false;
     currentUserId = '00000000-0000-0000-0000-000000000001';
     currentUserEmail = null;
     currentDisplayName = null;
+    currentUserPlan = 'free';
     
     // UI 업데이트
     updateAuthUI();

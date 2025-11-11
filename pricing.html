@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>요금제 - Read Aloud Korean</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .pricing-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.95;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 50px;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px 32px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.3);
+        }
+
+        .pricing-card.featured {
+            border: 3px solid #667eea;
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured::before {
+            content: '🔥 Most Popular';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .plan-name {
+            font-size: 24px;
+            font-weight: 800;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .plan-price {
+            font-size: 42px;
+            font-weight: 800;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .plan-price span {
+            font-size: 18px;
+            color: #888;
+            font-weight: 600;
+        }
+
+        .plan-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 24px;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 32px;
+        }
+
+        .plan-features li {
+            font-size: 15px;
+            color: #555;
+            margin-bottom: 12px;
+            padding-left: 28px;
+            position: relative;
+        }
+
+        .plan-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .plan-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s;
+        }
+
+        .plan-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .plan-btn.secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .season2-announcement {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .season2-announcement h2 {
+            font-size: 32px;
+            font-weight: 800;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .season2-announcement p {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 24px;
+        }
+
+        .season2-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .season2-feature {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .season2-feature h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .season2-feature p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .early-bird {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+        }
+
+        .early-bird h3 {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .early-bird .price {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .early-bird p {
+            font-size: 14px;
+            opacity: 0.95;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .back-link a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 12px 24px;
+            border: 2px solid white;
+            border-radius: 10px;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .back-link a:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #e74c3c;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-left: 8px;
+        }
+
+        .badge.coming {
+            background: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="pricing-container">
+        <div class="header">
+            <h1>📚 요금제 선택</h1>
+            <p>당신에게 딱 맞는 플랜을 찾아보세요</p>
+        </div>
+
+        <div class="pricing-grid">
+            <!-- Free 플랜 -->
+            <div class="pricing-card">
+                <div class="plan-name">Free</div>
+                <div class="plan-price">$0<span>/월</span></div>
+                <div class="plan-description">한국어 학습 시작하기</div>
+                <ul class="plan-features">
+                    <li>10 코인 지급</li>
+                    <li>1-3번 동화 학습</li>
+                    <li>K-콘텐츠 추가 기능</li>
+                    <li>성장 그래프 분석</li>
+                    <li>기본 TTS 음성</li>
+                </ul>
+                <button class="plan-btn secondary" onclick="selectPlan('free')">
+                    무료로 시작하기
+                </button>
+            </div>
+
+            <!-- Pro 플랜 -->
+            <div class="pricing-card featured">
+                <div class="plan-name">Pro</div>
+                <div class="plan-price">$13.99<span>/월</span></div>
+                <div class="plan-description">진지하게 학습하기</div>
+                <ul class="plan-features">
+                    <li>100 코인 지급</li>
+                    <li>1-10번 동화 학습</li>
+                    <li>K-콘텐츠 무제한 추가</li>
+                    <li>프리미엄 TTS 음성</li>
+                    <li>상세한 발음 분석</li>
+                    <li>우선 고객 지원</li>
+                </ul>
+                <button class="plan-btn" onclick="selectPlan('pro')">
+                    Pro 시작하기
+                </button>
+            </div>
+
+            <!-- Premier 플랜 -->
+            <div class="pricing-card">
+                <div class="plan-name">Premier</div>
+                <div class="plan-price">$29.99<span>/월</span></div>
+                <div class="plan-description">완벽한 한국어 마스터</div>
+                <ul class="plan-features">
+                    <li>300 코인 지급</li>
+                    <li>1-20번 동화 학습</li>
+                    <li>K-콘텐츠 무제한 추가</li>
+                    <li>프리미엄 TTS 음성</li>
+                    <li>AI 맞춤 학습 추천</li>
+                    <li>1:1 학습 컨설팅</li>
+                    <li>전용 커뮤니티 액세스</li>
+                </ul>
+                <button class="plan-btn" onclick="selectPlan('premier')">
+                    Premier 시작하기
+                </button>
+            </div>
+        </div>
+
+        <!-- Season 2 공지 -->
+        <div class="season2-announcement">
+            <h2>🎬 Season 2 Coming Soon <span class="badge coming">2026년 2월</span></h2>
+            <p>
+                K-드라마 & K-POP 더빙 챌린지가 포함된 시즌 2가 곧 찾아옵니다!<br>
+                21-50번 동화 + 프리미엄 커뮤니티 + 실시간 더빙 대회
+            </p>
+
+            <div class="season2-features">
+                <div class="season2-feature">
+                    <h4>🎤 더빙 챌린지</h4>
+                    <p>실제 K-드라마 장면으로 더빙 연습</p>
+                </div>
+                <div class="season2-feature">
+                    <h4>👥 프리미엄 커뮤니티</h4>
+                    <p>전 세계 학습자와 교류</p>
+                </div>
+                <div class="season2-feature">
+                    <h4>🏆 실시간 대회</h4>
+                    <p>매주 더빙 대회 및 상금</p>
+                </div>
+                <div class="season2-feature">
+                    <h4>📚 30개 추가 동화</h4>
+                    <p>21-50번 고급 동화 학습</p>
+                </div>
+            </div>
+
+            <div class="early-bird">
+                <h3>🐦 Early Bird 특별 할인</h3>
+                <div class="price">$299.99/년</div>
+                <p>
+                    지금 신청하면 시즌 2 론칭 시 연간 $299.99 특별가!<br>
+                    <strong>정가 $359.88 대비 17% 할인</strong>
+                </p>
+            </div>
+
+            <button class="plan-btn" onclick="alert('Early Bird 신청은 2025년 12월부터 시작됩니다!')">
+                Early Bird 알림 받기
+            </button>
+        </div>
+
+        <div class="back-link">
+            <a href="index.html">← 홈으로 돌아가기</a>
+        </div>
+    </div>
+
+    <script>
+        function selectPlan(plan) {
+            // 로그인 체크
+            const accessToken = localStorage.getItem('access_token');
+            
+            if (!accessToken) {
+                alert('먼저 로그인해주세요!');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            if (plan === 'free') {
+                // Free 플랜은 이미 기본값
+                alert('무료 플랜이 적용되었습니다!');
+                window.location.href = 'index.html';
+            } else {
+                // Pro/Premier는 결제 페이지로 (준비 중)
+                alert(`${plan.toUpperCase()} 플랜 결제 기능은 준비 중입니다.\n곧 Toss Payments를 통해 결제할 수 있습니다!`);
+            }
+        }
+    </script>
+</body>
+</html>
+
