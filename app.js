@@ -4213,5 +4213,232 @@ function handleAuth() {
 // 페이지 로드 시 인증 상태 체크
 document.addEventListener('DOMContentLoaded', async () => {
     await checkAuthStatus();
+    
+    // 로그인 상태면 출석 체크 상태 확인
+    if (isAuthenticated) {
+        await checkTodayCheckin();
+    }
 });
+
+
+// ============================================================================
+// [13] 출석 체크 & 일일 미션
+// ============================================================================
+
+// 오늘 출석 상태 확인
+async function checkTodayCheckin() {
+    // 로그인하지 않았으면 스킵
+    if (!isAuthenticated) return;
+    
+    // localStorage에서 오늘 출석 여부 확인
+    const lastCheckin = localStorage.getItem('lastCheckinDate');
+    const today = new Date().toISOString().split('T')[0];
+    
+    // 오늘 이미 출석했으면 버튼 스타일 변경
+    const checkinBtn = document.getElementById('checkinBtn');
+    if (checkinBtn) {
+        if (lastCheckin === today) {
+            checkinBtn.textContent = '✓ 출석완료';
+            checkinBtn.style.background = '#95a5a6';
+            checkinBtn.style.cursor = 'default';
+        }
+    }
+}
+
+// 출석 체크 모달 표시
+async function showCheckinModal() {
+    // 로그인하지 않았으면 로그인 요청
+    if (!isAuthenticated) {
+        alert('로그인이 필요합니다!');
+        location.href = 'login.html';
+        return;
+    }
+    
+    const modal = document.createElement('div');
+    modal.id = 'checkinModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        animation: fadeIn 0.3s;
+    `;
+    
+    modal.innerHTML = `
+        <div style="background: white; border-radius: 24px; padding: 40px; max-width: 500px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: slideUp 0.3s;">
+            <div style="font-size: 64px; margin-bottom: 20px;">📅</div>
+            <h2 style="font-size: 24px; font-weight: 800; color: #333; margin-bottom: 12px;">출석 체크</h2>
+            <p style="font-size: 15px; color: #666; line-height: 1.6; margin-bottom: 32px;">
+                매일 출석하고 코인을 받으세요!
+            </p>
+            
+            <div id="checkinContent" style="min-height: 200px;">
+                <div style="text-align: center; padding: 40px;">
+                    <div class="loading-spinner" style="border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+                </div>
+            </div>
+            
+            <button onclick="closeCheckinModal()" style="width: 100%; padding: 12px; background: #f0f0f0; color: #666; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 20px;">
+                닫기
+            </button>
+        </div>
+    `;
+    
+    // 스피너 애니메이션 추가
+    if (!document.getElementById('spinnerAnimation')) {
+        const style = document.createElement('style');
+        style.id = 'spinnerAnimation';
+        style.textContent = `
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    document.body.appendChild(modal);
+    
+    // 출석 체크 및 미션 로드
+    await loadCheckinAndMissions();
+}
+
+// 출석 체크 및 미션 로드
+async function loadCheckinAndMissions() {
+    const contentEl = document.getElementById('checkinContent');
+    
+    try {
+        // 오늘 출석 체크
+        const checkinResponse = await fetch(`${API_BASE}/checkin`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: currentUserId })
+        });
+        
+        let checkinData = null;
+        let alreadyChecked = false;
+        
+        if (checkinResponse.ok) {
+            checkinData = await checkinResponse.json();
+        } else {
+            const errorData = await checkinResponse.json();
+            if (errorData.already_checked) {
+                alreadyChecked = true;
+            }
+        }
+        
+        // 일일 미션 조회
+        const missionsResponse = await fetch(`${API_BASE}/missions/daily?user_id=${currentUserId}`);
+        const missionsData = await missionsResponse.json();
+        
+        // 출석 결과 표시
+        if (checkinData && checkinData.success) {
+            // 출석 성공
+            localStorage.setItem('lastCheckinDate', new Date().toISOString().split('T')[0]);
+            
+            const bonusText = checkinData.bonus_coins > 0 ? ` (+${checkinData.bonus_coins} 보너스!)` : '';
+            
+            contentEl.innerHTML = `
+                <div style="background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); color: white; padding: 24px; border-radius: 16px; margin-bottom: 24px;">
+                    <div style="font-size: 48px; margin-bottom: 12px;">🎉</div>
+                    <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 8px;">출석 완료!</h3>
+                    <p style="font-size: 32px; font-weight: 800; margin-bottom: 8px;">${checkinData.coins_earned}코인 획득${bonusText}</p>
+                    <p style="font-size: 14px; opacity: 0.95;">🔥 ${checkinData.current_streak}일 연속 출석</p>
+                </div>
+            `;
+            
+            // 코인 업데이트
+            await loadUserCoins();
+            
+            // 출석 버튼 업데이트
+            const checkinBtn = document.getElementById('checkinBtn');
+            if (checkinBtn) {
+                checkinBtn.textContent = '✓ 출석완료';
+                checkinBtn.style.background = '#95a5a6';
+                checkinBtn.style.cursor = 'default';
+            }
+        } else if (alreadyChecked) {
+            // 이미 출석함
+            contentEl.innerHTML = `
+                <div style="background: #f8f9fa; padding: 24px; border-radius: 16px; margin-bottom: 24px;">
+                    <div style="font-size: 48px; margin-bottom: 12px;">✓</div>
+                    <h3 style="font-size: 18px; font-weight: 700; color: #333;">오늘 이미 출석했습니다</h3>
+                    <p style="font-size: 14px; color: #666; margin-top: 8px;">내일 다시 만나요!</p>
+                </div>
+            `;
+        }
+        
+        // 일일 미션 표시
+        if (missionsData && missionsData.missions) {
+            const missionIcons = {
+                'vocabulary': '📚',
+                'grammar': '✏️',
+                'sentence': '💬',
+                'k_content': '🎬'
+            };
+            
+            const missionsHTML = missionsData.missions.map(mission => {
+                const progress = mission.current_count || 0;
+                const target = mission.target_count || 1;
+                const percentage = Math.min((progress / target) * 100, 100);
+                const completed = mission.completed || false;
+                const icon = missionIcons[mission.mission_type] || '📝';
+                
+                return `
+                    <div style="background: ${completed ? '#e8f5e9' : '#f8f9fa'}; border: 2px solid ${completed ? '#27ae60' : '#e0e0e0'}; border-radius: 12px; padding: 16px; margin-bottom: 12px; text-align: left;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 24px;">${icon}</span>
+                                <div>
+                                    <div style="font-size: 15px; font-weight: 700; color: #333;">${mission.title}</div>
+                                    <div style="font-size: 13px; color: #666;">${mission.description}</div>
+                                </div>
+                            </div>
+                            <div style="font-size: 14px; font-weight: 700; color: ${completed ? '#27ae60' : '#667eea'};">
+                                ${completed ? '✓' : progress + '/' + target}
+                            </div>
+                        </div>
+                        <div style="background: #e0e0e0; height: 6px; border-radius: 3px; overflow: hidden;">
+                            <div style="background: ${completed ? '#27ae60' : '#667eea'}; width: ${percentage}%; height: 100%; transition: width 0.3s;"></div>
+                        </div>
+                        <div style="text-align: right; margin-top: 6px;">
+                            <span style="font-size: 12px; color: #888;">🟡 ${mission.coins_reward}코인</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            contentEl.innerHTML += `
+                <div style="margin-top: 20px;">
+                    <h3 style="font-size: 18px; font-weight: 700; color: #333; margin-bottom: 16px; text-align: left;">📋 오늘의 미션</h3>
+                    ${missionsHTML}
+                </div>
+            `;
+        }
+        
+    } catch (error) {
+        console.error('출석 체크 오류:', error);
+        contentEl.innerHTML = `
+            <div style="padding: 40px; text-align: center;">
+                <div style="font-size: 48px; margin-bottom: 16px;">😕</div>
+                <p style="color: #e74c3c; font-size: 15px;">출석 체크에 실패했습니다</p>
+                <p style="color: #666; font-size: 13px; margin-top: 8px;">잠시 후 다시 시도해주세요</p>
+            </div>
+        `;
+    }
+}
+
+// 출석 모달 닫기
+function closeCheckinModal() {
+    const modal = document.getElementById('checkinModal');
+    if (modal) {
+        modal.remove();
+    }
+}
 
