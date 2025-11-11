@@ -712,7 +712,7 @@ function showStoryList() {
 // ============================================================================
 // [4] 탭 전환
 // ============================================================================
-function switchTab(tabName) {
+async function switchTab(tabName) {
     currentTab = tabName;
     
     // 완료한 탭 추적
@@ -735,7 +735,7 @@ function switchTab(tabName) {
     // ✅ 즉시 렌더링 (로딩 없음)
     switch(tabName) {
         case 'summary':
-            renderSummary();
+            await renderSummary();
             break;
         case 'full-story':
             renderFullStory();
@@ -764,7 +764,7 @@ function switchTab(tabName) {
 // ============================================================================
 // [5] 각 탭 렌더링
 // ============================================================================
-function renderSummary() {
+async function renderSummary() {
     console.log('📄 요약 렌더링 시작 (즉시 표시)');
     const contentEl = document.getElementById('learningContent');
     
@@ -785,10 +785,92 @@ function renderSummary() {
             </p>
         </div>
         
+        <!-- 내가 추가한 K-콘텐츠 미리보기 -->
+        <div id="kContentPreview" style="margin-top: 25px;">
+            <div style="text-align: center; color: #999; padding: 20px;">
+                로딩 중...
+            </div>
+        </div>
+        
         <div class="bottom-spacer"></div>
     `;
     
     console.log('✅ 요약 렌더링 완료 (텍스트만, 음성 버튼 없음)');
+    
+    // K-콘텐츠 미리보기 로드
+    await loadKContentPreview();
+}
+
+async function loadKContentPreview() {
+    const previewEl = document.getElementById('kContentPreview');
+    if (!previewEl) return;
+    
+    try {
+        const response = await fetch(`${API_BASE}/k-content/my-collection?user_id=${currentUserId}`);
+        const data = await response.json();
+        
+        const collection = data.collection || [];
+        
+        if (collection.length === 0) {
+            previewEl.innerHTML = '';
+            return;
+        }
+        
+        // 최근 3개만 표시
+        const recentItems = collection.slice(0, 3);
+        
+        const typeIcons = {
+            'drama': '📺',
+            'kpop': '🎵',
+            'variety': '🎬',
+            'movie': '🎥',
+            'other': '📝'
+        };
+        
+        previewEl.innerHTML = `
+            <div style="border-top: 2px solid #f0f0f0; padding-top: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="font-size: 16px; font-weight: 700; color: #333;">
+                        내가 추가한 K-콘텐츠 <span style="background: #667eea; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; margin-left: 6px;">${collection.length}개</span>
+                    </h3>
+                    <a href="my-k-content.html" style="font-size: 13px; color: #667eea; text-decoration: none; font-weight: 600;">
+                        전체 보기 →
+                    </a>
+                </div>
+                
+                ${recentItems.map(item => `
+                    <div class="content-box" style="padding: 15px; margin-bottom: 12px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-left: 4px solid #667eea;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                            <div style="flex: 1;">
+                                <div style="font-size: 12px; color: #888; margin-bottom: 4px;">
+                                    ${typeIcons[item.content_type] || '📝'} ${item.source_title || 'K-콘텐츠'}
+                                </div>
+                                <div style="font-size: 15px; color: #333; line-height: 1.6; font-weight: 500;">
+                                    "${item.content_text.length > 50 ? item.content_text.substring(0, 50) + '...' : item.content_text}"
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px; margin-top: 12px;">
+                            <button onclick="togglePlay('kcontent_${item.id}', '${escapeQuotes(item.content_text)}', this)" style="flex: 1; padding: 8px 12px; background: #667eea; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                ▶ 듣기
+                            </button>
+                            <button onclick="startKContentPractice('${escapeQuotes(item.content_text)}')" style="flex: 1; padding: 8px 12px; background: #27ae60; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                🎤 연습
+                            </button>
+                        </div>
+                    </div>
+                `).join('')}
+                
+                <button onclick="location.href='my-k-content.html'" style="width: 100%; padding: 12px; background: white; border: 2px solid #667eea; color: #667eea; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 14px; margin-top: 8px;">
+                    📚 전체 컬렉션 보기 (${collection.length}개)
+                </button>
+            </div>
+        `;
+        
+    } catch (error) {
+        console.error('K-콘텐츠 미리보기 로드 실패:', error);
+        previewEl.innerHTML = '';
+    }
 }
 
 function renderFullStory() {
@@ -3494,7 +3576,10 @@ function showKContentResult(analysis, originalText, sourceTitle) {
                 <button onclick="startKContentPractice('${escapeQuotes(originalText)}')" style="flex: 1; padding: 14px; background: #27ae60; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; color: white;">
                     🎤 따라 읽기
                 </button>
-                <button onclick="closeKContentResultModal()" style="flex: 1; padding: 14px; background: #667eea; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; color: white;">
+                <button onclick="location.href='my-k-content.html'" style="flex: 1; padding: 14px; background: #667eea; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; color: white;">
+                    📚 내 컬렉션
+                </button>
+                <button onclick="closeKContentResultModal()" style="flex: 1; padding: 14px; background: #f0f0f0; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; color: #666;">
                     ✓ 확인
                 </button>
             </div>
