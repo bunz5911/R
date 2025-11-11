@@ -40,12 +40,39 @@
         .header {
             background: white;
             color: #333;
-            padding: 50px 20px 20px;
-            text-align: center;
+            padding: 12px 20px 20px;
             position: sticky;
             top: 0;
             z-index: 100;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        /* 헤더 상단 바 (버튼들) */
+        .header-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            min-height: 44px;
+        }
+        
+        .header-left-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .header-right-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        /* 헤더 중앙 (타이틀) */
+        .header-center {
+            text-align: center;
         }
 
         .header h1 {
@@ -563,19 +590,17 @@
 
         /* 음성 설정 버튼 */
         .settings-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
             background: white;
             border: 1px solid #E0E0E0;
             color: #333;
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-size: 11px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
             transition: all 0.3s;
+            white-space: nowrap;
         }
 
         .settings-btn:hover {
@@ -584,19 +609,17 @@
         }
 
         .dashboard-btn {
-            position: absolute;
-            top: 20px;
-            right: 100px;
             background: white;
             border: 1px solid #E0E0E0;
             color: #333;
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-size: 11px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
             transition: all 0.3s;
+            white-space: nowrap;
         }
 
         .dashboard-btn:hover {
@@ -606,19 +629,17 @@
 
         /* 로그인/로그아웃 버튼 */
         .auth-btn {
-            position: absolute;
-            top: 20px;
-            right: 220px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             border-radius: 8px;
-            padding: 10px 20px;
-            font-size: 14px;
+            padding: 8px 16px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
             transition: all 0.3s;
+            white-space: nowrap;
         }
 
         .auth-btn:hover {
@@ -633,16 +654,14 @@
         }
 
         .user-info {
-            position: absolute;
-            top: 24px;
-            right: 340px;
-            font-size: 14px;
+            font-size: 13px;
             color: #667eea;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
             padding: 8px 12px;
             border-radius: 8px;
+            white-space: nowrap;
         }
 
         .user-info:hover {
@@ -651,9 +670,9 @@
 
         /* 코인 표시 */
         .coin-display-header {
-            position: absolute;
-            top: 20px;
-            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
             background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
             color: white;
             padding: 6px 12px;
@@ -795,20 +814,32 @@
     <div class="app-container">
         <!-- 헤더 -->
         <div class="header">
-            <div id="coinDisplay" class="coin-display-header">
-                <span style="font-size: 16px;">🟡</span> 
-                <span id="coinAmount">100</span>
-                <button id="checkinBtn" onclick="showCheckinModal()" class="coin-shop-btn" style="background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); border: none;">📅 출석</button>
-                <a href="coin-shop.html" class="coin-shop-btn">🛒 Shop</a>
-                <a href="my-k-content.html" class="coin-shop-btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">🎬 K</a>
+            <!-- 상단 바 (버튼들) -->
+            <div class="header-top-bar">
+                <div class="header-left-section">
+                    <div id="coinDisplay" class="coin-display-header">
+                        <span style="font-size: 16px;">🟡</span> 
+                        <span id="coinAmount">100</span>
+                        <button id="checkinBtn" onclick="showCheckinModal()" class="coin-shop-btn" style="background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); border: none;">📅 출석</button>
+                        <a href="coin-shop.html" class="coin-shop-btn">🛒 Shop</a>
+                        <a href="my-k-content.html" class="coin-shop-btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">🎬 K</a>
+                    </div>
+                </div>
+                
+                <div class="header-right-section">
+                    <div id="userInfo" class="user-info" style="display: none;"></div>
+                    <button id="authBtn" class="auth-btn" onclick="handleAuth()">로그인</button>
+                    <button id="adminBtn" class="dashboard-btn" onclick="location.href='admin.html'" style="display: none; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white;">🛠️ 관리</button>
+                    <button class="dashboard-btn" onclick="location.href='dashboard.html'">대시보드</button>
+                    <button class="settings-btn" onclick="showVoiceSettings()">음성 설정</button>
+                </div>
             </div>
-            <div id="userInfo" class="user-info" style="display: none;"></div>
-            <button id="authBtn" class="auth-btn" onclick="handleAuth()">로그인</button>
-            <button id="adminBtn" class="dashboard-btn" onclick="location.href='admin.html'" style="display: none; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; right: 340px;">🛠️ 관리</button>
-            <button class="dashboard-btn" onclick="location.href='dashboard.html'">대시보드</button>
-            <h1 onclick="location.href='onboarding.html'">Read Aloud Korean</h1>
-            <p>한국어 동화로 배우는 실전 한국어</p>
-            <button class="settings-btn" onclick="showVoiceSettings()">음성 설정</button>
+            
+            <!-- 중앙 (타이틀) -->
+            <div class="header-center">
+                <h1 onclick="location.href='onboarding.html'">Read Aloud Korean</h1>
+                <p>한국어 동화로 배우는 실전 한국어</p>
+            </div>
         </div>
 
         <!-- 동화 목록 화면 -->

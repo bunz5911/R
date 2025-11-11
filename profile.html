@@ -289,6 +289,9 @@
             <div class="section-title">⚙️ 계정 관리</div>
             
             <div class="button-group" style="margin-bottom: 32px;">
+                <button class="btn btn-primary" onclick="logoutUser()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    🚪 로그아웃
+                </button>
                 <button class="btn btn-secondary" onclick="location.href='pricing.html'">
                     ⬆️ 플랜 업그레이드
                 </button>
@@ -464,6 +467,25 @@
                 `;
                 
                 if (cancelBtn) cancelBtn.style.display = 'inline-block';
+            }
+        }
+
+        // 로그아웃
+        function logoutUser() {
+            const confirmed = confirm('로그아웃 하시겠습니까?');
+            
+            if (confirmed) {
+                // localStorage 정리
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
+                localStorage.removeItem('userId');
+                localStorage.removeItem('userEmail');
+                localStorage.removeItem('displayName');
+                localStorage.removeItem('userPlan');
+                localStorage.removeItem('lastCheckinDate');
+                
+                alert('로그아웃 되었습니다.');
+                location.href = 'index.html';
             }
         }
 
