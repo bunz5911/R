@@ -307,6 +307,21 @@ async function loadStories() {
 function renderStoryList() {
     const listEl = document.getElementById('storyList');
     listEl.innerHTML = currentStories.map(story => {
+        // 🔑 bunz5911@gmail.com은 모든 동화 잠금 해제
+        if (currentUserEmail === 'bunz5911@gmail.com') {
+            return `
+                <div class="story-card" onclick="selectStory(${story.id})">
+                    <div class="story-card-image">
+                        <img src="${story.image}" alt="${story.title}" onerror="this.style.display='none'">
+                        <div class="story-card-overlay">
+                            <div class="story-card-number">${story.id}</div>
+                            <h3 class="story-card-title-overlay">${story.title}</h3>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
         // 접근 권한 확인
         let isLocked = false;
         let lockMessage = '';
@@ -374,6 +389,12 @@ function renderStoryList() {
 
 // 동화 접근 권한 체크
 function checkStoryAccess(storyId) {
+    // 🔑 bunz5911@gmail.com은 모든 동화 무제한 접근
+    if (currentUserEmail === 'bunz5911@gmail.com') {
+        selectStory(storyId);
+        return;
+    }
+    
     // 시즌 2 (21-50번)
     if (storyId >= 21) {
         showSeason2Modal();
