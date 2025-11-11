@@ -1311,11 +1311,19 @@ def analyze_k_content():
         
         analysis_result = json.loads(response_text)
         
-        print(f"✅ K-콘텐츠 분석 완료", flush=True)
+        # ✅ Gemini가 배열로 반환하는 경우 처리
+        if isinstance(analysis_result, list):
+            print(f"⚠️ Gemini가 배열로 반환함, 첫 번째 요소 사용", flush=True)
+            if len(analysis_result) > 0:
+                analysis_result = analysis_result[0]
+            else:
+                raise ValueError("빈 배열 반환됨")
+        
+        print(f"✅ K-콘텐츠 분석 완료 (타입: {type(analysis_result).__name__})", flush=True)
         
         # ✅ 유사한 동화 추천 (키워드 기반)
         similar_stories = []
-        keywords = analysis_result.get('similar_story_keywords', [])
+        keywords = analysis_result.get('similar_story_keywords', []) if isinstance(analysis_result, dict) else []
         if keywords:
             # 간단한 매칭: 동화 제목이나 내용에 키워드가 포함된 것 추천
             for i, title in enumerate(story_titles[:20], 1):
