@@ -4162,8 +4162,10 @@ function updateAuthUI() {
         authBtn.onclick = logout;
         
         if (userInfo) {
-            userInfo.textContent = `${currentDisplayName}님`;
+            userInfo.textContent = `👤 ${currentDisplayName}님`;
             userInfo.style.display = 'block';
+            userInfo.onclick = () => location.href = 'profile.html';
+            userInfo.title = '프로필 보기';
         }
         
         // 관리자 버튼 표시 (bunz5911@gmail.com만)
