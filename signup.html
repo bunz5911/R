@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원가입 - Read Aloud Korean</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity="sha384-TiCUE00h+xOxtgETOXyPT1Kgq9pZLqy7vKGT+JOhQNN1JIEe4LbpbxJPr/j5FYDx" crossorigin="anonymous"></script>
     <script src="config.js"></script>
     <style>
         * {
@@ -424,6 +425,14 @@
             // OAuth 콜백 처리
             handleOAuthCallback();
         }
+        
+        // 카카오 SDK 초기화
+        if (typeof CONFIG !== 'undefined' && CONFIG.KAKAO_JS_KEY && CONFIG.KAKAO_JS_KEY !== 'YOUR_KAKAO_JAVASCRIPT_KEY') {
+            if (window.Kakao && !window.Kakao.isInitialized()) {
+                window.Kakao.init(CONFIG.KAKAO_JS_KEY);
+                console.log('✅ 카카오 SDK 초기화 완료');
+            }
+        }
 
         // OAuth 콜백 처리 (Google 회원가입 후 리다이렉트)
         async function handleOAuthCallback() {
@@ -626,7 +635,72 @@
 
         // 카카오 회원가입
         async function signupWithKakao() {
-            alert('카카오 회원가입은 곧 출시됩니다!\n\n현재는 Google 또는 이메일로 가입해주세요.');
+            if (!window.Kakao || !window.Kakao.isInitialized()) {
+                showError('카카오 로그인 설정이 필요합니다. config.js 파일을 확인하세요.');
+                return;
+            }
+            
+            try {
+                window.Kakao.Auth.login({
+                    success: async (authObj) => {
+                        console.log('✅ 카카오 로그인 성공:', authObj);
+                        
+                        // 사용자 정보 가져오기
+                        window.Kakao.API.request({
+                            url: '/v2/user/me',
+                            success: async (response) => {
+                                console.log('✅ 카카오 사용자 정보:', response);
+                                
+                                const kakaoId = response.id;
+                                const kakaoEmail = response.kakao_account?.email;
+                                const kakaoName = response.kakao_account?.profile?.nickname || '사용자';
+                                const kakaoAvatar = response.kakao_account?.profile?.profile_image_url;
+                                
+                                // 백엔드로 카카오 회원가입 처리
+                                const signupResponse = await fetch(`${API_BASE}/auth/kakao-login`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        kakao_id: kakaoId,
+                                        email: kakaoEmail,
+                                        display_name: kakaoName,
+                                        avatar_url: kakaoAvatar,
+                                        access_token: authObj.access_token
+                                    })
+                                });
+                                
+                                const signupData = await signupResponse.json();
+                                
+                                if (signupResponse.ok && signupData.success) {
+                                    // 회원가입/로그인 성공
+                                    localStorage.setItem('access_token', signupData.session.access_token);
+                                    localStorage.setItem('refresh_token', signupData.session.refresh_token);
+                                    localStorage.setItem('userId', signupData.user.id);
+                                    localStorage.setItem('userEmail', signupData.user.email);
+                                    localStorage.setItem('displayName', signupData.user.display_name);
+                                    localStorage.setItem('userPlan', signupData.user.plan || 'free');
+                                    
+                                    // 플랜 선택 화면 표시
+                                    showPlanSelection(signupData.user);
+                                } else {
+                                    showError(signupData.error || '카카오 회원가입에 실패했습니다');
+                                }
+                            },
+                            fail: (error) => {
+                                console.error('카카오 사용자 정보 조회 실패:', error);
+                                showError('사용자 정보를 가져오는데 실패했습니다');
+                            }
+                        });
+                    },
+                    fail: (err) => {
+                        console.error('카카오 로그인 실패:', err);
+                        showError('카카오 로그인에 실패했습니다');
+                    }
+                });
+            } catch (error) {
+                console.error('카카오 회원가입 오류:', error);
+                showError('카카오 회원가입에 실패했습니다');
+            }
         }
 
         // 에러 메시지 표시
