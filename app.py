@@ -1217,6 +1217,233 @@ def adjust_difficulty():
 
 
 # ============================================================================
+# [2-1] K-콘텐츠 학습 시스템
+# ============================================================================
+
+@app.route('/api/k-content/analyze', methods=['POST'])
+def analyze_k_content():
+    """
+    사용자가 입력한 K-콘텐츠(드라마/K-POP 대사) 분석
+    POST body: {
+        "user_id": "UUID",
+        "content_text": "너에게 달려가고 싶어, 지금 당장!",
+        "content_type": "kpop|drama|variety|movie",
+        "source_title": "DNA",
+        "source_artist": "BTS",
+        "story_id": 1 (현재 학습 중인 동화)
+    }
+    
+    응답:
+    - 문법 패턴 분석
+    - 어휘 난이도
+    - TOPIK 레벨
+    - 유사한 동화 추천
+    """
+    data = request.get_json() or {}
+    user_id = data.get('user_id')
+    content_text = data.get('content_text', '').strip()
+    content_type = data.get('content_type', 'other')
+    source_title = data.get('source_title', '')
+    source_artist = data.get('source_artist', '')
+    story_id = data.get('story_id')
+    
+    if not content_text:
+        return jsonify({"error": "분석할 텍스트가 필요합니다"}), 400
+    
+    if not user_id:
+        return jsonify({"error": "user_id가 필요합니다"}), 400
+    
+    if not client:
+        return jsonify({"error": "Gemini API가 설정되지 않았습니다"}), 500
+    
+    # ✅ Gemini로 K-콘텐츠 분석
+    prompt = f"""
+다음 한국어 문장을 TOPIK 학습자 관점에서 상세히 분석하세요:
+
+원문: {content_text}
+출처: {source_title} ({content_type})
+
+다음 항목을 JSON 형식으로 분석:
+{{
+  "difficulty_level": "beginner|intermediate|advanced",
+  "topik_level": "TOPIK 2급|3급|4급...",
+  "grammar_patterns": [
+    {{
+      "pattern": "-(으)려고 하다",
+      "explanation": "의지나 계획을 나타내는 표현",
+      "example": "학교에 가려고 해요."
+    }}
+  ],
+  "vocabulary": [
+    {{
+      "word": "달려가다",
+      "difficulty": "intermediate",
+      "meaning": "빠르게 가다, 서두르다",
+      "similar_words": ["뛰어가다", "서두르다"]
+    }}
+  ],
+  "key_expressions": [
+    "지금 당장",
+    "-(으)려고 싶다"
+  ],
+  "similar_story_keywords": ["의지", "행동", "감정표현"],
+  "learning_tips": "이 표현은 강한 의지를 표현할 때 사용합니다. K-POP 가사에서 자주 등장하는 패턴입니다."
+}}
+"""
+    
+    try:
+        print(f"🎬 K-콘텐츠 분석 시작: {content_text[:30]}...", flush=True)
+        
+        response = client.models.generate_content(
+            model='gemini-2.0-flash-exp',
+            contents=[prompt],
+            config=types.GenerateContentConfig(
+                temperature=0.5,
+                response_mime_type="application/json"
+            )
+        )
+        
+        response_text = response.text.strip()
+        if response_text.startswith('```json'):
+            response_text = response_text[7:-3].strip()
+        elif response_text.startswith('```'):
+            response_text = response_text[3:-3].strip()
+        
+        analysis_result = json.loads(response_text)
+        
+        print(f"✅ K-콘텐츠 분석 완료", flush=True)
+        
+        # ✅ 유사한 동화 추천 (키워드 기반)
+        similar_stories = []
+        keywords = analysis_result.get('similar_story_keywords', [])
+        if keywords:
+            # 간단한 매칭: 동화 제목이나 내용에 키워드가 포함된 것 추천
+            for i, title in enumerate(story_titles[:20], 1):
+                similarity_score = 0
+                for kw in keywords:
+                    if kw in title:
+                        similarity_score += 30
+                
+                if similarity_score > 0:
+                    similar_stories.append({
+                        "story_id": i,
+                        "title": title,
+                        "similarity": min(similarity_score, 95)
+                    })
+        
+        # 점수 높은 순으로 정렬, 상위 3개
+        similar_stories = sorted(similar_stories, key=lambda x: x['similarity'], reverse=True)[:3]
+        analysis_result['similar_stories'] = similar_stories
+        
+        # ✅ Supabase에 저장 (컬렉션)
+        if supabase_client:
+            try:
+                saved = supabase_client.table('user_k_content').insert({
+                    'user_id': user_id,
+                    'story_id': story_id,
+                    'content_text': content_text,
+                    'content_type': content_type,
+                    'source_title': source_title,
+                    'source_artist': source_artist,
+                    'grammar_analysis': analysis_result.get('grammar_patterns', []),
+                    'vocabulary_analysis': analysis_result.get('vocabulary', []),
+                    'difficulty_level': analysis_result.get('difficulty_level', 'intermediate'),
+                    'similar_stories': similar_stories
+                }).execute()
+                
+                print(f"✅ K-콘텐츠 저장 완료: content_id={saved.data[0]['id'] if saved.data else 'N/A'}", flush=True)
+                analysis_result['content_id'] = saved.data[0]['id'] if saved.data else None
+                
+            except Exception as e:
+                print(f"⚠️ K-콘텐츠 저장 실패: {e}", flush=True)
+        
+        return jsonify(analysis_result)
+        
+    except json.JSONDecodeError as e:
+        print(f"❌ JSON 파싱 오류: {e}", flush=True)
+        return jsonify({"error": f"응답 형식 오류: {str(e)}"}), 500
+    except Exception as e:
+        print(f"❌ K-콘텐츠 분석 오류: {type(e).__name__}: {str(e)}", flush=True)
+        import traceback
+        print(traceback.format_exc(), flush=True)
+        return jsonify({"error": f"분석 오류: {str(e)}"}), 500
+
+
+@app.route('/api/k-content/my-collection', methods=['GET'])
+def get_my_k_content():
+    """사용자의 K-콘텐츠 컬렉션 조회"""
+    user_id = request.args.get('user_id')
+    
+    if not user_id:
+        return jsonify({"error": "user_id가 필요합니다"}), 400
+    
+    if not supabase_client:
+        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    
+    try:
+        result = supabase_client.table('user_k_content')\
+            .select('*')\
+            .eq('user_id', user_id)\
+            .order('created_at', desc=True)\
+            .execute()
+        
+        return jsonify({
+            "total": len(result.data),
+            "collection": result.data
+        })
+    except Exception as e:
+        print(f"❌ 컬렉션 조회 오류: {e}", flush=True)
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/k-content/<content_id>', methods=['DELETE'])
+def delete_k_content(content_id):
+    """K-콘텐츠 삭제"""
+    user_id = request.args.get('user_id')
+    
+    if not user_id:
+        return jsonify({"error": "user_id가 필요합니다"}), 400
+    
+    if not supabase_client:
+        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    
+    try:
+        supabase_client.table('user_k_content')\
+            .delete()\
+            .eq('id', content_id)\
+            .eq('user_id', user_id)\
+            .execute()
+        
+        return jsonify({"success": True, "message": "삭제되었습니다"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/k-content/public', methods=['GET'])
+def get_public_k_content():
+    """공개된 인기 K-콘텐츠 조회"""
+    if not supabase_client:
+        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    
+    try:
+        limit = request.args.get('limit', 20)
+        
+        result = supabase_client.table('user_k_content')\
+            .select('*')\
+            .eq('is_public', True)\
+            .order('likes_count', desc=True)\
+            .limit(limit)\
+            .execute()
+        
+        return jsonify({
+            "total": len(result.data),
+            "popular_content": result.data
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# ============================================================================
 # [3] 서버 시작
 # ============================================================================
 if __name__ == '__main__':
