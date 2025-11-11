@@ -47,9 +47,14 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
         
+        /* 네비게이션 바 컨테이너 */
+        .nav-container {
+            position: relative;
+            margin-bottom: 16px;
+        }
+        
         /* 네비게이션 바 (가로 스크롤) */
         .header-top-bar {
-            margin-bottom: 16px;
             min-height: 44px;
             overflow-x: auto;
             overflow-y: hidden;
@@ -57,7 +62,8 @@
             /* 스크롤바 숨기기 */
             scrollbar-width: none;
             -ms-overflow-style: none;
-            padding: 0 12px;
+            padding: 0 50px; /* 화살표 공간 확보 */
+            scroll-behavior: smooth; /* 부드러운 스크롤 */
         }
         
         .header-top-bar::-webkit-scrollbar {
@@ -70,6 +76,46 @@
             gap: 8px;
             flex-wrap: nowrap; /* 한 줄 고정 */
             min-width: max-content; /* 컨텐츠 전체 너비 확보 */
+        }
+        
+        /* 스크롤 화살표 버튼 */
+        .scroll-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 102;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s;
+            font-size: 16px;
+            color: #667eea;
+        }
+        
+        .scroll-arrow:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .scroll-arrow.left {
+            left: 8px;
+        }
+        
+        .scroll-arrow.right {
+            right: 8px;
+        }
+        
+        .scroll-arrow.hidden {
+            opacity: 0;
+            pointer-events: none;
         }
         
         /* 헤더 중앙 (타이틀) */
@@ -830,18 +876,23 @@
     <div class="app-container">
         <!-- 헤더 -->
         <div class="header">
-            <!-- 상단 바 (버튼들) -->
-            <div class="header-top-bar">
-                <div class="header-left-section">
-                    <div id="userInfo" class="user-info" style="display: none;"></div>
-                    <button id="authBtn" class="header-btn" onclick="handleAuth()">로그인</button>
-                    <button id="checkinBtn" onclick="showCheckinModal()" class="header-btn checkin">📅 출석</button>
-                    <a href="my-k-content.html" class="header-btn">🎬 K-콘텐츠</a>
-                    <button id="adminBtn" class="header-btn" onclick="location.href='admin.html'" style="display: none; background: #e74c3c; color: white; border: none;">🛠️ 관리</button>
-                    <button class="header-btn" onclick="location.href='dashboard.html'">대시보드</button>
-                    <button class="header-btn" onclick="showVoiceSettings()">음성 설정</button>
-                    <button class="header-btn" style="min-width: 80px;"><span style="font-size: 14px;">🟡</span> <span id="coinAmount">100</span></button>
-                    <a href="coin-shop.html" class="header-btn">🛒 Shop</a>
+            <!-- 네비게이션 바 (스크롤 가능) -->
+            <div class="nav-container">
+                <button class="scroll-arrow left" id="scrollLeft" onclick="scrollNav(-200)">◀</button>
+                <button class="scroll-arrow right" id="scrollRight" onclick="scrollNav(200)">▶</button>
+                
+                <div class="header-top-bar" id="navBar">
+                    <div class="header-left-section">
+                        <div id="userInfo" class="user-info" style="display: none;"></div>
+                        <button id="authBtn" class="header-btn" onclick="handleAuth()">로그인</button>
+                        <button id="checkinBtn" onclick="showCheckinModal()" class="header-btn checkin">📅 출석</button>
+                        <a href="my-k-content.html" class="header-btn">🎬 K-콘텐츠</a>
+                        <button id="adminBtn" class="header-btn" onclick="location.href='admin.html'" style="display: none; background: #e74c3c; color: white; border: none;">🛠️ 관리</button>
+                        <button class="header-btn" onclick="location.href='dashboard.html'">대시보드</button>
+                        <button class="header-btn" onclick="showVoiceSettings()">음성 설정</button>
+                        <button class="header-btn" style="min-width: 80px;"><span style="font-size: 14px;">🟡</span> <span id="coinAmount">100</span></button>
+                        <a href="coin-shop.html" class="header-btn">🛒 Shop</a>
+                    </div>
                 </div>
             </div>
             
