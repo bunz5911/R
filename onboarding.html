@@ -72,7 +72,12 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            margin-top: 300px; /* 150px 위로 이동 */
+            margin-top: 300px;
+        }
+        
+        /* 첫 페이지만 50px 더 아래로 */
+        .slide:first-child .slide-content {
+            margin-top: 350px;
         }
 
         .illustration-placeholder {
@@ -287,7 +292,6 @@
                     <ul class="features-list">
                         <li>정확한 발음 마스터-like a native</li>
                         <li>자연스러운 억양과 리듬감!- 유창성 급상승!!</li>
-                        <li>내가 읽은 문장은 귀에 쏙쏙! 듣기 실력도 동반 상승</li>
                         <li>학습 효과를 실제 대화에 바로 적용하는 자신감!</li>
                     </ul>
                 </div>
@@ -307,7 +311,8 @@
             <div class="slide" style="background-image: url('img/ai_tutor.jpeg');">
                 <div class="slide-content">
                     <h1 class="slide-title">
-                        1:1 AI 튜터가 당신의 성장 속도를<br>
+                        1:1 AI 튜터가<br>
+                        당신의 성장 속도를<br>
                         3배 높입니다.
                     </h1>
                     <ul class="features-list">
