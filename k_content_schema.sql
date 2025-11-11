@@ -152,7 +152,16 @@ CREATE INDEX IF NOT EXISTS idx_daily_missions_user_date ON public.daily_missions
 -- 7. 트리거 (자동 업데이트)
 -- ============================================================================
 
--- updated_at 자동 업데이트
+-- updated_at 자동 업데이트 함수 생성 (없을 경우에만)
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- updated_at 자동 업데이트 트리거
 DROP TRIGGER IF EXISTS update_k_content_updated_at ON public.user_k_content;
 CREATE TRIGGER update_k_content_updated_at
     BEFORE UPDATE ON public.user_k_content
