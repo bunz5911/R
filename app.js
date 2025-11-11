@@ -4258,7 +4258,66 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (isAuthenticated) {
         await checkTodayCheckin();
     }
+    
+    // 네비게이션 바 스크롤 화살표 초기화
+    initNavScrollArrows();
 });
+
+
+// ============================================================================
+// [14] 네비게이션 바 스크롤 컨트롤
+// ============================================================================
+
+// 네비게이션 스크롤 함수
+function scrollNav(amount) {
+    const navBar = document.getElementById('navBar');
+    if (navBar) {
+        navBar.scrollLeft += amount;
+    }
+}
+
+// 스크롤 화살표 표시/숨김 업데이트
+function updateScrollArrows() {
+    const navBar = document.getElementById('navBar');
+    const leftArrow = document.getElementById('scrollLeft');
+    const rightArrow = document.getElementById('scrollRight');
+    
+    if (!navBar || !leftArrow || !rightArrow) return;
+    
+    const scrollLeft = navBar.scrollLeft;
+    const maxScroll = navBar.scrollWidth - navBar.clientWidth;
+    
+    // 왼쪽 화살표 (맨 왼쪽이면 숨김)
+    if (scrollLeft <= 5) {
+        leftArrow.classList.add('hidden');
+    } else {
+        leftArrow.classList.remove('hidden');
+    }
+    
+    // 오른쪽 화살표 (맨 오른쪽이면 숨김)
+    if (scrollLeft >= maxScroll - 5) {
+        rightArrow.classList.add('hidden');
+    } else {
+        rightArrow.classList.remove('hidden');
+    }
+}
+
+// 네비게이션 스크롤 화살표 초기화
+function initNavScrollArrows() {
+    const navBar = document.getElementById('navBar');
+    
+    if (navBar) {
+        // 스크롤 이벤트 리스너
+        navBar.addEventListener('scroll', updateScrollArrows);
+        
+        // 초기 상태 업데이트
+        setTimeout(updateScrollArrows, 100);
+        
+        // 윈도우 리사이즈 시 업데이트
+        window.addEventListener('resize', updateScrollArrows);
+    }
+}
+
 
 
 // ============================================================================
