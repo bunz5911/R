@@ -27,12 +27,19 @@
 
         .onboarding-container {
             width: 100%;
-            max-width: 500px;
+            min-width: 430px; /* iPhone 16 Pro 최소 */
+            max-width: 800px; /* Desktop 최대 (온보딩은 좀 더 작게) */
             height: 100vh;
-            height: 100dvh; /* 동적 뷰포트 */
+            height: 100dvh;
             max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
             position: relative;
             overflow: hidden;
+        }
+        
+        @media (max-width: 768px) {
+            .onboarding-container {
+                min-width: 100%;
+            }
         }
 
         .slides-wrapper {
