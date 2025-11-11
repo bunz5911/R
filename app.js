@@ -774,6 +774,17 @@ function renderSummary() {
         <div class="content-box">
             ${currentAnalysis.summary || '요약 정보가 없습니다.'}
         </div>
+        
+        <!-- K-콘텐츠 추가 버튼 -->
+        <div style="margin-top: 20px;">
+            <button class="btn btn-primary" onclick="showKContentModal()" style="width: 100%; padding: 16px; font-size: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; border-radius: 12px; font-weight: 700; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); cursor: pointer;">
+                🎬 내 K-콘텐츠 추가하기
+            </button>
+            <p style="text-align: center; font-size: 13px; color: #888; margin-top: 8px;">
+                좋아하는 K-드라마/K-POP 대사로 배워보세요!
+            </p>
+        </div>
+        
         <div class="bottom-spacer"></div>
     `;
     
@@ -3118,7 +3129,572 @@ function showToast(message) {
 }
 
 // ============================================================================
-// [10] 유틸리티
+// [10] K-콘텐츠 학습 시스템
+// ============================================================================
+
+let kContentRecognition = null;
+let kContentRecordedText = '';
+
+function showKContentModal() {
+    const modal = document.createElement('div');
+    modal.id = 'kContentModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        backdrop-filter: blur(5px);
+    `;
+    
+    modal.innerHTML = `
+        <div style="background: white; border-radius: 20px; padding: 30px; max-width: 450px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="font-size: 22px; font-weight: 700; color: #333;">🎬 K-콘텐츠로 배우기</h2>
+                <button onclick="closeKContentModal()" style="background: none; border: none; font-size: 28px; cursor: pointer; color: #999;">&times;</button>
+            </div>
+            
+            <!-- 입력 방식 선택 탭 -->
+            <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;">
+                <button id="textTabBtn" onclick="switchKContentTab('text')" class="k-content-tab-btn active" style="flex: 1; padding: 12px; border: none; background: #667eea; color: white; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                    📝 텍스트 입력
+                </button>
+                <button id="voiceTabBtn" onclick="switchKContentTab('voice')" class="k-content-tab-btn" style="flex: 1; padding: 12px; border: none; background: #f0f0f0; color: #666; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                    🎤 음성 녹음
+                </button>
+            </div>
+            
+            <!-- 텍스트 입력 탭 -->
+            <div id="textInputTab" style="display: block;">
+                <textarea id="kContentText" placeholder="K-드라마 대사나 K-POP 가사를 입력하세요...&#10;&#10;예시: 너에게 달려가고 싶어, 지금 당장!" style="width: 100%; min-height: 120px; padding: 15px; border: 2px solid #E0E0E0; border-radius: 12px; font-size: 15px; resize: vertical; font-family: inherit;"></textarea>
+            </div>
+            
+            <!-- 음성 녹음 탭 -->
+            <div id="voiceInputTab" style="display: none;">
+                <div style="text-align: center; padding: 30px; background: #f8f9fa; border-radius: 12px; border: 2px dashed #ddd;">
+                    <div style="font-size: 60px; margin-bottom: 15px;">🎤</div>
+                    <p style="font-size: 14px; color: #666; margin-bottom: 15px;">
+                        K-드라마 대사나 K-POP 가사를 말해보세요
+                    </p>
+                    <button id="kContentRecordBtn" onclick="startKContentRecording()" style="padding: 14px 30px; background: #e74c3c; color: white; border: none; border-radius: 25px; font-weight: 700; cursor: pointer; font-size: 15px;">
+                        🎤 녹음 시작
+                    </button>
+                    <div id="kContentRecordingStatus" style="margin-top: 15px; font-size: 13px; color: #888;"></div>
+                    <div id="kContentRecordedText" style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px; display: none; text-align: left;">
+                        <strong>인식된 텍스트:</strong>
+                        <p id="kContentRecognizedText" style="margin-top: 8px; color: #333;"></p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 출처 정보 -->
+            <div style="margin-top: 20px;">
+                <label style="display: block; font-size: 13px; color: #666; margin-bottom: 6px; font-weight: 600;">콘텐츠 종류</label>
+                <select id="kContentType" style="width: 100%; padding: 12px; border: 2px solid #E0E0E0; border-radius: 8px; font-size: 14px; margin-bottom: 12px;">
+                    <option value="drama">📺 K-드라마</option>
+                    <option value="kpop">🎵 K-POP</option>
+                    <option value="variety">🎬 예능</option>
+                    <option value="movie">🎥 영화</option>
+                    <option value="other">기타</option>
+                </select>
+                
+                <label style="display: block; font-size: 13px; color: #666; margin-bottom: 6px; font-weight: 600;">제목 (선택)</label>
+                <input id="kContentTitle" type="text" placeholder="예: DNA, 도깨비" style="width: 100%; padding: 12px; border: 2px solid #E0E0E0; border-radius: 8px; font-size: 14px; margin-bottom: 12px;">
+                
+                <label style="display: block; font-size: 13px; color: #666; margin-bottom: 6px; font-weight: 600;">아티스트/출연진 (선택)</label>
+                <input id="kContentArtist" type="text" placeholder="예: BTS, 공유" style="width: 100%; padding: 12px; border: 2px solid #E0E0E0; border-radius: 8px; font-size: 14px;">
+            </div>
+            
+            <!-- 액션 버튼 -->
+            <div style="display: flex; gap: 12px; margin-top: 25px;">
+                <button onclick="closeKContentModal()" style="flex: 1; padding: 14px; background: #f0f0f0; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; color: #666;">
+                    취소
+                </button>
+                <button onclick="analyzeKContent()" style="flex: 2; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 10px; font-weight: 700; cursor: pointer; color: white; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
+                    ✨ 분석하기 →
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // 모달 배경 클릭 시 닫기
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeKContentModal();
+    });
+}
+
+function switchKContentTab(tab) {
+    const textTab = document.getElementById('textInputTab');
+    const voiceTab = document.getElementById('voiceInputTab');
+    const textBtn = document.getElementById('textTabBtn');
+    const voiceBtn = document.getElementById('voiceTabBtn');
+    
+    if (tab === 'text') {
+        textTab.style.display = 'block';
+        voiceTab.style.display = 'none';
+        textBtn.style.background = '#667eea';
+        textBtn.style.color = 'white';
+        voiceBtn.style.background = '#f0f0f0';
+        voiceBtn.style.color = '#666';
+    } else {
+        textTab.style.display = 'none';
+        voiceTab.style.display = 'block';
+        textBtn.style.background = '#f0f0f0';
+        textBtn.style.color = '#666';
+        voiceBtn.style.background = '#667eea';
+        voiceBtn.style.color = 'white';
+    }
+}
+
+function startKContentRecording() {
+    const btn = document.getElementById('kContentRecordBtn');
+    const status = document.getElementById('kContentRecordingStatus');
+    
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        alert('이 브라우저는 음성 인식을 지원하지 않습니다. Chrome을 사용해주세요.');
+        return;
+    }
+    
+    if (kContentRecognition && kContentRecognition.isRecording) {
+        // 녹음 중지
+        kContentRecognition.stop();
+        kContentRecognition.isRecording = false;
+        btn.textContent = '🎤 녹음 시작';
+        btn.style.background = '#e74c3c';
+        status.textContent = '';
+        return;
+    }
+    
+    // 녹음 시작
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    kContentRecognition = new SpeechRecognition();
+    kContentRecognition.lang = 'ko-KR';
+    kContentRecognition.continuous = true;
+    kContentRecognition.interimResults = true;
+    
+    kContentRecordedText = '';
+    
+    kContentRecognition.onstart = () => {
+        kContentRecognition.isRecording = true;
+        btn.textContent = '⏹ 녹음 중지';
+        btn.style.background = '#95a5a6';
+        status.textContent = '🔴 녹음 중... 대사를 말해주세요';
+        status.style.color = '#e74c3c';
+    };
+    
+    kContentRecognition.onresult = (event) => {
+        let interimTranscript = '';
+        let finalTranscript = '';
+        
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+            const transcript = event.results[i][0].transcript;
+            if (event.results[i].isFinal) {
+                finalTranscript += transcript + ' ';
+            } else {
+                interimTranscript += transcript;
+            }
+        }
+        
+        kContentRecordedText = (finalTranscript + interimTranscript).trim();
+        
+        const recognizedEl = document.getElementById('kContentRecognizedText');
+        const recordedBox = document.getElementById('kContentRecordedText');
+        
+        if (recognizedEl && kContentRecordedText) {
+            recognizedEl.textContent = kContentRecordedText;
+            recordedBox.style.display = 'block';
+        }
+    };
+    
+    kContentRecognition.onerror = (event) => {
+        console.error('음성 인식 오류:', event.error);
+        status.textContent = '⚠️ 오류 발생: ' + event.error;
+        status.style.color = '#e74c3c';
+        btn.textContent = '🎤 녹음 시작';
+        btn.style.background = '#e74c3c';
+        kContentRecognition.isRecording = false;
+    };
+    
+    kContentRecognition.onend = () => {
+        if (kContentRecognition.isRecording) {
+            status.textContent = '✅ 녹음 완료!';
+            status.style.color = '#27ae60';
+        }
+        kContentRecognition.isRecording = false;
+        btn.textContent = '🎤 다시 녹음';
+        btn.style.background = '#e74c3c';
+    };
+    
+    kContentRecognition.start();
+}
+
+async function analyzeKContent() {
+    // 텍스트 또는 음성에서 입력 가져오기
+    const textInput = document.getElementById('kContentText');
+    const voiceInput = kContentRecordedText;
+    const activeTab = document.getElementById('textInputTab').style.display === 'block' ? 'text' : 'voice';
+    
+    const contentText = activeTab === 'text' ? textInput.value.trim() : voiceInput.trim();
+    
+    if (!contentText) {
+        alert('분석할 텍스트를 입력하거나 녹음해주세요.');
+        return;
+    }
+    
+    const contentType = document.getElementById('kContentType').value;
+    const sourceTitle = document.getElementById('kContentTitle').value;
+    const sourceArtist = document.getElementById('kContentArtist').value;
+    
+    // 로딩 표시
+    showLoadingMessage('AI가 분석 중입니다...');
+    closeKContentModal();
+    
+    try {
+        console.log('🎬 K-콘텐츠 분석 API 호출:', contentText);
+        
+        const response = await fetch(`${API_BASE}/k-content/analyze`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: currentUserId,
+                content_text: contentText,
+                content_type: contentType,
+                source_title: sourceTitle,
+                source_artist: sourceArtist,
+                story_id: currentStory?.id
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`API 오류: ${response.status}`);
+        }
+        
+        const analysisData = await response.json();
+        console.log('✅ K-콘텐츠 분석 완료:', analysisData);
+        
+        hideLoadingMessage();
+        showKContentResult(analysisData, contentText, sourceTitle);
+        
+        // 코인 지급 (K-콘텐츠 추가 보상)
+        await updateCoins(10, 'k_content_added', 'K-콘텐츠 추가');
+        showToast('💰 +10 코인 획득!');
+        
+    } catch (error) {
+        console.error('❌ K-콘텐츠 분석 오류:', error);
+        hideLoadingMessage();
+        alert('분석 중 오류가 발생했습니다: ' + error.message);
+    }
+}
+
+function showKContentResult(analysis, originalText, sourceTitle) {
+    const modal = document.createElement('div');
+    modal.id = 'kContentResultModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        backdrop-filter: blur(5px);
+    `;
+    
+    const grammarHTML = (analysis.grammar_patterns || []).map(g => `
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 12px; border-left: 4px solid #667eea;">
+            <strong style="color: #667eea; font-size: 15px;">${g.pattern}</strong>
+            <p style="margin: 8px 0; font-size: 14px; color: #555;">${g.explanation}</p>
+            <p style="font-size: 13px; color: #888; font-style: italic;">예: ${g.example}</p>
+        </div>
+    `).join('');
+    
+    const vocabHTML = (analysis.vocabulary || []).map(v => `
+        <div style="background: #fff3cd; padding: 12px; border-radius: 8px; margin-bottom: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <strong style="font-size: 15px;">${v.word}</strong>
+                <span style="background: ${v.difficulty === 'beginner' ? '#6FCF97' : v.difficulty === 'intermediate' ? '#F59E0B' : '#E74C3C'}; color: white; padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 600;">${v.difficulty}</span>
+            </div>
+            <p style="margin: 8px 0 4px; font-size: 14px; color: #555;">${v.meaning}</p>
+        </div>
+    `).join('');
+    
+    const similarStoriesHTML = (analysis.similar_stories || []).map(s => `
+        <div onclick="loadStory(${s.story_id}); closeKContentResultModal();" style="background: #e8f4f8; padding: 12px; border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#d1e7f0'" onmouseout="this.style.background='#e8f4f8'">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 600;">${s.story_id}. ${s.title}</span>
+                <span style="color: #667eea; font-size: 13px; font-weight: 600;">${s.similarity}% 유사</span>
+            </div>
+        </div>
+    `).join('') || '<p style="text-align: center; color: #999;">추천할 동화가 없습니다.</p>';
+    
+    modal.innerHTML = `
+        <div style="background: white; border-radius: 20px; padding: 30px; max-width: 500px; width: 90%; max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="font-size: 22px; font-weight: 700; color: #333;">✨ 분석 완료!</h2>
+                <button onclick="closeKContentResultModal()" style="background: none; border: none; font-size: 28px; cursor: pointer; color: #999;">&times;</button>
+            </div>
+            
+            <!-- 원문 -->
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 12px; color: white; margin-bottom: 20px;">
+                <div style="font-size: 13px; opacity: 0.9; margin-bottom: 8px;">${sourceTitle || 'K-콘텐츠'}</div>
+                <div style="font-size: 17px; line-height: 1.6; font-weight: 500;">"${originalText}"</div>
+                <div style="display: flex; gap: 8px; margin-top: 15px; align-items: center;">
+                    <span style="background: rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 15px; font-size: 12px; font-weight: 600;">🎯 ${analysis.difficulty_level || '중급'}</span>
+                    <span style="background: rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 15px; font-size: 12px; font-weight: 600;">📊 ${analysis.topik_level || 'TOPIK 3급'}</span>
+                    <button onclick="togglePlay('kcontent', '${escapeQuotes(originalText)}', this)" style="background: rgba(255,255,255,0.9); color: #667eea; border: none; padding: 8px 16px; border-radius: 15px; font-weight: 700; cursor: pointer; font-size: 13px;">
+                        ▶ 듣기
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 문법 패턴 -->
+            <div style="margin-bottom: 25px;">
+                <h3 style="font-size: 17px; font-weight: 700; color: #333; margin-bottom: 12px; display: flex; align-items: center;">
+                    📚 문법 패턴 <span style="background: #667eea; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; margin-left: 8px;">${(analysis.grammar_patterns || []).length}개</span>
+                </h3>
+                ${grammarHTML || '<p style="text-align: center; color: #999;">문법 패턴 정보가 없습니다.</p>'}
+            </div>
+            
+            <!-- 어휘 분석 -->
+            <div style="margin-bottom: 25px;">
+                <h3 style="font-size: 17px; font-weight: 700; color: #333; margin-bottom: 12px; display: flex; align-items: center;">
+                    📖 핵심 어휘 <span style="background: #F59E0B; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; margin-left: 8px;">${(analysis.vocabulary || []).length}개</span>
+                </h3>
+                ${vocabHTML || '<p style="text-align: center; color: #999;">어휘 정보가 없습니다.</p>'}
+            </div>
+            
+            <!-- 학습 팁 -->
+            ${analysis.learning_tips ? `
+            <div style="background: #fff3cd; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #ffc107;">
+                <strong style="color: #856404;">💡 학습 팁</strong>
+                <p style="margin-top: 8px; color: #856404; line-height: 1.6; font-size: 14px;">${analysis.learning_tips}</p>
+            </div>
+            ` : ''}
+            
+            <!-- 유사한 동화 추천 -->
+            <div style="margin-bottom: 20px;">
+                <h3 style="font-size: 17px; font-weight: 700; color: #333; margin-bottom: 12px;">
+                    🔗 이 표현과 비슷한 동화
+                </h3>
+                ${similarStoriesHTML}
+            </div>
+            
+            <!-- 액션 버튼 -->
+            <div style="display: flex; gap: 10px;">
+                <button onclick="startKContentPractice('${escapeQuotes(originalText)}')" style="flex: 1; padding: 14px; background: #27ae60; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; color: white;">
+                    🎤 따라 읽기
+                </button>
+                <button onclick="closeKContentResultModal()" style="flex: 1; padding: 14px; background: #667eea; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; color: white;">
+                    ✓ 확인
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // 모달 배경 클릭 시 닫기
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeKContentResultModal();
+    });
+}
+
+function closeKContentModal() {
+    const modal = document.getElementById('kContentModal');
+    if (modal) modal.remove();
+    
+    // 음성 인식 중지
+    if (kContentRecognition) {
+        kContentRecognition.stop();
+        kContentRecognition = null;
+    }
+    kContentRecordedText = '';
+}
+
+function closeKContentResultModal() {
+    const modal = document.getElementById('kContentResultModal');
+    if (modal) modal.remove();
+}
+
+function startKContentPractice(text) {
+    closeKContentResultModal();
+    
+    // 읽기 평가 모달 표시
+    const modal = document.createElement('div');
+    modal.id = 'kContentPracticeModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1001;
+    `;
+    
+    modal.innerHTML = `
+        <div style="background: white; border-radius: 20px; padding: 40px; max-width: 450px; width: 90%; text-align: center;">
+            <h2 style="font-size: 24px; margin-bottom: 20px; color: #333;">🎤 따라 읽기 연습</h2>
+            
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                <p style="font-size: 18px; line-height: 1.8; color: #333; font-weight: 500;">"${text}"</p>
+            </div>
+            
+            <p style="font-size: 14px; color: #666; margin-bottom: 20px;">
+                위 문장을 자연스럽게 읽어주세요<br>
+                AI가 발음과 억양을 평가합니다
+            </p>
+            
+            <button id="kContentPracticeBtn" onclick="startKContentPracticeRecording('${escapeQuotes(text)}')" style="padding: 16px 40px; background: #e74c3c; color: white; border: none; border-radius: 25px; font-size: 16px; font-weight: 700; cursor: pointer; margin-bottom: 15px;">
+                🎤 녹음 시작
+            </button>
+            
+            <div id="kContentPracticeStatus" style="font-size: 14px; color: #888; min-height: 20px; margin-bottom: 15px;"></div>
+            
+            <button onclick="closePracticeModal()" style="padding: 12px 30px; background: #f0f0f0; color: #666; border: none; border-radius: 10px; font-weight: 600; cursor: pointer;">
+                취소
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+let kPracticeRecognition = null;
+let kPracticeText = '';
+
+function startKContentPracticeRecording(originalText) {
+    const btn = document.getElementById('kContentPracticeBtn');
+    const status = document.getElementById('kContentPracticeStatus');
+    
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        alert('이 브라우저는 음성 인식을 지원하지 않습니다.');
+        return;
+    }
+    
+    if (kPracticeRecognition && kPracticeRecognition.isRecording) {
+        // 녹음 중지 및 평가
+        kPracticeRecognition.stop();
+        return;
+    }
+    
+    // 녹음 시작
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    kPracticeRecognition = new SpeechRecognition();
+    kPracticeRecognition.lang = 'ko-KR';
+    kPracticeRecognition.continuous = false;
+    kPracticeRecognition.interimResults = false;
+    
+    kPracticeText = '';
+    
+    kPracticeRecognition.onstart = () => {
+        kPracticeRecognition.isRecording = true;
+        btn.textContent = '⏹ 녹음 중...';
+        btn.style.background = '#95a5a6';
+        status.textContent = '🔴 녹음 중... 소리 내어 읽어주세요';
+        status.style.color = '#e74c3c';
+    };
+    
+    kPracticeRecognition.onresult = async (event) => {
+        kPracticeText = event.results[0][0].transcript;
+        status.textContent = '✅ 녹음 완료! AI가 평가 중...';
+        status.style.color = '#27ae60';
+        
+        // AI 평가 요청
+        await evaluateKContentPractice(originalText, kPracticeText);
+    };
+    
+    kPracticeRecognition.onerror = (event) => {
+        console.error('음성 인식 오류:', event.error);
+        status.textContent = '⚠️ 오류 발생';
+        status.style.color = '#e74c3c';
+        btn.textContent = '🎤 다시 녹음';
+        btn.style.background = '#e74c3c';
+    };
+    
+    kPracticeRecognition.start();
+}
+
+async function evaluateKContentPractice(originalText, userText) {
+    try {
+        const response = await fetch(`${API_BASE}/story/${currentStory?.id || 1}/evaluate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: currentUserId,
+                paragraph_num: 0,  // K-콘텐츠는 0번으로 표시
+                original_text: originalText,
+                user_text: userText
+            })
+        });
+        
+        const result = await response.json();
+        
+        closePracticeModal();
+        
+        // 평가 결과 표시
+        alert(`🎉 평가 완료!\n\n점수: ${result.score}점\n획득 코인: ${result.coins}개\n\n${result.feedback}`);
+        
+        // 코인 업데이트
+        if (result.total_coins !== undefined) {
+            userCoins = result.total_coins;
+            updateCoinDisplay();
+        }
+        
+    } catch (error) {
+        console.error('평가 오류:', error);
+        alert('평가 중 오류가 발생했습니다.');
+    }
+}
+
+function closePracticeModal() {
+    const modal = document.getElementById('kContentPracticeModal');
+    if (modal) modal.remove();
+    
+    if (kPracticeRecognition) {
+        kPracticeRecognition.stop();
+        kPracticeRecognition = null;
+    }
+}
+
+async function updateCoins(amount, type, description) {
+    try {
+        const response = await fetch(`${API_BASE}/user/${currentUserId}/coins`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                amount: amount,
+                type: type,
+                description: description
+            })
+        });
+        
+        const data = await response.json();
+        if (data.coins !== undefined) {
+            userCoins = data.coins;
+            updateCoinDisplay();
+        }
+    } catch (error) {
+        console.log('코인 업데이트 실패:', error);
+    }
+}
+
+
+// ============================================================================
+// [11] 유틸리티
 // ============================================================================
 function escapeQuotes(str) {
     if (!str) return '';
