@@ -15,7 +15,12 @@
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
             background: #f5f7fa;
             min-height: 100vh;
+            min-height: 100dvh; /* 동적 뷰포트 */
             padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            padding-bottom: max(60px, env(safe-area-inset-bottom)); /* 하단 넉넉한 여백 */
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .profile-container {
