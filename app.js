@@ -2220,8 +2220,15 @@ function playFullStoryAudio(storyId, buttonElement) {
         fullStoryAudio.pause();
         fullStoryAudio.currentTime = 0;
         fullStoryAudio = null;
-        buttonElement.innerHTML = '▶';
+        buttonElement.textContent = '▶';
+        buttonElement.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
         return;
+    }
+    
+    // 이전 오디오 정리
+    if (fullStoryAudio) {
+        fullStoryAudio.pause();
+        fullStoryAudio = null;
     }
     
     // 새 오디오 객체 생성
@@ -2230,6 +2237,16 @@ function playFullStoryAudio(storyId, buttonElement) {
     // 로딩 중 표시
     buttonElement.innerHTML = '⏳';
     buttonElement.disabled = true;
+    
+    // 에러 처리 (파일 없음)
+    fullStoryAudio.addEventListener('error', (e) => {
+        console.error('❌ 오디오 로드 실패:', e);
+        alert(`전체 듣기 오디오 파일이 없습니다.\n\n현재는 문단별 학습을 이용해주세요.\n(AI 음성으로 실시간 생성됩니다)`);
+        buttonElement.innerHTML = '▶';
+        buttonElement.disabled = false;
+        buttonElement.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        fullStoryAudio = null;
+    }, { once: true });
     
     // 재생 준비 완료
     fullStoryAudio.addEventListener('canplaythrough', () => {
@@ -2247,7 +2264,7 @@ function playFullStoryAudio(storyId, buttonElement) {
         })
         .catch(error => {
             console.error('❌ 오디오 재생 실패:', error);
-            alert(`오디오 파일을 재생할 수 없습니다.\n파일 경로: ${audioPath}\n\n파일이 존재하는지 확인해 주세요.`);
+            alert(`전체 듣기 오디오 파일이 없습니다.\n\n현재는 문단별 학습을 이용해주세요.\n(AI 음성으로 실시간 생성됩니다)`);
             buttonElement.innerHTML = '▶';
             buttonElement.disabled = false;
             fullStoryAudio = null;
