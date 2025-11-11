@@ -40,14 +40,14 @@
         .header {
             background: white;
             color: #333;
-            padding: 12px 20px 20px;
+            padding: 12px 0 20px;
             position: sticky;
             top: 0;
             z-index: 100;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
         
-        /* 헤더 상단 바 (버튼들) */
+        /* 네비게이션 바 (가로 스크롤) */
         .header-top-bar {
             margin-bottom: 16px;
             min-height: 44px;
@@ -57,6 +57,7 @@
             /* 스크롤바 숨기기 */
             scrollbar-width: none;
             -ms-overflow-style: none;
+            padding: 0 12px;
         }
         
         .header-top-bar::-webkit-scrollbar {
@@ -67,18 +68,19 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            flex-wrap: nowrap; /* 한 줄로 */
-            min-width: max-content;
+            flex-wrap: nowrap; /* 한 줄 고정 */
+            min-width: max-content; /* 컨텐츠 전체 너비 확보 */
         }
         
         /* 헤더 중앙 (타이틀) */
         .header-center {
             text-align: center;
+            padding: 0 20px;
         }
 
         .header h1 {
             font-size: 24px;
-            margin-top: 30px;
+            margin-top: 0;
             margin-bottom: 8px;
             font-weight: 700;
             cursor: pointer;
