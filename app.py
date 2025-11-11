@@ -1765,6 +1765,327 @@ def check_story_access(story_id):
 
 
 # ============================================================================
+# 출석 체크 & 일일 미션 시스템
+# ============================================================================
+
+@app.route('/api/checkin', methods=['POST'])
+def daily_checkin():
+    """
+    출석 체크
+    POST body: { "user_id": "UUID" }
+    """
+    if not supabase_client:
+        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    
+    data = request.get_json() or {}
+    user_id = data.get('user_id')
+    
+    if not user_id:
+        return jsonify({"error": "user_id가 필요합니다"}), 400
+    
+    try:
+        from datetime import date, timedelta
+        today = date.today()
+        
+        # 오늘 이미 출석했는지 확인
+        check_result = supabase_client.table('streak_history')\
+            .select('*')\
+            .eq('user_id', user_id)\
+            .eq('date', today.isoformat())\
+            .execute()
+        
+        if check_result.data and len(check_result.data) > 0:
+            # 이미 출석함
+            return jsonify({
+                "success": False,
+                "message": "오늘 이미 출석했습니다",
+                "already_checked": True
+            }), 400
+        
+        # 어제 출석 확인 (연속 출석 체크)
+        yesterday = today - timedelta(days=1)
+        yesterday_result = supabase_client.table('streak_history')\
+            .select('*')\
+            .eq('user_id', user_id)\
+            .eq('date', yesterday.isoformat())\
+            .execute()
+        
+        # 프로필 조회
+        profile_result = supabase_client.table('profiles')\
+            .select('current_streak, longest_streak')\
+            .eq('id', user_id)\
+            .execute()
+        
+        current_streak = 1
+        longest_streak = 1
+        
+        if profile_result.data and len(profile_result.data) > 0:
+            profile = profile_result.data[0]
+            prev_streak = profile.get('current_streak', 0)
+            prev_longest = profile.get('longest_streak', 0)
+            
+            # 어제 출석했으면 연속 출석
+            if yesterday_result.data and len(yesterday_result.data) > 0:
+                current_streak = prev_streak + 1
+            else:
+                # 끊김 - 1일부터 다시 시작
+                current_streak = 1
+            
+            longest_streak = max(current_streak, prev_longest)
+        
+        # 출석 코인 보상 (기본 2코인 + 연속 출석 보너스)
+        bonus_coins = 0
+        if current_streak >= 7:
+            bonus_coins = 5  # 7일 연속: +5코인
+        elif current_streak >= 3:
+            bonus_coins = 2  # 3일 연속: +2코인
+        
+        total_coins = 2 + bonus_coins
+        
+        # 출석 기록 저장
+        supabase_client.table('streak_history').insert({
+            'user_id': user_id,
+            'date': today.isoformat(),
+            'checked_in': True,
+            'coins_earned': total_coins,
+            'freeze_used': False
+        }).execute()
+        
+        # 프로필 업데이트
+        supabase_client.table('profiles').update({
+            'current_streak': current_streak,
+            'longest_streak': longest_streak,
+            'last_check_in': today.isoformat()
+        }).eq('id', user_id).execute()
+        
+        # 코인 지급
+        supabase_client.rpc('add_user_coins', {
+            'p_user_id': user_id,
+            'p_amount': total_coins,
+            'p_type': 'daily_checkin',
+            'p_description': f'출석 체크 ({current_streak}일 연속)'
+        }).execute()
+        
+        print(f"✅ 출석 체크: {user_id}, 연속 {current_streak}일, +{total_coins}코인", flush=True)
+        
+        return jsonify({
+            "success": True,
+            "current_streak": current_streak,
+            "longest_streak": longest_streak,
+            "coins_earned": total_coins,
+            "bonus_coins": bonus_coins,
+            "message": f"{current_streak}일 연속 출석!"
+        })
+        
+    except Exception as e:
+        print(f"❌ 출석 체크 오류: {e}", flush=True)
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/missions/daily', methods=['GET'])
+def get_daily_missions():
+    """
+    오늘의 일일 미션 조회 (없으면 자동 생성)
+    Query param: user_id
+    """
+    if not supabase_client:
+        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    
+    user_id = request.args.get('user_id')
+    
+    if not user_id:
+        return jsonify({"error": "user_id가 필요합니다"}), 400
+    
+    try:
+        from datetime import date
+        import random
+        
+        today = date.today()
+        
+        # 오늘의 미션 조회
+        missions_result = supabase_client.table('daily_missions')\
+            .select('*')\
+            .eq('user_id', user_id)\
+            .eq('mission_date', today.isoformat())\
+            .execute()
+        
+        if missions_result.data and len(missions_result.data) > 0:
+            # 이미 생성된 미션이 있음
+            return jsonify({
+                "success": True,
+                "missions": missions_result.data,
+                "generated": False
+            })
+        
+        # 오늘의 미션 생성 (4개: 어휘, 문법, 문장, K-콘텐츠)
+        mission_types = [
+            {
+                "type": "vocabulary",
+                "title": "어휘 마스터",
+                "descriptions": [
+                    "새로운 단어 5개 학습하기",
+                    "단어장에 단어 3개 추가하기",
+                    "어휘 퀴즈 통과하기"
+                ],
+                "coins": 5,
+                "target_count": 5
+            },
+            {
+                "type": "grammar",
+                "title": "문법 정복",
+                "descriptions": [
+                    "문법 패턴 3개 학습하기",
+                    "문법 설명 읽고 이해하기",
+                    "문법 문제 5개 풀기"
+                ],
+                "coins": 5,
+                "target_count": 3
+            },
+            {
+                "type": "sentence",
+                "title": "문장 연습",
+                "descriptions": [
+                    "동화 1개 완독하기",
+                    "문장 3개 소리 내어 읽기",
+                    "따라 읽기 점수 80점 이상 받기"
+                ],
+                "coins": 10,
+                "target_count": 3
+            },
+            {
+                "type": "k_content",
+                "title": "K-콘텐츠 학습",
+                "descriptions": [
+                    "K-콘텐츠 1개 추가하기",
+                    "K-콘텐츠 발음 연습하기",
+                    "내 컬렉션에 저장하기"
+                ],
+                "coins": 10,
+                "target_count": 1
+            }
+        ]
+        
+        # 각 타입별로 랜덤 설명 선택
+        created_missions = []
+        for mission_type in mission_types:
+            description = random.choice(mission_type["descriptions"])
+            
+            mission_data = {
+                'user_id': user_id,
+                'mission_date': today.isoformat(),
+                'mission_type': mission_type["type"],
+                'title': mission_type["title"],
+                'description': description,
+                'target_count': mission_type["target_count"],
+                'current_count': 0,
+                'completed': False,
+                'coins_reward': mission_type["coins"]
+            }
+            
+            result = supabase_client.table('daily_missions').insert(mission_data).execute()
+            if result.data and len(result.data) > 0:
+                created_missions.append(result.data[0])
+        
+        print(f"✅ 일일 미션 생성: {user_id}, {len(created_missions)}개", flush=True)
+        
+        return jsonify({
+            "success": True,
+            "missions": created_missions,
+            "generated": True
+        })
+        
+    except Exception as e:
+        print(f"❌ 일일 미션 조회 오류: {e}", flush=True)
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/missions/complete', methods=['POST'])
+def complete_mission():
+    """
+    미션 완료 처리
+    POST body: { "user_id": "UUID", "mission_id": "UUID", "progress": 1 }
+    """
+    if not supabase_client:
+        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    
+    data = request.get_json() or {}
+    user_id = data.get('user_id')
+    mission_id = data.get('mission_id')
+    progress = data.get('progress', 1)  # 진행도 (기본 1)
+    
+    if not user_id or not mission_id:
+        return jsonify({"error": "user_id와 mission_id가 필요합니다"}), 400
+    
+    try:
+        # 미션 조회
+        mission_result = supabase_client.table('daily_missions')\
+            .select('*')\
+            .eq('id', mission_id)\
+            .eq('user_id', user_id)\
+            .execute()
+        
+        if not mission_result.data or len(mission_result.data) == 0:
+            return jsonify({"error": "미션을 찾을 수 없습니다"}), 404
+        
+        mission = mission_result.data[0]
+        
+        # 이미 완료된 미션
+        if mission.get('completed'):
+            return jsonify({
+                "success": False,
+                "message": "이미 완료된 미션입니다",
+                "mission": mission
+            }), 400
+        
+        # 진행도 업데이트
+        current_count = mission.get('current_count', 0) + progress
+        target_count = mission.get('target_count', 1)
+        completed = current_count >= target_count
+        
+        # 미션 업데이트
+        update_data = {
+            'current_count': current_count,
+            'completed': completed
+        }
+        
+        if completed:
+            update_data['completed_at'] = datetime.now().isoformat()
+        
+        supabase_client.table('daily_missions')\
+            .update(update_data)\
+            .eq('id', mission_id)\
+            .execute()
+        
+        # 완료 시 코인 지급
+        coins_earned = 0
+        if completed:
+            coins_reward = mission.get('coins_reward', 5)
+            
+            supabase_client.rpc('add_user_coins', {
+                'p_user_id': user_id,
+                'p_amount': coins_reward,
+                'p_type': 'mission_complete',
+                'p_description': f'미션 완료: {mission.get("title")}'
+            }).execute()
+            
+            coins_earned = coins_reward
+            print(f"✅ 미션 완료: {mission.get('title')}, +{coins_reward}코인", flush=True)
+        
+        return jsonify({
+            "success": True,
+            "completed": completed,
+            "current_count": current_count,
+            "target_count": target_count,
+            "coins_earned": coins_earned,
+            "message": "미션 완료!" if completed else "진행 중"
+        })
+        
+    except Exception as e:
+        print(f"❌ 미션 완료 처리 오류: {e}", flush=True)
+        return jsonify({"error": str(e)}), 500
+
+
+# ============================================================================
 # [3] 서버 시작
 # ============================================================================
 if __name__ == '__main__':
