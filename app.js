@@ -75,6 +75,9 @@ let PRECOMPUTED_ANALYSIS = {};  // 하드코딩된 분석 데이터 (즉시 로�
 
 // 사용자 정보
 let currentUserId = localStorage.getItem('userId') || '00000000-0000-0000-0000-000000000001';  // 테스트 사용자
+let currentUserEmail = localStorage.getItem('userEmail') || null;
+let currentDisplayName = localStorage.getItem('displayName') || null;
+let isAuthenticated = !!localStorage.getItem('access_token');  // 로그인 상태
 let completedTabs = new Set();  // 완료한 탭 추적
 let userCoins = 50;  // 사용자 코인 (초기: 50개)
 
@@ -302,24 +305,129 @@ async function loadStories() {
 
 function renderStoryList() {
     const listEl = document.getElementById('storyList');
-    listEl.innerHTML = currentStories.map(story => `
-        <div class="story-card" onclick="selectStory(${story.id})">
-            <div class="story-card-image">
-                <img src="${story.image}" alt="${story.title}" onerror="this.style.display='none'">
-                <div class="story-card-overlay">
-                    <div class="story-card-number">${story.id}</div>
-                    <h3 class="story-card-title-overlay">${story.title}</h3>
+    listEl.innerHTML = currentStories.map(story => {
+        // 1번 동화는 누구나 접근 가능, 2번부터는 로그인 필요
+        const isLocked = story.id > 1 && !isAuthenticated;
+        const lockIcon = isLocked ? '<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 48px; z-index: 10;">🔒</div>' : '';
+        const lockedStyle = isLocked ? 'opacity: 0.6; cursor: pointer;' : '';
+        const clickHandler = isLocked ? `checkStoryAccess(${story.id})` : `selectStory(${story.id})`;
+        
+        return `
+            <div class="story-card" onclick="${clickHandler}" style="${lockedStyle}">
+                <div class="story-card-image">
+                    <img src="${story.image}" alt="${story.title}" onerror="this.style.display='none'">
+                    ${lockIcon}
+                    <div class="story-card-overlay">
+                        <div class="story-card-number">${story.id}</div>
+                        <h3 class="story-card-title-overlay">${story.title}</h3>
+                        ${isLocked ? '<div style="margin-top: 8px; font-size: 12px; background: rgba(255,255,255,0.9); color: #333; padding: 4px 8px; border-radius: 4px;">🔒 로그인 필요</div>' : ''}
+                    </div>
                 </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 // ============================================================================
 // [3] 동화 선택 및 학습 시작
 // ============================================================================
+
+// 동화 접근 권한 체크
+function checkStoryAccess(storyId) {
+    // 1번 동화는 누구나 접근 가능
+    if (storyId === 1) {
+        selectStory(storyId);
+        return;
+    }
+    
+    // 2번 이상은 로그인 필요
+    if (!isAuthenticated) {
+        showLoginModal(storyId);
+        return;
+    }
+    
+    // 로그인 상태면 접근 허용
+    selectStory(storyId);
+}
+
+// 로그인 필요 모달 표시
+function showLoginModal(storyId) {
+    const modal = document.createElement('div');
+    modal.id = 'loginModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        animation: fadeIn 0.3s;
+    `;
+    
+    modal.innerHTML = `
+        <div style="background: white; border-radius: 24px; padding: 40px; max-width: 420px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: slideUp 0.3s;">
+            <div style="font-size: 64px; margin-bottom: 20px;">🔒</div>
+            <h2 style="font-size: 24px; font-weight: 800; color: #333; margin-bottom: 12px;">로그인이 필요합니다</h2>
+            <p style="font-size: 15px; color: #666; line-height: 1.6; margin-bottom: 32px;">
+                2번째 동화부터는 회원만 이용할 수 있습니다.<br>
+                <strong style="color: #667eea;">가입하고 100코인을 받으세요!</strong>
+            </p>
+            
+            <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                <button onclick="location.href='signup.html'" style="flex: 1; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
+                    회원가입
+                </button>
+                <button onclick="location.href='login.html'" style="flex: 1; padding: 16px; background: white; color: #667eea; border: 2px solid #667eea; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer;">
+                    로그인
+                </button>
+            </div>
+            
+            <button onclick="closeLoginModal()" style="width: 100%; padding: 12px; background: #f0f0f0; color: #666; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer;">
+                취소
+            </button>
+        </div>
+    `;
+    
+    // CSS 애니메이션 추가
+    if (!document.getElementById('modalAnimationStyles')) {
+        const style = document.createElement('style');
+        style.id = 'modalAnimationStyles';
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes slideUp {
+                from { transform: translateY(30px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    document.body.appendChild(modal);
+}
+
+// 로그인 모달 닫기
+function closeLoginModal() {
+    const modal = document.getElementById('loginModal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
 async function selectStory(storyId) {
     console.log(`📖 동화 선택: ID=${storyId}`);
+    
+    // ✅ 접근 권한 체크 (안전장치)
+    if (storyId > 1 && !isAuthenticated) {
+        showLoginModal(storyId);
+        return;
+    }
     
     // ✅ 즉시 화면 전환 및 로딩 표시
     document.getElementById('storyListView').style.display = 'none';
@@ -3785,4 +3893,134 @@ function escapeQuotes(str) {
     if (!str) return '';
     return str.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ');
 }
+
+
+// ============================================================================
+// [12] 인증 관리
+// ============================================================================
+
+// 로그인 상태 체크 및 UI 업데이트
+async function checkAuthStatus() {
+    const accessToken = localStorage.getItem('access_token');
+    
+    if (!accessToken) {
+        // 비로그인 상태
+        isAuthenticated = false;
+        currentUserId = '00000000-0000-0000-0000-000000000001';  // 테스트 사용자
+        updateAuthUI();
+        return false;
+    }
+    
+    try {
+        // 토큰으로 사용자 정보 확인
+        const response = await fetch(`${API_BASE}/auth/me`, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.user) {
+                // 로그인 상태
+                isAuthenticated = true;
+                currentUserId = data.user.id;
+                currentUserEmail = data.user.email;
+                currentDisplayName = data.user.display_name;
+                
+                // localStorage 업데이트
+                localStorage.setItem('userId', data.user.id);
+                localStorage.setItem('userEmail', data.user.email);
+                localStorage.setItem('displayName', data.user.display_name);
+                
+                updateAuthUI();
+                console.log('✅ 로그인 상태 확인:', currentDisplayName);
+                return true;
+            }
+        }
+        
+        // 토큰이 유효하지 않음 - 로그아웃 처리
+        logout();
+        return false;
+        
+    } catch (error) {
+        console.error('인증 확인 오류:', error);
+        // 에러 발생 시에도 계속 사용 가능하도록 (비로그인)
+        isAuthenticated = false;
+        updateAuthUI();
+        return false;
+    }
+}
+
+// 로그인/로그아웃 UI 업데이트
+function updateAuthUI() {
+    const authBtn = document.getElementById('authBtn');
+    const userInfo = document.getElementById('userInfo');
+    
+    if (!authBtn) return;
+    
+    if (isAuthenticated && currentDisplayName) {
+        // 로그인 상태
+        authBtn.textContent = '로그아웃';
+        authBtn.className = 'auth-btn logout';
+        authBtn.onclick = logout;
+        
+        if (userInfo) {
+            userInfo.textContent = `${currentDisplayName}님`;
+            userInfo.style.display = 'block';
+        }
+    } else {
+        // 비로그인 상태
+        authBtn.textContent = '로그인';
+        authBtn.className = 'auth-btn';
+        authBtn.onclick = () => location.href = 'login.html';
+        
+        if (userInfo) {
+            userInfo.style.display = 'none';
+        }
+    }
+}
+
+// 로그아웃
+function logout() {
+    // localStorage 정리
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('displayName');
+    
+    // 상태 초기화
+    isAuthenticated = false;
+    currentUserId = '00000000-0000-0000-0000-000000000001';
+    currentUserEmail = null;
+    currentDisplayName = null;
+    
+    // UI 업데이트
+    updateAuthUI();
+    
+    console.log('✅ 로그아웃 완료');
+    
+    // 홈으로 리다이렉트
+    if (window.location.pathname !== '/index.html' && window.location.pathname !== '/') {
+        location.href = 'index.html';
+    } else {
+        // 이미 홈이면 새로고침
+        location.reload();
+    }
+}
+
+// 로그인/로그아웃 버튼 클릭 핸들러
+function handleAuth() {
+    if (isAuthenticated) {
+        logout();
+    } else {
+        location.href = 'login.html';
+    }
+}
+
+// 페이지 로드 시 인증 상태 체크
+document.addEventListener('DOMContentLoaded', async () => {
+    await checkAuthStatus();
+});
 
