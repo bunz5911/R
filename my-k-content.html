@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 K-콘텐츠 컬렉션 - Read Aloud Korean</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #FDFBF7;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 430px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 50px 20px 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .tabs {
+            display: flex;
+            background: white;
+            border-bottom: 2px solid #f0f0f0;
+            position: sticky;
+            top: 102px;
+            z-index: 99;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            background: none;
+            border: none;
+            font-size: 15px;
+            font-weight: 600;
+            color: #999;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: #666;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            color: #999;
+            line-height: 1.6;
+        }
+
+        .k-content-card {
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+
+        .k-content-card:hover {
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+            border-color: #667eea;
+        }
+
+        .k-content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .k-content-source {
+            flex: 1;
+        }
+
+        .k-content-type {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .type-drama { background: #FFE4E6; color: #E11D48; }
+        .type-kpop { background: #DBEAFE; color: #2563EB; }
+        .type-variety { background: #FEF3C7; color: #D97706; }
+        .type-movie { background: #E0E7FF; color: #6366F1; }
+
+        .k-content-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .k-content-artist {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .k-content-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            line-height: 1.7;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .k-content-stats {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .stat-badge {
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-difficulty {
+            background: #FFF3CD;
+            color: #856404;
+        }
+
+        .badge-topik {
+            background: #E8F4F8;
+            color: #0369A1;
+        }
+
+        .badge-score {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .k-content-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-play {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-play:hover {
+            background: #5568d3;
+        }
+
+        .btn-practice {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-practice:hover {
+            background: #229954;
+        }
+
+        .btn-delete {
+            background: #fee;
+            color: #e74c3c;
+        }
+
+        .btn-delete:hover {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .stats-header {
+            background: linear-gradient(135deg, #6FCF97 0%, #667eea 100%);
+            padding: 20px;
+            border-radius: 16px;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="back-btn" onclick="location.href='index.html'">← 돌아가기</button>
+            <h1>내 K-콘텐츠</h1>
+            <p>저장한 K-드라마/K-POP 학습 자료</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('my')">내 컬렉션</button>
+            <button class="tab-btn" onclick="switchTab('public')">인기 컬렉션</button>
+        </div>
+
+        <div class="content">
+            <!-- 통계 -->
+            <div class="stats-header" id="statsSection">
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">내 학습 현황</div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalCount">0</div>
+                        <div class="stat-label">저장 개수</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="practiceCount">0</div>
+                        <div class="stat-label">연습 횟수</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="avgScore">0</div>
+                        <div class="stat-label">평균 점수</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 내 컬렉션 -->
+            <div id="myCollectionTab">
+                <div id="collectionList" class="loading">
+                    로딩 중...
+                </div>
+            </div>
+
+            <!-- 인기 컬렉션 -->
+            <div id="publicCollectionTab" style="display: none;">
+                <div id="publicList" class="loading">
+                    로딩 중...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080/api';
+        const currentUserId = localStorage.getItem('userId') || '00000000-0000-0000-0000-000000000001';
+        let myCollection = [];
+        let publicCollection = [];
+
+        // 페이지 로드 시 초기화
+        window.addEventListener('DOMContentLoaded', () => {
+            loadMyCollection();
+        });
+
+        function switchTab(tab) {
+            const myTab = document.getElementById('myCollectionTab');
+            const publicTab = document.getElementById('publicCollectionTab');
+            const tabs = document.querySelectorAll('.tab-btn');
+            
+            if (tab === 'my') {
+                myTab.style.display = 'block';
+                publicTab.style.display = 'none';
+                tabs[0].classList.add('active');
+                tabs[1].classList.remove('active');
+                if (myCollection.length === 0) loadMyCollection();
+            } else {
+                myTab.style.display = 'none';
+                publicTab.style.display = 'block';
+                tabs[0].classList.remove('active');
+                tabs[1].classList.add('active');
+                if (publicCollection.length === 0) loadPublicCollection();
+            }
+        }
+
+        async function loadMyCollection() {
+            const listEl = document.getElementById('collectionList');
+            
+            try {
+                const response = await fetch(`${API_BASE}/k-content/my-collection?user_id=${currentUserId}`);
+                const data = await response.json();
+                
+                myCollection = data.collection || [];
+                
+                if (myCollection.length === 0) {
+                    listEl.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📭</div>
+                            <h3>아직 저장된 K-콘텐츠가 없어요</h3>
+                            <p>
+                                동화 학습 중 "K-콘텐츠 추가하기" 버튼을 눌러<br>
+                                좋아하는 K-드라마/K-POP 대사를 추가해보세요!
+                            </p>
+                        </div>
+                    `;
+                    updateStats(0, 0, 0);
+                    return;
+                }
+                
+                // 통계 계산
+                const totalPractice = myCollection.reduce((sum, item) => sum + (item.practice_count || 0), 0);
+                const scoresWithData = myCollection.filter(item => item.pronunciation_score);
+                const avgScore = scoresWithData.length > 0 
+                    ? Math.round(scoresWithData.reduce((sum, item) => sum + item.pronunciation_score, 0) / scoresWithData.length)
+                    : 0;
+                
+                updateStats(myCollection.length, totalPractice, avgScore);
+                
+                // 컬렉션 렌더링
+                listEl.innerHTML = myCollection.map(item => renderKContentCard(item)).join('');
+                
+            } catch (error) {
+                console.error('컬렉션 로드 오류:', error);
+                listEl.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <h3>로딩 중 오류가 발생했습니다</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderKContentCard(item) {
+            const typeLabels = {
+                'drama': '📺 드라마',
+                'kpop': '🎵 K-POP',
+                'variety': '🎬 예능',
+                'movie': '🎥 영화',
+                'other': '📝 기타'
+            };
+            
+            const typeLabel = typeLabels[item.content_type] || '📝 기타';
+            const typeClass = `type-${item.content_type}`;
+            
+            return `
+                <div class="k-content-card">
+                    <div class="k-content-header">
+                        <div class="k-content-source">
+                            <div class="k-content-type ${typeClass}">${typeLabel}</div>
+                            ${item.source_title ? `<div class="k-content-title">${item.source_title}</div>` : ''}
+                            ${item.source_artist ? `<div class="k-content-artist">${item.source_artist}</div>` : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="k-content-text">"${item.content_text}"</div>
+                    
+                    <div class="k-content-stats">
+                        ${item.difficulty_level ? `<span class="stat-badge badge-difficulty">🎯 ${getDifficultyLabel(item.difficulty_level)}</span>` : ''}
+                        ${item.pronunciation_score ? `<span class="stat-badge badge-score">🎤 ${item.pronunciation_score}점</span>` : ''}
+                        ${item.practice_count > 0 ? `<span class="stat-badge" style="background: #E0E7FF; color: #4F46E5;">📚 ${item.practice_count}회 연습</span>` : ''}
+                    </div>
+                    
+                    <div class="k-content-actions">
+                        <button class="action-btn btn-play" onclick="playKContent('${escapeQuotes(item.content_text)}')">
+                            ▶ 듣기
+                        </button>
+                        <button class="action-btn btn-practice" onclick="practiceKContent('${item.id}', '${escapeQuotes(item.content_text)}')">
+                            🎤 연습
+                        </button>
+                        <button class="action-btn btn-delete" onclick="deleteKContent('${item.id}')">
+                            🗑️
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getDifficultyLabel(level) {
+            const labels = {
+                'beginner': '초급',
+                'intermediate': '중급',
+                'advanced': '고급'
+            };
+            return labels[level] || level;
+        }
+
+        function updateStats(total, practice, avgScore) {
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('practiceCount').textContent = practice;
+            document.getElementById('avgScore').textContent = avgScore;
+        }
+
+        async function loadPublicCollection() {
+            const listEl = document.getElementById('publicList');
+            
+            try {
+                const response = await fetch(`${API_BASE}/k-content/public?limit=30`);
+                const data = await response.json();
+                
+                publicCollection = data.popular_content || [];
+                
+                if (publicCollection.length === 0) {
+                    listEl.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🌟</div>
+                            <h3>아직 공유된 콘텐츠가 없어요</h3>
+                            <p>첫 번째로 K-콘텐츠를 공유해보세요!</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // 인기 컬렉션 렌더링
+                listEl.innerHTML = publicCollection.map(item => renderPublicCard(item)).join('');
+                
+            } catch (error) {
+                console.error('인기 컬렉션 로드 오류:', error);
+                listEl.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <h3>로딩 중 오류가 발생했습니다</h3>
+                    </div>
+                `;
+            }
+        }
+
+        function renderPublicCard(item) {
+            const typeLabels = {
+                'drama': '📺',
+                'kpop': '🎵',
+                'variety': '🎬',
+                'movie': '🎥',
+                'other': '📝'
+            };
+            
+            const typeIcon = typeLabels[item.content_type] || '📝';
+            
+            return `
+                <div class="k-content-card">
+                    <div class="k-content-text" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #2d3436;">
+                        "${item.content_text}"
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <div style="font-size: 14px; font-weight: 600; color: #333;">
+                            ${typeIcon} ${item.source_title || 'K-콘텐츠'}
+                        </div>
+                        <div style="font-size: 13px; color: #999;">
+                            💚 ${item.likes_count || 0} · 📚 ${item.bookmarks_count || 0}
+                        </div>
+                    </div>
+                    
+                    <div class="k-content-actions">
+                        <button class="action-btn btn-play" onclick="playKContent('${escapeQuotes(item.content_text)}')">
+                            ▶ 듣기
+                        </button>
+                        <button class="action-btn btn-practice" onclick="practiceKContent('${item.id}', '${escapeQuotes(item.content_text)}')">
+                            🎤 연습
+                        </button>
+                        <button class="action-btn" style="background: #667eea; color: white;" onclick="bookmarkKContent('${item.id}')">
+                            💾 저장
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function playKContent(text) {
+            // TTS로 재생 (기존 togglePlay 함수 활용 필요)
+            alert('듣기 기능: "' + text + '" 재생');
+            // TODO: index.html의 TTS 시스템 연동
+        }
+
+        async function practiceKContent(contentId, text) {
+            // 따라 읽기 연습
+            alert('연습 시작: "' + text + '"');
+            // TODO: 발음 평가 시스템 연동
+        }
+
+        async function deleteKContent(contentId) {
+            if (!confirm('정말 삭제하시겠습니까?')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/k-content/${contentId}?user_id=${currentUserId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    alert('✅ 삭제되었습니다');
+                    loadMyCollection();  // 목록 새로고침
+                } else {
+                    alert('❌ 삭제 실패');
+                }
+            } catch (error) {
+                alert('삭제 중 오류: ' + error.message);
+            }
+        }
+
+        async function bookmarkKContent(contentId) {
+            alert('북마크 기능은 추후 구현 예정입니다.');
+        }
+
+        function escapeQuotes(str) {
+            if (!str) return '';
+            return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        }
+    </script>
+</body>
+</html>
+
