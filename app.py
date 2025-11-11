@@ -1452,6 +1452,253 @@ def get_public_k_content():
 
 
 # ============================================================================
+# Auth API (회원가입/로그인)
+# ============================================================================
+
+@app.route('/api/auth/signup', methods=['POST'])
+def auth_signup():
+    """
+    회원가입 (이메일 + 비밀번호)
+    POST body: { "email": "user@example.com", "password": "password123", "display_name": "홍길동" }
+    """
+    if not supabase_client:
+        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    
+    data = request.get_json() or {}
+    email = data.get('email')
+    password = data.get('password')
+    display_name = data.get('display_name')
+    
+    if not email or not password:
+        return jsonify({"error": "이메일과 비밀번호가 필요합니다"}), 400
+    
+    try:
+        # Supabase Auth 회원가입
+        auth_response = supabase_client.auth.sign_up({
+            "email": email,
+            "password": password,
+            "options": {
+                "data": {
+                    "display_name": display_name or email.split('@')[0]
+                }
+            }
+        })
+        
+        if auth_response.user:
+            user = auth_response.user
+            
+            # profiles 테이블에 사용자 프로필 생성
+            try:
+                supabase_client.table('profiles').insert({
+                    'id': user.id,
+                    'email': email,
+                    'display_name': display_name or email.split('@')[0],
+                    'plan': 'free',
+                    'coins': 100,  # 신규 회원 100코인
+                    'role': 'user'
+                }).execute()
+                
+                # user_coins 테이블에도 초기화
+                supabase_client.table('user_coins').insert({
+                    'user_id': user.id,
+                    'total_coins': 100
+                }).execute()
+                
+                print(f"✅ 신규 회원 가입: {email}", flush=True)
+            except Exception as profile_error:
+                print(f"⚠️ 프로필 생성 실패 (이미 존재할 수 있음): {profile_error}", flush=True)
+            
+            return jsonify({
+                "success": True,
+                "user": {
+                    "id": user.id,
+                    "email": user.email,
+                    "display_name": display_name or email.split('@')[0]
+                },
+                "session": {
+                    "access_token": auth_response.session.access_token if auth_response.session else None,
+                    "refresh_token": auth_response.session.refresh_token if auth_response.session else None
+                }
+            })
+        else:
+            return jsonify({"error": "회원가입 실패"}), 400
+            
+    except Exception as e:
+        error_msg = str(e)
+        print(f"❌ 회원가입 오류: {error_msg}", flush=True)
+        return jsonify({"error": error_msg}), 400
+
+
+@app.route('/api/auth/login', methods=['POST'])
+def auth_login():
+    """
+    로그인 (이메일 + 비밀번호)
+    POST body: { "email": "user@example.com", "password": "password123" }
+    """
+    if not supabase_client:
+        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    
+    data = request.get_json() or {}
+    email = data.get('email')
+    password = data.get('password')
+    
+    if not email or not password:
+        return jsonify({"error": "이메일과 비밀번호가 필요합니다"}), 400
+    
+    try:
+        # Supabase Auth 로그인
+        auth_response = supabase_client.auth.sign_in_with_password({
+            "email": email,
+            "password": password
+        })
+        
+        if auth_response.user and auth_response.session:
+            user = auth_response.user
+            
+            # 프로필 정보 조회
+            profile_result = supabase_client.table('profiles')\
+                .select('*')\
+                .eq('id', user.id)\
+                .execute()
+            
+            profile = profile_result.data[0] if profile_result.data else None
+            
+            print(f"✅ 로그인 성공: {email}", flush=True)
+            
+            return jsonify({
+                "success": True,
+                "user": {
+                    "id": user.id,
+                    "email": user.email,
+                    "display_name": profile.get('display_name') if profile else email.split('@')[0],
+                    "avatar_url": profile.get('avatar_url') if profile else None,
+                    "plan": profile.get('plan') if profile else 'free',
+                    "coins": profile.get('coins') if profile else 100
+                },
+                "session": {
+                    "access_token": auth_response.session.access_token,
+                    "refresh_token": auth_response.session.refresh_token
+                }
+            })
+        else:
+            return jsonify({"error": "로그인 실패"}), 401
+            
+    except Exception as e:
+        error_msg = str(e)
+        print(f"❌ 로그인 오류: {error_msg}", flush=True)
+        return jsonify({"error": "이메일 또는 비밀번호가 올바르지 않습니다"}), 401
+
+
+@app.route('/api/auth/me', methods=['GET'])
+def auth_me():
+    """
+    현재 로그인한 사용자 정보 조회
+    Header: Authorization: Bearer <access_token>
+    """
+    if not supabase_client:
+        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    
+    # Authorization 헤더에서 토큰 추출
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        return jsonify({"error": "인증 토큰이 필요합니다"}), 401
+    
+    access_token = auth_header.replace('Bearer ', '')
+    
+    try:
+        # 토큰으로 사용자 정보 조회
+        user_response = supabase_client.auth.get_user(access_token)
+        
+        if user_response and user_response.user:
+            user = user_response.user
+            
+            # 프로필 정보 조회
+            profile_result = supabase_client.table('profiles')\
+                .select('*')\
+                .eq('id', user.id)\
+                .execute()
+            
+            profile = profile_result.data[0] if profile_result.data else None
+            
+            return jsonify({
+                "success": True,
+                "user": {
+                    "id": user.id,
+                    "email": user.email,
+                    "display_name": profile.get('display_name') if profile else user.email.split('@')[0],
+                    "avatar_url": profile.get('avatar_url') if profile else None,
+                    "plan": profile.get('plan') if profile else 'free',
+                    "coins": profile.get('coins') if profile else 100,
+                    "current_streak": profile.get('current_streak') if profile else 0,
+                    "level": profile.get('level') if profile else 1
+                }
+            })
+        else:
+            return jsonify({"error": "유효하지 않은 토큰입니다"}), 401
+            
+    except Exception as e:
+        error_msg = str(e)
+        print(f"❌ 사용자 조회 오류: {error_msg}", flush=True)
+        return jsonify({"error": "인증 실패"}), 401
+
+
+@app.route('/api/auth/logout', methods=['POST'])
+def auth_logout():
+    """
+    로그아웃
+    Header: Authorization: Bearer <access_token>
+    """
+    if not supabase_client:
+        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    
+    try:
+        # 클라이언트 측에서 토큰 제거로 충분
+        # Supabase는 세션 관리를 자동으로 처리
+        return jsonify({"success": True, "message": "로그아웃 성공"})
+            
+    except Exception as e:
+        error_msg = str(e)
+        print(f"❌ 로그아웃 오류: {error_msg}", flush=True)
+        return jsonify({"error": "로그아웃 실패"}), 400
+
+
+@app.route('/api/story/access-check/<int:story_id>', methods=['GET'])
+def check_story_access(story_id):
+    """
+    동화 접근 권한 확인
+    - story_id가 1이면 누구나 접근 가능 (비회원 OK)
+    - story_id가 2 이상이면 로그인 필요
+    
+    Query param: user_id (optional)
+    """
+    # 1번 동화는 항상 접근 가능
+    if story_id == 1:
+        return jsonify({
+            "access": True,
+            "reason": "free_story",
+            "message": "누구나 읽을 수 있는 동화입니다"
+        })
+    
+    # 2번 이상은 로그인 필요
+    user_id = request.args.get('user_id')
+    
+    if not user_id or user_id == '00000000-0000-0000-0000-000000000001':
+        # 비회원 또는 테스트 사용자
+        return jsonify({
+            "access": False,
+            "reason": "login_required",
+            "message": "로그인이 필요합니다"
+        }), 403
+    
+    # 로그인한 사용자는 모든 동화 접근 가능
+    return jsonify({
+        "access": True,
+        "reason": "authenticated",
+        "message": "접근 가능합니다"
+    })
+
+
+# ============================================================================
 # [3] 서버 시작
 # ============================================================================
 if __name__ == '__main__':
