@@ -201,10 +201,15 @@ def scan_story_files():
         base_title = os.path.basename(doc_path)[:-5]  # .docx 제거
         
         # "00_" 접두사 제거 (0번 동화용)
-        if base_title.startswith("00_"):
+        is_zero_story = base_title.startswith("00_")
+        if is_zero_story:
             base_title = base_title[3:]
         
-        display_title = base_title if base_title.endswith("의 비밀") else f"{base_title}의 비밀"
+        # 0번 동화는 "의 비밀" 추가하지 않음
+        if is_zero_story:
+            display_title = base_title
+        else:
+            display_title = base_title if base_title.endswith("의 비밀") else f"{base_title}의 비밀"
         
         story_files[display_title] = doc_path
         story_titles.append(display_title)
@@ -385,9 +390,13 @@ def analyze_story(story_id):
     print(f"📚 동화 제목: {title} (원본: {base_title})", flush=True)
     
     # ✅ 1순위: 사전 생성된 분석 데이터 확인 (0.1초 이내)
-    # 매칭 키 생성: 공백 제거 + "의비밀" 추가
-    matching_key = base_title.replace(" ", "") + ("의비밀" if not base_title.endswith("의 비밀") else "")
-    print(f"🔑 매칭 키: '{matching_key}' (원본: '{base_title}')", flush=True)
+    # 매칭 키 생성: 공백 제거 + "의비밀" 추가 (0번 동화 제외)
+    if story_id == 0:
+        # 0번 동화는 "의비밀" 추가하지 않음
+        matching_key = base_title.replace(" ", "")
+    else:
+        matching_key = base_title.replace(" ", "") + ("의비밀" if not base_title.endswith("의 비밀") else "")
+    print(f"🔑 매칭 키: '{matching_key}' (원본: '{base_title}', story_id: {story_id})", flush=True)
     
     if matching_key in PRECOMPUTED_ANALYSIS and level in PRECOMPUTED_ANALYSIS[matching_key]:
         print(f"✅ [캐시 HIT] {matching_key} - {level} (사전 생성 데이터)", flush=True)
