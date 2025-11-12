@@ -1728,26 +1728,26 @@ function showQuizQuestion() {
         saveProgress({ quiz_score: score });
         
         contentEl.innerHTML = `
-            <div class="section-title">퀴즈 완료!</div>
+            <div class="section-title">${t('quiz.completed')}</div>
             <div class="evaluation-result">
-                <div class="score-display">${score}점</div>
+                <div class="score-display">${score}${t('quiz.score')}</div>
                 <div class="feedback-text">
-                    ${correctCount}/${quizData.length} 정답!<br>
-                    ${score >= 80 ? '훌륭합니다!' : score >= 60 ? '잘했어요! 조금만 더 연습해보세요.' : '다시 한번 학습해보세요!'}
+                    ${correctCount}/${quizData.length} ${t('quiz.correct')}<br>
+                    ${score >= 80 ? t('quiz.excellent') : score >= 60 ? t('quiz.good') : t('quiz.practiceMore')}
                 </div>
                 ${bonusCoins > 0 ? `
                     <div style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: white; padding: 16px; border-radius: 12px; margin-top: 16px; font-weight: 700; text-align: center;">
-                        🎉 90점 이상 달성!<br>
-                        <span style="font-size: 24px;">🟡 +${bonusCoins} 코인 획득!</span>
+                        🎉 ${t('quiz.achieved90Plus')}<br>
+                        <span style="font-size: 24px;">🟡 +${bonusCoins} ${t('quiz.coinsEarned')}!</span>
                     </div>
                 ` : ''}
             </div>
             <div class="control-buttons" style="margin-top: 24px;">
                 <button class="btn" onclick="renderQuiz()">
-                    다시 풀기
+                    ${t('quiz.retry')}
                 </button>
                 <button class="btn-secondary btn" onclick="switchTab('summary')">
-                    학습 계속하기
+                    ${t('quiz.continueLearning')}
                 </button>
             </div>
             <div class="bottom-spacer"></div>
@@ -1757,7 +1757,7 @@ function showQuizQuestion() {
     
     const q = quizData[currentQuizIndex];
     contentEl.innerHTML = `
-        <div class="section-title">문제 ${currentQuizIndex + 1} / ${quizData.length}</div>
+        <div class="section-title">${t('quiz.questionNumber')} ${currentQuizIndex + 1} / ${quizData.length}</div>
         ${renderCharacterImage('quiz')}
         <div class="content-box" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); font-size: 16px; font-weight: 600; color: #2d3436;">
             ${q.question}
@@ -1793,7 +1793,7 @@ function checkAnswer(selectedIndex, correctIndex) {
         optionEl.style.animation = 'flash 0.5s ease-in-out';
         feedbackEl.innerHTML = `
             <div class="content-box" style="background: #55efc4; color: white; font-weight: 700; text-align: center;">
-                ✅ 정답입니다!
+                ✅ ${t('quiz.correctAnswer')}
             </div>
         `;
         
@@ -1817,18 +1817,18 @@ function checkAnswer(selectedIndex, correctIndex) {
             feedbackEl.innerHTML = `
                 <div class="content-box" style="background: #ff7675; color: white; font-weight: 700; text-align: center; padding: 20px;">
                     <div style="font-size: 24px; margin-bottom: 12px;">❌</div>
-                    <div style="font-size: 18px; margin-bottom: 16px;">3번 틀렸습니다!</div>
+                    <div style="font-size: 18px; margin-bottom: 16px;">${t('quiz.wrongThreeTimes')}</div>
                     <div style="font-size: 14px; opacity: 0.9; margin-bottom: 20px;">
-                        더 이상 진행할 수 없습니다.<br>
-                        10 코인을 사용하여 계속하거나<br>
-                        1 코인으로 정답 해설을 확인하세요.
+                        ${t('quiz.cannotContinue')}<br>
+                        ${t('quiz.useCoinsToContinue')}<br>
+                        ${t('quiz.useCoinForExplanation')}
                     </div>
                     <div style="display: flex; gap: 8px; margin-top: 16px;">
                         <button class="btn" onclick="showCorrectAnswer(${correctIndex})" style="flex: 1; background: #6FCF97;">
-                            💡 정답 해설 보기<br><span style="font-size: 11px;">(-1 코인)</span>
+                            💡 ${t('quiz.showExplanation')}<br><span style="font-size: 11px;">(-1 ${t('quiz.coinShortage')})</span>
                         </button>
                         <button class="btn" onclick="continueWithCoins()" style="flex: 1; background: #4A90E2;">
-                            ▶️ 계속하기<br><span style="font-size: 11px;">(-10 코인)</span>
+                            ▶️ ${t('quiz.continue')}<br><span style="font-size: 11px;">(-10 ${t('quiz.coinShortage')})</span>
                         </button>
                     </div>
                 </div>
@@ -1836,8 +1836,8 @@ function checkAnswer(selectedIndex, correctIndex) {
         } else {
             feedbackEl.innerHTML = `
                 <div class="content-box" style="background: #ff7675; color: white; font-weight: 700; text-align: center;">
-                    ❌ 틀렸습니다! (-2 코인)<br>
-                    <span style="font-size: 13px; opacity: 0.9;">${3 - wrongCount}번 더 시도 가능</span>
+                    ❌ ${t('quiz.wrongAnswer')} ${t('quiz.coinDeducted')}<br>
+                    <span style="font-size: 13px; opacity: 0.9;">${3 - wrongCount}${t('quiz.moreAttempts')}</span>
                 </div>
             `;
             
@@ -1872,15 +1872,15 @@ function showCorrectAnswer(correctIndex) {
     feedbackEl.innerHTML = `
         <div class="content-box" style="background: #6FCF97; color: white; font-weight: 700; text-align: center; padding: 20px;">
             <div style="font-size: 24px; margin-bottom: 12px;">💡</div>
-            <div style="font-size: 16px; margin-bottom: 16px;">정답 해설 (-1 코인)</div>
+            <div style="font-size: 16px; margin-bottom: 16px;">${t('quiz.explanationTitle')} (-1 ${t('quiz.coinShortage')})</div>
             <div style="font-size: 14px; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; margin-bottom: 16px;">
-                정답: <strong>${correctOption}</strong>
+                ${t('quiz.correctAnswerLabel')} <strong>${correctOption}</strong>
             </div>
             <div style="font-size: 13px; opacity: 0.9; line-height: 1.6;">
-                ${q.explanation || '이 문제는 동화의 내용을 잘 이해했는지 확인하는 문제입니다.'}
+                ${q.explanation || t('quiz.defaultExplanation')}
             </div>
             <button class="btn" onclick="continueAfterExplanation()" style="margin-top: 16px; background: white; color: #6FCF97;">
-                다음 문제로
+                ${t('quiz.nextQuestion')}
             </button>
         </div>
     `;
@@ -1920,15 +1920,15 @@ function showCoinShop() {
     feedbackEl.innerHTML = `
         <div class="content-box" style="background: #FFD700; color: white; font-weight: 700; text-align: center; padding: 20px;">
             <div style="font-size: 32px; margin-bottom: 12px;">🟡</div>
-            <div style="font-size: 18px; margin-bottom: 16px;">코인이 부족합니다!</div>
+            <div style="font-size: 18px; margin-bottom: 16px;">${t('quiz.notEnoughCoins')}</div>
             <div style="font-size: 14px; opacity: 0.9; margin-bottom: 20px;">
-                현재 코인: ${userCoins}개
+                ${t('quiz.currentCoins')}: ${userCoins}
             </div>
             <button class="btn" onclick="location.href='coin-shop.html'" style="background: white; color: #FFD700;">
-                🛒 코인 스토어 가기
+                🛒 ${t('quiz.goToCoinShop')}
             </button>
             <button class="btn" onclick="switchTab('summary')" style="margin-top: 8px; background: rgba(255,255,255,0.3); color: white;">
-                학습 계속하기
+                ${t('quiz.continueLearning')}
             </button>
         </div>
     `;
@@ -1950,7 +1950,7 @@ async function generateQuiz() {
     } catch (error) {
         document.getElementById('learningContent').innerHTML = `
             <div class="content-box" style="color: red;">
-                퀴즈 생성 오류: ${error.message}
+                ${t('quiz.quizError')}: ${error.message}
             </div>
         `;
     }
