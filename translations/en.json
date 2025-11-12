@@ -35,7 +35,10 @@
     "save": "Save",
     "delete": "Delete",
     "startRecording": "Start Recording",
-    "stopRecording": "Stop Recording"
+    "stopRecording": "Stop Recording",
+    "backToStoryList": "Back to Story List",
+    "getAIEvaluation": "Get AI Evaluation",
+    "addWord": "Add Word"
   },
   "messages": {
     "recording": "Recording...",
@@ -46,7 +49,12 @@
     "noParagraphs": "No paragraph analysis data available.",
     "noAudioFile": "Full story audio file has not been generated yet.",
     "useParagraphLearning": "Please use paragraph learning.",
-    "aiVoiceGenerated": "AI voice will be generated in real-time"
+    "aiVoiceGenerated": "AI voice will be generated in real-time",
+    "analyzing": "Analyzing...",
+    "loadingData": "Loading data...",
+    "loadingAudio": "Loading audio data...",
+    "enterWordAndMeaning": "Please enter both word and meaning!",
+    "loadingStoryList": "Loading story list..."
   },
   "descriptions": {
     "beginner": "Short sentences (1-2 sentences)",
@@ -62,7 +70,11 @@
     "grammar": "Grammar Points",
     "example": "Example:",
     "paragraph": "Paragraph",
-    "readAndRecord": "Read and record this sentence!"
+    "readAndRecord": "Read and record this sentence!",
+    "wordPlaceholder": "Word",
+    "meaningPlaceholder": "Meaning",
+    "addWordHint": "Try adding words above!",
+    "wordbookDescription": "Add words you want to memorize!"
   },
   "difficulty": {
     "easier": "Easier",
@@ -82,4 +94,3 @@
     "it": "Italiano"
   }
 }
-

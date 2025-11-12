@@ -35,7 +35,10 @@
     "save": "Speichern",
     "delete": "Löschen",
     "startRecording": "Aufnahme starten",
-    "stopRecording": "Aufnahme stoppen"
+    "stopRecording": "Aufnahme stoppen",
+    "backToStoryList": "Zurück zur Liste",
+    "getAIEvaluation": "KI-Bewertung erhalten",
+    "addWord": "Wort hinzufügen"
   },
   "messages": {
     "recording": "Aufnahme läuft...",
@@ -46,7 +49,12 @@
     "noParagraphs": "Keine Absatzanalysedaten verfügbar.",
     "noAudioFile": "Die vollständige Audio-Datei wurde noch nicht generiert.",
     "useParagraphLearning": "Bitte verwenden Sie das Absatzlernen.",
-    "aiVoiceGenerated": "Die KI-Stimme wird in Echtzeit generiert"
+    "aiVoiceGenerated": "Die KI-Stimme wird in Echtzeit generiert",
+    "analyzing": "Analysiere...",
+    "loadingData": "Lade Daten...",
+    "loadingAudio": "Lade Audiodaten...",
+    "enterWordAndMeaning": "Bitte geben Sie Wort und Bedeutung ein!",
+    "loadingStoryList": "Lade Geschichtenliste..."
   },
   "descriptions": {
     "beginner": "Kurze Sätze (1-2 Sätze)",
@@ -62,7 +70,11 @@
     "grammar": "Grammatikpunkte",
     "example": "Beispiel:",
     "paragraph": "Absatz",
-    "readAndRecord": "Lesen und aufnehmen Sie diesen Satz!"
+    "readAndRecord": "Lesen und aufnehmen Sie diesen Satz!",
+    "wordPlaceholder": "Wort",
+    "meaningPlaceholder": "Bedeutung",
+    "addWordHint": "Versuchen Sie, Wörter oben hinzuzufügen!",
+    "wordbookDescription": "Fügen Sie Wörter hinzu, die Sie sich merken möchten!"
   },
   "difficulty": {
     "easier": "Einfacher",
@@ -82,4 +94,3 @@
     "it": "Italiano"
   }
 }
-

@@ -119,7 +119,13 @@ function updateUI() {
     // 뒤로 버튼 업데이트
     const backButton = document.querySelector('.back-button');
     if (backButton) {
-        backButton.textContent = `← ${t('buttons.back')}`;
+        backButton.textContent = `← ${t('buttons.backToStoryList')}`;
+    }
+    
+    // 동화 목록 로딩 메시지 업데이트
+    const storyListLoading = document.querySelector('#storyList.loading p');
+    if (storyListLoading) {
+        storyListLoading.textContent = t('messages.loadingStoryList');
     }
     
     // currentLevel은 원래 값 유지 (초급/중급/고급), 표시할 때만 번역
@@ -1238,7 +1244,7 @@ async function switchTab(tabName) {
     
     // ✅ currentAnalysis가 없을 때만 로딩 표시 (즉시 렌더링 우선)
     if (!currentAnalysis) {
-        contentEl.innerHTML = '<div class="loading"><img src="img/loading.png" alt="Loading" class="loading-image"><p>분석 중...</p></div>';
+        contentEl.innerHTML = `<div class="loading"><img src="img/loading.png" alt="Loading" class="loading-image"><p>${t('messages.analyzing')}</p></div>`;
         return;
     }
 
@@ -1589,14 +1595,14 @@ function renderWordbook() {
         <div class="section-title">${t('tabs.wordbook')}</div>
         ${renderCharacterImage('wordbook')}
         <div class="content-box" style="background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%); color: #2d3436;">
-            <strong>${t('descriptions.realLifeUsage')}</strong>
+            <strong>${t('descriptions.wordbookDescription')}</strong>
         </div>
 
         <div style="margin-top: 16px;">
-            <input type="text" id="newWord" placeholder="${t('descriptions.vocabulary')}" style="width: calc(50% - 5px); padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px;">
-            <input type="text" id="newMeaning" placeholder="${t('descriptions.explanation')}" style="width: calc(50% - 5px); padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px; margin-left: 10px;">
+            <input type="text" id="newWord" placeholder="${t('descriptions.wordPlaceholder')}" style="width: calc(50% - 5px); padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px;">
+            <input type="text" id="newMeaning" placeholder="${t('descriptions.meaningPlaceholder')}" style="width: calc(50% - 5px); padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px; margin-left: 10px;">
             <button class="btn" onclick="addToWordbook()" style="width: 100%; margin-top: 10px;">
-                ${t('buttons.save')}
+                ${t('buttons.addWord')}
             </button>
         </div>
 
@@ -1604,7 +1610,7 @@ function renderWordbook() {
             ${myWords.length === 0 ? `
                 <div class="content-box">
                     ${t('messages.noWords')}<br>
-                    ${t('descriptions.realLifeUsage')}
+                    ${t('descriptions.addWordHint')}
                 </div>
             ` : myWords.map((word, idx) => `
                 <div class="vocabulary-item">
@@ -1635,7 +1641,7 @@ function addToWordbook() {
     const meaning = document.getElementById('newMeaning').value.trim();
     
     if (!word || !meaning) {
-        alert('단어와 뜻을 모두 입력해주세요!');
+        alert(t('messages.enterWordAndMeaning'));
         return;
     }
     
@@ -1970,7 +1976,7 @@ function renderGrowth() {
         ${recordedText ? `
             <div class="control-buttons" style="margin-top: 16px;">
                 <button class="btn-success btn" onclick="evaluateGrowth()">
-                    AI 평가 받기
+                    ${t('buttons.getAIEvaluation')}
                 </button>
             </div>
         ` : ''}
@@ -1987,7 +1993,7 @@ async function evaluateGrowth() {
     feedbackEl.innerHTML = `
         <div class="loading" style="margin-top: 20px;">
             <img src="img/loading.png" alt="Loading" class="loading-image">
-            <p>데이터를 로드합니다...</p>
+            <p>${t('messages.loadingData')}</p>
         </div>
     `;
     
@@ -2539,7 +2545,7 @@ function showLoadingMessage(buttonElement) {
     `;
     loadingDiv.innerHTML = `
         <div style="font-size: 32px; margin-bottom: 8px;">🔊</div>
-        <div>음성 데이터를 로드합니다...</div>
+        <div>${t('messages.loadingAudio')}</div>
         <div style="font-size: 12px; opacity: 0.8; margin-top: 8px;">Anna (프리미엄 음성)</div>
     `;
     

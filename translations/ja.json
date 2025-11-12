@@ -35,7 +35,10 @@
     "save": "保存",
     "delete": "削除",
     "startRecording": "録音開始",
-    "stopRecording": "録音停止"
+    "stopRecording": "録音停止",
+    "backToStoryList": "物語リストに戻る",
+    "getAIEvaluation": "AI評価を受ける",
+    "addWord": "単語を追加"
   },
   "messages": {
     "recording": "録音中...",
@@ -46,7 +49,12 @@
     "noParagraphs": "段落分析データがありません。",
     "noAudioFile": "全文音声ファイルがまだ生成されていません。",
     "useParagraphLearning": "段落学習をご利用ください。",
-    "aiVoiceGenerated": "AI音声がリアルタイムで生成されます"
+    "aiVoiceGenerated": "AI音声がリアルタイムで生成されます",
+    "analyzing": "分析中...",
+    "loadingData": "データを読み込み中...",
+    "loadingAudio": "音声データを読み込み中...",
+    "enterWordAndMeaning": "単語と意味の両方を入力してください！",
+    "loadingStoryList": "物語リストを読み込み中..."
   },
   "descriptions": {
     "beginner": "短文（1-2文）",
@@ -62,7 +70,11 @@
     "grammar": "文法ポイント",
     "example": "例：",
     "paragraph": "段落",
-    "readAndRecord": "この文を読んで録音してみましょう！"
+    "readAndRecord": "この文を読んで録音してみましょう！",
+    "wordPlaceholder": "単語",
+    "meaningPlaceholder": "意味",
+    "addWordHint": "上から単語を追加してみてください！",
+    "wordbookDescription": "覚えたい単語を追加してください！"
   },
   "difficulty": {
     "easier": "もっと簡単に",
@@ -82,4 +94,3 @@
     "it": "Italiano"
   }
 }
-

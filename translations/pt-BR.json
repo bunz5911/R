@@ -35,7 +35,10 @@
     "save": "Salvar",
     "delete": "Excluir",
     "startRecording": "Iniciar Gravação",
-    "stopRecording": "Parar Gravação"
+    "stopRecording": "Parar Gravação",
+    "backToStoryList": "Voltar para a Lista",
+    "getAIEvaluation": "Obter Avaliação IA",
+    "addWord": "Adicionar Palavra"
   },
   "messages": {
     "recording": "Gravando...",
@@ -46,7 +49,12 @@
     "noParagraphs": "Nenhum dado de análise de parágrafo disponível.",
     "noAudioFile": "O arquivo de áudio da história completa ainda não foi gerado.",
     "useParagraphLearning": "Por favor, use o aprendizado por parágrafos.",
-    "aiVoiceGenerated": "A voz IA será gerada em tempo real"
+    "aiVoiceGenerated": "A voz IA será gerada em tempo real",
+    "analyzing": "Analisando...",
+    "loadingData": "Carregando dados...",
+    "loadingAudio": "Carregando dados de áudio...",
+    "enterWordAndMeaning": "Por favor, insira palavra e significado!",
+    "loadingStoryList": "Carregando lista de histórias..."
   },
   "descriptions": {
     "beginner": "Frases curtas (1-2 frases)",
@@ -62,7 +70,11 @@
     "grammar": "Pontos de Gramática",
     "example": "Exemplo:",
     "paragraph": "Parágrafo",
-    "readAndRecord": "Leia e grave esta frase!"
+    "readAndRecord": "Leia e grave esta frase!",
+    "wordPlaceholder": "Palavra",
+    "meaningPlaceholder": "Significado",
+    "addWordHint": "Tente adicionar palavras acima!",
+    "wordbookDescription": "Adicione palavras que deseja memorizar!"
   },
   "difficulty": {
     "easier": "Mais fácil",
@@ -82,4 +94,3 @@
     "it": "Italiano"
   }
 }
-

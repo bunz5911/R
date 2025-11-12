@@ -35,7 +35,10 @@
     "save": "儲存",
     "delete": "刪除",
     "startRecording": "開始錄音",
-    "stopRecording": "停止錄音"
+    "stopRecording": "停止錄音",
+    "backToStoryList": "返回故事列表",
+    "getAIEvaluation": "獲得AI評價",
+    "addWord": "新增單字"
   },
   "messages": {
     "recording": "錄音中...",
@@ -46,7 +49,12 @@
     "noParagraphs": "沒有段落分析資料。",
     "noAudioFile": "完整故事音訊檔案尚未產生。",
     "useParagraphLearning": "請使用段落學習。",
-    "aiVoiceGenerated": "AI語音將即時產生"
+    "aiVoiceGenerated": "AI語音將即時產生",
+    "analyzing": "分析中...",
+    "loadingData": "正在載入資料...",
+    "loadingAudio": "正在載入音訊資料...",
+    "enterWordAndMeaning": "請輸入單字和意思！",
+    "loadingStoryList": "正在載入故事列表..."
   },
   "descriptions": {
     "beginner": "短句（1-2句）",
@@ -62,7 +70,11 @@
     "grammar": "語法要點",
     "example": "例如：",
     "paragraph": "段落",
-    "readAndRecord": "請閱讀並錄音這個句子！"
+    "readAndRecord": "請閱讀並錄音這個句子！",
+    "wordPlaceholder": "單字",
+    "meaningPlaceholder": "意思",
+    "addWordHint": "請在上方新增單字！",
+    "wordbookDescription": "新增您想記住的單字！"
   },
   "difficulty": {
     "easier": "更容易",
@@ -82,4 +94,3 @@
     "it": "Italiano"
   }
 }
-

@@ -35,7 +35,9 @@
     "save": "저장",
     "delete": "삭제",
     "startRecording": "녹음 시작",
-    "stopRecording": "녹음 중지"
+    "stopRecording": "녹음 중지",
+    "getAIEvaluation": "AI 평가 받기",
+    "addWord": "단어 추가"
   },
   "messages": {
     "recording": "녹음 중...",
@@ -46,7 +48,11 @@
     "noParagraphs": "문단 분석 데이터가 없습니다.",
     "noAudioFile": "전체 읽기 오디오 파일이 아직 생성되지 않았습니다.",
     "useParagraphLearning": "문단별 학습을 이용해주세요.",
-    "aiVoiceGenerated": "AI 음성으로 실시간 생성됩니다"
+    "aiVoiceGenerated": "AI 음성으로 실시간 생성됩니다",
+    "analyzing": "분석 중...",
+    "loadingData": "데이터를 로드합니다...",
+    "loadingAudio": "음성 데이터를 로드합니다...",
+    "loadingStoryList": "동화 목록을 불러오는 중..."
   },
   "descriptions": {
     "beginner": "짧은 문장 (1-2문장)",
@@ -62,7 +68,11 @@
     "grammar": "문법 포인트",
     "example": "예:",
     "paragraph": "문단",
-    "readAndRecord": "이 문장을 읽고 녹음해보세요!"
+    "readAndRecord": "이 문장을 읽고 녹음해보세요!",
+    "wordPlaceholder": "단어",
+    "meaningPlaceholder": "뜻",
+    "addWordHint": "위에서 단어를 추가해보세요!",
+    "wordbookDescription": "외우고 싶은 단어를 추가하세요!"
   },
   "difficulty": {
     "easier": "더 쉽게",
