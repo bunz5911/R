@@ -125,9 +125,15 @@ function updateUI() {
     // currentLevel은 원래 값 유지 (초급/중급/고급), 표시할 때만 번역
     // currentLevel 변수는 그대로 두고, 렌더링할 때만 번역된 값 사용
     
-    // 현재 탭 다시 렌더링
-    if (currentView === 'learning' && currentTab) {
-        switchTab(currentTab);
+    // 현재 탭 다시 렌더링 (안전하게 체크)
+    const learningView = document.getElementById('learningView');
+    if (learningView && learningView.style.display !== 'none' && currentTab) {
+        // 학습 화면이 표시 중이면 현재 탭 다시 렌더링
+        try {
+            switchTab(currentTab);
+        } catch (error) {
+            console.warn('탭 렌더링 실패:', error);
+        }
     }
 }
 
