@@ -629,7 +629,9 @@ def text_to_speech():
             }
         }
         
-        response = http_requests.post(url, json=payload, headers=headers, timeout=30)
+        # 타임아웃 증가 (긴 텍스트 처리용)
+        timeout_seconds = 60 if len(text) > 1000 else 30
+        response = http_requests.post(url, json=payload, headers=headers, timeout=timeout_seconds)
         
         if response.status_code == 200:
             # MP3 데이터를 Base64로 인코딩

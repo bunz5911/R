@@ -2263,38 +2263,77 @@ async function playFullStoryAudio(storyId, buttonElement) {
             return;
         }
         
+        // 텍스트를 문단 단위로 분할 (긴 텍스트 처리)
+        const paragraphs = currentStory?.paragraphs || [];
+        const textChunks = paragraphs.length > 0 ? paragraphs : [fullText];
+        
         // 로딩 중 표시
         buttonElement.innerHTML = '⏳';
         buttonElement.disabled = true;
+        buttonElement.title = '음성 생성 중...';
         
         try {
-            // TTS API 호출
-            console.log('🔊 TTS 음성 생성 중... (전체 이야기)');
-            const response = await fetch(`${API_BASE}/tts/speak`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    text: fullText,
-                    voice: selectedGoogleVoice,
-                    speed: 0.95
-                })
-            });
+            console.log(`🔊 TTS 음성 생성 중... (전체 이야기, ${textChunks.length}개 청크)`);
             
-            const data = await response.json();
+            // 각 청크를 순차적으로 TTS 생성
+            const audioChunks = [];
+            let processedChunks = 0;
             
-            if (data.error || !data.audio) {
-                throw new Error(data.error || '오디오 데이터 없음');
+            for (let i = 0; i < textChunks.length; i++) {
+                const chunk = textChunks[i];
+                if (!chunk || chunk.trim().length === 0) continue;
+                
+                console.log(`📝 청크 ${i + 1}/${textChunks.length} 처리 중 (${chunk.length}자)...`);
+                buttonElement.innerHTML = `⏳ ${i + 1}/${textChunks.length}`;
+                
+                try {
+                    const response = await fetch(`${API_BASE}/tts/speak`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            text: chunk,
+                            voice: selectedGoogleVoice,
+                            speed: 0.95
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data.error || !data.audio) {
+                        throw new Error(data.error || '오디오 데이터 없음');
+                    }
+                    
+                    // Base64를 Blob으로 변환
+                    const audioData = atob(data.audio);
+                    const arrayBuffer = new ArrayBuffer(audioData.length);
+                    const view = new Uint8Array(arrayBuffer);
+                    for (let j = 0; j < audioData.length; j++) {
+                        view[j] = audioData.charCodeAt(j);
+                    }
+                    const audioBlob = new Blob([arrayBuffer], { type: 'audio/mp3' });
+                    audioChunks.push(audioBlob);
+                    processedChunks++;
+                    
+                    console.log(`✅ 청크 ${i + 1} 완료`);
+                } catch (chunkError) {
+                    console.error(`❌ 청크 ${i + 1} 오류:`, chunkError);
+                    // 일부 청크 실패해도 계속 진행
+                }
             }
             
-            // Base64를 Blob으로 변환
-            const audioData = atob(data.audio);
-            const arrayBuffer = new ArrayBuffer(audioData.length);
-            const view = new Uint8Array(arrayBuffer);
-            for (let i = 0; i < audioData.length; i++) {
-                view[i] = audioData.charCodeAt(i);
+            if (audioChunks.length === 0) {
+                throw new Error('모든 청크 생성 실패');
             }
-            const audioBlob = new Blob([arrayBuffer], { type: 'audio/mp3' });
-            const audioUrl = URL.createObjectURL(audioBlob);
+            
+            console.log(`✅ 총 ${audioChunks.length}개 청크 생성 완료`);
+            
+            // 모든 오디오 청크를 하나로 합치기
+            const combinedBlob = new Blob(audioChunks, { type: 'audio/mp3' });
+            const audioUrl = URL.createObjectURL(combinedBlob);
             
             // 오디오 재생
             fullStoryAudio = new Audio(audioUrl);
@@ -2303,6 +2342,7 @@ async function playFullStoryAudio(storyId, buttonElement) {
             await fullStoryAudio.play();
             buttonElement.innerHTML = '⏸';
             buttonElement.disabled = false;
+            buttonElement.title = '';
             console.log('✅ TTS 재생 시작됨');
             
             // 재생 완료 시
@@ -2315,9 +2355,10 @@ async function playFullStoryAudio(storyId, buttonElement) {
             
         } catch (error) {
             console.error('❌ TTS 오류:', error);
-            alert(`음성 생성에 실패했습니다.\n\n에러: ${error.message}\n\n잠시 후 다시 시도해주세요.`);
+            alert(`음성 생성에 실패했습니다.\n\n에러: ${error.message}\n\n텍스트가 너무 길어서 타임아웃이 발생할 수 있습니다.\n문단별 학습을 이용해주세요.`);
             buttonElement.innerHTML = '▶';
             buttonElement.disabled = false;
+            buttonElement.title = '';
             fullStoryAudio = null;
         }
         
