@@ -1452,6 +1452,7 @@ function renderWordbook() {
     
     contentEl.innerHTML = `
         <div class="section-title">나만의 단어장</div>
+        ${renderCharacterImage('wordbook')}
         <div class="content-box" style="background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%); color: #2d3436;">
             <strong>외우고 싶은 단어를 추가하세요!</strong>
         </div>
@@ -1533,6 +1534,7 @@ function renderQuiz() {
         // 퀴즈 생성 요청
         contentEl.innerHTML = `
             <div class="section-title">이해도 확인 (퀴즈)</div>
+            ${renderCharacterImage('quiz')}
             <div class="loading">
                 <img src="img/loading.png" alt="Loading" class="loading-image">
                 <p>데이터를 로드합니다...</p>
@@ -1601,6 +1603,7 @@ function showQuizQuestion() {
     const q = quizData[currentQuizIndex];
     contentEl.innerHTML = `
         <div class="section-title">문제 ${currentQuizIndex + 1} / ${quizData.length}</div>
+        ${renderCharacterImage('quiz')}
         <div class="content-box" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); font-size: 16px; font-weight: 600; color: #2d3436;">
             ${q.question}
         </div>
@@ -1805,6 +1808,7 @@ function renderGrowth() {
     
     contentEl.innerHTML = `
         <div class="section-title">성장 기록 (발음 테스트)</div>
+        ${renderCharacterImage('growth')}
         <div class="content-box" style="background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%); color: #2d3436;">
             <strong>이 문장을 읽고 녹음해보세요!</strong>
         </div>
