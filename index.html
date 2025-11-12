@@ -399,6 +399,46 @@
             font-style: italic;
         }
 
+        /* 캐릭터 이미지 스타일 */
+        .character-image-container {
+            text-align: center;
+            margin: 12px 0 16px 0;
+            padding: 0;
+        }
+
+        .character-image {
+            max-width: 200px;
+            width: 50%;
+            height: auto;
+            display: inline-block;
+            animation: characterFloat 3s ease-in-out infinite;
+        }
+
+        /* 캐릭터 위아래 움직임 애니메이션 */
+        @keyframes characterFloat {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* 태블릿 이상 */
+        @media (min-width: 769px) {
+            .character-image {
+                max-width: 250px;
+                width: auto;
+            }
+        }
+
+        /* 데스크톱 */
+        @media (min-width: 1025px) {
+            .character-image {
+                max-width: 300px;
+            }
+        }
+
         /* 컨트롤 버튼들 */
         .control-buttons {
             display: flex;
