@@ -53,6 +53,18 @@ function t(key) {
 }
 
 /**
+ * 레벨 번역 함수 (초급/중급/고급 -> 번역된 값)
+ * @param {string} level - 레벨 (초급, 중급, 고급)
+ * @returns {string} 번역된 레벨
+ */
+function translateLevel(level) {
+    if (level === '초급') return t('levels.beginner');
+    if (level === '중급') return t('levels.intermediate');
+    if (level === '고급') return t('levels.advanced');
+    return level; // 번역 없으면 원래 값 반환
+}
+
+/**
  * 언어 변경 함수
  * @param {string} lang - 언어 코드
  */
@@ -90,10 +102,28 @@ function updateUI() {
     if (levelIntermediate) levelIntermediate.textContent = t('levels.intermediate');
     if (levelAdvanced) levelAdvanced.textContent = t('levels.advanced');
     
-    // currentLevel도 번역된 값으로 업데이트 (초급/중급/고급 -> Beginner/Intermediate/Advanced)
-    if (currentLevel === '초급') currentLevel = t('levels.beginner');
-    else if (currentLevel === '중급') currentLevel = t('levels.intermediate');
-    else if (currentLevel === '고급') currentLevel = t('levels.advanced');
+    // 학습 탭 버튼 업데이트
+    const tabButtons = document.querySelectorAll('.tab-button');
+    tabButtons.forEach(btn => {
+        const tabName = btn.getAttribute('data-tab');
+        if (tabName === 'summary') btn.textContent = t('tabs.summary');
+        else if (tabName === 'full-story') btn.textContent = t('tabs.fullStory');
+        else if (tabName === 'paragraphs') btn.textContent = t('tabs.paragraphs');
+        else if (tabName === 'real-life') btn.textContent = t('tabs.realLife');
+        else if (tabName === 'vocabulary') btn.textContent = t('tabs.vocabulary');
+        else if (tabName === 'wordbook') btn.textContent = t('tabs.wordbook');
+        else if (tabName === 'quiz') btn.textContent = t('tabs.quiz');
+        else if (tabName === 'growth') btn.textContent = t('tabs.growth');
+    });
+    
+    // 뒤로 버튼 업데이트
+    const backButton = document.querySelector('.back-button');
+    if (backButton) {
+        backButton.textContent = `← ${t('buttons.back')}`;
+    }
+    
+    // currentLevel은 원래 값 유지 (초급/중급/고급), 표시할 때만 번역
+    // currentLevel 변수는 그대로 두고, 렌더링할 때만 번역된 값 사용
     
     // 현재 탭 다시 렌더링
     if (currentView === 'learning' && currentTab) {
@@ -1406,10 +1436,10 @@ function renderParagraphs() {
     }
 
     contentEl.innerHTML = `
-        <div class="section-title">${t('tabs.paragraphs')} + ${t('tabs.quiz')} (${currentLevel})</div>
+        <div class="section-title">${t('tabs.paragraphs')} + ${t('tabs.quiz')} (${translateLevel(currentLevel)})</div>
         ${renderCharacterImage('paragraphs')}
         <div class="content-box" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; margin-bottom: 20px;">
-            <strong>🎤 ${currentLevel}${t('descriptions.levelDescription')}</strong><br>
+            <strong>🎤 ${translateLevel(currentLevel)}${t('descriptions.levelDescription')}</strong><br>
             <small style="opacity: 0.9; margin-top: 8px; display: block;">
                 📗 ${t('levels.beginner')}: ${t('descriptions.beginner')} | 📘 ${t('levels.intermediate')}: ${t('descriptions.intermediate')} | 📕 ${t('levels.advanced')}: ${t('descriptions.advanced')}
             </small>
@@ -1481,7 +1511,7 @@ function renderRealLife() {
     const examples = currentAnalysis.real_life_usage || [];
     
     contentEl.innerHTML = `
-        <div class="section-title">${t('tabs.realLife')} (${currentLevel})</div>
+        <div class="section-title">${t('tabs.realLife')} (${translateLevel(currentLevel)})</div>
         ${renderCharacterImage('real-life')}
         <div class="content-box" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #2d3436;">
             <strong>${t('descriptions.realLifeUsage')}</strong>
