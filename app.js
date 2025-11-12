@@ -2332,46 +2332,48 @@ async function playFullStoryAudio(storyId, buttonElement) {
             console.log(`✅ 총 ${audioChunks.length}개 청크 생성 완료`);
             
             // 각 청크를 순차적으로 재생
-            let currentChunkIndex = 0;
-            const audioUrls = audioChunks.map(blob => URL.createObjectURL(blob));
+            window.currentChunkIndex = 0;
+            window.audioUrls = audioChunks.map(blob => URL.createObjectURL(blob));
             
-            function playNextChunk() {
-                if (currentChunkIndex >= audioUrls.length) {
+            const playNextChunk = () => {
+                if (window.currentChunkIndex >= window.audioUrls.length) {
                     // 모든 청크 재생 완료
                     console.log('✅ 전체 재생 완료');
                     buttonElement.innerHTML = '▶';
                     buttonElement.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
                     fullStoryAudio = null;
                     // URL 정리
-                    audioUrls.forEach(url => URL.revokeObjectURL(url));
+                    window.audioUrls.forEach(url => URL.revokeObjectURL(url));
+                    window.currentChunkIndex = undefined;
+                    window.audioUrls = undefined;
                     return;
                 }
                 
                 // 다음 청크 재생
-                const audioUrl = audioUrls[currentChunkIndex];
+                const audioUrl = window.audioUrls[window.currentChunkIndex];
                 fullStoryAudio = new Audio(audioUrl);
                 
-                console.log(`▶ 청크 ${currentChunkIndex + 1}/${audioUrls.length} 재생 시작`);
+                console.log(`▶ 청크 ${window.currentChunkIndex + 1}/${window.audioUrls.length} 재생 시작`);
                 
                 fullStoryAudio.addEventListener('ended', () => {
-                    console.log(`✅ 청크 ${currentChunkIndex + 1} 재생 완료`);
-                    currentChunkIndex++;
+                    console.log(`✅ 청크 ${window.currentChunkIndex + 1} 재생 완료`);
+                    window.currentChunkIndex++;
                     playNextChunk();
                 }, { once: true });
                 
                 fullStoryAudio.addEventListener('error', (e) => {
-                    console.error(`❌ 청크 ${currentChunkIndex + 1} 재생 오류:`, e);
+                    console.error(`❌ 청크 ${window.currentChunkIndex + 1} 재생 오류:`, e);
                     // 오류가 나도 다음 청크로 진행
-                    currentChunkIndex++;
+                    window.currentChunkIndex++;
                     playNextChunk();
                 }, { once: true });
                 
                 fullStoryAudio.play().catch(error => {
-                    console.error(`❌ 청크 ${currentChunkIndex + 1} 재생 실패:`, error);
-                    currentChunkIndex++;
+                    console.error(`❌ 청크 ${window.currentChunkIndex + 1} 재생 실패:`, error);
+                    window.currentChunkIndex++;
                     playNextChunk();
                 });
-            }
+            };
             
             // 첫 번째 청크 재생 시작
             buttonElement.innerHTML = '⏸';
