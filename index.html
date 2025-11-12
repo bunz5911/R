@@ -747,6 +747,36 @@
             background: rgba(102, 126, 234, 0.1);
         }
 
+        /* 언어 선택 드롭다운 스타일 */
+        .language-selector {
+            background: white;
+            border: 2px solid #e9ecef;
+            color: #333;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            cursor: pointer;
+            min-width: 120px;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 35px;
+        }
+        
+        .language-selector:hover {
+            border-color: #667eea;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+        }
+        
+        .language-selector:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
         /* 헤더 버튼 통일 스타일 */
         .header-btn {
             background: white;
@@ -913,6 +943,19 @@
                 
                 <div class="header-top-bar" id="navBar">
                     <div class="header-left-section">
+                        <!-- 언어 선택 드롭다운 (첫 번째 항목) -->
+                        <select id="languageSelect" class="header-btn language-selector" onchange="changeLanguage(this.value)" style="min-width: 120px; padding: 8px 12px; font-size: 14px; border: 2px solid #e9ecef; border-radius: 12px; background: white; color: #333; cursor: pointer;">
+                            <option value="ko">🇰🇷 한국어</option>
+                            <option value="en">🇺🇸 English</option>
+                            <option value="zh-CN">🇨🇳 简体中文</option>
+                            <option value="ja">🇯🇵 日本語</option>
+                            <option value="es">🇪🇸 Español</option>
+                            <option value="de">🇩🇪 Deutsch</option>
+                            <option value="fr">🇫🇷 Français</option>
+                            <option value="pt-BR">🇧🇷 Português</option>
+                            <option value="zh-TW">🇹🇼 繁體中文</option>
+                            <option value="it">🇮🇹 Italiano</option>
+                        </select>
                         <div id="userInfo" class="user-info" style="display: none;"></div>
                         <button id="authBtn" class="header-btn" onclick="handleAuth()">로그인</button>
                         <button id="checkinBtn" onclick="showCheckinModal()" class="header-btn checkin">📅 출석</button>
