@@ -9,6 +9,38 @@ const API_BASE = window.location.hostname === 'localhost' || window.location.hos
     : 'https://r-6s57.onrender.com/api';
 
 // ============================================================================
+// 🎨 캐릭터 이미지 매핑
+// ============================================================================
+const CHARACTER_IMAGES = {
+    'full-story': 'img/characters/reading.png',      // 전체 듣기
+    'paragraphs': 'img/characters/learning.png',    // 문단별 학습
+    'real-life': 'img/characters/speaking.png',      // 실생활 활용
+    'vocabulary': 'img/characters/studying.png',    // 어휘문법
+    'wordbook': 'img/characters/notebook.png',      // 단어장
+    'quiz': 'img/characters/quiz.png',              // 이해도확인
+    'growth': 'img/characters/growth.png'           // 성장기록
+};
+
+/**
+ * 캐릭터 이미지 렌더링 헬퍼 함수
+ * @param {string} tabName - 탭 이름
+ * @returns {string} HTML 문자열
+ */
+function renderCharacterImage(tabName) {
+    const characterImg = CHARACTER_IMAGES[tabName];
+    if (!characterImg) return '';
+    
+    return `
+        <div class="character-image-container">
+            <img src="${characterImg}" 
+                 alt="캐릭터" 
+                 class="character-image"
+                 onerror="this.style.display='none'">
+        </div>
+    `;
+}
+
+// ============================================================================
 // 🚀 하드코딩된 동화 목록 (즉시 로딩용)
 // ============================================================================
 const PRELOADED_STORIES = [
@@ -1276,6 +1308,7 @@ function renderParagraphs() {
 
     contentEl.innerHTML = `
         <div class="section-title">문단별 학습 + 읽기 평가 (${currentLevel} 레벨)</div>
+        ${renderCharacterImage('paragraphs')}
         <div class="content-box" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; margin-bottom: 20px;">
             <strong>🎤 ${currentLevel}에 맞는 문장을 읽고 AI 평가를 받아 코인을 획득하세요!</strong><br>
             <small style="opacity: 0.9; margin-top: 8px; display: block;">
@@ -1350,6 +1383,7 @@ function renderRealLife() {
     
     contentEl.innerHTML = `
         <div class="section-title">실생활 활용 (${currentLevel} 레벨)</div>
+        ${renderCharacterImage('real-life')}
         <div class="content-box" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #2d3436;">
             <strong>이 동화에서 배운 표현을 실제 대화에서 사용해보세요!</strong>
         </div>
@@ -1376,7 +1410,7 @@ function renderVocabulary() {
     
     contentEl.innerHTML = `
         <div class="section-title">어휘 문법</div>
-        
+        ${renderCharacterImage('vocabulary')}
         <div class="section-title" style="font-size: 18px; margin-top: 16px;">주요 어휘</div>
         ${vocabulary.map((v, idx) => `
             <div class="vocabulary-item">
