@@ -12,7 +12,7 @@ const API_BASE = window.location.hostname === 'localhost' || window.location.hos
 // 🚀 하드코딩된 동화 목록 (즉시 로딩용)
 // ============================================================================
 const PRELOADED_STORIES = [
-    { id: 0, title: "도깨비키친의비밀", preview: "", image: "img/stories/story-0.jpg" },
+    { id: 0, title: "도깨비키친", preview: "", image: "img/stories/story-0.jpg" },
     { id: 1, title: "강아지닥스훈트의비밀", preview: "", image: "img/stories/story-1.jpg" },
     { id: 2, title: "공룡발자국의비밀", preview: "", image: "img/stories/story-2.jpg" },
     { id: 3, title: "기린의비밀", preview: "", image: "img/stories/story-3.jpg" },
@@ -815,9 +815,15 @@ async function analyzeStory(storyId) {
     
     // ✅ 핵심: 서버에서 받은 제목의 모든 공백 제거 (내부 키와 100% 일치시키기)
     const originalTitle = currentStory.title;  // 화면 표시용 (원본)
-    const internalKey = originalTitle.replace(/\s+/g, '');  // 내부 매칭용 (공백 완전 제거)
+    let internalKey = originalTitle.replace(/\s+/g, '');  // 내부 매칭용 (공백 완전 제거)
+    
+    // 0번 동화는 "의비밀" 제거 (이미 "도깨비키친"으로만 표시됨)
+    if (storyId === 0 && internalKey.endsWith('의비밀')) {
+        internalKey = internalKey.replace('의비밀', '');
+    }
     
     console.log('🔍 하드코딩 데이터 확인:', {
+        storyId: storyId,
         originalTitle: originalTitle,
         internalKey: internalKey,
         currentLevel: currentLevel,
@@ -2207,10 +2213,101 @@ function stopTTS() {
 }
 
 /**
- * 전체 이야기 듣기 전용 - 로컬 MP3 파일 재생
- * 다른 TTS 기능(문단별 읽기, 어휘, 문법)은 ElevenLabs API를 계속 사용
+ * 전체 이야기 듣기 전용
+ * - 0번 동화: TTS로 실시간 생성
+ * - 기타 동화: 로컬 MP3 파일 재생
  */
-function playFullStoryAudio(storyId, buttonElement) {
+async function playFullStoryAudio(storyId, buttonElement) {
+    // 0번 동화는 TTS로 처리
+    if (storyId === 0) {
+        console.log(`🎵 0번 동화 전체 듣기 - TTS 사용`);
+        
+        // 이미 재생 중이면 정지
+        if (fullStoryAudio && !fullStoryAudio.paused) {
+            console.log('⏸ 재생 중지');
+            fullStoryAudio.pause();
+            fullStoryAudio.currentTime = 0;
+            fullStoryAudio = null;
+            buttonElement.textContent = '▶';
+            buttonElement.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            return;
+        }
+        
+        // 이전 오디오 정리
+        if (fullStoryAudio) {
+            fullStoryAudio.pause();
+            fullStoryAudio = null;
+        }
+        
+        // 전체 텍스트 가져오기
+        const fullText = currentStory?.full_text || '';
+        if (!fullText) {
+            alert('동화 내용을 불러올 수 없습니다.');
+            return;
+        }
+        
+        // 로딩 중 표시
+        buttonElement.innerHTML = '⏳';
+        buttonElement.disabled = true;
+        
+        try {
+            // TTS API 호출
+            console.log('🔊 TTS 음성 생성 중... (전체 이야기)');
+            const response = await fetch(`${API_BASE}/tts/speak`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    text: fullText,
+                    voice: selectedGoogleVoice,
+                    speed: 0.95
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.error || !data.audio) {
+                throw new Error(data.error || '오디오 데이터 없음');
+            }
+            
+            // Base64를 Blob으로 변환
+            const audioData = atob(data.audio);
+            const arrayBuffer = new ArrayBuffer(audioData.length);
+            const view = new Uint8Array(arrayBuffer);
+            for (let i = 0; i < audioData.length; i++) {
+                view[i] = audioData.charCodeAt(i);
+            }
+            const audioBlob = new Blob([arrayBuffer], { type: 'audio/mp3' });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            
+            // 오디오 재생
+            fullStoryAudio = new Audio(audioUrl);
+            
+            // 재생 시작
+            await fullStoryAudio.play();
+            buttonElement.innerHTML = '⏸';
+            buttonElement.disabled = false;
+            console.log('✅ TTS 재생 시작됨');
+            
+            // 재생 완료 시
+            fullStoryAudio.addEventListener('ended', () => {
+                console.log('✅ 재생 완료');
+                buttonElement.innerHTML = '▶';
+                buttonElement.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                fullStoryAudio = null;
+            }, { once: true });
+            
+        } catch (error) {
+            console.error('❌ TTS 오류:', error);
+            alert(`음성 생성에 실패했습니다.\n\n에러: ${error.message}\n\n잠시 후 다시 시도해주세요.`);
+            buttonElement.innerHTML = '▶';
+            buttonElement.disabled = false;
+            fullStoryAudio = null;
+        }
+        
+        return;
+    }
+    
+    // 기타 동화: 로컬 MP3 파일 재생
     const audioPath = `audio/full-stories/story-${storyId}.mp3`;
     
     console.log(`🎵 전체 듣기 MP3 재생 시작: ${audioPath}`);
