@@ -199,6 +199,11 @@ def scan_story_files():
     
     for doc_path in doc_files:
         base_title = os.path.basename(doc_path)[:-5]  # .docx 제거
+        
+        # "00_" 접두사 제거 (0번 동화용)
+        if base_title.startswith("00_"):
+            base_title = base_title[3:]
+        
         display_title = base_title if base_title.endswith("의 비밀") else f"{base_title}의 비밀"
         
         story_files[display_title] = doc_path
@@ -304,9 +309,9 @@ def health():
 
 @app.route('/api/stories', methods=['GET'])
 def get_stories():
-    """50개 동화 목록 반환 (Lazy Loading)"""
+    """동화 목록 반환 (0번부터 시작, Lazy Loading)"""
     story_list = []
-    for i, title in enumerate(story_titles, 1):
+    for i, title in enumerate(story_titles):
         # 필요할 때만 내용 로드 (메모리 절약)
         content = get_story_content(title)
         preview = content[:100] + "..." if content else ""
@@ -327,11 +332,12 @@ def get_story(story_id):
     """특정 동화의 전체 내용 반환 (Lazy Loading)"""
     print(f"📖 동화 요청 받음: story_id={story_id}", flush=True)
     
-    if story_id < 1 or story_id > len(story_titles):
+    # 0번 동화 허용 (무료 티어)
+    if story_id < 0 or story_id >= len(story_titles):
         print(f"❌ 잘못된 story_id: {story_id}", flush=True)
         return jsonify({"error": "동화를 찾을 수 없습니다"}), 404
     
-    title = story_titles[story_id - 1]
+    title = story_titles[story_id]
     print(f"📚 동화 제목: {title}", flush=True)
     
     content = get_story_content(title)
@@ -364,7 +370,8 @@ def analyze_story(story_id):
     print(f"🔍 분석 요청 받음: story_id={story_id}", flush=True)
     print(f"{'='*80}", flush=True)
     
-    if story_id < 1 or story_id > len(story_titles):
+    # 0번 동화 허용 (무료 티어)
+    if story_id < 0 or story_id >= len(story_titles):
         print(f"❌ 잘못된 story_id: {story_id}", flush=True)
         return jsonify({"error": "동화를 찾을 수 없습니다"}), 404
     
@@ -373,7 +380,7 @@ def analyze_story(story_id):
     print(f"📊 요청된 레벨: {level}", flush=True)
     
     # 동화 제목 가져오기
-    title = story_titles[story_id - 1]
+    title = story_titles[story_id]
     base_title = story_title_base_map.get(title, title)
     print(f"📚 동화 제목: {title} (원본: {base_title})", flush=True)
     
@@ -646,7 +653,8 @@ def generate_quiz(story_id):
     동화 기반 퀴즈 생성
     POST body: { "level": "초급|중급|고급", "count": 15 }
     """
-    if story_id < 1 or story_id > len(story_titles):
+    # 0번 동화 허용 (무료 티어)
+    if story_id < 0 or story_id >= len(story_titles):
         return jsonify({"error": "동화를 찾을 수 없습니다"}), 404
     
     data = request.get_json() or {}
@@ -654,7 +662,7 @@ def generate_quiz(story_id):
     count = data.get('count', 15)
     
     # 동화 로드 (Lazy Loading)
-    title = story_titles[story_id - 1]
+    title = story_titles[story_id]
     content = get_story_content(title)
     
     if not client:

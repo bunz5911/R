@@ -12,6 +12,7 @@ const API_BASE = window.location.hostname === 'localhost' || window.location.hos
 // 🚀 하드코딩된 동화 목록 (즉시 로딩용)
 // ============================================================================
 const PRELOADED_STORIES = [
+    { id: 0, title: "도깨비키친의비밀", preview: "", image: "img/stories/story-0.jpg" },
     { id: 1, title: "강아지닥스훈트의비밀", preview: "", image: "img/stories/story-1.jpg" },
     { id: 2, title: "공룡발자국의비밀", preview: "", image: "img/stories/story-2.jpg" },
     { id: 3, title: "기린의비밀", preview: "", image: "img/stories/story-3.jpg" },
@@ -401,8 +402,8 @@ function checkStoryAccess(storyId) {
         return;
     }
     
-    // 1번 동화는 누구나 접근 가능
-    if (storyId === 1) {
+    // 0번과 1번 동화는 누구나 접근 가능 (무료 티어)
+    if (storyId === 0 || storyId === 1) {
         selectStory(storyId);
         return;
     }
@@ -631,7 +632,7 @@ function closeLoginModal() {
 async function selectStory(storyId) {
     console.log(`📖 동화 선택: ID=${storyId}`);
     
-    // ✅ 접근 권한 체크 (안전장치)
+    // ✅ 접근 권한 체크 (안전장치) - 0번과 1번은 무료 티어로 접근 가능
     if (storyId > 1 && !isAuthenticated) {
         showLoginModal(storyId);
         return;
