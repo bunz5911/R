@@ -2235,182 +2235,7 @@ function stopTTS() {
 async function playFullStoryAudio(storyId, buttonElement) {
     console.log(`🎵 playFullStoryAudio 호출됨 - storyId: ${storyId}, type: ${typeof storyId}`);
     
-    // 0번 동화는 TTS로 처리
-    if (storyId === 0 || storyId === '0') {
-        console.log(`🎵 0번 동화 전체 듣기 - TTS 사용`);
-        
-        // 이미 재생 중이면 정지
-        if (fullStoryAudio && !fullStoryAudio.paused) {
-            console.log('⏸ 재생 중지');
-            fullStoryAudio.pause();
-            fullStoryAudio.currentTime = 0;
-            fullStoryAudio = null;
-            // 순차 재생 중이었다면 인덱스도 리셋
-            if (window.currentChunkIndex !== undefined) {
-                window.currentChunkIndex = undefined;
-            }
-            if (window.audioUrls) {
-                window.audioUrls.forEach(url => URL.revokeObjectURL(url));
-                window.audioUrls = undefined;
-            }
-            buttonElement.textContent = '▶';
-            buttonElement.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-            return;
-        }
-        
-        // 이전 오디오 정리
-        if (fullStoryAudio) {
-            fullStoryAudio.pause();
-            fullStoryAudio = null;
-        }
-        // 순차 재생 관련 변수도 정리
-        if (window.currentChunkIndex !== undefined) {
-            window.currentChunkIndex = undefined;
-        }
-        if (window.audioUrls) {
-            window.audioUrls.forEach(url => URL.revokeObjectURL(url));
-            window.audioUrls = undefined;
-        }
-        
-        // 전체 텍스트 가져오기
-        const fullText = currentStory?.full_text || '';
-        if (!fullText) {
-            alert('동화 내용을 불러올 수 없습니다.');
-            return;
-        }
-        
-        // 텍스트를 문단 단위로 분할 (긴 텍스트 처리)
-        const paragraphs = currentStory?.paragraphs || [];
-        const textChunks = paragraphs.length > 0 ? paragraphs : [fullText];
-        
-        // 로딩 중 표시
-        buttonElement.innerHTML = '⏳';
-        buttonElement.disabled = true;
-        buttonElement.title = '음성 생성 중...';
-        
-        try {
-            console.log(`🔊 TTS 음성 생성 중... (전체 이야기, ${textChunks.length}개 청크)`);
-            
-            // 각 청크를 순차적으로 TTS 생성
-            const audioChunks = [];
-            let processedChunks = 0;
-            
-            for (let i = 0; i < textChunks.length; i++) {
-                const chunk = textChunks[i];
-                if (!chunk || chunk.trim().length === 0) continue;
-                
-                console.log(`📝 청크 ${i + 1}/${textChunks.length} 처리 중 (${chunk.length}자)...`);
-                buttonElement.innerHTML = `⏳ ${i + 1}/${textChunks.length}`;
-                
-                try {
-                    const response = await fetch(`${API_BASE}/tts/speak`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            text: chunk,
-                            voice: selectedGoogleVoice,
-                            speed: 0.95
-                        })
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}`);
-                    }
-                    
-                    const data = await response.json();
-                    
-                    if (data.error || !data.audio) {
-                        throw new Error(data.error || '오디오 데이터 없음');
-                    }
-                    
-                    // Base64를 Blob으로 변환
-                    const audioData = atob(data.audio);
-                    const arrayBuffer = new ArrayBuffer(audioData.length);
-                    const view = new Uint8Array(arrayBuffer);
-                    for (let j = 0; j < audioData.length; j++) {
-                        view[j] = audioData.charCodeAt(j);
-                    }
-                    const audioBlob = new Blob([arrayBuffer], { type: 'audio/mp3' });
-                    audioChunks.push(audioBlob);
-                    processedChunks++;
-                    
-                    console.log(`✅ 청크 ${i + 1} 완료`);
-                } catch (chunkError) {
-                    console.error(`❌ 청크 ${i + 1} 오류:`, chunkError);
-                    // 일부 청크 실패해도 계속 진행
-                }
-            }
-            
-            if (audioChunks.length === 0) {
-                throw new Error('모든 청크 생성 실패');
-            }
-            
-            console.log(`✅ 총 ${audioChunks.length}개 청크 생성 완료`);
-            
-            // 각 청크를 순차적으로 재생
-            window.currentChunkIndex = 0;
-            window.audioUrls = audioChunks.map(blob => URL.createObjectURL(blob));
-            
-            const playNextChunk = () => {
-                if (window.currentChunkIndex >= window.audioUrls.length) {
-                    // 모든 청크 재생 완료
-                    console.log('✅ 전체 재생 완료');
-                    buttonElement.innerHTML = '▶';
-                    buttonElement.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                    fullStoryAudio = null;
-                    // URL 정리
-                    window.audioUrls.forEach(url => URL.revokeObjectURL(url));
-                    window.currentChunkIndex = undefined;
-                    window.audioUrls = undefined;
-                    return;
-                }
-                
-                // 다음 청크 재생
-                const audioUrl = window.audioUrls[window.currentChunkIndex];
-                fullStoryAudio = new Audio(audioUrl);
-                
-                console.log(`▶ 청크 ${window.currentChunkIndex + 1}/${window.audioUrls.length} 재생 시작`);
-                
-                fullStoryAudio.addEventListener('ended', () => {
-                    console.log(`✅ 청크 ${window.currentChunkIndex + 1} 재생 완료`);
-                    window.currentChunkIndex++;
-                    playNextChunk();
-                }, { once: true });
-                
-                fullStoryAudio.addEventListener('error', (e) => {
-                    console.error(`❌ 청크 ${window.currentChunkIndex + 1} 재생 오류:`, e);
-                    // 오류가 나도 다음 청크로 진행
-                    window.currentChunkIndex++;
-                    playNextChunk();
-                }, { once: true });
-                
-                fullStoryAudio.play().catch(error => {
-                    console.error(`❌ 청크 ${window.currentChunkIndex + 1} 재생 실패:`, error);
-                    window.currentChunkIndex++;
-                    playNextChunk();
-                });
-            };
-            
-            // 첫 번째 청크 재생 시작
-            buttonElement.innerHTML = '⏸';
-            buttonElement.disabled = false;
-            buttonElement.title = '';
-            playNextChunk();
-            console.log('✅ TTS 순차 재생 시작됨');
-            
-        } catch (error) {
-            console.error('❌ TTS 오류:', error);
-            alert(`음성 생성에 실패했습니다.\n\n에러: ${error.message}\n\n텍스트가 너무 길어서 타임아웃이 발생할 수 있습니다.\n문단별 학습을 이용해주세요.`);
-            buttonElement.innerHTML = '▶';
-            buttonElement.disabled = false;
-            buttonElement.title = '';
-            fullStoryAudio = null;
-        }
-        
-        return;
-    }
-    
-    // 기타 동화: 로컬 MP3 파일 재생
+    // 모든 동화: 로컬 MP3 파일 재생 (0번 포함, 파일이 없으면 TTS로 fallback)
     const audioPath = `audio/full-stories/story-${storyId}.mp3`;
     
     console.log(`🎵 전체 듣기 MP3 재생 시작: ${audioPath}`);
@@ -2439,14 +2264,38 @@ async function playFullStoryAudio(storyId, buttonElement) {
     buttonElement.innerHTML = '⏳';
     buttonElement.disabled = true;
     
-    // 에러 처리 (파일 없음)
-    fullStoryAudio.addEventListener('error', (e) => {
-        console.error('❌ 오디오 로드 실패:', e);
-        alert(`전체 듣기 오디오 파일이 없습니다.\n\n현재는 문단별 학습을 이용해주세요.\n(AI 음성으로 실시간 생성됩니다)`);
+    // TTS fallback 함수 (0번 동화 파일이 없을 때만 사용)
+    const fallbackToTTS = async () => {
+        if (storyId !== 0 && storyId !== '0') {
+            // 0번이 아니면 TTS fallback 없음
+            alert(`전체 듣기 오디오 파일이 없습니다.\n\n파일명: story-${storyId}.mp3\n경로: audio/full-stories/\n\nMP3 파일을 해당 폴더에 추가해 주세요.`);
+            buttonElement.innerHTML = '▶';
+            buttonElement.disabled = false;
+            return;
+        }
+        
+        console.log('⚠️ story-0.mp3 파일이 없습니다. TTS로 fallback합니다.');
+        
+        // 전체 텍스트 가져오기
+        const fullText = currentStory?.full_text || '';
+        if (!fullText) {
+            alert('동화 내용을 불러올 수 없습니다.');
+            buttonElement.innerHTML = '▶';
+            buttonElement.disabled = false;
+            return;
+        }
+        
+        // TTS는 문단별 학습을 권장
+        alert(`전체 읽기 오디오 파일이 아직 생성되지 않았습니다.\n\n문단별 학습을 이용해주세요.\n(AI 음성으로 실시간 생성됩니다)`);
         buttonElement.innerHTML = '▶';
         buttonElement.disabled = false;
-        buttonElement.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
         fullStoryAudio = null;
+    };
+    
+    // 에러 처리 (파일 없음) - 0번 동화는 TTS로 fallback
+    fullStoryAudio.addEventListener('error', async (e) => {
+        console.error('❌ 오디오 로드 실패:', e);
+        await fallbackToTTS();
     }, { once: true });
     
     // 재생 준비 완료
@@ -2463,32 +2312,15 @@ async function playFullStoryAudio(storyId, buttonElement) {
             buttonElement.innerHTML = '⏸';
             buttonElement.disabled = false;
         })
-        .catch(error => {
+        .catch(async (error) => {
             console.error('❌ 오디오 재생 실패:', error);
-            alert(`전체 듣기 오디오 파일이 없습니다.\n\n현재는 문단별 학습을 이용해주세요.\n(AI 음성으로 실시간 생성됩니다)`);
-            buttonElement.innerHTML = '▶';
-            buttonElement.disabled = false;
-            fullStoryAudio = null;
+            await fallbackToTTS();
         });
     
     // 재생 완료 시
     fullStoryAudio.addEventListener('ended', () => {
         console.log('✅ 재생 완료');
         buttonElement.innerHTML = '▶';
-        fullStoryAudio = null;
-    }, { once: true });
-    
-    // 에러 처리
-    fullStoryAudio.addEventListener('error', (e) => {
-        console.error('❌ 오디오 로드 에러:', e);
-        console.error('에러 상세:', {
-            error: e.target.error,
-            code: e.target.error?.code,
-            message: e.target.error?.message
-        });
-        alert(`오디오 파일을 찾을 수 없습니다.\n\n파일명: story-${storyId}.mp3\n경로: audio/full-stories/\n\nMP3 파일을 해당 폴더에 추가해 주세요.`);
-        buttonElement.innerHTML = '▶';
-        buttonElement.disabled = false;
         fullStoryAudio = null;
     }, { once: true });
 }
