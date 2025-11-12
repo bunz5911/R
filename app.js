@@ -2245,6 +2245,14 @@ async function playFullStoryAudio(storyId, buttonElement) {
             fullStoryAudio.pause();
             fullStoryAudio.currentTime = 0;
             fullStoryAudio = null;
+            // 순차 재생 중이었다면 인덱스도 리셋
+            if (window.currentChunkIndex !== undefined) {
+                window.currentChunkIndex = undefined;
+            }
+            if (window.audioUrls) {
+                window.audioUrls.forEach(url => URL.revokeObjectURL(url));
+                window.audioUrls = undefined;
+            }
             buttonElement.textContent = '▶';
             buttonElement.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
             return;
@@ -2254,6 +2262,14 @@ async function playFullStoryAudio(storyId, buttonElement) {
         if (fullStoryAudio) {
             fullStoryAudio.pause();
             fullStoryAudio = null;
+        }
+        // 순차 재생 관련 변수도 정리
+        if (window.currentChunkIndex !== undefined) {
+            window.currentChunkIndex = undefined;
+        }
+        if (window.audioUrls) {
+            window.audioUrls.forEach(url => URL.revokeObjectURL(url));
+            window.audioUrls = undefined;
         }
         
         // 전체 텍스트 가져오기
