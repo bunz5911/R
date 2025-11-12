@@ -1267,6 +1267,7 @@ function renderFullStory() {
                 ▶
             </button>
         </div>
+        ${renderCharacterImage('full-story')}
         <div class="content-box">
             ${fullText.replace(/\n/g, '<br>')}
         </div>
