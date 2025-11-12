@@ -9,6 +9,104 @@ const API_BASE = window.location.hostname === 'localhost' || window.location.hos
     : 'https://r-6s57.onrender.com/api';
 
 // ============================================================================
+// 🌍 다국어 지원 시스템
+// ============================================================================
+let translations = {};
+let currentLanguage = localStorage.getItem('language') || 'ko';
+
+/**
+ * 번역 파일 로드
+ * @param {string} lang - 언어 코드 (ko, en, zh-CN, ja, es, de, fr, pt-BR, zh-TW, it)
+ */
+async function loadTranslations(lang) {
+    try {
+        const response = await fetch(`translations/${lang}.json?v=${Date.now()}`);
+        if (!response.ok) {
+            throw new Error(`번역 파일 로드 실패: ${response.status}`);
+        }
+        translations = await response.json();
+        currentLanguage = lang;
+        localStorage.setItem('language', lang);
+        updateUI();
+        console.log(`✅ 번역 로드 완료: ${lang}`);
+    } catch (error) {
+        console.error('❌ 번역 로드 실패:', error);
+        // 폴백: 한국어 사용
+        if (lang !== 'ko') {
+            await loadTranslations('ko');
+        }
+    }
+}
+
+/**
+ * 번역 함수
+ * @param {string} key - 번역 키 (예: "tabs.summary")
+ * @returns {string} 번역된 텍스트
+ */
+function t(key) {
+    const keys = key.split('.');
+    let value = translations;
+    for (const k of keys) {
+        value = value?.[k];
+    }
+    return value || key; // 번역 없으면 키 반환
+}
+
+/**
+ * 언어 변경 함수
+ * @param {string} lang - 언어 코드
+ */
+function changeLanguage(lang) {
+    loadTranslations(lang);
+}
+
+/**
+ * UI 업데이트 함수 (번역 적용)
+ */
+function updateUI() {
+    // 언어 선택 드롭다운 업데이트
+    const langSelect = document.getElementById('languageSelect');
+    if (langSelect) {
+        langSelect.value = currentLanguage;
+    }
+    
+    // 네비게이션 바 텍스트 업데이트
+    const authBtn = document.getElementById('authBtn');
+    if (authBtn) authBtn.textContent = t('nav.login');
+    
+    const checkinBtn = document.getElementById('checkinBtn');
+    if (checkinBtn) checkinBtn.innerHTML = `📅 ${t('nav.checkin')}`;
+    
+    // 헤더 타이틀 업데이트
+    const headerSubtitle = document.querySelector('.header-center p');
+    if (headerSubtitle) headerSubtitle.textContent = t('app.subtitle');
+    
+    // 레벨 버튼 업데이트
+    const levelBeginner = document.getElementById('levelBeginner');
+    const levelIntermediate = document.getElementById('levelIntermediate');
+    const levelAdvanced = document.getElementById('levelAdvanced');
+    
+    if (levelBeginner) levelBeginner.textContent = t('levels.beginner');
+    if (levelIntermediate) levelIntermediate.textContent = t('levels.intermediate');
+    if (levelAdvanced) levelAdvanced.textContent = t('levels.advanced');
+    
+    // currentLevel도 번역된 값으로 업데이트 (초급/중급/고급 -> Beginner/Intermediate/Advanced)
+    if (currentLevel === '초급') currentLevel = t('levels.beginner');
+    else if (currentLevel === '중급') currentLevel = t('levels.intermediate');
+    else if (currentLevel === '고급') currentLevel = t('levels.advanced');
+    
+    // 현재 탭 다시 렌더링
+    if (currentView === 'learning' && currentTab) {
+        switchTab(currentTab);
+    }
+}
+
+// 페이지 로드 시 번역 로드
+document.addEventListener('DOMContentLoaded', () => {
+    loadTranslations(currentLanguage);
+});
+
+// ============================================================================
 // 🎨 캐릭터 이미지 매핑
 // ============================================================================
 const CHARACTER_IMAGES = {
@@ -1146,9 +1244,9 @@ async function renderSummary() {
     
     // ✅ 음성 재생 버튼 제거 (텍스트만 표시)
     contentEl.innerHTML = `
-        <div class="section-title">이야기 요약</div>
+        <div class="section-title">${t('tabs.summary')}</div>
         <div class="content-box">
-            ${currentAnalysis.summary || '요약 정보가 없습니다.'}
+            ${currentAnalysis.summary || t('messages.noSummary')}
         </div>
         
         <!-- K-콘텐츠 추가 버튼 -->
@@ -1262,7 +1360,7 @@ function renderFullStory() {
     
     contentEl.innerHTML = `
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-            <div class="section-title" style="margin-bottom: 0;">전체 이야기 듣기</div>
+            <div class="section-title" style="margin-bottom: 0;">${t('tabs.fullStory')}</div>
             <button class="play-btn-circle" id="fullStoryPlayBtn" onclick="playFullStoryAudio(${storyId}, this)">
                 ▶
             </button>
@@ -1303,17 +1401,17 @@ function renderParagraphs() {
     });
     
     if (paragraphs.length === 0) {
-        contentEl.innerHTML = '<div class="content-box">문단 분석 데이터가 없습니다.</div>';
+        contentEl.innerHTML = `<div class="content-box">${t('messages.noParagraphs')}</div>`;
         return;
     }
 
     contentEl.innerHTML = `
-        <div class="section-title">문단별 학습 + 읽기 평가 (${currentLevel} 레벨)</div>
+        <div class="section-title">${t('tabs.paragraphs')} + ${t('tabs.quiz')} (${currentLevel})</div>
         ${renderCharacterImage('paragraphs')}
         <div class="content-box" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; margin-bottom: 20px;">
-            <strong>🎤 ${currentLevel}에 맞는 문장을 읽고 AI 평가를 받아 코인을 획득하세요!</strong><br>
+            <strong>🎤 ${currentLevel}${t('descriptions.levelDescription')}</strong><br>
             <small style="opacity: 0.9; margin-top: 8px; display: block;">
-                📗 초급: 짧은 문장 (1-2문장) | 📘 중급: 적당한 길이 (2-4문장) | 📕 고급: 다른 표현으로 (패러프레이징)
+                📗 ${t('levels.beginner')}: ${t('descriptions.beginner')} | 📘 ${t('levels.intermediate')}: ${t('descriptions.intermediate')} | 📕 ${t('levels.advanced')}: ${t('descriptions.advanced')}
             </small>
         </div>
         ${paragraphs.map((p, idx) => {
@@ -1324,7 +1422,7 @@ function renderParagraphs() {
             return `
             <div class="paragraph-item" id="paragraph${idx}">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                    <span class="paragraph-num">문단 ${p.paragraph_num || idx + 1}</span>
+                    <span class="paragraph-num">${t('descriptions.paragraph')} ${p.paragraph_num || idx + 1}</span>
                     <button class="play-btn-circle" id="paraPlayBtn${idx}" onclick="togglePlay('para${idx}', '${escapeQuotes(practiceText)}', this)">
                         ▶
                     </button>
@@ -1333,11 +1431,11 @@ function renderParagraphs() {
                 <!-- ✅ 레벨별 연습 문장 (AI가 선택한 적절한 길이) -->
                 <div style="background: #e3f2fd; border-left: 4px solid #2196f3; padding: 16px; margin-bottom: 12px; border-radius: 8px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <div style="font-weight: 600; color: #1976d2;">🎤 연습 문장 (이 부분을 읽으세요):</div>
+                        <div style="font-weight: 600; color: #1976d2;">🎤 ${t('descriptions.practiceSentence')}</div>
                         <div style="display: flex; gap: 4px;">
-                            <button onclick="adjustParagraphDifficulty(${idx}, 'easier')" style="background: #84fab0; color: white; border: none; padding: 4px 8px; border-radius: 12px; font-size: 11px; cursor: pointer;" title="더 쉽게">⬇️</button>
-                            <button onclick="adjustParagraphDifficulty(${idx}, 'harder')" style="background: #fa709a; color: white; border: none; padding: 4px 8px; border-radius: 12px; font-size: 11px; cursor: pointer;" title="더 어렵게">⬆️</button>
-                            <button onclick="adjustParagraphDifficulty(${idx}, 'realistic')" style="background: #667eea; color: white; border: none; padding: 4px 8px; border-radius: 12px; font-size: 11px; cursor: pointer;" title="현실적 표현">💬</button>
+                            <button onclick="adjustParagraphDifficulty(${idx}, 'easier')" style="background: #84fab0; color: white; border: none; padding: 4px 8px; border-radius: 12px; font-size: 11px; cursor: pointer;" title="${t('difficulty.easier')}">⬇️</button>
+                            <button onclick="adjustParagraphDifficulty(${idx}, 'harder')" style="background: #fa709a; color: white; border: none; padding: 4px 8px; border-radius: 12px; font-size: 11px; cursor: pointer;" title="${t('difficulty.harder')}">⬆️</button>
+                            <button onclick="adjustParagraphDifficulty(${idx}, 'realistic')" style="background: #667eea; color: white; border: none; padding: 4px 8px; border-radius: 12px; font-size: 11px; cursor: pointer;" title="${t('difficulty.realistic')}">💬</button>
                         </div>
                     </div>
                     <div style="font-size: 18px; font-weight: 600; line-height: 1.8; color: #333;" id="practiceText${idx}">
@@ -1346,27 +1444,27 @@ function renderParagraphs() {
                 </div>
                 
                 <details style="margin-bottom: 12px;">
-                    <summary style="cursor: pointer; color: #667eea; font-weight: 600;">전체 원문 보기</summary>
+                    <summary style="cursor: pointer; color: #667eea; font-weight: 600;">${t('descriptions.fullText')}</summary>
                     <div style="margin-top: 12px; padding: 12px; background: #f5f5f5; border-radius: 8px;" id="originalText${idx}">
                         ${fullText}
                     </div>
                 </details>
                 
-                <div style="font-weight: 600; color: #667eea;">쉬운 표현:</div>
+                <div style="font-weight: 600; color: #667eea;">${t('descriptions.easyExpression')}</div>
                 <div style="margin-bottom: 12px;">${p.simplified_text || ''}</div>
-                <div style="font-weight: 600; color: #764ba2;">설명:</div>
+                <div style="font-weight: 600; color: #764ba2;">${t('descriptions.explanation')}</div>
                 <div style="margin-bottom: 16px;">${p.explanation || ''}</div>
                 
                 <!-- ✅ 읽기 평가 버튼 -->
                 <div class="control-buttons" id="recordingButtons${idx}">
                     <button class="btn" onclick="startParagraphRecording(${idx}, ${p.paragraph_num || idx + 1}, '${escapeQuotes(practiceText)}')">
-                        🎤 녹음하고 평가받기
+                        🎤 ${t('buttons.record')}
                     </button>
                 </div>
                 
                 <!-- 녹음 상태 표시 -->
                 <div class="recording-indicator" id="recordingIndicator${idx}">
-                    <div class="recording-text">녹음 중...</div>
+                    <div class="recording-text">${t('messages.recording')}</div>
                 </div>
                 
                 <!-- 평가 결과 -->
@@ -1383,10 +1481,10 @@ function renderRealLife() {
     const examples = currentAnalysis.real_life_usage || [];
     
     contentEl.innerHTML = `
-        <div class="section-title">실생활 활용 (${currentLevel} 레벨)</div>
+        <div class="section-title">${t('tabs.realLife')} (${currentLevel})</div>
         ${renderCharacterImage('real-life')}
         <div class="content-box" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #2d3436;">
-            <strong>이 동화에서 배운 표현을 실제 대화에서 사용해보세요!</strong>
+            <strong>${t('descriptions.realLifeUsage')}</strong>
         </div>
         ${examples.map((example, idx) => `
             <div class="content-box">
@@ -1410,9 +1508,9 @@ function renderVocabulary() {
     const grammar = currentAnalysis.grammar || [];
     
     contentEl.innerHTML = `
-        <div class="section-title">어휘 문법</div>
+        <div class="section-title">${t('tabs.vocabulary')}</div>
         ${renderCharacterImage('vocabulary')}
-        <div class="section-title" style="font-size: 18px; margin-top: 16px;">주요 어휘</div>
+        <div class="section-title" style="font-size: 18px; margin-top: 16px;">${t('descriptions.vocabulary')}</div>
         ${vocabulary.map((v, idx) => `
             <div class="vocabulary-item">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
@@ -1422,12 +1520,12 @@ function renderVocabulary() {
                     </button>
                 </div>
                 <div class="vocab-meaning">${v.meaning}</div>
-                <div class="vocab-example">예: ${v.example}</div>
+                <div class="vocab-example">${t('descriptions.example')} ${v.example}</div>
             </div>
         `).join('')}
 
         ${grammar.length > 0 ? `
-            <div class="section-title" style="font-size: 18px; margin-top: 32px;">문법 포인트</div>
+            <div class="section-title" style="font-size: 18px; margin-top: 32px;">${t('descriptions.grammar')}</div>
             ${grammar.map((g, idx) => `
                 <div class="grammar-item">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
@@ -1437,7 +1535,7 @@ function renderVocabulary() {
                         </button>
                     </div>
                     <div class="vocab-meaning">${g.explanation}</div>
-                    <div class="vocab-example">예: ${g.example}</div>
+                    <div class="vocab-example">${t('descriptions.example')} ${g.example}</div>
                 </div>
             `).join('')}
         ` : ''}
@@ -1452,25 +1550,25 @@ function renderWordbook() {
     let myWords = JSON.parse(localStorage.getItem('myWordbook') || '[]');
     
     contentEl.innerHTML = `
-        <div class="section-title">나만의 단어장</div>
+        <div class="section-title">${t('tabs.wordbook')}</div>
         ${renderCharacterImage('wordbook')}
         <div class="content-box" style="background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%); color: #2d3436;">
-            <strong>외우고 싶은 단어를 추가하세요!</strong>
+            <strong>${t('descriptions.realLifeUsage')}</strong>
         </div>
 
         <div style="margin-top: 16px;">
-            <input type="text" id="newWord" placeholder="단어" style="width: calc(50% - 5px); padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px;">
-            <input type="text" id="newMeaning" placeholder="뜻" style="width: calc(50% - 5px); padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px; margin-left: 10px;">
+            <input type="text" id="newWord" placeholder="${t('descriptions.vocabulary')}" style="width: calc(50% - 5px); padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px;">
+            <input type="text" id="newMeaning" placeholder="${t('descriptions.explanation')}" style="width: calc(50% - 5px); padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px; margin-left: 10px;">
             <button class="btn" onclick="addToWordbook()" style="width: 100%; margin-top: 10px;">
-                단어 추가
+                ${t('buttons.save')}
             </button>
         </div>
 
         <div style="margin-top: 24px;">
             ${myWords.length === 0 ? `
                 <div class="content-box">
-                    아직 저장된 단어가 없습니다.<br>
-                    위에서 단어를 추가해보세요!
+                    ${t('messages.noWords')}<br>
+                    ${t('descriptions.realLifeUsage')}
                 </div>
             ` : myWords.map((word, idx) => `
                 <div class="vocabulary-item">
@@ -1484,7 +1582,7 @@ function renderWordbook() {
                                 ▶
                             </button>
                             <button class="btn-secondary btn" onclick="removeFromWordbook(${idx})" style="padding: 8px 14px; font-size: 12px; background: #e74c3c; border-radius: 20px; border: none;">
-                                삭제
+                                ${t('buttons.delete')}
                             </button>
                         </div>
                     </div>
@@ -1513,7 +1611,7 @@ function addToWordbook() {
 }
 
 function removeFromWordbook(index) {
-    if (confirm('이 단어를 단어장에서 삭제하시겠습니까?')) {
+    if (confirm(t('messages.deleteConfirm'))) {
         let myWords = JSON.parse(localStorage.getItem('myWordbook') || '[]');
         myWords.splice(index, 1);
         localStorage.setItem('myWordbook', JSON.stringify(myWords));
@@ -1534,11 +1632,11 @@ function renderQuiz() {
     if (!currentAnalysis.quiz_questions || currentAnalysis.quiz_questions.length === 0) {
         // 퀴즈 생성 요청
         contentEl.innerHTML = `
-            <div class="section-title">이해도 확인 (퀴즈)</div>
+            <div class="section-title">${t('tabs.quiz')}</div>
             ${renderCharacterImage('quiz')}
             <div class="loading">
                 <img src="img/loading.png" alt="Loading" class="loading-image">
-                <p>데이터를 로드합니다...</p>
+                <p>${t('messages.recording')}</p>
             </div>
         `;
         generateQuiz();
@@ -1808,10 +1906,10 @@ function renderGrowth() {
     const firstParagraph = fullText.split('\n\n')[0] || fullText.substring(0, 200);
     
     contentEl.innerHTML = `
-        <div class="section-title">성장 기록 (발음 테스트)</div>
+        <div class="section-title">${t('tabs.growth')}</div>
         ${renderCharacterImage('growth')}
         <div class="content-box" style="background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%); color: #2d3436;">
-            <strong>이 문장을 읽고 녹음해보세요!</strong>
+            <strong>${t('descriptions.readAndRecord')}</strong>
         </div>
 
         <div class="content-box" style="margin-top: 16px; font-size: 15px; line-height: 1.8;">
@@ -1819,15 +1917,15 @@ function renderGrowth() {
         </div>
 
         <div class="recording-indicator" id="recordingIndicator">
-            <div class="recording-text">녹음 중...</div>
+            <div class="recording-text">${t('messages.recording')}</div>
         </div>
 
         <div class="control-buttons" style="margin-top: 16px;">
             <button class="btn" onclick="startRecording()">
-                녹음 시작
+                ${t('buttons.startRecording')}
             </button>
             <button class="btn-secondary btn" onclick="stopRecording()">
-                녹음 중지
+                ${t('buttons.stopRecording')}
             </button>
         </div>
 
