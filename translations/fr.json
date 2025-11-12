@@ -1,0 +1,85 @@
+{
+  "app": {
+    "title": "Read Aloud Korean",
+    "subtitle": "Apprentissage de Contes Coréens"
+  },
+  "nav": {
+    "language": "Langue",
+    "login": "Connexion",
+    "checkin": "Enregistrement",
+    "kContent": "K-Contenu",
+    "admin": "Administration",
+    "dashboard": "Tableau de bord",
+    "voiceSettings": "Paramètres vocaux",
+    "shop": "Boutique"
+  },
+  "tabs": {
+    "summary": "Résumé de l'Histoire",
+    "fullStory": "Écouter l'Histoire Complète",
+    "paragraphs": "Apprentissage par Paragraphes",
+    "realLife": "Utilisation dans la Vie Réelle",
+    "vocabulary": "Vocabulaire et Grammaire",
+    "wordbook": "Mon Carnet de Mots",
+    "quiz": "Vérification de Compréhension",
+    "growth": "Enregistrement de Croissance"
+  },
+  "levels": {
+    "beginner": "Débutant",
+    "intermediate": "Intermédiaire",
+    "advanced": "Avancé"
+  },
+  "buttons": {
+    "play": "Lire",
+    "back": "Retour",
+    "record": "Enregistrer et Évaluer",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "startRecording": "Démarrer l'enregistrement",
+    "stopRecording": "Arrêter l'enregistrement"
+  },
+  "messages": {
+    "recording": "Enregistrement en cours...",
+    "noWords": "Aucun mot enregistré pour le moment.",
+    "deleteConfirm": "Voulez-vous supprimer ce mot de votre carnet de mots ?",
+    "loginRequired": "Connexion requise",
+    "noSummary": "Aucune information de résumé disponible.",
+    "noParagraphs": "Aucune donnée d'analyse de paragraphe disponible.",
+    "noAudioFile": "Le fichier audio de l'histoire complète n'a pas encore été généré.",
+    "useParagraphLearning": "Veuillez utiliser l'apprentissage par paragraphes.",
+    "aiVoiceGenerated": "La voix IA sera générée en temps réel"
+  },
+  "descriptions": {
+    "beginner": "Phrases courtes (1-2 phrases)",
+    "intermediate": "Longueur modérée (2-4 phrases)",
+    "advanced": "Expressions différentes (paraphrase)",
+    "levelDescription": "Lisez des phrases adaptées à votre niveau et gagnez des pièces grâce à l'évaluation IA !",
+    "realLifeUsage": "Utilisez les expressions apprises de cette histoire dans de vraies conversations !",
+    "practiceSentence": "Phrase d'Entraînement (Lisez cette partie) :",
+    "fullText": "Voir le Texte Complet",
+    "easyExpression": "Expression Facile :",
+    "explanation": "Explication :",
+    "vocabulary": "Vocabulaire Clé",
+    "grammar": "Points de Grammaire",
+    "example": "Exemple :",
+    "paragraph": "Paragraphe",
+    "readAndRecord": "Lisez et enregistrez cette phrase !"
+  },
+  "difficulty": {
+    "easier": "Plus facile",
+    "harder": "Plus difficile",
+    "realistic": "Expression réaliste"
+  },
+  "languages": {
+    "ko": "한국어",
+    "en": "English",
+    "zh-CN": "简体中文",
+    "ja": "日本語",
+    "es": "Español",
+    "de": "Deutsch",
+    "fr": "Français",
+    "pt-BR": "Português (BR)",
+    "zh-TW": "繁體中文",
+    "it": "Italiano"
+  }
+}
+
