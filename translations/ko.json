@@ -1,0 +1,85 @@
+{
+  "app": {
+    "title": "Read Aloud Korean",
+    "subtitle": "한국어 동화 학습"
+  },
+  "nav": {
+    "language": "언어",
+    "login": "로그인",
+    "checkin": "출석",
+    "kContent": "K-콘텐츠",
+    "admin": "관리",
+    "dashboard": "대시보드",
+    "voiceSettings": "음성 설정",
+    "shop": "Shop"
+  },
+  "tabs": {
+    "summary": "이야기 요약",
+    "fullStory": "전체 이야기 듣기",
+    "paragraphs": "문단별 학습",
+    "realLife": "실생활 활용",
+    "vocabulary": "어휘 문법",
+    "wordbook": "나만의 단어장",
+    "quiz": "이해도 확인",
+    "growth": "성장기록"
+  },
+  "levels": {
+    "beginner": "초급",
+    "intermediate": "중급",
+    "advanced": "고급"
+  },
+  "buttons": {
+    "play": "재생",
+    "back": "뒤로",
+    "record": "녹음하고 평가받기",
+    "save": "저장",
+    "delete": "삭제",
+    "startRecording": "녹음 시작",
+    "stopRecording": "녹음 중지"
+  },
+  "messages": {
+    "recording": "녹음 중...",
+    "noWords": "아직 저장된 단어가 없습니다.",
+    "deleteConfirm": "이 단어를 단어장에서 삭제하시겠습니까?",
+    "loginRequired": "로그인이 필요합니다",
+    "noSummary": "요약 정보가 없습니다.",
+    "noParagraphs": "문단 분석 데이터가 없습니다.",
+    "noAudioFile": "전체 읽기 오디오 파일이 아직 생성되지 않았습니다.",
+    "useParagraphLearning": "문단별 학습을 이용해주세요.",
+    "aiVoiceGenerated": "AI 음성으로 실시간 생성됩니다"
+  },
+  "descriptions": {
+    "beginner": "짧은 문장 (1-2문장)",
+    "intermediate": "적당한 길이 (2-4문장)",
+    "advanced": "다른 표현으로 (패러프레이징)",
+    "levelDescription": "에 맞는 문장을 읽고 AI 평가를 받아 코인을 획득하세요!",
+    "realLifeUsage": "이 동화에서 배운 표현을 실제 대화에서 사용해보세요!",
+    "practiceSentence": "연습 문장 (이 부분을 읽으세요):",
+    "fullText": "전체 원문 보기",
+    "easyExpression": "쉬운 표현:",
+    "explanation": "설명:",
+    "vocabulary": "주요 어휘",
+    "grammar": "문법 포인트",
+    "example": "예:",
+    "paragraph": "문단",
+    "readAndRecord": "이 문장을 읽고 녹음해보세요!"
+  },
+  "difficulty": {
+    "easier": "더 쉽게",
+    "harder": "더 어렵게",
+    "realistic": "현실적 표현"
+  },
+  "languages": {
+    "ko": "한국어",
+    "en": "English",
+    "zh-CN": "简体中文",
+    "ja": "日本語",
+    "es": "Español",
+    "de": "Deutsch",
+    "fr": "Français",
+    "pt-BR": "Português (BR)",
+    "zh-TW": "繁體中文",
+    "it": "Italiano"
+  }
+}
+

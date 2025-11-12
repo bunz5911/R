@@ -1,0 +1,85 @@
+{
+  "app": {
+    "title": "Read Aloud Korean",
+    "subtitle": "Korean Fairy Tale Learning"
+  },
+  "nav": {
+    "language": "Language",
+    "login": "Login",
+    "checkin": "Check-in",
+    "kContent": "K-Content",
+    "admin": "Admin",
+    "dashboard": "Dashboard",
+    "voiceSettings": "Voice Settings",
+    "shop": "Shop"
+  },
+  "tabs": {
+    "summary": "Story Summary",
+    "fullStory": "Listen to Full Story",
+    "paragraphs": "Paragraph Learning",
+    "realLife": "Real Life Usage",
+    "vocabulary": "Vocabulary & Grammar",
+    "wordbook": "My Wordbook",
+    "quiz": "Comprehension Check",
+    "growth": "Growth Record"
+  },
+  "levels": {
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced"
+  },
+  "buttons": {
+    "play": "Play",
+    "back": "Back",
+    "record": "Record & Get Evaluated",
+    "save": "Save",
+    "delete": "Delete",
+    "startRecording": "Start Recording",
+    "stopRecording": "Stop Recording"
+  },
+  "messages": {
+    "recording": "Recording...",
+    "noWords": "No words saved yet.",
+    "deleteConfirm": "Do you want to delete this word from your wordbook?",
+    "loginRequired": "Login Required",
+    "noSummary": "No summary available.",
+    "noParagraphs": "No paragraph analysis data available.",
+    "noAudioFile": "Full story audio file has not been generated yet.",
+    "useParagraphLearning": "Please use paragraph learning.",
+    "aiVoiceGenerated": "AI voice will be generated in real-time"
+  },
+  "descriptions": {
+    "beginner": "Short sentences (1-2 sentences)",
+    "intermediate": "Moderate length (2-4 sentences)",
+    "advanced": "Different expressions (paraphrasing)",
+    "levelDescription": "Read sentences appropriate for your level and earn coins through AI evaluation!",
+    "realLifeUsage": "Use the expressions you learned from this story in real conversations!",
+    "practiceSentence": "Practice Sentence (Read this part):",
+    "fullText": "View Full Text",
+    "easyExpression": "Easy Expression:",
+    "explanation": "Explanation:",
+    "vocabulary": "Key Vocabulary",
+    "grammar": "Grammar Points",
+    "example": "Example:",
+    "paragraph": "Paragraph",
+    "readAndRecord": "Read and record this sentence!"
+  },
+  "difficulty": {
+    "easier": "Easier",
+    "harder": "Harder",
+    "realistic": "Realistic Expression"
+  },
+  "languages": {
+    "ko": "한국어",
+    "en": "English",
+    "zh-CN": "简体中文",
+    "ja": "日本語",
+    "es": "Español",
+    "de": "Deutsch",
+    "fr": "Français",
+    "pt-BR": "Português (BR)",
+    "zh-TW": "繁體中文",
+    "it": "Italiano"
+  }
+}
+

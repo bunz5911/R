@@ -1,0 +1,85 @@
+{
+  "app": {
+    "title": "Read Aloud Korean",
+    "subtitle": "韓語童話學習"
+  },
+  "nav": {
+    "language": "語言",
+    "login": "登入",
+    "checkin": "簽到",
+    "kContent": "K-內容",
+    "admin": "管理",
+    "dashboard": "儀表板",
+    "voiceSettings": "語音設定",
+    "shop": "商店"
+  },
+  "tabs": {
+    "summary": "故事摘要",
+    "fullStory": "聽完整故事",
+    "paragraphs": "段落學習",
+    "realLife": "實際應用",
+    "vocabulary": "詞彙語法",
+    "wordbook": "我的單字本",
+    "quiz": "理解檢查",
+    "growth": "成長記錄"
+  },
+  "levels": {
+    "beginner": "初級",
+    "intermediate": "中級",
+    "advanced": "高級"
+  },
+  "buttons": {
+    "play": "播放",
+    "back": "返回",
+    "record": "錄音並獲得評價",
+    "save": "儲存",
+    "delete": "刪除",
+    "startRecording": "開始錄音",
+    "stopRecording": "停止錄音"
+  },
+  "messages": {
+    "recording": "錄音中...",
+    "noWords": "還沒有儲存的單字。",
+    "deleteConfirm": "您想從單字本中刪除這個詞嗎？",
+    "loginRequired": "需要登入",
+    "noSummary": "沒有摘要資訊。",
+    "noParagraphs": "沒有段落分析資料。",
+    "noAudioFile": "完整故事音訊檔案尚未產生。",
+    "useParagraphLearning": "請使用段落學習。",
+    "aiVoiceGenerated": "AI語音將即時產生"
+  },
+  "descriptions": {
+    "beginner": "短句（1-2句）",
+    "intermediate": "中等長度（2-4句）",
+    "advanced": "不同表達（改寫）",
+    "levelDescription": "閱讀適合您程度的句子，透過AI評價獲得硬幣！",
+    "realLifeUsage": "在實際對話中使用從這個故事中學到的表達！",
+    "practiceSentence": "練習句子（請讀這部分）：",
+    "fullText": "查看全文",
+    "easyExpression": "簡單表達：",
+    "explanation": "說明：",
+    "vocabulary": "主要詞彙",
+    "grammar": "語法要點",
+    "example": "例如：",
+    "paragraph": "段落",
+    "readAndRecord": "請閱讀並錄音這個句子！"
+  },
+  "difficulty": {
+    "easier": "更容易",
+    "harder": "更難",
+    "realistic": "現實表達"
+  },
+  "languages": {
+    "ko": "한국어",
+    "en": "English",
+    "zh-CN": "简体中文",
+    "ja": "日本語",
+    "es": "Español",
+    "de": "Deutsch",
+    "fr": "Français",
+    "pt-BR": "Português (BR)",
+    "zh-TW": "繁體中文",
+    "it": "Italiano"
+  }
+}
+

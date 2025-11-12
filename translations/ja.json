@@ -1,0 +1,85 @@
+{
+  "app": {
+    "title": "Read Aloud Korean",
+    "subtitle": "韓国語童話学習"
+  },
+  "nav": {
+    "language": "言語",
+    "login": "ログイン",
+    "checkin": "チェックイン",
+    "kContent": "K-コンテンツ",
+    "admin": "管理",
+    "dashboard": "ダッシュボード",
+    "voiceSettings": "音声設定",
+    "shop": "ショップ"
+  },
+  "tabs": {
+    "summary": "物語の要約",
+    "fullStory": "全文を聞く",
+    "paragraphs": "段落学習",
+    "realLife": "実生活での活用",
+    "vocabulary": "語彙・文法",
+    "wordbook": "マイ単語帳",
+    "quiz": "理解度確認",
+    "growth": "成長記録"
+  },
+  "levels": {
+    "beginner": "初級",
+    "intermediate": "中級",
+    "advanced": "上級"
+  },
+  "buttons": {
+    "play": "再生",
+    "back": "戻る",
+    "record": "録音して評価を受ける",
+    "save": "保存",
+    "delete": "削除",
+    "startRecording": "録音開始",
+    "stopRecording": "録音停止"
+  },
+  "messages": {
+    "recording": "録音中...",
+    "noWords": "保存された単語がまだありません。",
+    "deleteConfirm": "この単語を単語帳から削除しますか？",
+    "loginRequired": "ログインが必要です",
+    "noSummary": "要約情報がありません。",
+    "noParagraphs": "段落分析データがありません。",
+    "noAudioFile": "全文音声ファイルがまだ生成されていません。",
+    "useParagraphLearning": "段落学習をご利用ください。",
+    "aiVoiceGenerated": "AI音声がリアルタイムで生成されます"
+  },
+  "descriptions": {
+    "beginner": "短文（1-2文）",
+    "intermediate": "適度な長さ（2-4文）",
+    "advanced": "別の表現で（言い換え）",
+    "levelDescription": "レベルに合った文を読んでAI評価を受け、コインを獲得しましょう！",
+    "realLifeUsage": "この物語で学んだ表現を実際の会話で使ってみましょう！",
+    "practiceSentence": "練習文（この部分を読んでください）：",
+    "fullText": "全文を見る",
+    "easyExpression": "簡単な表現：",
+    "explanation": "説明：",
+    "vocabulary": "主要語彙",
+    "grammar": "文法ポイント",
+    "example": "例：",
+    "paragraph": "段落",
+    "readAndRecord": "この文を読んで録音してみましょう！"
+  },
+  "difficulty": {
+    "easier": "もっと簡単に",
+    "harder": "もっと難しく",
+    "realistic": "現実的な表現"
+  },
+  "languages": {
+    "ko": "한국어",
+    "en": "English",
+    "zh-CN": "简体中文",
+    "ja": "日本語",
+    "es": "Español",
+    "de": "Deutsch",
+    "fr": "Français",
+    "pt-BR": "Português (BR)",
+    "zh-TW": "繁體中文",
+    "it": "Italiano"
+  }
+}
+

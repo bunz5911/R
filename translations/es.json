@@ -1,0 +1,85 @@
+{
+  "app": {
+    "title": "Read Aloud Korean",
+    "subtitle": "Aprendizaje de Cuentos Coreanos"
+  },
+  "nav": {
+    "language": "Idioma",
+    "login": "Iniciar sesión",
+    "checkin": "Registro",
+    "kContent": "K-Contenido",
+    "admin": "Administrar",
+    "dashboard": "Panel",
+    "voiceSettings": "Configuración de voz",
+    "shop": "Tienda"
+  },
+  "tabs": {
+    "summary": "Resumen de la Historia",
+    "fullStory": "Escuchar Historia Completa",
+    "paragraphs": "Aprendizaje por Párrafos",
+    "realLife": "Uso en la Vida Real",
+    "vocabulary": "Vocabulario y Gramática",
+    "wordbook": "Mi Libro de Palabras",
+    "quiz": "Verificación de Comprensión",
+    "growth": "Registro de Crecimiento"
+  },
+  "levels": {
+    "beginner": "Principiante",
+    "intermediate": "Intermedio",
+    "advanced": "Avanzado"
+  },
+  "buttons": {
+    "play": "Reproducir",
+    "back": "Atrás",
+    "record": "Grabar y Evaluar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "startRecording": "Iniciar Grabación",
+    "stopRecording": "Detener Grabación"
+  },
+  "messages": {
+    "recording": "Grabando...",
+    "noWords": "Aún no hay palabras guardadas.",
+    "deleteConfirm": "¿Desea eliminar esta palabra de su libro de palabras?",
+    "loginRequired": "Inicio de sesión requerido",
+    "noSummary": "No hay información de resumen disponible.",
+    "noParagraphs": "No hay datos de análisis de párrafos disponibles.",
+    "noAudioFile": "El archivo de audio de la historia completa aún no se ha generado.",
+    "useParagraphLearning": "Por favor use el aprendizaje por párrafos.",
+    "aiVoiceGenerated": "La voz AI se generará en tiempo real"
+  },
+  "descriptions": {
+    "beginner": "Oraciones cortas (1-2 oraciones)",
+    "intermediate": "Longitud moderada (2-4 oraciones)",
+    "advanced": "Diferentes expresiones (parafraseo)",
+    "levelDescription": "¡Lea oraciones apropiadas para su nivel y gane monedas a través de la evaluación AI!",
+    "realLifeUsage": "¡Use las expresiones que aprendió de esta historia en conversaciones reales!",
+    "practiceSentence": "Oración de Práctica (Lea esta parte):",
+    "fullText": "Ver Texto Completo",
+    "easyExpression": "Expresión Fácil:",
+    "explanation": "Explicación:",
+    "vocabulary": "Vocabulario Clave",
+    "grammar": "Puntos de Gramática",
+    "example": "Ejemplo:",
+    "paragraph": "Párrafo",
+    "readAndRecord": "¡Lea y grabe esta oración!"
+  },
+  "difficulty": {
+    "easier": "Más fácil",
+    "harder": "Más difícil",
+    "realistic": "Expresión realista"
+  },
+  "languages": {
+    "ko": "한국어",
+    "en": "English",
+    "zh-CN": "简体中文",
+    "ja": "日本語",
+    "es": "Español",
+    "de": "Deutsch",
+    "fr": "Français",
+    "pt-BR": "Português (BR)",
+    "zh-TW": "繁體中文",
+    "it": "Italiano"
+  }
+}
+

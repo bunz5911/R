@@ -16,6 +16,7 @@ config.js
 !stories_data_final.json
 !stories_precomputed.json
 !stories/*.docx
+!translations/*.json
 
 # Python
 __pycache__/

@@ -1,0 +1,85 @@
+{
+  "app": {
+    "title": "Read Aloud Korean",
+    "subtitle": "Koreanisches Märchenlernen"
+  },
+  "nav": {
+    "language": "Sprache",
+    "login": "Anmelden",
+    "checkin": "Check-in",
+    "kContent": "K-Inhalt",
+    "admin": "Verwaltung",
+    "dashboard": "Dashboard",
+    "voiceSettings": "Spracheinstellungen",
+    "shop": "Shop"
+  },
+  "tabs": {
+    "summary": "Geschichtenzusammenfassung",
+    "fullStory": "Vollständige Geschichte anhören",
+    "paragraphs": "Absatzlernen",
+    "realLife": "Verwendung im echten Leben",
+    "vocabulary": "Wortschatz & Grammatik",
+    "wordbook": "Mein Wörterbuch",
+    "quiz": "Verständnisprüfung",
+    "growth": "Wachstumsaufzeichnung"
+  },
+  "levels": {
+    "beginner": "Anfänger",
+    "intermediate": "Mittelstufe",
+    "advanced": "Fortgeschritten"
+  },
+  "buttons": {
+    "play": "Abspielen",
+    "back": "Zurück",
+    "record": "Aufnehmen und bewerten lassen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "startRecording": "Aufnahme starten",
+    "stopRecording": "Aufnahme stoppen"
+  },
+  "messages": {
+    "recording": "Aufnahme läuft...",
+    "noWords": "Noch keine Wörter gespeichert.",
+    "deleteConfirm": "Möchten Sie dieses Wort aus Ihrem Wörterbuch löschen?",
+    "loginRequired": "Anmeldung erforderlich",
+    "noSummary": "Keine Zusammenfassungsinformationen verfügbar.",
+    "noParagraphs": "Keine Absatzanalysedaten verfügbar.",
+    "noAudioFile": "Die vollständige Audio-Datei wurde noch nicht generiert.",
+    "useParagraphLearning": "Bitte verwenden Sie das Absatzlernen.",
+    "aiVoiceGenerated": "Die KI-Stimme wird in Echtzeit generiert"
+  },
+  "descriptions": {
+    "beginner": "Kurze Sätze (1-2 Sätze)",
+    "intermediate": "Mittlere Länge (2-4 Sätze)",
+    "advanced": "Verschiedene Ausdrücke (Umschreibung)",
+    "levelDescription": "Lesen Sie Sätze, die Ihrem Niveau entsprechen, und verdienen Sie Münzen durch KI-Bewertung!",
+    "realLifeUsage": "Verwenden Sie die Ausdrücke, die Sie aus dieser Geschichte gelernt haben, in echten Gesprächen!",
+    "practiceSentence": "Übungssatz (Lesen Sie diesen Teil):",
+    "fullText": "Vollständigen Text anzeigen",
+    "easyExpression": "Einfacher Ausdruck:",
+    "explanation": "Erklärung:",
+    "vocabulary": "Hauptwortschatz",
+    "grammar": "Grammatikpunkte",
+    "example": "Beispiel:",
+    "paragraph": "Absatz",
+    "readAndRecord": "Lesen und aufnehmen Sie diesen Satz!"
+  },
+  "difficulty": {
+    "easier": "Einfacher",
+    "harder": "Schwieriger",
+    "realistic": "Realistischer Ausdruck"
+  },
+  "languages": {
+    "ko": "한국어",
+    "en": "English",
+    "zh-CN": "简体中文",
+    "ja": "日本語",
+    "es": "Español",
+    "de": "Deutsch",
+    "fr": "Français",
+    "pt-BR": "Português (BR)",
+    "zh-TW": "繁體中文",
+    "it": "Italiano"
+  }
+}
+
