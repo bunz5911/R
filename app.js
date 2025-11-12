@@ -209,10 +209,23 @@ function resetOnboarding() {
 function setupEventListeners() {
     // 레벨 선택
     document.querySelectorAll('.level-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        btn.addEventListener('click', async (e) => {
             document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
             e.target.classList.add('active');
-            currentLevel = e.target.dataset.level;
+            const newLevel = e.target.dataset.level;
+            
+            // 레벨이 실제로 변경되었는지 확인
+            if (currentLevel === newLevel) {
+                return; // 같은 레벨이면 아무것도 하지 않음
+            }
+            
+            currentLevel = newLevel;
+            
+            // ✅ 레벨 변경 시 분석 데이터 다시 로드
+            if (currentStory && currentStory.id !== undefined) {
+                console.log(`🔄 레벨 변경: ${currentLevel} → 분석 데이터 다시 로드`);
+                await analyzeStory(currentStory.id);
+            }
         });
     });
 
