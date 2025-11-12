@@ -25674,54 +25674,39 @@
         }
       ],
       "real_life_usage": [
-        "강아지가 정말 귀엽네요! (The puppy is so cute!)",
-        "우리 강아지는 꼬리를 흔들어요. (Our puppy wags its tail.)",
-        "동물 병원에 가야 해요. (I need to go to the animal hospital.)",
-        "나는 강아지를 데리고 싶어요. (I want to take a puppy.)",
-        "강아지가 창밖을 보고 있어요. (The puppy is looking out the window.)",
-        "우리 집은 예쁜 이층집이에요. (Our house is a pretty two-story house.)",
-        "강아지가 왈왈 짖어요. (The puppy barks.)",
-        "나는 강아지를 사랑해요. (I love the puppy.)",
-        "강아지에게 밥을 줘야 해요. (I need to feed the puppy.)",
-        "강아지가 슬퍼 보여요. (The puppy looks sad.)"
+        "수민아, 생일 파티에 뭐 만들어 줄까? (Sumin, what should I make for the birthday party?)",
+        "이번 생일에 직접 만들어 줄게. (I'll make it myself for this birthday.)",
+        "내가 엄마랑 같이 만든 거야. (I made it with my mom.)",
+        "이번 생일에 만들어 줄게. (I'll make it for this birthday.)",
+        "나는 수민이네 김밥과 떡볶이가 제일 맛있더라. (I think Sumin's kimbap and tteokbokki are the most delicious.)"
       ],
       "vocabulary": [
         {
-          "word": "똑똑똑",
-          "meaning": "Knock-knock (sound of knocking)",
-          "example": "누군가 문을 똑똑똑 두드리고 있어요. (Someone is knocking on the door.)"
+          "word": "생일",
+          "meaning": "birthday",
+          "example": "수민이는 써니의 생일에 초대받았어요. (Sumin was invited to Sunny's birthday.)"
         },
         {
-          "word": "부러워하다",
-          "meaning": "To envy",
-          "example": "나는 그의 성공을 부러워해요. (I envy his success.)"
+          "word": "김밥",
+          "meaning": "kimbap (Korean rice roll)",
+          "example": "수민이네 김밥이 정말 맛있어요. (Sumin's kimbap is really delicious.)"
         },
         {
-          "word": "왈왈",
-          "meaning": "Woof-woof (sound of a dog barking)",
-          "example": "강아지가 왈왈 짖고 있어요. (The puppy is barking woof-woof.)"
-        },
-        {
-          "word": "심장이 콩닥콩닥 뛰다",
-          "meaning": "Heart is pounding",
-          "example": "긴장해서 심장이 콩닥콩닥 뛰었어요. (My heart was pounding because I was nervous.)"
+          "word": "떡볶이",
+          "meaning": "tteokbokki (spicy rice cakes)",
+          "example": "떡볶이를 직접 만들어요. (I make tteokbokki myself.)"
         }
       ],
       "grammar": [
         {
-          "pattern": "-고 싶다",
-          "explanation": "Expressing a desire or wish.",
-          "example": "나는 한국에 가고 싶어요. (I want to go to Korea.)"
+          "pattern": "-(으)ㄹ게",
+          "explanation": "미래의 의지나 약속을 나타냄 (expresses future intention or promise)",
+          "example": "이번 생일에 만들어 줄게. (I'll make it for this birthday.)"
         },
         {
-          "pattern": "-처럼",
-          "explanation": "Like, as",
-          "example": "구름처럼 솜사탕이 부드러워요. (The cotton candy is as soft as a cloud.)"
-        },
-        {
-          "pattern": "-아/어 보이다",
-          "explanation": "To look like, to seem",
-          "example": "그는 행복해 보여요. (He looks happy.)"
+          "pattern": "-더라",
+          "explanation": "과거 경험을 회상하며 말할 때 사용 (used when recalling past experiences)",
+          "example": "나는 수민이네 김밥이 제일 맛있더라. (I think Sumin's kimbap is the most delicious.)"
         }
       ],
       "key_expressions": [
@@ -26059,59 +26044,51 @@
         }
       ],
       "real_life_usage": [
-        "저도 강아지처럼 귀여운 옷을 입고 산책하고 싶어요.",
-        "이 집은 정말 예쁘지 않니? 내가 봐도 참 예뻐.",
-        "내 친구는 멋진 차를 자랑했지만, 행복해 보이지 않았어.",
-        "저도 닥스훈트처럼 예쁜 집에서 살고 싶어요.",
-        "왜 처음 마음과 나중 마음이 달라졌을까?",
-        "시간이 지나니까 그 친구는 나에게 관심이 없어졌어.",
-        "나는 하루 종일 혼자 있었어. 너무 외로웠어.",
-        "그 사람의 슬픈 이야기를 듣고 마음이 아팠어.",
-        "나를 데리고 가서 나를 잊으면 어떡하지?",
-        "갑자기 걱정이 되기 시작했어."
+        "수민아, 생일 파티에 뭐 만들어 줄까? (Sumin, what should I make for the birthday party?)",
+        "이번 생일에 직접 만들어 줄게. (I'll make it myself for this birthday.)",
+        "내가 엄마랑 같이 만든 거야. (I made it with my mom.)",
+        "이번 생일에 만들어 줄게. (I'll make it for this birthday.)",
+        "나는 수민이네 김밥과 떡볶이가 제일 맛있더라. (I think Sumin's kimbap and tteokbokki are the most delicious.)",
+        "직접 만들어 주는 게 제일 좋더라. (Making it yourself is the best.)",
+        "고마워, 정말 맛있어 보여! (Thank you, it looks really delicious!)"
       ],
       "vocabulary": [
         {
-          "word": "자랑하다",
-          "meaning": "자신의 좋은 점을 다른 사람에게 드러내어 뽐내다.",
-          "example": "그는 자신의 새 차를 자랑하기 바빴다."
+          "word": "생일",
+          "meaning": "birthday",
+          "example": "수민이는 써니의 생일에 초대받았어요. (Sumin was invited to Sunny's birthday.)"
         },
         {
-          "word": "부러워하다",
-          "meaning": "남이 가진 것을 탐내어 자기도 가지거나 그렇게 되기를 바라다.",
-          "example": "나는 그의 성공이 너무 부러웠다."
+          "word": "김밥",
+          "meaning": "kimbap (Korean rice roll)",
+          "example": "수민이네 김밥이 정말 맛있어요. (Sumin's kimbap is really delicious.)"
         },
         {
-          "word": "왈왈",
-          "meaning": "개 짖는 소리를 흉내내는 말.",
-          "example": "개가 창밖을 보며 왈왈 짖었다."
+          "word": "떡볶이",
+          "meaning": "tteokbokki (spicy rice cakes)",
+          "example": "떡볶이를 직접 만들어요. (I make tteokbokki myself.)"
         },
         {
-          "word": "표정",
-          "meaning": "얼굴에 나타나는 감정이나 기분.",
-          "example": "그녀의 얼굴에는 슬픈 표정이 가득했다."
-        },
-        {
-          "word": "관심",
-          "meaning": "어떤 대상에 마음이 끌려 주의를 기울이는 것.",
-          "example": "그는 환경 문제에 큰 관심을 가지고 있다."
+          "word": "초대받다",
+          "meaning": "to be invited",
+          "example": "생일 파티에 초대받았어요. (I was invited to the birthday party.)"
         }
       ],
       "grammar": [
         {
-          "pattern": "-고 싶다",
-          "explanation": "화자의 바람이나 희망을 나타내는 표현.",
-          "example": "한국에 여행 가고 싶다."
+          "pattern": "-(으)ㄹ게",
+          "explanation": "미래의 의지나 약속을 나타냄 (expresses future intention or promise)",
+          "example": "이번 생일에 만들어 줄게. (I'll make it for this birthday.)"
         },
         {
-          "pattern": "-는 것 같다",
-          "explanation": "화자의 추측이나 짐작을 나타내는 표현.",
-          "example": "비가 올 것 같다."
+          "pattern": "-더라",
+          "explanation": "과거 경험을 회상하며 말할 때 사용 (used when recalling past experiences)",
+          "example": "나는 수민이네 김밥이 제일 맛있더라. (I think Sumin's kimbap is the most delicious.)"
         },
         {
-          "pattern": "-면 어떡하지?",
-          "explanation": "걱정이나 불안을 나타내는 표현.",
-          "example": "시험에 떨어지면 어떡하지?"
+          "pattern": "-(으)면 안 되다",
+          "explanation": "금지나 부정을 나타냄 (expresses prohibition or negation)",
+          "example": "걱정하면 안 돼. (You shouldn't worry.)"
         }
       ],
       "key_expressions": [
@@ -26449,69 +26426,54 @@
         }
       ],
       "real_life_usage": [
-        "겉모습만 보고 판단하면 안 돼. (Don't judge by appearances.)",
-        "처음 마음이 변치 않도록 노력해야 해. (We should try to keep our initial intentions.)",
-        "진정한 행복은 겉모습에 있는 게 아니야. (True happiness isn't about outward appearances.)",
-        "사랑과 관심이 얼마나 중요한지 깨달았어. (I realized how important love and attention are.)",
-        "나도 닥스훈트처럼 버려질까 봐 걱정돼. (I'm worried I'll be abandoned like the dachshund.)",
-        "사람 마음은 갈대와 같아서 믿을 수 없어. (People's minds are like reeds, you can't trust them.)",
-        "예쁜 쓰레기라는 말도 있잖아. (There's also the saying 'pretty garbage,' you know.)",
-        "겉만 번지르르한 것보다 속이 꽉 찬 게 중요해. (It's more important to be substantial than just look good.)",
-        "인간관계에서 진심이 가장 중요하다고 생각해. (I think sincerity is the most important thing in relationships.)",
-        "상대방의 입장에서 생각해 보는 게 중요해. (It's important to put yourself in the other person's shoes.)"
+        "수민아, 생일 파티에 뭐 만들어 줄까? (Sumin, what should I make for the birthday party?)",
+        "이번 생일에 직접 만들어 줄게. (I'll make it myself for this birthday.)",
+        "내가 엄마랑 같이 만든 거야. (I made it with my mom.)",
+        "이번 생일에 만들어 줄게. (I'll make it for this birthday.)",
+        "나는 수민이네 김밥과 떡볶이가 제일 맛있더라. (I think Sumin's kimbap and tteokbokki are the most delicious.)",
+        "직접 만들어 주는 게 제일 좋더라. (Making it yourself is the best.)",
+        "고마워, 정말 맛있어 보여! (Thank you, it looks really delicious!)",
+        "우리 함께 만들어 볼까? (Shall we make it together?)",
+        "생일 파티 준비 도와줄게. (I'll help prepare for the birthday party.)",
+        "도깨비 키친에서 배운 요리로 선물하자. (Let's give a gift with cooking learned from Goblin Kitchen.)"
       ],
       "vocabulary": [
         {
-          "word": "갈망하다",
-          "meaning": "간절히 바라다 (to yearn for, to long for)",
-          "example": "그녀는 성공을 갈망하며 밤낮으로 공부했다."
+          "word": "생일",
+          "meaning": "birthday",
+          "example": "수민이는 써니의 생일에 초대받았어요. (Sumin was invited to Sunny's birthday.)"
         },
         {
-          "word": "질투하다",
-          "meaning": "부러워하고 시기하다 (to be jealous of)",
-          "example": "그녀는 친구의 성공을 질투했지만, 축하해 주었다."
+          "word": "김밥",
+          "meaning": "kimbap (Korean rice roll)",
+          "example": "수민이네 김밥이 정말 맛있어요. (Sumin's kimbap is really delicious.)"
         },
         {
-          "word": "변덕스럽다",
-          "meaning": "마음이 잘 변하다 (to be fickle, capricious)",
-          "example": "그녀는 변덕스러운 성격 때문에 친구를 사귀기 어려웠다."
+          "word": "떡볶이",
+          "meaning": "tteokbokki (spicy rice cakes)",
+          "example": "떡볶이를 직접 만들어요. (I make tteokbokki myself.)"
         },
         {
-          "word": "소홀히 하다",
-          "meaning": "관심을 덜 기울이다 (to neglect, to be negligent)",
-          "example": "그는 건강을 소홀히 하여 병에 걸렸다."
-        },
-        {
-          "word": "절망하다",
-          "meaning": "희망을 잃다 (to despair)",
-          "example": "그는 시험에 떨어져 절망했지만, 다시 도전하기로 결심했다."
+          "word": "초대받다",
+          "meaning": "to be invited",
+          "example": "생일 파티에 초대받았어요. (I was invited to the birthday party.)"
         }
       ],
       "grammar": [
         {
-          "pattern": "-ㄹ/을 뻔하다",
-          "explanation": "거의 -할 뻔했다 (almost did something)",
-          "example": "넘어질 뻔했어요. (I almost fell.)"
+          "pattern": "-(으)ㄹ게",
+          "explanation": "미래의 의지나 약속을 나타냄 (expresses future intention or promise)",
+          "example": "이번 생일에 만들어 줄게. (I'll make it for this birthday.)"
         },
         {
-          "pattern": "-는/은/ㄴ 듯하다",
-          "explanation": "추측이나 짐작을 나타냄 (seems like, appears to be)",
-          "example": "비가 올 듯하다. (It seems like it's going to rain.)"
+          "pattern": "-더라",
+          "explanation": "과거 경험을 회상하며 말할 때 사용 (used when recalling past experiences)",
+          "example": "나는 수민이네 김밥이 제일 맛있더라. (I think Sumin's kimbap is the most delicious.)"
         },
         {
-          "pattern": "-기 마련이다",
-          "explanation": "당연히 그렇게 된다 (it is natural to, it is bound to)",
-          "example": "노력하면 성공하기 마련이다. (If you try, you are bound to succeed.)"
-        },
-        {
-          "pattern": "-에 휩싸이다",
-          "explanation": "어떤 감정이나 상황에 완전히 빠지다 (to be overwhelmed by)",
-          "example": "슬픔에 휩싸이다. (to be overwhelmed by sadness.)"
-        },
-        {
-          "pattern": "-에 그치다",
-          "explanation": "어떤 수준이나 범위에 머무르다 (to be limited to, to end up with)",
-          "example": "노력은 말에 그치지 않고 행동으로 이어져야 한다. (Effort should not just end up in words but should lead to actions.)"
+          "pattern": "-(으)면 안 되다",
+          "explanation": "금지나 부정을 나타냄 (expresses prohibition or negation)",
+          "example": "걱정하면 안 돼. (You shouldn't worry.)"
         }
       ],
       "key_expressions": [
