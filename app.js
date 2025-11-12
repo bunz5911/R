@@ -2331,27 +2331,54 @@ async function playFullStoryAudio(storyId, buttonElement) {
             
             console.log(`✅ 총 ${audioChunks.length}개 청크 생성 완료`);
             
-            // 모든 오디오 청크를 하나로 합치기
-            const combinedBlob = new Blob(audioChunks, { type: 'audio/mp3' });
-            const audioUrl = URL.createObjectURL(combinedBlob);
+            // 각 청크를 순차적으로 재생
+            let currentChunkIndex = 0;
+            const audioUrls = audioChunks.map(blob => URL.createObjectURL(blob));
             
-            // 오디오 재생
-            fullStoryAudio = new Audio(audioUrl);
+            function playNextChunk() {
+                if (currentChunkIndex >= audioUrls.length) {
+                    // 모든 청크 재생 완료
+                    console.log('✅ 전체 재생 완료');
+                    buttonElement.innerHTML = '▶';
+                    buttonElement.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                    fullStoryAudio = null;
+                    // URL 정리
+                    audioUrls.forEach(url => URL.revokeObjectURL(url));
+                    return;
+                }
+                
+                // 다음 청크 재생
+                const audioUrl = audioUrls[currentChunkIndex];
+                fullStoryAudio = new Audio(audioUrl);
+                
+                console.log(`▶ 청크 ${currentChunkIndex + 1}/${audioUrls.length} 재생 시작`);
+                
+                fullStoryAudio.addEventListener('ended', () => {
+                    console.log(`✅ 청크 ${currentChunkIndex + 1} 재생 완료`);
+                    currentChunkIndex++;
+                    playNextChunk();
+                }, { once: true });
+                
+                fullStoryAudio.addEventListener('error', (e) => {
+                    console.error(`❌ 청크 ${currentChunkIndex + 1} 재생 오류:`, e);
+                    // 오류가 나도 다음 청크로 진행
+                    currentChunkIndex++;
+                    playNextChunk();
+                }, { once: true });
+                
+                fullStoryAudio.play().catch(error => {
+                    console.error(`❌ 청크 ${currentChunkIndex + 1} 재생 실패:`, error);
+                    currentChunkIndex++;
+                    playNextChunk();
+                });
+            }
             
-            // 재생 시작
-            await fullStoryAudio.play();
+            // 첫 번째 청크 재생 시작
             buttonElement.innerHTML = '⏸';
             buttonElement.disabled = false;
             buttonElement.title = '';
-            console.log('✅ TTS 재생 시작됨');
-            
-            // 재생 완료 시
-            fullStoryAudio.addEventListener('ended', () => {
-                console.log('✅ 재생 완료');
-                buttonElement.innerHTML = '▶';
-                buttonElement.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                fullStoryAudio = null;
-            }, { once: true });
+            playNextChunk();
+            console.log('✅ TTS 순차 재생 시작됨');
             
         } catch (error) {
             console.error('❌ TTS 오류:', error);
