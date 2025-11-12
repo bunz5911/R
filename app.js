@@ -2218,8 +2218,10 @@ function stopTTS() {
  * - 기타 동화: 로컬 MP3 파일 재생
  */
 async function playFullStoryAudio(storyId, buttonElement) {
+    console.log(`🎵 playFullStoryAudio 호출됨 - storyId: ${storyId}, type: ${typeof storyId}`);
+    
     // 0번 동화는 TTS로 처리
-    if (storyId === 0) {
+    if (storyId === 0 || storyId === '0') {
         console.log(`🎵 0번 동화 전체 듣기 - TTS 사용`);
         
         // 이미 재생 중이면 정지
