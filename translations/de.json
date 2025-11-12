@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "Read Aloud Korean",
-    "subtitle": "Koreanisches Märchenlernen"
+    "subtitle": "Lerne echtes Koreanisch mit koreanischen Märchen"
   },
   "nav": {
     "language": "Sprache",
@@ -124,5 +124,29 @@
     "achieved90Plus": "90+ Punkte Erreicht!",
     "coinsEarned": "Münzen Verdient!",
     "quizError": "Quiz-Generierungsfehler"
+  },
+  "onboarding": {
+    "back": "← Zurück",
+    "skip": "Überspringen",
+    "slide1": {
+      "title": "Deine Koreanisch-Fähigkeiten werden\nexplosiv wachsen, während du liest.",
+      "description": "Meistere Satzverständnis, Aussprache,\nund Vokabular/Grammatik-Grundlagen sofort mit verifizierten koreanischen Märchen.",
+      "button": "4 Schlüsselerfolge anzeigen"
+    },
+    "slide2": {
+      "title": "Lautes Lesen ist\ndie mächtigste Lernmethode!",
+      "feature1": "Meistere genaue Aussprache-wie ein Muttersprachler",
+      "feature2": "Natürliche Intonation und Rhythmus!-Flüssigkeit steigt rasant!!",
+      "feature3": "Vertrauen, Lerneffekte direkt auf echte Gespräche anzuwenden!",
+      "button": "KI-Tutor wird dir helfen."
+    },
+    "slide3": {
+      "title": "1:1 KI-Tutor\nerhöht deine Wachstumsgeschwindigkeit\num das 3-fache.",
+      "feature1": "Sekunden-genaue Analyse, präzise Korrektur von Fehlern",
+      "feature2": "Baue Fähigkeiten spielerisch auf und verdiene Belohnungen (Münzen)",
+      "feature3": "Überprüfe Level-Up mit Lese-, Grammatik- und Vokabular-Wachstumsdiagrammen!",
+      "feature4": "Effizientes Lernen mit personalisierten Märchenempfehlungen basierend auf Schwächen",
+      "button": "Perfekte Koreanisch-Fähigkeiten, starte jetzt"
+    }
   }
 }
