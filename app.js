@@ -107,7 +107,9 @@ async function loadPrecomputedAnalysis() {
     try {
         console.log('📦 하드코딩된 분석 데이터 로드 시작...');
         // ✅ 최종 파일: 모든 키 공백 제거 완료
-        const response = await fetch('stories_data_final.json?v=' + Date.now());
+        // 캐시 무효화를 위해 타임스탬프 추가
+        const cacheBuster = Date.now();
+        const response = await fetch(`stories_data_final.json?v=${cacheBuster}&nocache=${cacheBuster}`);
         if (!response.ok) {
             throw new Error(`stories_data_final.json 로드 실패: ${response.status}`);
         }
@@ -118,15 +120,21 @@ async function loadPrecomputedAnalysis() {
         
         console.log(`✅ 하드코딩된 분석 데이터 로드 완료: ${Object.keys(PRECOMPUTED_ANALYSIS).length}개 동화`);
         console.log('📋 로드된 동화 목록 (처음 5개):', Object.keys(PRECOMPUTED_ANALYSIS).slice(0, 5));
-        console.log('📋 첫 번째 동화의 레벨:', Object.keys(PRECOMPUTED_ANALYSIS)[0], Object.keys(PRECOMPUTED_ANALYSIS[Object.keys(PRECOMPUTED_ANALYSIS)[0]]));
+        
+        // ✅ 0번 동화 확인
+        if ('도깨비키친' in PRECOMPUTED_ANALYSIS) {
+            const dokkaebi = PRECOMPUTED_ANALYSIS['도깨비키친'];
+            if ('초급' in dokkaebi) {
+                const paras = dokkaebi['초급'].paragraphs_analysis || [];
+                console.log('✅ 도깨비키친 데이터 확인:', {
+                    문단수: paras.length,
+                    첫문단: paras[0]?.original_text?.substring(0, 50) || '없음'
+                });
+            }
+        }
         
         // ✅ 전역 변수 확인
         console.log('🔍 PRECOMPUTED_ANALYSIS 전역 변수 확인:', typeof PRECOMPUTED_ANALYSIS, Object.keys(PRECOMPUTED_ANALYSIS).length);
-        
-        // 🔍 디버그: 30번째 키 확인 (여자화장실)
-        const allKeys = Object.keys(PRECOMPUTED_ANALYSIS);
-        console.log('🔍 30번째 키 (index 29):', allKeys[29]);
-        console.log('🔍 "여자화장실의비밀" 존재 여부:', allKeys.includes('여자화장실의비밀'));
         
         return true;
     } catch (error) {
@@ -1240,6 +1248,13 @@ function extractFirstSentence(text) {
 function renderParagraphs() {
     const contentEl = document.getElementById('learningContent');
     const paragraphs = currentAnalysis.paragraphs_analysis || [];
+    
+    console.log('📝 문단별 학습 렌더링:', {
+        storyId: currentStory?.id,
+        title: currentStory?.title,
+        문단수: paragraphs.length,
+        첫문단: paragraphs[0]?.original_text?.substring(0, 50) || '없음'
+    });
     
     if (paragraphs.length === 0) {
         contentEl.innerHTML = '<div class="content-box">문단 분석 데이터가 없습니다.</div>';
