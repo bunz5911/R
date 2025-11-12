@@ -1284,11 +1284,25 @@ async function renderSummary() {
     console.log('📄 요약 렌더링 시작 (즉시 표시)');
     const contentEl = document.getElementById('learningContent');
     
+    // ✅ 다국어 요약 지원: summary가 객체면 현재 언어 선택, 문자열이면 그대로 사용 (하위 호환)
+    let summaryText = '';
+    if (currentAnalysis.summary) {
+        if (typeof currentAnalysis.summary === 'object' && currentAnalysis.summary !== null) {
+            // 다국어 요약 객체인 경우
+            summaryText = currentAnalysis.summary[currentLanguage] || currentAnalysis.summary['ko'] || t('messages.noSummary');
+        } else {
+            // 기존 문자열 형식인 경우 (하위 호환)
+            summaryText = currentAnalysis.summary;
+        }
+    } else {
+        summaryText = t('messages.noSummary');
+    }
+    
     // ✅ 음성 재생 버튼 제거 (텍스트만 표시)
     contentEl.innerHTML = `
         <div class="section-title">${t('tabs.summary')}</div>
         <div class="content-box">
-            ${currentAnalysis.summary || t('messages.noSummary')}
+            ${summaryText}
         </div>
         
         <!-- K-콘텐츠 추가 버튼 -->
