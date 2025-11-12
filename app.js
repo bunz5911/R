@@ -89,6 +89,21 @@ function updateUI() {
     const checkinBtn = document.getElementById('checkinBtn');
     if (checkinBtn) checkinBtn.innerHTML = `📅 ${t('nav.checkin')}`;
     
+    const kContentBtn = document.getElementById('kContentBtn');
+    if (kContentBtn) kContentBtn.innerHTML = `🎬 ${t('nav.kContent')}`;
+    
+    const adminBtn = document.getElementById('adminBtn');
+    if (adminBtn) adminBtn.innerHTML = `🛠️ ${t('nav.admin')}`;
+    
+    const dashboardBtn = document.getElementById('dashboardBtn');
+    if (dashboardBtn) dashboardBtn.textContent = t('nav.dashboard');
+    
+    const voiceSettingsBtn = document.getElementById('voiceSettingsBtn');
+    if (voiceSettingsBtn) voiceSettingsBtn.textContent = t('nav.voiceSettings');
+    
+    const shopBtn = document.getElementById('shopBtn');
+    if (shopBtn) shopBtn.innerHTML = `🛒 ${t('nav.shop')}`;
+    
     // 헤더 타이틀 업데이트
     const headerSubtitle = document.querySelector('.header-center p');
     if (headerSubtitle) headerSubtitle.textContent = t('app.subtitle');

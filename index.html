@@ -959,12 +959,12 @@
                         <div id="userInfo" class="user-info" style="display: none;"></div>
                         <button id="authBtn" class="header-btn" onclick="handleAuth()">로그인</button>
                         <button id="checkinBtn" onclick="showCheckinModal()" class="header-btn checkin">📅 출석</button>
-                        <a href="my-k-content.html" class="header-btn">🎬 K-콘텐츠</a>
+                        <a href="my-k-content.html" id="kContentBtn" class="header-btn">🎬 K-콘텐츠</a>
                         <button id="adminBtn" class="header-btn" onclick="location.href='admin.html'" style="display: none; background: #e74c3c; color: white; border: none;">🛠️ 관리</button>
-                        <button class="header-btn" onclick="location.href='dashboard.html'">대시보드</button>
-                        <button class="header-btn" onclick="showVoiceSettings()">음성 설정</button>
+                        <button id="dashboardBtn" class="header-btn" onclick="location.href='dashboard.html'">대시보드</button>
+                        <button id="voiceSettingsBtn" class="header-btn" onclick="showVoiceSettings()">음성 설정</button>
                         <button class="header-btn" style="min-width: 80px;"><span style="font-size: 14px;">🟡</span> <span id="coinAmount">100</span></button>
-                        <a href="coin-shop.html" class="header-btn">🛒 Shop</a>
+                        <a href="coin-shop.html" id="shopBtn" class="header-btn">🛒 Shop</a>
                     </div>
                 </div>
             </div>

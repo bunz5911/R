@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "Read Aloud Korean",
-    "subtitle": "Aprendizaje de Cuentos Coreanos"
+    "subtitle": "Aprende Coreano Real con Cuentos Coreanos"
   },
   "nav": {
     "language": "Idioma",
@@ -124,5 +124,29 @@
     "achieved90Plus": "¡Logrado 90+ puntos!",
     "coinsEarned": "¡monedas ganadas!",
     "quizError": "Error de generación de cuestionario"
+  },
+  "onboarding": {
+    "back": "← Atrás",
+    "skip": "Omitir",
+    "slide1": {
+      "title": "Tu nivel de coreano crecerá\nexplosivamente mientras lees.",
+      "description": "Domina la comprensión de oraciones, pronunciación,\ny fundamentos de vocabulario/gramática al instante con cuentos coreanos verificados.",
+      "button": "Ver 4 Logros Clave"
+    },
+    "slide2": {
+      "title": "Leer en voz alta es\n¡el método de aprendizaje más poderoso!",
+      "feature1": "Domina la pronunciación precisa-como un nativo",
+      "feature2": "¡Entonación y ritmo naturales!-¡La fluidez se dispara!!",
+      "feature3": "¡Confianza para aplicar los efectos del aprendizaje directamente a conversaciones reales!",
+      "button": "El Tutor de IA te ayudará."
+    },
+    "slide3": {
+      "title": "Tutor de IA 1:1\naumenta tu velocidad de crecimiento\npor 3x.",
+      "feature1": "Análisis de precisión por segundos, corrección precisa de errores",
+      "feature2": "Desarrolla habilidades de manera divertida y gana recompensas (monedas)",
+      "feature3": "¡Verifica el nivel con gráficos de crecimiento de lectura, gramática y vocabulario!",
+      "feature4": "Aprendizaje eficiente con recomendaciones personalizadas de cuentos basadas en debilidades",
+      "button": "Habilidades perfectas en coreano, comienza ahora"
+    }
   }
 }

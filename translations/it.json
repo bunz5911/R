@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "Read Aloud Korean",
-    "subtitle": "Apprendimento di Fiabe Coreane"
+    "subtitle": "Impara il Coreano Reale con Fiabe Coreane"
   },
   "nav": {
     "language": "Lingua",
@@ -124,5 +124,29 @@
     "achieved90Plus": "90+ Punti Raggiunti!",
     "coinsEarned": "monete guadagnate!",
     "quizError": "Errore di generazione quiz"
+  },
+  "onboarding": {
+    "back": "← Indietro",
+    "skip": "Salta",
+    "slide1": {
+      "title": "Le tue abilità in coreano cresceranno\nesplosivamente mentre leggi.",
+      "description": "Padroneggia comprensione delle frasi, pronuncia,\ne basi di vocabolario/grammatica istantaneamente con fiabe coreane verificate.",
+      "button": "Vedi 4 Risultati Chiave"
+    },
+    "slide2": {
+      "title": "Leggere ad alta voce è\nil metodo di apprendimento più potente!",
+      "feature1": "Padroneggia la pronuncia precisa-come un nativo",
+      "feature2": "Intonazione e ritmo naturali!-La fluidità decolla!!",
+      "feature3": "Fiducia per applicare gli effetti dell'apprendimento direttamente alle conversazioni reali!",
+      "button": "Il Tutor IA ti aiuterà."
+    },
+    "slide3": {
+      "title": "Tutor IA 1:1\naumenta la tua velocità di crescita\ndi 3x.",
+      "feature1": "Analisi di precisione al secondo, correzione precisa degli errori",
+      "feature2": "Costruisci abilità in modo divertente e guadagna ricompense (monete)",
+      "feature3": "Verifica il livello con grafici di crescita di lettura, grammatica e vocabolario!",
+      "feature4": "Apprendimento efficiente con raccomandazioni personalizzate di fiabe basate su debolezze",
+      "button": "Abilità perfette in coreano, inizia ora"
+    }
   }
 }

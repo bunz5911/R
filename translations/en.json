@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "Read Aloud Korean",
-    "subtitle": "Korean Fairy Tale Learning"
+    "subtitle": "Learn Real Korean with Korean Fairy Tales"
   },
   "nav": {
     "language": "Language",
@@ -124,5 +124,29 @@
     "achieved90Plus": "Achieved 90+ points!",
     "coinsEarned": "coins earned!",
     "quizError": "Quiz generation error"
+  },
+  "onboarding": {
+    "back": "← Back",
+    "skip": "Skip",
+    "slide1": {
+      "title": "Your Korean skills will grow\nexplosively as you read.",
+      "description": "Master sentence comprehension, pronunciation,\nand vocabulary/grammar basics instantly with verified Korean fairy tales.",
+      "button": "Check 4 Key Achievements"
+    },
+    "slide2": {
+      "title": "Reading aloud is\nthe most powerful learning method!",
+      "feature1": "Master accurate pronunciation-like a native",
+      "feature2": "Natural intonation and rhythm!-Fluency skyrockets!!",
+      "feature3": "Confidence to apply learning effects directly to real conversations!",
+      "button": "AI Tutor will help you."
+    },
+    "slide3": {
+      "title": "1:1 AI Tutor\nincreases your growth speed\nby 3x.",
+      "feature1": "Second-level accuracy analysis, pinpoint correction of mistakes",
+      "feature2": "Build skills fun and earn rewards (coins)",
+      "feature3": "Check level up with reading, grammar, vocabulary growth graphs!",
+      "feature4": "Efficient learning with personalized fairy tale recommendations based on weaknesses",
+      "button": "Perfect Korean skills, start now"
+    }
   }
 }

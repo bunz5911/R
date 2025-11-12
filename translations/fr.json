@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "Read Aloud Korean",
-    "subtitle": "Apprentissage de Contes Coréens"
+    "subtitle": "Apprenez le Coréen Réel avec des Contes Coréens"
   },
   "nav": {
     "language": "Langue",
@@ -124,5 +124,29 @@
     "achieved90Plus": "90+ Points Atteints !",
     "coinsEarned": "pièces gagnées !",
     "quizError": "Erreur de génération de quiz"
+  },
+  "onboarding": {
+    "back": "← Retour",
+    "skip": "Passer",
+    "slide1": {
+      "title": "Vos compétences en coréen grandiront\nexplosivement pendant que vous lisez.",
+      "description": "Maîtrisez la compréhension de phrases, la prononciation,\net les bases du vocabulaire/grammaire instantanément avec des contes coréens vérifiés.",
+      "button": "Voir 4 Réalisations Clés"
+    },
+    "slide2": {
+      "title": "Lire à voix haute est\nla méthode d'apprentissage la plus puissante !",
+      "feature1": "Maîtrisez la prononciation précise-comme un natif",
+      "feature2": "Intonation et rythme naturels !-La fluidité monte en flèche !!",
+      "feature3": "Confiance pour appliquer les effets d'apprentissage directement aux conversations réelles !",
+      "button": "Le Tuteur IA vous aidera."
+    },
+    "slide3": {
+      "title": "Tuteur IA 1:1\naugmente votre vitesse de croissance\npar 3x.",
+      "feature1": "Analyse de précision par seconde, correction précise des erreurs",
+      "feature2": "Développez vos compétences de manière amusante et gagnez des récompenses (pièces)",
+      "feature3": "Vérifiez le niveau avec des graphiques de croissance de lecture, grammaire et vocabulaire !",
+      "feature4": "Apprentissage efficace avec des recommandations de contes personnalisées basées sur les faiblesses",
+      "button": "Compétences parfaites en coréen, commencez maintenant"
+    }
   }
 }

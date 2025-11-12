@@ -261,8 +261,20 @@
 </head>
 <body>
     <div class="onboarding-container">
+        <select id="languageSelect" class="skip-btn" onchange="changeLanguage(this.value)" style="position: absolute; top: 20px; right: 20px; background: rgba(0, 0, 0, 0.1); color: #333; border: 1px solid #E0E0E0; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-size: 14px; font-weight: 600; z-index: 10; min-width: 120px;">
+            <option value="ko">🇰🇷 한국어</option>
+            <option value="en">🇺🇸 English</option>
+            <option value="zh-CN">🇨🇳 简体中文</option>
+            <option value="ja">🇯🇵 日本語</option>
+            <option value="es">🇪🇸 Español</option>
+            <option value="de">🇩🇪 Deutsch</option>
+            <option value="fr">🇫🇷 Français</option>
+            <option value="pt-BR">🇧🇷 Português</option>
+            <option value="zh-TW">🇹🇼 繁體中文</option>
+            <option value="it">🇮🇹 Italiano</option>
+        </select>
         <button class="back-btn" id="backBtn" onclick="prevSlide()">← 뒤로</button>
-        <button class="skip-btn" onclick="skipOnboarding()">건너뛰기</button>
+        <button class="skip-btn" id="skipBtn" onclick="skipOnboarding()" style="position: absolute; top: 20px; right: 150px;">건너뛰기</button>
         
         <div class="slides-wrapper" id="slidesWrapper">
             <!-- Slide 1: 환영 -->
@@ -344,6 +356,102 @@
     </div>
 
     <script>
+        // 다국어 지원
+        let translations = {};
+        let currentLanguage = localStorage.getItem('language') || 'ko';
+
+        async function loadTranslations(lang) {
+            try {
+                const response = await fetch(`translations/${lang}.json?v=${Date.now()}`);
+                if (!response.ok) {
+                    throw new Error(`번역 파일 로드 실패: ${response.status}`);
+                }
+                translations = await response.json();
+                currentLanguage = lang;
+                localStorage.setItem('language', lang);
+                updateOnboardingUI();
+                console.log(`✅ 번역 로드 완료: ${lang}`);
+            } catch (error) {
+                console.error('❌ 번역 로드 실패:', error);
+                if (lang !== 'ko') {
+                    await loadTranslations('ko');
+                }
+            }
+        }
+
+        function t(key) {
+            const keys = key.split('.');
+            let value = translations;
+            for (const k of keys) {
+                value = value?.[k];
+            }
+            return value || key;
+        }
+
+        function changeLanguage(lang) {
+            loadTranslations(lang);
+        }
+
+        function updateOnboardingUI() {
+            // 언어 선택 드롭다운 업데이트
+            const langSelect = document.getElementById('languageSelect');
+            if (langSelect) {
+                langSelect.value = currentLanguage;
+            }
+            
+            // 뒤로 버튼
+            const backBtn = document.getElementById('backBtn');
+            if (backBtn) backBtn.textContent = t('onboarding.back');
+            
+            // 건너뛰기 버튼
+            const skipBtn = document.getElementById('skipBtn');
+            if (skipBtn) skipBtn.textContent = t('onboarding.skip');
+            
+            // Slide 1
+            const slide1Title = document.querySelector('.slide:nth-child(1) .slide-title');
+            if (slide1Title) slide1Title.innerHTML = t('onboarding.slide1.title').replace(/\n/g, '<br>');
+            
+            const slide1Desc = document.querySelector('.slide:nth-child(1) .slide-description');
+            if (slide1Desc) slide1Desc.innerHTML = t('onboarding.slide1.description').replace(/\n/g, '<br>');
+            
+            const slide1Btn = document.querySelector('.slide:nth-child(1) .btn-primary');
+            if (slide1Btn) slide1Btn.textContent = t('onboarding.slide1.button');
+            
+            // Slide 2
+            const slide2Title = document.querySelector('.slide:nth-child(2) .slide-title');
+            if (slide2Title) slide2Title.innerHTML = t('onboarding.slide2.title').replace(/\n/g, '<br>');
+            
+            const slide2Features = document.querySelectorAll('.slide:nth-child(2) .features-list li');
+            if (slide2Features.length >= 3) {
+                slide2Features[0].textContent = t('onboarding.slide2.feature1');
+                slide2Features[1].textContent = t('onboarding.slide2.feature2');
+                slide2Features[2].textContent = t('onboarding.slide2.feature3');
+            }
+            
+            const slide2Btn = document.querySelector('.slide:nth-child(2) .btn-primary');
+            if (slide2Btn) slide2Btn.textContent = t('onboarding.slide2.button');
+            
+            // Slide 3
+            const slide3Title = document.querySelector('.slide:nth-child(3) .slide-title');
+            if (slide3Title) slide3Title.innerHTML = t('onboarding.slide3.title').replace(/\n/g, '<br>');
+            
+            const slide3Features = document.querySelectorAll('.slide:nth-child(3) .features-list li');
+            if (slide3Features.length >= 4) {
+                slide3Features[0].textContent = t('onboarding.slide3.feature1');
+                slide3Features[1].textContent = t('onboarding.slide3.feature2');
+                slide3Features[2].textContent = t('onboarding.slide3.feature3');
+                slide3Features[3].textContent = t('onboarding.slide3.feature4');
+            }
+            
+            const slide3Btn = document.querySelector('.slide:nth-child(3) .btn-primary');
+            if (slide3Btn) slide3Btn.textContent = t('onboarding.slide3.button');
+        }
+
+        // 페이지 로드 시 번역 로드
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTranslations(currentLanguage);
+        });
+
         let currentSlide = 0;
         const totalSlides = 3;
 
