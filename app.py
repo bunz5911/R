@@ -115,6 +115,47 @@ except Exception as e:
 
 print("="*80 + "\n", flush=True)
 
+# ============================================================================
+# 이메일 발송 함수
+# ============================================================================
+def send_email(to_email, subject, html_body, text_body=None):
+    """이메일 발송 함수"""
+    try:
+        # 환경변수에서 이메일 설정 가져오기
+        smtp_host = os.environ.get('SMTP_HOST', 'smtp.gmail.com')
+        smtp_port = int(os.environ.get('SMTP_PORT', '587'))
+        smtp_user = os.environ.get('SMTP_USER', '')
+        smtp_password = os.environ.get('SMTP_PASSWORD', '')
+        
+        if not smtp_user or not smtp_password:
+            print(f"⚠️ 이메일 설정이 없어 이메일을 발송할 수 없습니다: {to_email}", flush=True)
+            print(f"   환경변수 설정 필요: SMTP_USER, SMTP_PASSWORD", flush=True)
+            print(f"   Gmail 앱 비밀번호 사용 권장: https://support.google.com/accounts/answer/185833", flush=True)
+            return False
+        
+        msg = MIMEMultipart('alternative')
+        msg['From'] = smtp_user
+        msg['To'] = to_email
+        msg['Subject'] = subject
+        
+        if text_body:
+            msg.attach(MIMEText(text_body, 'plain', 'utf-8'))
+        msg.attach(MIMEText(html_body, 'html', 'utf-8'))
+        
+        print(f"📧 이메일 발송 시도: {to_email} (제목: {subject})", flush=True)
+        with smtplib.SMTP(smtp_host, smtp_port, timeout=10) as server:
+            server.starttls()
+            server.login(smtp_user, smtp_password)
+            server.send_message(msg)
+        
+        print(f"✅ 이메일 발송 성공: {to_email}", flush=True)
+        return True
+    except Exception as e:
+        print(f"❌ 이메일 발송 실패 ({to_email}): {e}", flush=True)
+        import traceback
+        print(f"   상세 오류:\n{traceback.format_exc()}", flush=True)
+        return False
+
 # Supabase 클라이언트 초기화
 supabase_client = None
 if SUPABASE_AVAILABLE:
