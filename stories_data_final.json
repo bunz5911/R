@@ -1,7 +1,18 @@
 {
   "강아지닥스훈트의비밀": {
     "초급": {
-      "summary": "동물 병원에 있는 강아지들은 예쁜 집에서 사는 닥스훈트를 부러워했지만, 닥스훈트는 주인의 무관심으로 불행했습니다. 새 주인을 찾아 동물 병원에 온 닥스훈트의 이야기를 듣고 강아지들은 사랑받는 것의 중요성을 깨닫습니다. 강아지들은 겉모습보다 진정한 사랑과 관심이 중요하다는 것을 알게 됩니다.",
+      "summary": {
+        "ko": "동물 병원에 있는 강아지들은 예쁜 집에서 사는 닥스훈트를 부러워했지만, 닥스훈트는 주인의 무관심으로 불행했습니다. 새 주인을 찾아 동물 병원에 온 닥스훈트의 이야기를 듣고 강아지들은 사랑받는 것의 중요성을 깨닫습니다. 강아지들은 겉모습보다 진정한 사랑과 관심이 중요하다는 것을 알게 됩니다.",
+        "en": "The puppies at the animal hospital envied the dachshund who lived in a beautiful home, but the dachshund was unhappy due to the owner's neglect. After hearing the dachshund's story of coming to the animal hospital to find a new owner, the puppies realized the importance of being loved. They learned that genuine love and attention are more important than outward appearances.",
+        "zh-CN": "动物医院里的小狗们羡慕住在漂亮房子里的腊肠犬，但腊肠犬却因为主人的漠不关心而感到不幸。听了来到动物医院寻找新主人的腊肠犬的故事后，小狗们明白了被爱的重要性。它们意识到，比起外表，真正的爱和关怀才是最重要的。",
+        "ja": "動物病院にいる犬たちは、綺麗な家に住むダックスフントを羨ましがっていました。しかし、ダックスフントは飼い主の無関心に悩んでいました。新しい飼い主を探して動物病院にやってきたダックスフントの話を聞き、犬たちは愛されることの大切さに気づきます。そして、外見よりも真の愛情と関心が重要だと知るのでした。",
+        "es": "En una clínica veterinaria, los cachorros envidiaban a un perro salchicha que vivía en una casa bonita, pero este era infeliz debido a la indiferencia de su dueño. Al escuchar la historia del perro salchicha, que había llegado a la clínica en busca de un nuevo hogar, los cachorros comprendieron la importancia de ser amados. Se dieron cuenta de que el amor y la atención genuinos son más importantes que las apariencias.",
+        "de": "Die Hunde im Tierkrankenhaus beneideten den Dackel, der in einem schönen Haus lebte, aber der Dackel war unglücklich wegen der mangelnden Aufmerksamkeit seines Besitzers. Nachdem sie die Geschichte des Dackels gehört hatten, der ins Tierkrankenhaus gekommen war, um ein neues Zuhause zu finden, erkannten die Hunde, wie wichtig es ist, geliebt zu werden. Sie verstanden, dass wahre Liebe und Aufmerksamkeit wichtiger sind als das äußere Erscheinungsbild.",
+        "fr": "À l'hôpital vétérinaire, les chiots enviaient le teckel qui vivait dans une belle maison. Cependant, ce dernier était malheureux à cause de la négligence de son propriétaire. En écoutant l'histoire du teckel, arrivé à l'hôpital vétérinaire pour trouver un nouveau foyer, les chiots ont compris l'importance d'être aimé. Ils ont réalisé que l'amour véritable et l'attention sont plus importants que les apparences.",
+        "pt-BR": "No hospital veterinário, os cachorrinhos invejavam o Dachshund que vivia em uma casa bonita, mas o Dachshund era infeliz devido à negligência de seu dono. Ao ouvirem a história do Dachshund, que foi para o hospital veterinário em busca de um novo lar, os cachorrinhos perceberam a importância de serem amados. Eles aprenderam que o amor e a atenção genuínos são mais importantes do que as aparências.",
+        "zh-TW": "動物醫院裡的小狗們羨慕住在漂亮房子裡的臘腸犬，但臘腸犬卻因為主人的漠不關心而感到不幸。聽了來到動物醫院尋找新主人的臘腸犬的故事後，小狗們明白了被愛的重要性。牠們也了解到，比起外表，真正的愛與關懷才是最重要的。",
+        "it": "All'ospedale veterinario, i cuccioli invidiavano il bassotto che viveva in una bella casa, ma quest'ultimo era infelice a causa della negligenza del suo padrone. Ascoltando la storia del bassotto, arrivato all'ospedale veterinario in cerca di una nuova famiglia, i cuccioli comprendono l'importanza di essere amati. Capiscono che il vero amore e l'attenzione sono più importanti delle apparenze."
+      },
       "paragraphs_analysis": [
         {
           "paragraph_num": 1,
@@ -203,1688 +214,1699 @@
       "quiz_questions": [
         {
           "ko": {
-            "question": "동물 병원 창문을 두드린 강아지들은 누구인가요?",
+            "question": "동물 병원 창문을 두드린 강아지들은 어떤 종류인가요?",
             "options": [
-              "닥스훈트, 슈나우저, 푸들",
+              "닥스훈트, 불독, 시츄",
               "말티즈, 슈나우저, 푸들",
-              "말티즈, 닥스훈트, 슈나우저",
-              "말티즈, 닥스훈트, 시츄"
+              "진돗개, 삽살개, 풍산개",
+              "비글, 코카 스파니엘, 포메라니안"
             ],
             "correct_index": 1,
-            "explanation": "동화 초반에 말티즈, 슈나우저, 푸들이 창문을 두드리는 장면이 나옵니다."
+            "explanation": "이야기 초반에 말티즈, 슈나우저, 푸들이 창문을 두드리는 장면이 나옵니다."
           },
           "en": {
-            "question": "Who are the puppies that knocked on the animal hospital window?",
+            "question": "What kind of dogs were knocking on the animal hospital window?",
             "options": [
-              "Dachshund, Schnauzer, Poodle",
+              "Dachshund, Bulldog, Shih Tzu",
               "Maltese, Schnauzer, Poodle",
-              "Maltese, Dachshund, Schnauzer",
-              "Maltese, Dachshund, Shih Tzu"
+              "Jindo Dog, Sapsal Dog, Pungsan Dog",
+              "Beagle, Cocker Spaniel, Pomeranian"
             ],
             "correct_index": 1,
             "explanation": "Early in the story, a Maltese, a Schnauzer, and a Poodle are shown knocking on the window."
           },
           "zh-CN": {
-            "question": "是谁敲打动物医院窗户的小狗们？",
+            "question": "敲打动物医院窗户的小狗是什么品种？",
             "options": [
-              "腊肠犬，雪纳瑞，贵宾犬",
+              "腊肠犬，斗牛犬，西施犬",
               "马尔济斯犬，雪纳瑞，贵宾犬",
-              "马尔济斯犬，腊肠犬，雪纳瑞犬",
-              "马尔济斯犬，腊肠犬，西施犬"
+              "珍岛犬、萨摩犬、丰山犬",
+              "比格犬，可卡犬，博美犬"
             ],
             "correct_index": 1,
-            "explanation": "童话故事开头，有玛尔济斯犬、雪纳瑞犬和贵宾犬敲窗户的场景。"
+            "explanation": "故事开头，有玛尔济斯犬、雪纳瑞犬和贵宾犬敲窗户的场景。"
           },
           "ja": {
-            "question": "動物病院の窓を叩いた子犬たちは誰ですか？",
+            "question": "動物病院の窓を叩いた子犬たちは何という種類ですか？",
             "options": [
-              "ダックスフント、シュナウザー、プードル",
+              "ダックスフント、ブルドッグ、シーズー",
               "マルチーズ、シュナウザー、プードル",
-              "マルチーズ、ダックスフント、シュナウザー",
-              "マルチーズ、ダックスフント、シーズー"
+              "珍島犬（チンドッケン）、삽살개（サプサル개）、豊山犬（プンサン개）",
+              "ビーグル、コッカースパニエル、ポメラニアン"
             ],
             "correct_index": 1,
-            "explanation": "童話の冒頭で、マルチーズ、シュナウザー、プードルが窓を叩く場面が出てきます。"
+            "explanation": "物語の序盤で、マルチーズ、シュナウザー、プードルが窓を叩く場面が出てきます。"
           },
           "es": {
-            "question": "¿Quiénes son los cachorros que golpearon la ventana del hospital de animales?",
+            "question": "¿Qué raza de cachorros golpeaban la ventana de la clínica veterinaria?",
             "options": [
-              "Teckel, Schnauzer, Caniche",
+              "Teckel, bulldog, shih tzu",
               "Maltés, Schnauzer, Caniche",
-              "Maltés, Dachshund, Schnauzer",
-              "Maltés, Dachshund, Shih Tzu"
+              "Jindo, Sapsal, Pungsan",
+              "Beagle, Cocker Spaniel, Pomerania"
             ],
             "correct_index": 1,
-            "explanation": "Al principio del cuento, aparecen un maltés, un schnauzer y un caniche golpeando la ventana."
+            "explanation": "Al principio del cuento, hay una escena en la que un maltés, un schnauzer y un caniche golpean la ventana."
           },
           "de": {
-            "question": "Wer klopfte an die Fenster der Tierklinik?",
+            "question": "Welche Rasse hatten die Welpen, die an die Fenster der Tierklinik klopften?",
             "options": [
-              "Dackel, Schnauzer, Pudel",
+              "Dackel, Bulldogge, Shih Tzu",
               "Malteser, Schnauzer, Pudel",
-              "Malteser, Dackel, Schnauzer",
-              "Malteser, Dackel, Shih Tzu"
+              "Jindo, Sapsal, Pungsan",
+              "Beagle, Cocker Spaniel, Pomeranian"
             ],
             "correct_index": 1,
-            "explanation": "Gleich zu Beginn des Märchens klopfen ein Malteser, ein Schnauzer und ein Pudel an ein Fenster."
+            "explanation": "Gleich zu Beginn der Geschichte klopfen ein Malteser, ein Schnauzer und ein Pudel an das Fenster."
           },
           "fr": {
-            "question": "Qui sont les chiots qui ont frappé à la fenêtre de la clinique vétérinaire ?",
+            "question": "De quelle race étaient les chiots qui ont frappé à la fenêtre de la clinique vétérinaire ?",
             "options": [
-              "Teckel, Schnauzer, Caniche",
+              "Teckel, bouledogue, Shih Tzu",
               "Bichon maltais, schnauzer, caniche",
-              "Bichon maltais, Teckel, Schnauzer",
-              "Maltais, Teckel, Shih Tzu"
+              "Jindo, Sapsal, Pungsan",
+              "Beagle, Cocker Spaniel, Poméranien"
             ],
             "correct_index": 1,
-            "explanation": "Au début du conte, un bichon maltais, un schnauzer et un caniche frappent à la fenêtre."
+            "explanation": "Au début de l'histoire, on voit un Maltais, un Schnauzer et un Caniche frapper à la fenêtre."
           },
           "pt-BR": {
-            "question": "Quais cachorros bateram na janela do hospital veterinário?",
+            "question": "Que tipo de cachorros bateram na janela do hospital veterinário?",
             "options": [
-              "Dachshund, Schnauzer, Poodle",
+              "Dachshund, Buldogue, Shih Tzu",
               "Maltês, Schnauzer, Poodle",
-              "Maltês, Dachshund, Schnauzer",
-              "Maltês, Dachshund, Shih Tzu"
+              "진돗개, 삽살개, 풍산개",
+              "비글, 코카 스파니엘, 포메라니안"
             ],
             "correct_index": 1,
-            "explanation": "No início do conto de fadas, há uma cena em que um maltês, um schnauzer e um poodle batem na janela."
+            "explanation": "이야기 초반에 말티즈, 슈나우저, 푸들이 창문을 두드리는 장면이 나옵니다."
           },
           "zh-TW": {
-            "question": "是哪些小狗敲打動物醫院的窗戶？",
+            "question": "동물 병원 창문을 두드린 강아지들은 어떤 종류인가요?",
             "options": [
-              "臘腸犬、雪納瑞、貴賓犬",
-              "瑪爾濟斯犬、雪納瑞、貴賓犬",
-              "瑪爾濟斯犬、臘腸犬、雪納瑞犬",
-              "瑪爾濟斯、臘腸犬、西施犬"
+              "닥스훈트, 불독, 시츄",
+              "말티즈, 슈나우저, 푸들",
+              "진돗개, 삽살개, 풍산개",
+              "비글, 코카 스파니엘, 포메라니안"
             ],
             "correct_index": 1,
-            "explanation": "童話故事一開始，有瑪爾濟斯犬、雪納瑞犬和貴賓犬敲打窗戶的場景。"
+            "explanation": "이야기 초반에 말티즈, 슈나우저, 푸들이 창문을 두드리는 장면이 나옵니다."
           },
           "it": {
-            "question": "Quali sono i cuccioli che hanno bussato alla finestra dell'ospedale veterinario?",
+            "question": "동물 병원 창문을 두드린 강아지들은 어떤 종류인가요?",
             "options": [
-              "Bassotto, Schnauzer, Barboncino",
-              "Maltese, Schnauzer, Barboncino",
-              "Maltese, Bassotto, Schnauzer",
-              "Maltese, Bassotto, Shih Tzu"
+              "닥스훈트, 불독, 시츄",
+              "말티즈, 슈나우저, 푸들",
+              "진돗개, 삽살개, 풍산개",
+              "비글, 코카 스파니엘, 포메라니안"
             ],
             "correct_index": 1,
-            "explanation": "All'inizio della fiaba, una scena mostra un Maltese, uno Schnauzer e un Barboncino che bussano alla finestra."
+            "explanation": "이야기 초반에 말티즈, 슈나우저, 푸들이 창문을 두드리는 장면이 나옵니다."
           }
         },
         {
           "ko": {
-            "question": "슈나우저가 자신의 어떤 점을 자랑했나요?",
+            "question": "동물 병원 강아지들이 부러워한 강아지는 무엇이었나요?",
             "options": [
-              "귀여운 외모",
-              "멋진 꼬리",
-              "예쁜 눈",
-              "날씬한 몸매"
-            ],
-            "correct_index": 0,
-            "explanation": "슈나우저는 '나처럼 귀여운 강아지를 왜 안 데려갈까?'라고 말하며 자신의 귀여운 외모를 자랑했습니다."
-          },
-          "en": {
-            "question": "What did the Schnauzer boast about?",
-            "options": [
-              "Cute appearance",
-              "Magnificent Tail",
-              "Pretty Eyes",
-              "Slim figure"
-            ],
-            "correct_index": 0,
-            "explanation": "The Schnauzer boasted about its adorable appearance, saying, \"Why wouldn't they take a cute puppy like me?\""
-          },
-          "zh-CN": {
-            "question": "施纳泽犬炫耀自己哪一点呢？",
-            "options": [
-              "可爱的外貌",
-              "漂亮的尾巴",
-              "美丽的眼睛",
-              "苗条的身材"
-            ],
-            "correct_index": 0,
-            "explanation": "雪纳瑞自夸道：“为什么不带走像我这么可爱的小狗呢？”"
-          },
-          "ja": {
-            "question": "シュナウザーは自分のどんなところを自慢しましたか？",
-            "options": [
-              "可愛らしい容姿",
-              "すてきなしっぽ",
-              "きれいな瞳",
-              "スリムな体型"
-            ],
-            "correct_index": 0,
-            "explanation": "シュナウザーは「どうして僕みたいな可愛い犬を連れて行かないんだろう？」と言い、自分の可愛らしい外見を自慢しました。"
-          },
-          "es": {
-            "question": "¿De qué se jactaba el Schnauzer?",
-            "options": [
-              "Apariencia adorable",
-              "Una Cola Fantástica",
-              "Ojos bonitos.",
-              "Figura esbelta"
-            ],
-            "correct_index": 0,
-            "explanation": "El Schnauzer, diciendo: \"¿Por qué no me adoptan si soy un perrito tan adorable?\", presumía de su linda apariencia."
-          },
-          "de": {
-            "question": "Womit prahlte der Schnauzer?",
-            "options": [
-              "Niedliches Aussehen",
-              "Ein prächtiger Schwanz\n\n(Alternativ, je nach Kontext der Quizfrage:\n\n* Ein wunderschöner Schwanz\n* Ein toller Schwanz)",
-              "Schöne Augen",
-              "Schlanke Figur"
-            ],
-            "correct_index": 0,
-            "explanation": "\"Warum nimmt mich denn niemand mit? Bin ich denn nicht süß genug?\", bellte der Schnauzer und prahlte mit seinem niedlichen Aussehen."
-          },
-          "fr": {
-            "question": "De quoi le schnauzer était-il fier ?",
-            "options": [
-              "Apparence mignonne",
-              "Une queue magnifique.",
-              "De beaux yeux",
-              "Silhouette svelte"
-            ],
-            "correct_index": 0,
-            "explanation": "Le schnauzer, se vantant de son adorable apparence, se disait : \"Pourquoi ne m'adopterait-on pas, moi, un chiot aussi mignon ?\""
-          },
-          "pt-BR": {
-            "question": "De que o Schnauzer se gabava?",
-            "options": [
-              "Aparência adorável",
-              "Cauda Magnífica",
-              "Olhos Bonitos",
-              "Corpo esguio / Silhueta esguia / Figura esbelta"
-            ],
-            "correct_index": 0,
-            "explanation": "O Schnauzer, com seu focinho adorável, se gabava, dizendo: \"Por que será que não me levam para casa? Sou um cachorrinho tão fofo!\""
-          },
-          "zh-TW": {
-            "question": "雪納瑞犬 자랑 自己的哪個優點？",
-            "options": [
-              "可愛的外貌",
-              "漂亮的尾巴",
-              "美麗的眼睛",
-              "苗條的身材"
-            ],
-            "correct_index": 0,
-            "explanation": "雪納瑞說：「為什麼不帶走像我這麼可愛的小狗呢？」並炫耀自己可愛的外表。"
-          },
-          "it": {
-            "question": "Di cosa si vantava lo Schnauzer?",
-            "options": [
-              "귀여운 외모",
-              "멋진 꼬리",
-              "예쁜 눈",
-              "날씬한 몸매"
-            ],
-            "correct_index": 0,
-            "explanation": "슈나우저는 '나처럼 귀여운 강아지를 왜 안 데려갈까?'라고 말하며 자신의 귀여운 외모를 자랑했습니다."
-          }
-        },
-        {
-          "ko": {
-            "question": "푸들이 자랑한 것은 무엇인가요?",
-            "options": [
-              "긴 털",
-              "작은 코",
-              "멋진 꼬리",
-              "큰 귀"
+              "예쁜 옷",
+              "맛있는 음식",
+              "예쁜 이층집",
+              "넓은 운동장"
             ],
             "correct_index": 2,
-            "explanation": "푸들은 자신의 꼬리가 멋있다고 자랑하며, 지나가는 사람이 자신을 보고 웃었다고 말했습니다."
-          },
-          "en": {
-            "question": "푸들이 자랑한 것은 무엇인가요?",
-            "options": [
-              "긴 털",
-              "작은 코",
-              "멋진 꼬리",
-              "큰 귀"
-            ],
-            "correct_index": 2,
-            "explanation": "푸들은 자신의 꼬리가 멋있다고 자랑하며, 지나가는 사람이 자신을 보고 웃었다고 말했습니다."
-          },
-          "zh-CN": {
-            "question": "푸들이 자랑한 것은 무엇인가요?",
-            "options": [
-              "긴 털",
-              "작은 코",
-              "멋진 꼬리",
-              "큰 귀"
-            ],
-            "correct_index": 2,
-            "explanation": "푸들은 자신의 꼬리가 멋있다고 자랑하며, 지나가는 사람이 자신을 보고 웃었다고 말했습니다."
-          },
-          "ja": {
-            "question": "푸들이 자랑한 것은 무엇인가요?",
-            "options": [
-              "긴 털",
-              "작은 코",
-              "멋진 꼬리",
-              "큰 귀"
-            ],
-            "correct_index": 2,
-            "explanation": "푸들은 자신의 꼬리가 멋있다고 자랑하며, 지나가는 사람이 자신을 보고 웃었다고 말했습니다."
-          },
-          "es": {
-            "question": "푸들이 자랑한 것은 무엇인가요?",
-            "options": [
-              "긴 털",
-              "작은 코",
-              "Una Cola Fantástica",
-              "큰 귀"
-            ],
-            "correct_index": 2,
-            "explanation": "푸들은 자신의 꼬리가 멋있다고 자랑하며, 지나가는 사람이 자신을 보고 웃었다고 말했습니다."
-          },
-          "de": {
-            "question": "푸들이 자랑한 것은 무엇인가요?",
-            "options": [
-              "긴 털",
-              "작은 코",
-              "멋진 꼬리",
-              "큰 귀"
-            ],
-            "correct_index": 2,
-            "explanation": "푸들은 자신의 꼬리가 멋있다고 자랑하며, 지나가는 사람이 자신을 보고 웃었다고 말했습니다."
-          },
-          "fr": {
-            "question": "푸들이 자랑한 것은 무엇인가요?",
-            "options": [
-              "긴 털",
-              "작은 코",
-              "멋진 꼬리",
-              "큰 귀"
-            ],
-            "correct_index": 2,
-            "explanation": "푸들은 자신의 꼬리가 멋있다고 자랑하며, 지나가는 사람이 자신을 보고 웃었다고 말했습니다."
-          },
-          "pt-BR": {
-            "question": "푸들이 자랑한 것은 무엇인가요?",
-            "options": [
-              "긴 털",
-              "작은 코",
-              "멋진 꼬리",
-              "큰 귀"
-            ],
-            "correct_index": 2,
-            "explanation": "푸들은 자신의 꼬리가 멋있다고 자랑하며, 지나가는 사람이 자신을 보고 웃었다고 말했습니다."
-          },
-          "zh-TW": {
-            "question": "푸들이 자랑한 것은 무엇인가요?",
-            "options": [
-              "긴 털",
-              "작은 코",
-              "멋진 꼬리",
-              "큰 귀"
-            ],
-            "correct_index": 2,
-            "explanation": "푸들은 자신의 꼬리가 멋있다고 자랑하며, 지나가는 사람이 자신을 보고 웃었다고 말했습니다."
-          },
-          "it": {
-            "question": "푸들이 자랑한 것은 무엇인가요?",
-            "options": [
-              "긴 털",
-              "작은 코",
-              "멋진 꼬리",
-              "큰 귀"
-            ],
-            "correct_index": 2,
-            "explanation": "푸들은 자신의 꼬리가 멋있다고 자랑하며, 지나가는 사람이 자신을 보고 웃었다고 말했습니다."
-          }
-        },
-        {
-          "ko": {
-            "question": "동물 병원 건너편 이층집에 사는 강아지는 어떤 종인가요?",
-            "options": [
-              "푸들",
-              "닥스훈트",
-              "말티즈",
-              "슈나우저"
-            ],
-            "correct_index": 1,
             "explanation": "동물 병원 강아지들은 건너편 이층집에 사는 닥스훈트를 부러워했습니다."
           },
           "en": {
-            "question": "동물 병원 건너편 이층집에 사는 강아지는 어떤 종인가요?",
+            "question": "동물 병원 강아지들이 부러워한 강아지는 무엇이었나요?",
             "options": [
-              "푸들",
-              "닥스훈트",
-              "말티즈",
-              "슈나우저"
+              "예쁜 옷",
+              "맛있는 음식",
+              "예쁜 이층집",
+              "넓은 운동장"
             ],
-            "correct_index": 1,
+            "correct_index": 2,
             "explanation": "동물 병원 강아지들은 건너편 이층집에 사는 닥스훈트를 부러워했습니다."
           },
           "zh-CN": {
-            "question": "동물 병원 건너편 이층집에 사는 강아지는 어떤 종인가요?",
+            "question": "동물 병원 강아지들이 부러워한 강아지는 무엇이었나요?",
             "options": [
-              "푸들",
-              "닥스훈트",
-              "말티즈",
-              "슈나우저"
+              "예쁜 옷",
+              "맛있는 음식",
+              "예쁜 이층집",
+              "넓은 운동장"
             ],
-            "correct_index": 1,
+            "correct_index": 2,
             "explanation": "동물 병원 강아지들은 건너편 이층집에 사는 닥스훈트를 부러워했습니다."
           },
           "ja": {
-            "question": "동물 병원 건너편 이층집에 사는 강아지는 어떤 종인가요?",
+            "question": "동물 병원 강아지들이 부러워한 강아지는 무엇이었나요?",
             "options": [
-              "푸들",
-              "닥스훈트",
-              "말티즈",
-              "슈나우저"
+              "예쁜 옷",
+              "맛있는 음식",
+              "예쁜 이층집",
+              "넓은 운동장"
             ],
-            "correct_index": 1,
+            "correct_index": 2,
             "explanation": "동물 병원 강아지들은 건너편 이층집에 사는 닥스훈트를 부러워했습니다."
           },
           "es": {
-            "question": "동물 병원 건너편 이층집에 사는 강아지는 어떤 종인가요?",
+            "question": "동물 병원 강아지들이 부러워한 강아지는 무엇이었나요?",
             "options": [
-              "푸들",
-              "닥스훈트",
-              "말티즈",
-              "슈나우저"
+              "예쁜 옷",
+              "맛있는 음식",
+              "예쁜 이층집",
+              "넓은 운동장"
             ],
-            "correct_index": 1,
+            "correct_index": 2,
             "explanation": "동물 병원 강아지들은 건너편 이층집에 사는 닥스훈트를 부러워했습니다."
           },
           "de": {
-            "question": "동물 병원 건너편 이층집에 사는 강아지는 어떤 종인가요?",
+            "question": "동물 병원 강아지들이 부러워한 강아지는 무엇이었나요?",
             "options": [
-              "푸들",
-              "닥스훈트",
-              "말티즈",
-              "슈나우저"
+              "예쁜 옷",
+              "맛있는 음식",
+              "예쁜 이층집",
+              "넓은 운동장"
             ],
-            "correct_index": 1,
+            "correct_index": 2,
             "explanation": "동물 병원 강아지들은 건너편 이층집에 사는 닥스훈트를 부러워했습니다."
           },
           "fr": {
-            "question": "동물 병원 건너편 이층집에 사는 강아지는 어떤 종인가요?",
+            "question": "동물 병원 강아지들이 부러워한 강아지는 무엇이었나요?",
             "options": [
-              "푸들",
-              "닥스훈트",
-              "말티즈",
-              "슈나우저"
+              "예쁜 옷",
+              "맛있는 음식",
+              "예쁜 이층집",
+              "넓은 운동장"
             ],
-            "correct_index": 1,
+            "correct_index": 2,
             "explanation": "동물 병원 강아지들은 건너편 이층집에 사는 닥스훈트를 부러워했습니다."
           },
           "pt-BR": {
-            "question": "동물 병원 건너편 이층집에 사는 강아지는 어떤 종인가요?",
+            "question": "동물 병원 강아지들이 부러워한 강아지는 무엇이었나요?",
             "options": [
-              "푸들",
-              "닥스훈트",
-              "말티즈",
-              "슈나우저"
+              "예쁜 옷",
+              "맛있는 음식",
+              "예쁜 이층집",
+              "넓은 운동장"
             ],
-            "correct_index": 1,
+            "correct_index": 2,
             "explanation": "동물 병원 강아지들은 건너편 이층집에 사는 닥스훈트를 부러워했습니다."
           },
           "zh-TW": {
-            "question": "동물 병원 건너편 이층집에 사는 강아지는 어떤 종인가요?",
+            "question": "동물 병원 강아지들이 부러워한 강아지는 무엇이었나요?",
             "options": [
-              "푸들",
-              "닥스훈트",
-              "말티즈",
-              "슈나우저"
+              "예쁜 옷",
+              "맛있는 음식",
+              "예쁜 이층집",
+              "넓은 운동장"
             ],
-            "correct_index": 1,
+            "correct_index": 2,
             "explanation": "동물 병원 강아지들은 건너편 이층집에 사는 닥스훈트를 부러워했습니다."
           },
           "it": {
-            "question": "동물 병원 건너편 이층집에 사는 강아지는 어떤 종인가요?",
+            "question": "동물 병원 강아지들이 부러워한 강아지는 무엇이었나요?",
             "options": [
-              "푸들",
-              "닥스훈트",
-              "말티즈",
-              "슈나우저"
+              "예쁜 옷",
+              "맛있는 음식",
+              "예쁜 이층집",
+              "넓은 운동장"
             ],
-            "correct_index": 1,
+            "correct_index": 2,
             "explanation": "동물 병원 강아지들은 건너편 이층집에 사는 닥스훈트를 부러워했습니다."
           }
         },
         {
           "ko": {
-            "question": "동물 병원 강아지들이 보기에 닥스훈트는 행복해 보였나요?",
+            "question": "닥스훈트가 동물 병원에 온 이유는 무엇이었나요?",
             "options": [
-              "매우 행복해 보였다",
-              "보통으로 보였다",
-              "행복하지 않아 보였다",
-              "전혀 알 수 없었다"
-            ],
-            "correct_index": 2,
-            "explanation": "강아지들이 볼 때마다 닥스훈트는 왈왈 짖거나 고개를 숙이고 움직이지 않는 등 행복하지 않아 보였습니다."
-          },
-          "en": {
-            "question": "동물 병원 강아지들이 보기에 닥스훈트는 행복해 보였나요?",
-            "options": [
-              "매우 행복해 보였다",
-              "보통으로 보였다",
-              "행복하지 않아 보였다",
-              "전혀 알 수 없었다"
-            ],
-            "correct_index": 2,
-            "explanation": "강아지들이 볼 때마다 닥스훈트는 왈왈 짖거나 고개를 숙이고 움직이지 않는 등 행복하지 않아 보였습니다."
-          },
-          "zh-CN": {
-            "question": "동물 병원 강아지들이 보기에 닥스훈트는 행복해 보였나요?",
-            "options": [
-              "매우 행복해 보였다",
-              "보통으로 보였다",
-              "행복하지 않아 보였다",
-              "完全不知道"
-            ],
-            "correct_index": 2,
-            "explanation": "강아지들이 볼 때마다 닥스훈트는 왈왈 짖거나 고개를 숙이고 움직이지 않는 등 행복하지 않아 보였습니다."
-          },
-          "ja": {
-            "question": "동물 병원 강아지들이 보기에 닥스훈트는 행복해 보였나요?",
-            "options": [
-              "매우 행복해 보였다",
-              "보통으로 보였다",
-              "행복하지 않아 보였다",
-              "전혀 알 수 없었다"
-            ],
-            "correct_index": 2,
-            "explanation": "강아지들이 볼 때마다 닥스훈트는 왈왈 짖거나 고개를 숙이고 움직이지 않는 등 행복하지 않아 보였습니다."
-          },
-          "es": {
-            "question": "동물 병원 강아지들이 보기에 닥스훈트는 행복해 보였나요?",
-            "options": [
-              "매우 행복해 보였다",
-              "보통으로 보였다",
-              "행복하지 않아 보였다",
-              "전혀 알 수 없었다"
-            ],
-            "correct_index": 2,
-            "explanation": "강아지들이 볼 때마다 닥스훈트는 왈왈 짖거나 고개를 숙이고 움직이지 않는 등 행복하지 않아 보였습니다."
-          },
-          "de": {
-            "question": "동물 병원 강아지들이 보기에 닥스훈트는 행복해 보였나요?",
-            "options": [
-              "매우 행복해 보였다",
-              "보통으로 보였다",
-              "행복하지 않아 보였다",
-              "전혀 알 수 없었다"
-            ],
-            "correct_index": 2,
-            "explanation": "강아지들이 볼 때마다 닥스훈트는 왈왈 짖거나 고개를 숙이고 움직이지 않는 등 행복하지 않아 보였습니다."
-          },
-          "fr": {
-            "question": "동물 병원 강아지들이 보기에 닥스훈트는 행복해 보였나요?",
-            "options": [
-              "매우 행복해 보였다",
-              "보통으로 보였다",
-              "행복하지 않아 보였다",
-              "전혀 알 수 없었다"
-            ],
-            "correct_index": 2,
-            "explanation": "강아지들이 볼 때마다 닥스훈트는 왈왈 짖거나 고개를 숙이고 움직이지 않는 등 행복하지 않아 보였습니다."
-          },
-          "pt-BR": {
-            "question": "동물 병원 강아지들이 보기에 닥스훈트는 행복해 보였나요?",
-            "options": [
-              "매우 행복해 보였다",
-              "보통으로 보였다",
-              "행복하지 않아 보였다",
-              "전혀 알 수 없었다"
-            ],
-            "correct_index": 2,
-            "explanation": "강아지들이 볼 때마다 닥스훈트는 왈왈 짖거나 고개를 숙이고 움직이지 않는 등 행복하지 않아 보였습니다."
-          },
-          "zh-TW": {
-            "question": "동물 병원 강아지들이 보기에 닥스훈트는 행복해 보였나요?",
-            "options": [
-              "매우 행복해 보였다",
-              "보통으로 보였다",
-              "看起來並不快樂",
-              "전혀 알 수 없었다"
-            ],
-            "correct_index": 2,
-            "explanation": "강아지들이 볼 때마다 닥스훈트는 왈왈 짖거나 고개를 숙이고 움직이지 않는 등 행복하지 않아 보였습니다."
-          },
-          "it": {
-            "question": "동물 병원 강아지들이 보기에 닥스훈트는 행복해 보였나요?",
-            "options": [
-              "매우 행복해 보였다",
-              "보통으로 보였다",
-              "행복하지 않아 보였다",
-              "전혀 알 수 없었다"
-            ],
-            "correct_index": 2,
-            "explanation": "강아지들이 볼 때마다 닥스훈트는 왈왈 짖거나 고개를 숙이고 움직이지 않는 등 행복하지 않아 보였습니다."
-          }
-        },
-        {
-          "ko": {
-            "question": "\"왈왈\"은 어떤 동물의 울음소리를 흉내낸 말인가요?",
-            "options": [
-              "고양이",
-              "강아지",
-              "새",
-              "쥐"
-            ],
-            "correct_index": 1,
-            "explanation": "\"왈왈\"은 강아지의 대표적인 울음소리를 나타내는 의성어입니다."
-          },
-          "en": {
-            "question": "\"왈왈\"은 어떤 동물의 울음소리를 흉내낸 말인가요?",
-            "options": [
-              "고양이",
-              "강아지",
-              "새",
-              "쥐"
-            ],
-            "correct_index": 1,
-            "explanation": "\"왈왈\"은 강아지의 대표적인 울음소리를 나타내는 의성어입니다."
-          },
-          "zh-CN": {
-            "question": "\"왈왈\"은 어떤 동물의 울음소리를 흉내낸 말인가요?",
-            "options": [
-              "고양이",
-              "강아지",
-              "새",
-              "쥐"
-            ],
-            "correct_index": 1,
-            "explanation": "\"왈왈\"은 강아지의 대표적인 울음소리를 나타내는 의성어입니다."
-          },
-          "ja": {
-            "question": "\"왈왈\"은 어떤 동물의 울음소리를 흉내낸 말인가요?",
-            "options": [
-              "고양이",
-              "강아지",
-              "새",
-              "쥐"
-            ],
-            "correct_index": 1,
-            "explanation": "\"왈왈\"은 강아지의 대표적인 울음소리를 나타내는 의성어입니다."
-          },
-          "es": {
-            "question": "\"왈왈\"은 어떤 동물의 울음소리를 흉내낸 말인가요?",
-            "options": [
-              "고양이",
-              "Cachorro",
-              "새",
-              "쥐"
-            ],
-            "correct_index": 1,
-            "explanation": "\"왈왈\"은 강아지의 대표적인 울음소리를 나타내는 의성어입니다."
-          },
-          "de": {
-            "question": "\"왈왈\"은 어떤 동물의 울음소리를 흉내낸 말인가요?",
-            "options": [
-              "고양이",
-              "Hündchen",
-              "Vogel",
-              "Maus"
-            ],
-            "correct_index": 1,
-            "explanation": "\"Wauwau\" ist eine typische Lautmalerei für das Bellen eines Hundes."
-          },
-          "fr": {
-            "question": "Quel animal fait \"wouaf wouaf\" ?",
-            "options": [
-              "Chat",
-              "Chiot",
-              "Oiseau",
-              "Souris"
-            ],
-            "correct_index": 1,
-            "explanation": "\"Ouaf ouaf\" est une onomatopée typique pour représenter le cri du chien."
-          },
-          "pt-BR": {
-            "question": "\"Au au\" é a onomatopeia de qual animal?",
-            "options": [
-              "Gato",
-              "Cachorro",
-              "Pássaro",
-              "Rato"
-            ],
-            "correct_index": 1,
-            "explanation": "\"Au au\" é uma onomatopeia que representa o som típico do latido de um cachorro."
-          },
-          "zh-TW": {
-            "question": "「汪汪」是模仿哪種動物的叫聲？",
-            "options": [
-              "貓",
-              "小狗",
-              "鳥",
-              "老鼠"
-            ],
-            "correct_index": 1,
-            "explanation": "「汪汪」是小狗最具代表性的叫聲，屬於擬聲詞。"
-          },
-          "it": {
-            "question": "Quale animale fa \"bau bau\"?",
-            "options": [
-              "Gatto",
-              "Cane",
-              "Uccello",
-              "Topo"
-            ],
-            "correct_index": 1,
-            "explanation": "\"Bau bau\" è l'onomatopea che rappresenta il tipico verso del cane."
-          }
-        },
-        {
-          "ko": {
-            "question": "닥스훈트가 동물 병원에 온 이유는 무엇인가요?",
-            "options": [
+              "새로운 친구를 만나기 위해",
               "아파서 치료를 받기 위해",
               "새 주인을 만나기 위해",
-              "친구를 만나러",
-              "산책하러"
+              "심심해서 놀러 오기 위해"
             ],
-            "correct_index": 1,
-            "explanation": "닥스훈트는 현재 주인이 자신에게 관심이 없어 새 주인을 만나러 동물 병원에 왔다고 말했습니다."
+            "correct_index": 2,
+            "explanation": "닥스훈트는 현재 주인이 자신을 잊은 것 같아 새 주인을 만나러 왔습니다."
           },
           "en": {
-            "question": "Why did the dachshund come to the animal hospital?",
+            "question": "닥스훈트가 동물 병원에 온 이유는 무엇이었나요?",
             "options": [
-              "To receive treatment for an illness.",
-              "To Find a New Owner",
-              "Going to See a Friend",
-              "Going for a walk"
+              "새로운 친구를 만나기 위해",
+              "아파서 치료를 받기 위해",
+              "새 주인을 만나기 위해",
+              "심심해서 놀러 오기 위해"
             ],
-            "correct_index": 1,
-            "explanation": "The dachshund said that its current owner wasn't paying attention to it anymore, so it came to the animal hospital to find a new owner."
+            "correct_index": 2,
+            "explanation": "The dachshund came to find a new owner because it felt its current owner had forgotten about it."
           },
           "zh-CN": {
-            "question": "腊肠犬来动物医院的原因是什么？",
+            "question": "닥스훈트가 동물 병원에 온 이유는 무엇이었나요?",
             "options": [
-              "为了治病而接受治疗",
-              "为了迎接新的主人",
-              "去见朋友",
-              "去散步"
+              "새로운 친구를 만나기 위해",
+              "아파서 치료를 받기 위해",
+              "새 주인을 만나기 위해",
+              "심심해서 놀러 오기 위해"
             ],
-            "correct_index": 1,
-            "explanation": "腊肠犬说，现在的主人对自己漠不关心，所以它来到动物医院，想找个新主人。"
+            "correct_index": 2,
+            "explanation": "닥스훈트는 현재 주인이 자신을 잊은 것 같아 새 주인을 만나러 왔습니다."
           },
           "ja": {
-            "question": "ダックスフントが動物病院に来た理由は何ですか？",
+            "question": "닥스훈트가 동물 병원에 온 이유는 무엇이었나요?",
             "options": [
-              "病気で治療を受けるために",
-              "新しい飼い主に出会うために",
-              "友達に会いに行く",
-              "散歩に行こう"
+              "새로운 친구를 만나기 위해",
+              "아파서 치료를 받기 위해",
+              "새 주인을 만나기 위해",
+              "심심해서 놀러 오기 위해"
             ],
-            "correct_index": 1,
-            "explanation": "ダックスフントは、今の飼い主が自分に関心を持ってくれないため、新しい飼い主を探しに動物病院に来たと話しました。"
+            "correct_index": 2,
+            "explanation": "닥스훈트는 현재 주인이 자신을 잊은 것 같아 새 주인을 만나러 왔습니다."
           },
           "es": {
-            "question": "¿Por qué fue el perro salchicha al veterinario?",
+            "question": "닥스훈트가 동물 병원에 온 이유는 무엇이었나요?",
             "options": [
-              "Para recibir tratamiento por enfermedad.",
-              "Para encontrar un nuevo dueño.",
-              "Yendo a encontrar a un amigo.",
-              "De paseo"
+              "새로운 친구를 만나기 위해",
+              "아파서 치료를 받기 위해",
+              "새 주인을 만나기 위해",
+              "심심해서 놀러 오기 위해"
             ],
-            "correct_index": 1,
-            "explanation": "El dachshund le dijo al veterinario que su dueño actual no le prestaba atención y que había venido a la clínica en busca de un nuevo hogar."
+            "correct_index": 2,
+            "explanation": "닥스훈트는 현재 주인이 자신을 잊은 것 같아 새 주인을 만나러 왔습니다."
           },
           "de": {
-            "question": "Warum kam der Dackel in die Tierklinik?",
+            "question": "닥스훈트가 동물 병원에 온 이유는 무엇이었나요?",
             "options": [
-              "Um sich wegen Krankheit behandeln zu lassen.",
-              "Um einen neuen Besitzer zu finden.",
-              "Auf dem Weg, Freunde zu treffen.",
-              "Spazieren gehen"
+              "새로운 친구를 만나기 위해",
+              "아파서 치료를 받기 위해",
+              "새 주인을 만나기 위해",
+              "심심해서 놀러 오기 위해"
             ],
-            "correct_index": 1,
-            "explanation": "Der Dackel sagte, er sei ins Tierheim gekommen, um einen neuen Besitzer zu finden, da sein jetziger Besitzer sich nicht mehr um ihn kümmere."
+            "correct_index": 2,
+            "explanation": "닥스훈트는 현재 주인이 자신을 잊은 것 같아 새 주인을 만나러 왔습니다."
           },
           "fr": {
-            "question": "Pourquoi le teckel est-il venu à la clinique vétérinaire ?",
+            "question": "닥스훈트가 동물 병원에 온 이유는 무엇이었나요?",
             "options": [
-              "Pour se faire soigner en raison d'une maladie.",
-              "À la recherche d'un nouveau maître",
-              "Rendez-vous avec un ami",
-              "Se promener"
+              "새로운 친구를 만나기 위해",
+              "아파서 치료를 받기 위해",
+              "새 주인을 만나기 위해",
+              "심심해서 놀러 오기 위해"
             ],
-            "correct_index": 1,
-            "explanation": "Le teckel a expliqué qu'il était venu à la clinique vétérinaire pour trouver un nouveau propriétaire, car son maître actuel ne s'intéressait plus à lui."
+            "correct_index": 2,
+            "explanation": "닥스훈트는 현재 주인이 자신을 잊은 것 같아 새 주인을 만나러 왔습니다."
           },
           "pt-BR": {
             "question": "Por que o dachshund foi ao veterinário?",
             "options": [
-              "Para receber tratamento por estar doente.",
-              "Para encontrar um novo dono.",
-              "Indo Encontrar um Amigo",
-              "Para um passeio"
+              "새로운 친구를 만나기 위해",
+              "아파서 치료를 받기 위해",
+              "새 주인을 만나기 위해",
+              "심심해서 놀러 오기 위해"
             ],
-            "correct_index": 1,
-            "explanation": "O dachshund disse que seu dono atual não lhe dava atenção e que ele veio ao veterinário para encontrar um novo lar."
+            "correct_index": 2,
+            "explanation": "닥스훈트는 현재 주인이 자신을 잊은 것 같아 새 주인을 만나러 왔습니다."
           },
           "zh-TW": {
-            "question": "臘腸犬到動物醫院的原因是什麼？",
+            "question": "닥스훈트가 동물 병원에 온 이유는 무엇이었나요?",
             "options": [
-              "為了生病接受治療",
-              "為了迎接新的主人",
-              "去見朋友",
-              "去散步"
+              "새로운 친구를 만나기 위해",
+              "아파서 치료를 받기 위해",
+              "새 주인을 만나기 위해",
+              "심심해서 놀러 오기 위해"
             ],
-            "correct_index": 1,
-            "explanation": "臘腸犬表示，因為現在的主人對牠漠不關心，所以牠來到動物醫院，希望能找到新的主人。"
+            "correct_index": 2,
+            "explanation": "臘腸犬覺得現在的主人好像忘記了牠，所以前來尋找新的主人。"
           },
           "it": {
-            "question": "Perché il bassotto è venuto alla clinica veterinaria?",
+            "question": "닥스훈트가 동물 병원에 온 이유는 무엇이었나요?",
             "options": [
-              "Per curarsi a causa di una malattia.",
-              "In attesa di un nuovo padrone.",
-              "Andare a trovare un amico.",
-              "Andiamo a fare una passeggiata."
+              "새로운 친구를 만나기 위해",
+              "아파서 치료를 받기 위해",
+              "새 주인을 만나기 위해",
+              "심심해서 놀러 오기 위해"
             ],
-            "correct_index": 1,
-            "explanation": "Il bassotto ha raccontato di essere arrivato alla clinica veterinaria per trovare un nuovo padrone, perché il suo attuale proprietario non gli prestava più attenzione."
+            "correct_index": 2,
+            "explanation": "닥스훈트는 현재 주인이 자신을 잊은 것 같아 새 주인을 만나러 왔습니다."
           }
         },
         {
           "ko": {
-            "question": "닥스훈트의 주인이 처음과 달리 닥스훈트에게 소홀해진 이유는 무엇이라고 닥스훈트는 생각했나요?",
+            "question": "\"왈왈\"은 어떤 동물의 울음소리를 나타내는 말인가요?",
             "options": [
-              "닥스훈트가 병에 걸려서",
-              "닥스훈트가 너무 커서",
-              "닥스훈트가 못생겨져서",
-              "닥스훈트가 그 집에 살고 있는 걸 잊어버린 것 같아서"
+              "고양이",
+              "강아지",
+              "새",
+              "쥐"
             ],
-            "correct_index": 3,
-            "explanation": "닥스훈트는 주인이 자신을 잊어버린 것 같다고 슬퍼했습니다."
+            "correct_index": 1,
+            "explanation": "\"왈왈\"은 강아지가 짖는 소리를 흉내내는 말입니다."
           },
           "en": {
-            "question": "What did the dachshund think was the reason its owner became neglectful, unlike at the beginning?",
+            "question": "\"왈왈\"은 어떤 동물의 울음소리를 나타내는 말인가요?",
             "options": [
-              "The dachshund got sick, so...",
-              "The dachshund grew too big.",
-              "Because the dachshund became ugly.",
-              "It seems like I forgot the dachshund lived in that house."
+              "고양이",
+              "강아지",
+              "Bird",
+              "쥐"
             ],
-            "correct_index": 3,
-            "explanation": "The dachshund was sad because it felt like its owner had forgotten about it."
+            "correct_index": 1,
+            "explanation": "\"왈왈\"은 강아지가 짖는 소리를 흉내내는 말입니다."
           },
           "zh-CN": {
-            "question": "腊肠犬认为，主人不像最初那样重视自己，是因为什么原因呢？",
+            "question": "\"왈왈\"은 어떤 동물의 울음소리를 나타내는 말인가요?",
             "options": [
-              "腊肠犬生病了",
-              "腊肠犬长得太大了",
-              "腊肠犬变得难看了，所以…",
-              "好像忘记了那家住着腊肠犬这件事一样。"
+              "고양이",
+              "小狗",
+              "새",
+              "쥐"
             ],
-            "correct_index": 3,
-            "explanation": "腊肠犬很伤心，因为它觉得主人好像忘记了它。"
+            "correct_index": 1,
+            "explanation": "\"왈왈\"은 강아지가 짖는 소리를 흉내내는 말입니다."
           },
           "ja": {
-            "question": "ダックスフントの飼い主が、最初と違ってダックスフントに冷たくなったのはなぜだと、ダックスフントは考えたのでしょうか？",
+            "question": "\"왈왈\"은 어떤 동물의 울음소리를 나타내는 말인가요?",
             "options": [
-              "ダックスフントが病気になって",
-              "ダックスフントが大きくなりすぎて",
-              "ダックスフントがみにくくなって",
-              "ダックスフントがその家に住んでいることを忘れてしまったかのようで"
+              "고양이",
+              "강아지",
+              "새",
+              "쥐"
             ],
-            "correct_index": 3,
-            "explanation": "ダックスフントは、飼い主が自分のことを忘れてしまったのではないかと悲しみました。"
+            "correct_index": 1,
+            "explanation": "\"왈왈\"은 강아지가 짖는 소리를 흉내내는 말입니다."
           },
           "es": {
-            "question": "¿Por qué creía el perro salchicha que su dueño lo había empezado a descuidar, a diferencia del principio?",
+            "question": "\"왈왈\"은 어떤 동물의 울음소리를 나타내는 말인가요?",
             "options": [
-              "Un teckel enfermó y...",
-              "El dachshund que creció demasiado.",
-              "Porque el perro salchicha se volvió feo.",
-              "Parece que se había olvidado de que en esa casa vivía un perro salchicha."
+              "고양이",
+              "강아지",
+              "새",
+              "쥐"
             ],
-            "correct_index": 3,
-            "explanation": "El dachshund se entristeció porque pensaba que su dueño lo había olvidado."
+            "correct_index": 1,
+            "explanation": "\"왈왈\"은 강아지가 짖는 소리를 흉내내는 말입니다."
           },
           "de": {
-            "question": "Was glaubte der Dackel, warum sein Besitzer ihn anders behandelte als am Anfang und ihm weniger Aufmerksamkeit schenkte?",
+            "question": "\"왈왈\"은 어떤 동물의 울음소리를 나타내는 말인가요?",
             "options": [
-              "Der Dackel ist krank geworden.",
-              "Der Dackel war zu groß.",
-              "weil der Dackel hässlich wurde",
-              "Es schien, als hätte er vergessen, dass in dem Haus ein Dackel lebte."
+              "고양이",
+              "강아지",
+              "새",
+              "쥐"
             ],
-            "correct_index": 3,
-            "explanation": "Der Dackel war traurig, weil er dachte, sein Besitzer hätte ihn vergessen."
+            "correct_index": 1,
+            "explanation": "\"왈왈\"은 강아지가 짖는 소리를 흉내내는 말입니다."
           },
           "fr": {
-            "question": "Selon le teckel, quelle est la raison pour laquelle son maître est devenu négligent envers lui, contrairement au début ?",
+            "question": "\"왈왈\"은 어떤 동물의 울음소리를 나타내는 말인가요?",
             "options": [
-              "Un teckel est tombé malade.",
-              "Le teckel était devenu trop grand.",
-              "Parce qu'un teckel est devenu laid.",
-              "On dirait qu'il avait oublié qu'il y avait un teckel qui vivait dans cette maison."
+              "고양이",
+              "강아지",
+              "새",
+              "쥐"
             ],
-            "correct_index": 3,
-            "explanation": "Le teckel était triste, car il avait l'impression que son maître l'avait oublié."
+            "correct_index": 1,
+            "explanation": "\"왈왈\"은 강아지가 짖는 소리를 흉내내는 말입니다."
           },
           "pt-BR": {
-            "question": "Na visão do dachshund, qual foi o motivo para seu dono se tornar negligente com ele, ao contrário do início?",
+            "question": "\"왈왈\"은 어떤 동물의 울음소리를 나타내는 말인가요?",
             "options": [
-              "Um dachshund ficou doente.",
-              "O dachshund ficou grande demais.",
-              "Porque o dachshund ficou feio.",
-              "Parece que ele se esqueceu que um dachshund mora naquela casa."
+              "고양이",
+              "강아지",
+              "새",
+              "쥐"
             ],
-            "correct_index": 3,
-            "explanation": "O dachshund estava triste porque achava que seu dono o havia esquecido."
+            "correct_index": 1,
+            "explanation": "\"왈왈\"은 강아지가 짖는 소리를 흉내내는 말입니다."
           },
           "zh-TW": {
-            "question": "臘腸犬認為，主人不像一開始那樣關愛牠，原因是什麼？",
+            "question": "\"왈왈\"은 어떤 동물의 울음소리를 나타내는 말인가요?",
             "options": [
-              "臘腸狗生病了",
-              "臘腸狗長得太大了",
-              "臘腸狗變得不好看了",
-              "好像忘記了那裡住著一隻臘腸犬似的"
+              "고양이",
+              "강아지",
+              "새",
+              "쥐"
             ],
-            "correct_index": 3,
-            "explanation": "臘腸狗因為主人好像忘記了牠而感到傷心。"
+            "correct_index": 1,
+            "explanation": "\"왈왈\"은 강아지가 짖는 소리를 흉내내는 말입니다."
           },
           "it": {
-            "question": "Perché, secondo il bassotto, il suo padrone aveva iniziato a trascurarlo rispetto all'inizio?",
+            "question": "\"왈왈\"은 어떤 동물의 울음소리를 나타내는 말인가요?",
             "options": [
-              "Un bassotto si ammala perché...",
-              "Il bassotto era diventato troppo grande.",
-              "Perché il bassotto è diventato brutto?",
-              "Sembrava avesse dimenticato che in quella casa viveva un bassotto."
+              "고양이",
+              "강아지",
+              "새",
+              "쥐"
             ],
-            "correct_index": 3,
-            "explanation": "Il bassotto era triste perché pensava che il suo padrone lo avesse dimenticato."
+            "correct_index": 1,
+            "explanation": "\"왈왈\"은 강아지가 짖는 소리를 흉내내는 말입니다."
           }
         },
         {
           "ko": {
-            "question": "닥스훈트의 이야기를 들은 강아지들은 어떤 감정을 느꼈나요?",
+            "question": "닥스훈트의 주인이 닥스훈트를 처음에는 어떻게 대했나요?",
+            "options": [
+              "무관심하게",
+              "사랑스럽게",
+              "괴롭히면서",
+              "무섭게"
+            ],
+            "correct_index": 1,
+            "explanation": "닥스훈트의 주인은 처음에는 예쁜 닥스훈트의 모습을 보고 마음에 들어하며 사랑해줬습니다."
+          },
+          "en": {
+            "question": "닥스훈트의 주인이 닥스훈트를 처음에는 어떻게 대했나요?",
+            "options": [
+              "무관심하게",
+              "사랑스럽게",
+              "괴롭히면서",
+              "무섭게"
+            ],
+            "correct_index": 1,
+            "explanation": "닥스훈트의 주인은 처음에는 예쁜 닥스훈트의 모습을 보고 마음에 들어하며 사랑해줬습니다."
+          },
+          "zh-CN": {
+            "question": "닥스훈트의 주인이 닥스훈트를 처음에는 어떻게 대했나요?",
+            "options": [
+              "漠不关心",
+              "사랑스럽게",
+              "괴롭히면서",
+              "무섭게"
+            ],
+            "correct_index": 1,
+            "explanation": "닥스훈트의 주인은 처음에는 예쁜 닥스훈트의 모습을 보고 마음에 들어하며 사랑해줬습니다."
+          },
+          "ja": {
+            "question": "닥스훈트의 주인이 닥스훈트를 처음에는 어떻게 대했나요?",
+            "options": [
+              "無関心に",
+              "사랑스럽게",
+              "괴롭히면서",
+              "무섭게"
+            ],
+            "correct_index": 1,
+            "explanation": "닥스훈트의 주인은 처음에는 예쁜 닥스훈트의 모습을 보고 마음에 들어하며 사랑해줬습니다."
+          },
+          "es": {
+            "question": "¿Cómo trató el dueño al teckel al principio?",
+            "options": [
+              "Con indiferencia.",
+              "Con cariño",
+              "Acosando",
+              "Aterradoramente"
+            ],
+            "correct_index": 1,
+            "explanation": "Al principio, el dueño del dachshund estaba encantado y lo amaba por su apariencia adorable."
+          },
+          "de": {
+            "question": "Wie behandelte der Besitzer den Dackel anfangs?",
+            "options": [
+              "Gleichgültig",
+              "Liebevoll",
+              "Während man ärgert / Beim Ärgern",
+              "Furchterregend"
+            ],
+            "correct_index": 1,
+            "explanation": "Anfangs war der Besitzer von dem Dackel ganz begeistert von seinem Aussehen und liebte ihn sehr."
+          },
+          "fr": {
+            "question": "Comment le propriétaire a-t-il traité le teckel au début ?",
+            "options": [
+              "Avec indifférence.",
+              "Tendrement",
+              "En harcelant",
+              "Effrayant(e)"
+            ],
+            "correct_index": 1,
+            "explanation": "Au début, le propriétaire du teckel était ravi et aimait son joli teckel."
+          },
+          "pt-BR": {
+            "question": "Como o dono tratava o dachshund no início da história?",
+            "options": [
+              "Com indiferença.",
+              "Com carinho.",
+              "Atormentando.",
+              "Assustadoramente"
+            ],
+            "correct_index": 1,
+            "explanation": "Inicialmente, o dono do dachshund ficou encantado com a aparência adorável do cãozinho e o amou muito."
+          },
+          "zh-TW": {
+            "question": "臘腸犬的主人最初是如何對待臘腸犬的？",
+            "options": [
+              "漠不關心地",
+              "可愛地",
+              "欺負的同時",
+              "可怕地"
+            ],
+            "correct_index": 1,
+            "explanation": "一開始，臘腸犬的主人看到牠可愛的模樣，非常喜歡，也疼愛牠。"
+          },
+          "it": {
+            "question": "Come trattava inizialmente il proprietario il suo bassotto?",
+            "options": [
+              "Con indifferenza",
+              "Affettuosamente",
+              "Tormentando",
+              "Spaventosamente"
+            ],
+            "correct_index": 1,
+            "explanation": "All'inizio, il padrone del bassotto era felice e lo amava, colpito dalla sua bellezza."
+          }
+        },
+        {
+          "ko": {
+            "question": "닥스훈트가 슬퍼한 이유는 무엇인가요?",
+            "options": [
+              "집이 없어서",
+              "친구가 없어서",
+              "주인이 자신을 잊은 것 같아서",
+              "병에 걸려서"
+            ],
+            "correct_index": 2,
+            "explanation": "닥스훈트는 시간이 지날수록 주인이 자신에게 관심을 주지 않아 슬퍼했습니다."
+          },
+          "en": {
+            "question": "What made the dachshund sad?",
+            "options": [
+              "Because they didn't have a home.",
+              "Because they had no friends.",
+              "Feeling as though their owner had forgotten them.",
+              "Suffering from an illness."
+            ],
+            "correct_index": 2,
+            "explanation": "The dachshund grew sadder as time went on because its owner paid it less and less attention."
+          },
+          "zh-CN": {
+            "question": "腊肠犬为什么感到悲伤？",
+            "options": [
+              "因为没有家",
+              "因为没有朋友",
+              "主人好像已经忘记自己了",
+              "生病了"
+            ],
+            "correct_index": 2,
+            "explanation": "腊肠犬随着时间流逝，因为主人不再关注自己而感到悲伤。"
+          },
+          "ja": {
+            "question": "ダックスフントが悲しんだ理由は何ですか？",
+            "options": [
+              "家がなくて",
+              "友達がいなくて",
+              "飼い主が自分のことを忘れてしまったようで",
+              "病気になって"
+            ],
+            "correct_index": 2,
+            "explanation": "ダックスフントは、時間が経つにつれて飼い主が自分に関心を払ってくれなくなったことを悲しんでいました。"
+          },
+          "es": {
+            "question": "¿Por qué estaba triste el perro salchicha?",
+            "options": [
+              "Por no tener hogar.",
+              "Por no tener amigos.",
+              "Porque parecía que su amo lo había olvidado.",
+              "Enfermo/a"
+            ],
+            "correct_index": 2,
+            "explanation": "El dachshund se entristeció al ver que, con el tiempo, su dueño le prestaba cada vez menos atención."
+          },
+          "de": {
+            "question": "Warum war der Dackel traurig?",
+            "options": [
+              "Weil sie kein Zuhause hatten.",
+              "Weil er/sie keine Freunde hatte.",
+              "Weil der Besitzer ihn wohl vergessen hatte.",
+              "Krankheitshalber"
+            ],
+            "correct_index": 2,
+            "explanation": "Der Dackel war traurig, weil sein Besitzer ihm mit der Zeit immer weniger Aufmerksamkeit schenkte."
+          },
+          "fr": {
+            "question": "Pourquoi le teckel était-il triste ?",
+            "options": [
+              "Parce qu'il n'avait pas de maison.",
+              "Parce qu'il n'avait pas d'amis.",
+              "Parce que son maître semblait l'avoir oublié.",
+              "Malade."
+            ],
+            "correct_index": 2,
+            "explanation": "Le teckel était triste car, avec le temps, son maître lui accordait de moins en moins d'attention."
+          },
+          "pt-BR": {
+            "question": "Por que o dachshund estava triste?",
+            "options": [
+              "Por não ter casa.",
+              "Por não ter amigos.",
+              "Por parecer que seu dono o havia esquecido.",
+              "Doente."
+            ],
+            "correct_index": 2,
+            "explanation": "O dachshund ficou triste porque, com o passar do tempo, seu dono parou de lhe dar atenção."
+          },
+          "zh-TW": {
+            "question": "臘腸犬悲傷的原因是什麼？",
+            "options": [
+              "無家可歸",
+              "因為沒有朋友",
+              "主人好像忘記了自己",
+              "生病了"
+            ],
+            "correct_index": 2,
+            "explanation": "臘腸犬隨著時間流逝，因為主人不再關心牠而感到悲傷。"
+          },
+          "it": {
+            "question": "Perché il bassotto era triste?",
+            "options": [
+              "Senza una casa.",
+              "Perché non aveva amici.",
+              "Sembrava che il padrone si fosse dimenticato di lui.",
+              "Essendo malato/a"
+            ],
+            "correct_index": 2,
+            "explanation": "Il bassotto si rattristò perché, col passare del tempo, il suo padrone gli prestava sempre meno attenzione."
+          }
+        },
+        {
+          "ko": {
+            "question": "동물 병원 강아지들이 날마다 한 행동은 무엇인가요?",
+            "options": [
+              "맛있는 밥을 먹었다",
+              "운동장에서 신나게 뛰어놀았다",
+              "예쁜 옷을 입고 귀여운 표정으로 사람들을 만났다",
+              "새로운 장난감을 가지고 놀았다"
+            ],
+            "correct_index": 3,
+            "explanation": "동물 병원 강아지들은 닥스훈트처럼 예쁜 집에서 살고 싶어 날마다 예쁜 옷을 입고 귀여운 표정으로 사람들을 만났습니다."
+          },
+          "en": {
+            "question": "What did the puppies at the animal hospital do every day?",
+            "options": [
+              "I ate a delicious meal.",
+              "I had a blast running around on the playground.",
+              "Met people wearing pretty clothes and making cute expressions.",
+              "Played with a new toy."
+            ],
+            "correct_index": 3,
+            "explanation": "Every day, the puppies at the animal hospital dressed in pretty clothes and greeted people with cute expressions, hoping to live in a beautiful home like a dachshund."
+          },
+          "zh-CN": {
+            "question": "动物医院的小狗们每天都做什么？",
+            "options": [
+              "吃了美味的饭。",
+              "在操场上尽情地奔跑玩耍。",
+              "穿着漂亮的衣服，带着可爱的表情与人们见面。",
+              "玩了新的玩具。"
+            ],
+            "correct_index": 3,
+            "explanation": "动物医院的小狗们每天都穿着漂亮的衣服，摆出可爱的表情，与人们见面，因为它们都想住在像腊肠犬一样漂亮的家里。"
+          },
+          "ja": {
+            "question": "動物病院の犬たちは、毎日何をしていたでしょうか？",
+            "options": [
+              "おいしいご飯を食べた。",
+              "校庭で元気いっぱいに走り回った。",
+              "きれいな服を着て、可愛らしい表情で人々に会った。",
+              "新しいおもちゃで遊んだ。"
+            ],
+            "correct_index": 3,
+            "explanation": "動物病院の子犬たちは、ダックスフントのような可愛い家で暮らしたいと、毎日可愛い服を着て、愛らしい表情で人々に会っていました。"
+          },
+          "es": {
+            "question": "¿Qué hacían los cachorros del hospital de animales todos los días?",
+            "options": [
+              "Comí una comida deliciosa.",
+              "Corrimos y jugamos alegremente en el patio.",
+              "Llevaba un vestido bonito y saludaba a la gente con una expresión adorable.",
+              "Jugó con un juguete nuevo."
+            ],
+            "correct_index": 3,
+            "explanation": "En el hospital veterinario, los cachorros, deseando vivir en una casa tan bonita como la de un dachshund, se vestían cada día con ropa bonita y recibían a la gente con expresiones adorables."
+          },
+          "de": {
+            "question": "Was taten die Hunde im Tierkrankenhaus jeden Tag?",
+            "options": [
+              "Ich habe ein leckeres Essen gegessen.",
+              "Wir tobten ausgelassen auf dem Sportplatz.",
+              "Sie traf Menschen in hübschen Kleidern und mit einem niedlichen Gesichtsausdruck.",
+              "Ich habe mit einem neuen Spielzeug gespielt."
+            ],
+            "correct_index": 3,
+            "explanation": "Die Hunde im Tierkrankenhaus trugen jeden Tag hübsche Kleider und zeigten niedliche Gesichtsausdrücke, weil sie sich wünschten, in einem schönen Zuhause wie ein Dackel zu leben."
+          },
+          "fr": {
+            "question": "Que faisaient les chiots de l'hôpital pour animaux tous les jours ?",
+            "options": [
+              "J'ai mangé un délicieux repas.",
+              "J'ai couru et joué avec joie dans la cour de récréation.",
+              "Vêtue d'une belle robe et arborant une expression adorable, elle rencontrait les gens.",
+              "J'ai joué avec un nouveau jouet."
+            ],
+            "correct_index": 3,
+            "explanation": "À l'hôpital vétérinaire, les chiots, rêvant de vivre dans une belle maison comme les teckels, se vêtissaient chaque jour de jolis vêtements et rencontraient les gens avec des expressions adorables."
+          },
+          "pt-BR": {
+            "question": "O que os cachorros do hospital veterinário faziam todos os dias?",
+            "options": [
+              "Comi uma refeição deliciosa.",
+              "Brincamos e corremos alegremente no pátio.",
+              "Vestida com roupas bonitas e com uma expressão adorável, encontrava as pessoas.",
+              "Brinquei com um brinquedo novo."
+            ],
+            "correct_index": 3,
+            "explanation": "No hospital veterinário, os cachorrinhos sonhavam em viver em lares bonitos como o de um Dachshund. Por isso, todos os dias vestiam roupinhas charmosas e faziam carinhas fofas para as pessoas que encontravam."
+          },
+          "zh-TW": {
+            "question": "動物醫院的小狗們每天都做什麼事呢？",
+            "options": [
+              "吃了美味的飯。",
+              "在操場上盡情地奔跑玩耍。",
+              "穿著漂亮的衣服，帶著可愛的表情與人們相遇。",
+              "玩了新的玩具"
+            ],
+            "correct_index": 3,
+            "explanation": "動物醫院裡的小狗們，每天都穿著漂亮的衣服，擺出可愛的表情與人們見面，因為牠們都想住在像臘腸犬一樣漂亮的家裡。"
+          },
+          "it": {
+            "question": "Cosa facevano ogni giorno i cuccioli dell'ospedale veterinario?",
+            "options": [
+              "Ho mangiato un pasto delizioso.",
+              "Ho giocato e corso allegramente nel cortile.",
+              "Incontrava le persone indossando abiti graziosi e con un'espressione adorabile.",
+              "Ho giocato con un nuovo giocattolo."
+            ],
+            "correct_index": 3,
+            "explanation": "Nell'ospedale veterinario, i cuccioli sognavano di vivere in una bella casa come quella di un bassotto. Per questo, ogni giorno indossavano vestiti carini e accoglievano le persone con espressioni adorabili."
+          }
+        },
+        {
+          "ko": {
+            "question": "이야기에서 '심장이 콩닥콩닥 뛰기 시작했다'는 것은 어떤 감정을 나타낼까요?",
             "options": [
               "기쁨",
-              "분노",
               "슬픔",
-              "무관심"
+              "두려움 또는 설렘",
+              "분노"
             ],
-            "correct_index": 3,
-            "explanation": "닥스훈트의 슬픈 이야기에 강아지들은 슬픔을 느끼고 걱정했습니다."
+            "correct_index": 2,
+            "explanation": "심장이 콩닥콩닥 뛴다는 것은 긴장되거나 설레는 감정을 표현할 때 사용합니다."
           },
           "en": {
-            "question": "How did the puppies feel after hearing the dachshund's story?",
+            "question": "In the story, what feeling does \"My heart started to pound\" represent?",
             "options": [
               "Joy",
-              "Anger",
               "Sadness",
-              "Indifference"
+              "Fear or Excitement",
+              "Anger"
             ],
-            "correct_index": 3,
-            "explanation": "The puppies felt sadness and worry after hearing the dachshund's sad story."
+            "correct_index": 2,
+            "explanation": "Having your heart pound or race is used to express feelings of nervousness or excitement."
           },
           "zh-CN": {
-            "question": "小狗们听了腊肠犬的故事后，感觉如何？",
+            "question": "故事中，“心跳开始怦怦直跳”表达了什么样的情感？",
             "options": [
               "喜悦",
-              "愤怒",
               "悲伤",
-              "漠不关心"
+              "恐惧或激动",
+              "愤怒"
             ],
-            "correct_index": 3,
-            "explanation": "小狗们听了腊肠犬的悲伤故事，感到难过和担忧。"
+            "correct_index": 2,
+            "explanation": "心跳加速通常用来表达紧张或激动的心情。"
           },
           "ja": {
-            "question": "ダックスフントの話を聞いた子犬たちは、どんな気持ちになったでしょうか？",
+            "question": "物語の中で「心臓がドキドキし始めた」というのは、どんな感情を表しているでしょうか？",
             "options": [
               "喜び",
-              "怒り",
               "悲しみ",
-              "無関心"
+              "恐れ、あるいはときめき",
+              "怒り"
             ],
-            "correct_index": 3,
-            "explanation": "ダックスフントの悲しい話に、子犬たちは悲しみを感じ、心配しました。"
+            "correct_index": 2,
+            "explanation": "心臓がドキドキするのは、緊張したり、ワクワクしたりする気持ちを表す時に使います。"
           },
           "es": {
-            "question": "¿Qué sintieron los cachorros después de escuchar la historia del perro salchicha?",
+            "question": "En el cuento, ¿qué emoción representa la frase \"el corazón empezó a latir con fuerza\"?",
             "options": [
               "Alegría",
-              "Ira",
               "Tristeza",
-              "Indiferencia"
+              "Miedo o emoción",
+              "Ira"
             ],
-            "correct_index": 3,
-            "explanation": "La triste historia del perro salchicha hizo que los cachorros sintieran tristeza y preocupación."
+            "correct_index": 2,
+            "explanation": "Decir que el corazón late con fuerza se usa para expresar sentimientos de nerviosismo o emoción."
           },
           "de": {
-            "question": "Welche Gefühle hatten die Welpen, nachdem sie die Geschichte des Dackels gehört hatten?",
+            "question": "Welches Gefühl wird in der Geschichte durch den Ausdruck \"Das Herz begann, wie wild zu schlagen\" ausgedrückt?",
             "options": [
               "Freude",
-              "Wut",
               "Trauer",
-              "Gleichgültigkeit"
+              "Furcht oder Aufregung",
+              "Wut"
             ],
-            "correct_index": 3,
-            "explanation": "Die Welpen waren traurig und besorgt über die traurige Geschichte des Dackels."
+            "correct_index": 2,
+            "explanation": "\"Herzklopfen\" wird verwendet, um ein Gefühl von Aufregung oder Nervosität auszudrücken."
           },
           "fr": {
-            "question": "Qu'ont ressenti les chiots après avoir entendu l'histoire du teckel ?",
+            "question": "Dans l'histoire, l'expression \"le cœur a commencé à battre la chamade\" exprime quel sentiment ?",
             "options": [
               "Joie",
-              "Colère",
               "Tristesse",
-              "Indifférence"
+              "Peur ou excitation ?",
+              "Colère"
             ],
-            "correct_index": 3,
-            "explanation": "L'histoire triste du teckel a rempli les chiots de tristesse et d'inquiétude."
+            "correct_index": 2,
+            "explanation": "L'expression \"avoir le cœur qui bat la chamade\" est utilisée pour exprimer une sensation de tension ou d'excitation."
           },
           "pt-BR": {
-            "question": "Que sentimento os filhotes tiveram ao ouvir a história do Dachshund?",
+            "question": "Na história, quando se diz que \"o coração começou a bater forte\", qual sentimento isso representa?",
             "options": [
               "Alegria",
-              "Raiva",
               "Tristeza",
-              "Indiferença"
+              "Medo ou Expectativa",
+              "Raiva"
             ],
-            "correct_index": 3,
-            "explanation": "Na triste história do dachshund, os filhotes sentiram tristeza e preocupação."
+            "correct_index": 2,
+            "explanation": "Usamos a expressão \"o coração palpita\" para expressar sentimentos de nervosismo ou excitação."
           },
           "zh-TW": {
-            "question": "聽到臘腸狗的故事後，小狗們有什麼感受？",
+            "question": "在故事中，描述「心臟撲通撲通地跳起來」通常代表哪種情緒？",
             "options": [
               "喜悅",
-              "憤怒",
               "悲傷",
-              "漠不關心"
+              "恐懼還是期待",
+              "憤怒"
             ],
-            "correct_index": 3,
-            "explanation": "臘腸狗的悲傷故事讓小狗們感到難過和擔心。"
+            "correct_index": 2,
+            "explanation": "心跳加速是用來表達緊張或激動的心情。"
           },
           "it": {
-            "question": "Quale sentimento provarono i cuccioli dopo aver ascoltato la storia del bassotto?",
+            "question": "Nel racconto, cosa indica l'espressione \"il cuore ha iniziato a battere forte\"?",
             "options": [
               "Gioia",
-              "Rabbia",
               "Tristezza",
-              "Indifferenza"
+              "Paura o eccitazione",
+              "Rabbia"
             ],
-            "correct_index": 3,
-            "explanation": "La triste storia del bassotto rese i cuccioli tristi e preoccupati."
+            "correct_index": 2,
+            "explanation": "L'espressione \"il cuore batte forte\" si usa per esprimere una sensazione di nervosismo o eccitazione."
           }
         },
         {
           "ko": {
-            "question": "이야기 속 '콩닥콩닥'은 무엇이 뛰는 소리를 나타낼까요?",
+            "question": "이야기에 나오는 강아지들 중 가장 슬픈 강아지는 누구인가요?",
             "options": [
-              "심장",
-              "발",
-              "꼬리",
-              "귀"
+              "말티즈",
+              "슈나우저",
+              "푸들",
+              "닥스훈트"
             ],
-            "correct_index": 0,
-            "explanation": "'콩닥콩닥'은 심장이 두근거리는 소리를 흉내내는 의성어입니다."
+            "correct_index": 3,
+            "explanation": "닥스훈트는 주인이 자신을 잊은 것 같아 슬퍼하며 동물 병원에 왔습니다."
           },
           "en": {
-            "question": "In the story, what is the \"thump-thump\" sound representing?",
+            "question": "Which of the dogs in the story is the saddest?",
             "options": [
-              "Heart",
-              "Foot",
-              "Tail",
-              "Ear"
+              "Maltese",
+              "Schnauzer",
+              "Poodle",
+              "Dachshund"
             ],
-            "correct_index": 0,
-            "explanation": "\"콩닥콩닥\" is an onomatopoeia that imitates the sound of a heart beating rapidly."
+            "correct_index": 3,
+            "explanation": "A dachshund came to the animal hospital, saddened because he felt his owner had forgotten about him."
           },
           "zh-CN": {
-            "question": "故事中“怦怦”指的是什么跳动的声音？",
+            "question": "在故事中，哪只小狗最悲伤？",
             "options": [
-              "心脏",
-              "足",
-              "尾巴",
-              "耳朵"
+              "马尔济斯犬",
+              "雪纳瑞",
+              "贵宾犬",
+              "腊肠犬"
             ],
-            "correct_index": 0,
-            "explanation": "“怦怦”是模仿心脏跳动声音的拟声词。"
+            "correct_index": 3,
+            "explanation": "腊肠犬因为主人好像忘记了自己而感到难过，来到了动物医院。"
           },
           "ja": {
-            "question": "物語の中で「ドキドキ」は何の音がする様子を表しているでしょうか？",
+            "question": "物語に出てくる犬の中で、一番悲しい犬は誰ですか？",
             "options": [
-              "心臓",
-              "足",
-              "しっぽ",
-              "耳"
+              "マルチーズ",
+              "シュナウザー",
+              "プードル",
+              "ダックスフント"
             ],
-            "correct_index": 0,
-            "explanation": "「ドキドキ」は、心臓がドキンドキンと高鳴る音を真似た擬音語です。"
+            "correct_index": 3,
+            "explanation": "ダックスフントは、飼い主が自分のことを忘れてしまったのではないかと悲しみ、動物病院にやってきました。"
           },
           "es": {
-            "question": "En el cuento, ¿qué late cuando se escucha \"콩닥콩닥\"?",
+            "question": "De los perros en la historia, ¿cuál es el más triste?",
             "options": [
-              "El corazón",
-              "Pie",
-              "Cola",
-              "Oreja"
+              "Maltés",
+              "Schnauzer",
+              "Caniche",
+              "Teckel"
             ],
-            "correct_index": 0,
-            "explanation": "\"콩닥콩닥\" es una onomatopeya que imita el sonido de un corazón latiendo con fuerza."
+            "correct_index": 3,
+            "explanation": "Un perro salchicha llegó a la clínica veterinaria triste porque sentía que su dueño lo había olvidado."
           },
           "de": {
-            "question": "Wessen Herz schlägt in der Geschichte 'Poch Poch'?",
+            "question": "Welcher Hund in der Geschichte ist der traurigste?",
             "options": [
-              "Das Herz",
-              "Fuß",
-              "Der Schwanz",
-              "Das Ohr"
+              "Malteser",
+              "Schnauzer",
+              "Pudel",
+              "Dackel"
             ],
-            "correct_index": 0,
-            "explanation": "\"Poch poch\" ist eine Lautmalerei, die das Geräusch eines klopfenden Herzens imitiert."
+            "correct_index": 3,
+            "explanation": "Der Dackel kam traurig in die Tierklinik, weil er dachte, sein Besitzer hätte ihn vergessen."
           },
           "fr": {
-            "question": "Dans l'histoire, quel est l'organe qui fait \"콩닥콩닥\" ?",
+            "question": "Parmi les chiens de l'histoire, lequel est le plus triste ?",
             "options": [
-              "Cœur",
-              "Pied",
-              "La queue",
-              "Oreille"
+              "Maltais",
+              "Schnauzer",
+              "Caniche",
+              "Teckel"
             ],
-            "correct_index": 0,
-            "explanation": "\"콩닥콩닥\" est une onomatopée qui imite le bruit d'un cœur qui bat la chamade."
+            "correct_index": 3,
+            "explanation": "Le teckel est arrivé à la clinique vétérinaire, triste car il avait l'impression que son maître l'avait oublié."
           },
           "pt-BR": {
-            "question": "Na história, o que o som \"콩닥콩닥\" representa batendo?",
+            "question": "Qual dos cachorros nas histórias é o mais triste?",
             "options": [
-              "Coração",
-              "Pé",
-              "Rabo",
-              "Orelha"
+              "Maltês",
+              "Schnauzer",
+              "Poodle",
+              "Dachshund"
             ],
-            "correct_index": 0,
-            "explanation": "\"콩닥콩닥\" é uma onomatopeia que imita o som de um coração batendo forte."
+            "correct_index": 3,
+            "explanation": "O dachshund chegou ao veterinário triste, sentindo que seu dono o havia esquecido."
           },
           "zh-TW": {
-            "question": "故事中「怦怦跳」指的是什麼東西跳動的聲音？",
+            "question": "在故事裡出現的狗狗中，誰是最悲傷的狗狗呢？",
             "options": [
-              "心臟",
-              "腳",
-              "尾巴",
-              "耳朵"
+              "瑪爾濟斯犬",
+              "雪納瑞",
+              "貴賓犬",
+              "臘腸犬"
             ],
-            "correct_index": 0,
-            "explanation": "「怦怦跳」是模仿心臟跳動聲音的擬聲詞。"
+            "correct_index": 3,
+            "explanation": "臘腸犬因為覺得主人好像忘記了自己，感到非常傷心，於是來到了動物醫院。"
           },
           "it": {
-            "question": "Nel racconto, il \"tum tum\" a cosa si riferisce? A cosa corrisponde il suono di \"tum tum\"?",
+            "question": "Tra i cani della storia, qual è il più triste?",
             "options": [
-              "Cuore",
-              "Piede",
-              "Coda\n\n(이것은 질문이나 선택지가 아니므로, 단순히 제목에 해당하는 단어만 번역했습니다.)",
-              "Orecchio"
+              "Maltese",
+              "Schnauzer",
+              "Barboncino",
+              "Bassotto"
             ],
-            "correct_index": 0,
-            "explanation": "‘콩닥콩닥’ è un'onomatopea che imita il suono di un cuore che batte forte."
+            "correct_index": 3,
+            "explanation": "Il bassotto è arrivato alla clinica veterinaria triste, perché pensava che il suo padrone lo avesse dimenticato."
           }
         },
         {
           "ko": {
             "question": "말티즈가 걱정하게 된 이유는 무엇인가요?",
             "options": [
-              "새 주인이 자신을 싫어할까 봐",
-              "새 주인이 자신을 잊어버릴까 봐",
-              "새 주인이 자신을 아프게 할까 봐",
-              "새 주인이 자신에게 먹이를 안 줄까 봐"
+              "새 주인이 무서워서",
+              "자신도 닥스훈트처럼 버려질까 봐",
+              "동물 병원이 싫어서",
+              "밥을 안 줄까 봐"
             ],
             "correct_index": 1,
-            "explanation": "닥스훈트의 이야기를 듣고 말티즈는 자신도 닥스훈트처럼 잊혀질까 봐 걱정했습니다."
+            "explanation": "말티즈는 닥스훈트 이야기를 듣고 자신도 새 주인에게 버려질까 봐 걱정하게 되었습니다."
           },
           "en": {
             "question": "What made the Maltese dog worried?",
             "options": [
-              "Worried the new owner wouldn't like him/her.",
-              "For fear that her new owner would forget her",
-              "For fear the new owner would hurt them",
-              "Afraid the new owner wouldn't feed it."
+              "Afraid of the new owner.",
+              "Afraid of being abandoned like a dachshund.",
+              "**Question:** Why did the animal dislike the animal hospital?",
+              "Afraid they wouldn't give me food."
             ],
             "correct_index": 1,
-            "explanation": "After hearing the dachshund's story, the Maltese worried that it too would be forgotten, just like the dachshund."
+            "explanation": "After hearing the story of the dachshund, the Maltese became worried that he too would be abandoned by his new owner."
           },
           "zh-CN": {
-            "question": "马尔济斯犬为什么开始担心了？",
+            "question": "马尔济斯犬为什么会感到担心呢？",
             "options": [
-              "害怕新主人不喜欢自己",
-              "怕新主人把自己忘记",
-              "怕新主人会伤害自己",
-              "担心新主人不给自己喂食"
+              "害怕新主人",
+              "害怕自己也像腊肠犬一样被抛弃",
+              "讨厌动物医院",
+              "怕不给饭吃"
             ],
             "correct_index": 1,
-            "explanation": "听了腊肠犬的故事，马尔济斯犬担心自己也会像腊肠犬一样被遗忘。"
+            "explanation": "马尔济斯犬听了腊肠犬的故事后，开始担心自己也会被新主人抛弃。"
           },
           "ja": {
             "question": "マルチーズが心配になった理由は何ですか？",
             "options": [
-              "新しい飼い主が自分のことを嫌うのではないかと",
-              "新しい飼い主が自分のことを忘れてしまうのではないかと",
-              "新しい飼い主が自分を傷つけるのではないかと",
-              "新しい飼い主が餌をくれないのではないかと"
+              "新しい飼い主が怖くて",
+              "自分もダックスフントのように捨てられるのではないかと",
+              "動物病院が嫌で\n\n**혹은, 문맥에 따라 아래와 같이 번역하는 것이 더 자연스러울 수 있습니다.**\n\n* 動物病院嫌い\n* 動物病院は苦手",
+              "ご飯をくれないんじゃないかと"
             ],
             "correct_index": 1,
-            "explanation": "ダックスフントの話を聞いて、マルチーズは自分もダックスフントのように忘れられてしまうのではないかと心配しました。"
+            "explanation": "マルチーズはダックスフントの話を聞いて、自分も新しい飼い主に捨てられるのではないかと心配になりました。"
           },
           "es": {
-            "question": "¿Por qué se preocupó el maltés?",
+            "question": "말티즈가 걱정하게 된 이유는 무엇인가요?",
             "options": [
-              "Por miedo a que su nuevo dueño no la quisiera.",
-              "Por miedo a que su nuevo dueño/a la olvidara.",
-              "Por miedo a que su nuevo dueño le hiciera daño.",
-              "Por miedo a que su nuevo dueño no le diera de comer."
+              "새 주인이 무서워서",
+              "자신도 닥스훈트처럼 버려질까 봐",
+              "동물 병원이 싫어서",
+              "밥을 안 줄까 봐"
             ],
             "correct_index": 1,
-            "explanation": "Después de escuchar la historia del perro salchicha, el maltés se preocupó de que él también pudiera ser olvidado como el dachshund."
+            "explanation": "말티즈는 닥스훈트 이야기를 듣고 자신도 새 주인에게 버려질까 봐 걱정하게 되었습니다."
           },
           "de": {
-            "question": "Warum war der Malteser besorgt?",
+            "question": "말티즈가 걱정하게 된 이유는 무엇인가요?",
             "options": [
-              "Aus Angst, dass der neue Besitzer sie nicht mögen würde.",
-              "Aus Angst, dass der neue Besitzer sie vergessen würde.",
-              "aus Angst, dass der neue Besitzer ihm/ihr wehtun könnte",
-              "aus Angst, dass der neue Besitzer sie nicht füttern würde"
+              "새 주인이 무서워서",
+              "자신도 닥스훈트처럼 버려질까 봐",
+              "동물 병원이 싫어서",
+              "밥을 안 줄까 봐"
             ],
             "correct_index": 1,
-            "explanation": "Nachdem der Malteser die Geschichte des Dackels gehört hatte, sorgte er sich, ob er auch in Vergessenheit geraten würde, so wie der Dackel."
+            "explanation": "말티즈는 닥스훈트 이야기를 듣고 자신도 새 주인에게 버려질까 봐 걱정하게 되었습니다."
           },
           "fr": {
-            "question": "Quelle est la raison de l'inquiétude du Maltais ?",
+            "question": "말티즈가 걱정하게 된 이유는 무엇인가요?",
             "options": [
-              "De peur que son nouveau maître ne la déteste.",
-              "새 주인이 자신을 잊어버릴까 봐",
-              "새 주인이 자신을 아프게 할까 봐",
-              "새 주인이 자신에게 먹이를 안 줄까 봐"
+              "새 주인이 무서워서",
+              "자신도 닥스훈트처럼 버려질까 봐",
+              "동물 병원이 싫어서",
+              "밥을 안 줄까 봐"
             ],
             "correct_index": 1,
-            "explanation": "닥스훈트의 이야기를 듣고 말티즈는 자신도 닥스훈트처럼 잊혀질까 봐 걱정했습니다."
+            "explanation": "말티즈는 닥스훈트 이야기를 듣고 자신도 새 주인에게 버려질까 봐 걱정하게 되었습니다."
           },
           "pt-BR": {
             "question": "말티즈가 걱정하게 된 이유는 무엇인가요?",
             "options": [
-              "새 주인이 자신을 싫어할까 봐",
-              "새 주인이 자신을 잊어버릴까 봐",
-              "새 주인이 자신을 아프게 할까 봐",
-              "새 주인이 자신에게 먹이를 안 줄까 봐"
+              "새 주인이 무서워서",
+              "자신도 닥스훈트처럼 버려질까 봐",
+              "동물 병원이 싫어서",
+              "밥을 안 줄까 봐"
             ],
             "correct_index": 1,
-            "explanation": "닥스훈트의 이야기를 듣고 말티즈는 자신도 닥스훈트처럼 잊혀질까 봐 걱정했습니다."
+            "explanation": "말티즈는 닥스훈트 이야기를 듣고 자신도 새 주인에게 버려질까 봐 걱정하게 되었습니다."
           },
           "zh-TW": {
             "question": "말티즈가 걱정하게 된 이유는 무엇인가요?",
             "options": [
-              "새 주인이 자신을 싫어할까 봐",
-              "새 주인이 자신을 잊어버릴까 봐",
-              "새 주인이 자신을 아프게 할까 봐",
-              "새 주인이 자신에게 먹이를 안 줄까 봐"
+              "새 주인이 무서워서",
+              "자신도 닥스훈트처럼 버려질까 봐",
+              "동물 병원이 싫어서",
+              "밥을 안 줄까 봐"
             ],
             "correct_index": 1,
-            "explanation": "닥스훈트의 이야기를 듣고 말티즈는 자신도 닥스훈트처럼 잊혀질까 봐 걱정했습니다."
+            "explanation": "말티즈는 닥스훈트 이야기를 듣고 자신도 새 주인에게 버려질까 봐 걱정하게 되었습니다."
           },
           "it": {
             "question": "말티즈가 걱정하게 된 이유는 무엇인가요?",
             "options": [
-              "새 주인이 자신을 싫어할까 봐",
-              "새 주인이 자신을 잊어버릴까 봐",
-              "새 주인이 자신을 아프게 할까 봐",
-              "새 주인이 자신에게 먹이를 안 줄까 봐"
+              "새 주인이 무서워서",
+              "자신도 닥스훈트처럼 버려질까 봐",
+              "동물 병원이 싫어서",
+              "밥을 안 줄까 봐"
             ],
             "correct_index": 1,
-            "explanation": "닥스훈트의 이야기를 듣고 말티즈는 자신도 닥스훈트처럼 잊혀질까 봐 걱정했습니다."
+            "explanation": "말티즈는 닥스훈트 이야기를 듣고 자신도 새 주인에게 버려질까 봐 걱정하게 되었습니다."
           }
         },
         {
           "ko": {
-            "question": "이 동화에서 '예쁜 이층집'은 무엇을 상징하나요?",
+            "question": "이 이야기에서 '건너편'은 어디를 가리키나요?",
             "options": [
-              "가난",
-              "아름다움",
-              "겉모습만 번지르르한 행복",
-              "진정한 행복"
+              "동물 병원 안",
+              "동물 병원 옆",
+              "동물 병원 건너편",
+              "동물 병원 뒤"
             ],
             "correct_index": 2,
-            "explanation": "겉으로는 좋아 보이지만 속으로는 불행할 수 있음을 암시합니다."
+            "explanation": "이야기에서 '건너편'은 동물 병원 건너편에 있는 예쁜 이층집을 가리킵니다."
           },
           "en": {
-            "question": "이 동화에서 '예쁜 이층집'은 무엇을 상징하나요?",
+            "question": "이 이야기에서 '건너편'은 어디를 가리키나요?",
             "options": [
-              "가난",
-              "아름다움",
-              "겉모습만 번지르르한 행복",
-              "진정한 행복"
+              "동물 병원 안",
+              "동물 병원 옆",
+              "동물 병원 건너편",
+              "동물 병원 뒤"
             ],
             "correct_index": 2,
-            "explanation": "겉으로는 좋아 보이지만 속으로는 불행할 수 있음을 암시합니다."
+            "explanation": "이야기에서 '건너편'은 동물 병원 건너편에 있는 예쁜 이층집을 가리킵니다."
           },
           "zh-CN": {
-            "question": "이 동화에서 '예쁜 이층집'은 무엇을 상징하나요?",
+            "question": "이 이야기에서 '건너편'은 어디를 가리키나요?",
             "options": [
-              "가난",
-              "아름다움",
-              "겉모습만 번지르르한 행복",
-              "진정한 행복"
+              "동물 병원 안",
+              "동물 병원 옆",
+              "동물 병원 건너편",
+              "동물 병원 뒤"
             ],
             "correct_index": 2,
-            "explanation": "겉으로는 좋아 보이지만 속으로는 불행할 수 있음을 암시합니다."
+            "explanation": "이야기에서 '건너편'은 동물 병원 건너편에 있는 예쁜 이층집을 가리킵니다."
           },
           "ja": {
-            "question": "이 동화에서 '예쁜 이층집'은 무엇을 상징하나요?",
+            "question": "이 이야기에서 '건너편'은 어디를 가리키나요?",
             "options": [
-              "가난",
-              "아름다움",
-              "겉모습만 번지르르한 행복",
-              "진정한 행복"
+              "동물 병원 안",
+              "동물 병원 옆",
+              "동물 병원 건너편",
+              "동물 병원 뒤"
             ],
             "correct_index": 2,
-            "explanation": "겉으로는 좋아 보이지만 속으로는 불행할 수 있음을 암시합니다."
+            "explanation": "이야기에서 '건너편'은 동물 병원 건너편에 있는 예쁜 이층집을 가리킵니다."
           },
           "es": {
-            "question": "이 동화에서 '예쁜 이층집'은 무엇을 상징하나요?",
+            "question": "이 이야기에서 '건너편'은 어디를 가리키나요?",
             "options": [
-              "가난",
-              "아름다움",
-              "겉모습만 번지르르한 행복",
-              "진정한 행복"
+              "동물 병원 안",
+              "동물 병원 옆",
+              "동물 병원 건너편",
+              "동물 병원 뒤"
             ],
             "correct_index": 2,
-            "explanation": "겉으로는 좋아 보이지만 속으로는 불행할 수 있음을 암시합니다."
+            "explanation": "이야기에서 '건너편'은 동물 병원 건너편에 있는 예쁜 이층집을 가리킵니다."
           },
           "de": {
-            "question": "이 동화에서 '예쁜 이층집'은 무엇을 상징하나요?",
+            "question": "이 이야기에서 '건너편'은 어디를 가리키나요?",
             "options": [
-              "가난",
-              "아름다움",
-              "겉모습만 번지르르한 행복",
-              "진정한 행복"
+              "동물 병원 안",
+              "동물 병원 옆",
+              "동물 병원 건너편",
+              "동물 병원 뒤"
             ],
             "correct_index": 2,
-            "explanation": "겉으로는 좋아 보이지만 속으로는 불행할 수 있음을 암시합니다."
+            "explanation": "이야기에서 '건너편'은 동물 병원 건너편에 있는 예쁜 이층집을 가리킵니다."
           },
           "fr": {
-            "question": "이 동화에서 '예쁜 이층집'은 무엇을 상징하나요?",
+            "question": "이 이야기에서 '건너편'은 어디를 가리키나요?",
             "options": [
-              "가난",
-              "아름다움",
-              "겉모습만 번지르르한 행복",
-              "진정한 행복"
+              "동물 병원 안",
+              "동물 병원 옆",
+              "동물 병원 건너편",
+              "동물 병원 뒤"
             ],
             "correct_index": 2,
-            "explanation": "겉으로는 좋아 보이지만 속으로는 불행할 수 있음을 암시합니다."
+            "explanation": "이야기에서 '건너편'은 동물 병원 건너편에 있는 예쁜 이층집을 가리킵니다."
           },
           "pt-BR": {
-            "question": "이 동화에서 '예쁜 이층집'은 무엇을 상징하나요?",
+            "question": "이 이야기에서 '건너편'은 어디를 가리키나요?",
             "options": [
-              "가난",
-              "아름다움",
-              "겉모습만 번지르르한 행복",
-              "진정한 행복"
+              "동물 병원 안",
+              "동물 병원 옆",
+              "동물 병원 건너편",
+              "동물 병원 뒤"
             ],
             "correct_index": 2,
-            "explanation": "겉으로는 좋아 보이지만 속으로는 불행할 수 있음을 암시합니다."
+            "explanation": "이야기에서 '건너편'은 동물 병원 건너편에 있는 예쁜 이층집을 가리킵니다."
           },
           "zh-TW": {
-            "question": "이 동화에서 '예쁜 이층집'은 무엇을 상징하나요?",
+            "question": "이 이야기에서 '건너편'은 어디를 가리키나요?",
             "options": [
-              "가난",
-              "아름다움",
-              "겉모습만 번지르르한 행복",
-              "진정한 행복"
+              "동물 병원 안",
+              "동물 병원 옆",
+              "동물 병원 건너편",
+              "동물 병원 뒤"
             ],
             "correct_index": 2,
-            "explanation": "겉으로는 좋아 보이지만 속으로는 불행할 수 있음을 암시합니다."
+            "explanation": "이야기에서 '건너편'은 동물 병원 건너편에 있는 예쁜 이층집을 가리킵니다."
           },
           "it": {
-            "question": "이 동화에서 '예쁜 이층집'은 무엇을 상징하나요?",
+            "question": "이 이야기에서 '건너편'은 어디를 가리키나요?",
             "options": [
-              "가난",
-              "아름다움",
-              "겉모습만 번지르르한 행복",
-              "진정한 행복"
+              "동물 병원 안",
+              "동물 병원 옆",
+              "동물 병원 건너편",
+              "동물 병원 뒤"
             ],
             "correct_index": 2,
-            "explanation": "겉으로는 좋아 보이지만 속으로는 불행할 수 있음을 암시합니다."
+            "explanation": "이야기에서 '건너편'은 동물 병원 건너편에 있는 예쁜 이층집을 가리킵니다."
           }
         },
         {
           "ko": {
-            "question": "이 동화의 주요 등장인물은 모두 어떤 동물인가요?",
+            "question": "이 이야기의 교훈으로 가장 적절한 것은 무엇인가요?",
             "options": [
-              "고양이",
-              "강아지",
-              "새",
-              "토끼"
+              "겉모습만 보고 판단하지 마세요.",
+              "동물을 함부로 대하지 마세요.",
+              "처음과 같은 마음으로 동물을 사랑해야 합니다.",
+              "돈을 많이 벌어야 행복합니다."
             ],
-            "correct_index": 1,
-            "explanation": "이야기는 여러 종류의 강아지들을 중심으로 전개됩니다."
+            "correct_index": 2,
+            "explanation": "이 이야기는 동물을 데려왔을 때 처음 마음과 변치 않고 사랑으로 보살펴야 한다는 교훈을 줍니다."
           },
           "en": {
-            "question": "이 동화의 주요 등장인물은 모두 어떤 동물인가요?",
+            "question": "이 이야기의 교훈으로 가장 적절한 것은 무엇인가요?",
             "options": [
-              "고양이",
-              "강아지",
-              "새",
-              "토끼"
+              "겉모습만 보고 판단하지 마세요.",
+              "동물을 함부로 대하지 마세요.",
+              "처음과 같은 마음으로 동물을 사랑해야 합니다.",
+              "돈을 많이 벌어야 행복합니다."
             ],
-            "correct_index": 1,
-            "explanation": "이야기는 여러 종류의 강아지들을 중심으로 전개됩니다."
+            "correct_index": 2,
+            "explanation": "이 이야기는 동물을 데려왔을 때 처음 마음과 변치 않고 사랑으로 보살펴야 한다는 교훈을 줍니다."
           },
           "zh-CN": {
-            "question": "이 동화의 주요 등장인물은 모두 어떤 동물인가요?",
+            "question": "이 이야기의 교훈으로 가장 적절한 것은 무엇인가요?",
             "options": [
-              "고양이",
-              "강아지",
-              "새",
-              "토끼"
+              "겉모습만 보고 판단하지 마세요.",
+              "동물을 함부로 대하지 마세요.",
+              "처음과 같은 마음으로 동물을 사랑해야 합니다.",
+              "돈을 많이 벌어야 행복합니다."
             ],
-            "correct_index": 1,
-            "explanation": "이야기는 여러 종류의 강아지들을 중심으로 전개됩니다."
+            "correct_index": 2,
+            "explanation": "이 이야기는 동물을 데려왔을 때 처음 마음과 변치 않고 사랑으로 보살펴야 한다는 교훈을 줍니다."
           },
           "ja": {
-            "question": "이 동화의 주요 등장인물은 모두 어떤 동물인가요?",
+            "question": "이 이야기의 교훈으로 가장 적절한 것은 무엇인가요?",
             "options": [
-              "고양이",
-              "강아지",
-              "새",
-              "토끼"
+              "겉모습만 보고 판단하지 마세요.",
+              "동물을 함부로 대하지 마세요.",
+              "처음과 같은 마음으로 동물을 사랑해야 합니다.",
+              "돈을 많이 벌어야 행복합니다."
             ],
-            "correct_index": 1,
-            "explanation": "이야기는 여러 종류의 강아지들을 중심으로 전개됩니다."
+            "correct_index": 2,
+            "explanation": "이 이야기는 동물을 데려왔을 때 처음 마음과 변치 않고 사랑으로 보살펴야 한다는 교훈을 줍니다."
           },
           "es": {
-            "question": "이 동화의 주요 등장인물은 모두 어떤 동물인가요?",
+            "question": "이 이야기의 교훈으로 가장 적절한 것은 무엇인가요?",
             "options": [
-              "고양이",
-              "강아지",
-              "새",
-              "토끼"
+              "겉모습만 보고 판단하지 마세요.",
+              "동물을 함부로 대하지 마세요.",
+              "처음과 같은 마음으로 동물을 사랑해야 합니다.",
+              "돈을 많이 벌어야 행복합니다."
             ],
-            "correct_index": 1,
-            "explanation": "이야기는 여러 종류의 강아지들을 중심으로 전개됩니다."
+            "correct_index": 2,
+            "explanation": "이 이야기는 동물을 데려왔을 때 처음 마음과 변치 않고 사랑으로 보살펴야 한다는 교훈을 줍니다."
           },
           "de": {
-            "question": "이 동화의 주요 등장인물은 모두 어떤 동물인가요?",
+            "question": "이 이야기의 교훈으로 가장 적절한 것은 무엇인가요?",
             "options": [
-              "고양이",
-              "강아지",
-              "새",
-              "토끼"
+              "겉모습만 보고 판단하지 마세요.",
+              "동물을 함부로 대하지 마세요.",
+              "처음과 같은 마음으로 동물을 사랑해야 합니다.",
+              "돈을 많이 벌어야 행복합니다."
             ],
-            "correct_index": 1,
-            "explanation": "이야기는 여러 종류의 강아지들을 중심으로 전개됩니다."
+            "correct_index": 2,
+            "explanation": "이 이야기는 동물을 데려왔을 때 처음 마음과 변치 않고 사랑으로 보살펴야 한다는 교훈을 줍니다."
           },
           "fr": {
-            "question": "이 동화의 주요 등장인물은 모두 어떤 동물인가요?",
+            "question": "이 이야기의 교훈으로 가장 적절한 것은 무엇인가요?",
             "options": [
-              "고양이",
-              "강아지",
-              "새",
-              "토끼"
+              "겉모습만 보고 판단하지 마세요.",
+              "동물을 함부로 대하지 마세요.",
+              "처음과 같은 마음으로 동물을 사랑해야 합니다.",
+              "돈을 많이 벌어야 행복합니다."
             ],
-            "correct_index": 1,
-            "explanation": "이야기는 여러 종류의 강아지들을 중심으로 전개됩니다."
+            "correct_index": 2,
+            "explanation": "이 이야기는 동물을 데려왔을 때 처음 마음과 변치 않고 사랑으로 보살펴야 한다는 교훈을 줍니다."
           },
           "pt-BR": {
-            "question": "이 동화의 주요 등장인물은 모두 어떤 동물인가요?",
+            "question": "이 이야기의 교훈으로 가장 적절한 것은 무엇인가요?",
             "options": [
-              "고양이",
-              "강아지",
-              "새",
-              "토끼"
+              "겉모습만 보고 판단하지 마세요.",
+              "동물을 함부로 대하지 마세요.",
+              "처음과 같은 마음으로 동물을 사랑해야 합니다.",
+              "돈을 많이 벌어야 행복합니다."
             ],
-            "correct_index": 1,
-            "explanation": "이야기는 여러 종류의 강아지들을 중심으로 전개됩니다."
+            "correct_index": 2,
+            "explanation": "이 이야기는 동물을 데려왔을 때 처음 마음과 변치 않고 사랑으로 보살펴야 한다는 교훈을 줍니다."
           },
           "zh-TW": {
-            "question": "이 동화의 주요 등장인물은 모두 어떤 동물인가요?",
+            "question": "이 이야기의 교훈으로 가장 적절한 것은 무엇인가요?",
             "options": [
-              "고양이",
-              "강아지",
-              "새",
-              "토끼"
+              "겉모습만 보고 판단하지 마세요.",
+              "동물을 함부로 대하지 마세요.",
+              "처음과 같은 마음으로 동물을 사랑해야 합니다.",
+              "돈을 많이 벌어야 행복합니다."
             ],
-            "correct_index": 1,
-            "explanation": "이야기는 여러 종류의 강아지들을 중심으로 전개됩니다."
+            "correct_index": 2,
+            "explanation": "이 이야기는 동물을 데려왔을 때 처음 마음과 변치 않고 사랑으로 보살펴야 한다는 교훈을 줍니다."
           },
           "it": {
-            "question": "이 동화의 주요 등장인물은 모두 어떤 동물인가요?",
+            "question": "이 이야기의 교훈으로 가장 적절한 것은 무엇인가요?",
             "options": [
-              "고양이",
-              "강아지",
-              "새",
-              "토끼"
+              "겉모습만 보고 판단하지 마세요.",
+              "동물을 함부로 대하지 마세요.",
+              "처음과 같은 마음으로 동물을 사랑해야 합니다.",
+              "돈을 많이 벌어야 행복합니다."
             ],
-            "correct_index": 1,
-            "explanation": "이야기는 여러 종류의 강아지들을 중심으로 전개됩니다."
+            "correct_index": 2,
+            "explanation": "이 이야기는 동물을 데려왔을 때 처음 마음과 변치 않고 사랑으로 보살펴야 한다는 교훈을 줍니다."
           }
         },
         {
           "ko": {
-            "question": "이 이야기에서 가장 중요한 교훈은 무엇일까요?",
+            "question": "강아지들이 '창문에 비친 내 모습을 좀 봐'라고 말하는 이유는 무엇일까요?",
             "options": [
-              "외모가 중요하다",
-              "집이 크고 좋아야 행복하다",
-              "겉모습보다 마음이 중요하다",
-              "동물은 병원에 가면 안 된다"
+              "배가 고파서",
+              "자신의 외모를 자랑하고 싶어서",
+              "심심해서",
+              "주인에게 혼나서"
             ],
-            "correct_index": 3,
-            "explanation": "겉으로 보이는 것보다 진정한 마음과 관심이 중요하다는 교훈을 줍니다."
+            "correct_index": 1,
+            "explanation": "강아지들은 창문에 비친 자신의 모습을 보며 서로 예쁘다고 자랑하고 싶어합니다."
           },
           "en": {
-            "question": "이 이야기에서 가장 중요한 교훈은 무엇일까요?",
+            "question": "강아지들이 '창문에 비친 내 모습을 좀 봐'라고 말하는 이유는 무엇일까요?",
             "options": [
-              "외모가 중요하다",
-              "집이 크고 좋아야 행복하다",
-              "겉모습보다 마음이 중요하다",
-              "동물은 병원에 가면 안 된다"
+              "배가 고파서",
+              "자신의 외모를 자랑하고 싶어서",
+              "심심해서",
+              "주인에게 혼나서"
             ],
-            "correct_index": 3,
-            "explanation": "겉으로 보이는 것보다 진정한 마음과 관심이 중요하다는 교훈을 줍니다."
+            "correct_index": 1,
+            "explanation": "강아지들은 창문에 비친 자신의 모습을 보며 서로 예쁘다고 자랑하고 싶어합니다."
           },
           "zh-CN": {
-            "question": "이 이야기에서 가장 중요한 교훈은 무엇일까요?",
+            "question": "강아지들이 '창문에 비친 내 모습을 좀 봐'라고 말하는 이유는 무엇일까요?",
             "options": [
-              "외모가 중요하다",
-              "집이 크고 좋아야 행복하다",
-              "겉모습보다 마음이 중요하다",
-              "동물은 병원에 가면 안 된다"
+              "배가 고파서",
+              "자신의 외모를 자랑하고 싶어서",
+              "심심해서",
+              "주인에게 혼나서"
             ],
-            "correct_index": 3,
-            "explanation": "겉으로 보이는 것보다 진정한 마음과 관심이 중요하다는 교훈을 줍니다."
+            "correct_index": 1,
+            "explanation": "강아지들은 창문에 비친 자신의 모습을 보며 서로 예쁘다고 자랑하고 싶어합니다."
           },
           "ja": {
-            "question": "이 이야기에서 가장 중요한 교훈은 무엇일까요?",
+            "question": "강아지들이 '창문에 비친 내 모습을 좀 봐'라고 말하는 이유는 무엇일까요?",
             "options": [
-              "외모가 중요하다",
-              "집이 크고 좋아야 행복하다",
-              "겉모습보다 마음이 중요하다",
-              "동물은 병원에 가면 안 된다"
+              "배가 고파서",
+              "자신의 외모를 자랑하고 싶어서",
+              "심심해서",
+              "주인에게 혼나서"
             ],
-            "correct_index": 3,
-            "explanation": "겉으로 보이는 것보다 진정한 마음과 관심이 중요하다는 교훈을 줍니다."
+            "correct_index": 1,
+            "explanation": "강아지들은 창문에 비친 자신의 모습을 보며 서로 예쁘다고 자랑하고 싶어합니다."
           },
           "es": {
-            "question": "이 이야기에서 가장 중요한 교훈은 무엇일까요?",
+            "question": "강아지들이 '창문에 비친 내 모습을 좀 봐'라고 말하는 이유는 무엇일까요?",
             "options": [
-              "외모가 중요하다",
-              "집이 크고 좋아야 행복하다",
-              "겉모습보다 마음이 중요하다",
-              "동물은 병원에 가면 안 된다"
+              "배가 고파서",
+              "자신의 외모를 자랑하고 싶어서",
+              "심심해서",
+              "주인에게 혼나서"
             ],
-            "correct_index": 3,
-            "explanation": "겉으로 보이는 것보다 진정한 마음과 관심이 중요하다는 교훈을 줍니다."
+            "correct_index": 1,
+            "explanation": "강아지들은 창문에 비친 자신의 모습을 보며 서로 예쁘다고 자랑하고 싶어합니다."
           },
           "de": {
-            "question": "이 이야기에서 가장 중요한 교훈은 무엇일까요?",
+            "question": "강아지들이 '창문에 비친 내 모습을 좀 봐'라고 말하는 이유는 무엇일까요?",
             "options": [
-              "외모가 중요하다",
-              "집이 크고 좋아야 행복하다",
-              "겉모습보다 마음이 중요하다",
-              "동물은 병원에 가면 안 된다"
+              "배가 고파서",
+              "자신의 외모를 자랑하고 싶어서",
+              "심심해서",
+              "주인에게 혼나서"
             ],
-            "correct_index": 3,
-            "explanation": "겉으로 보이는 것보다 진정한 마음과 관심이 중요하다는 교훈을 줍니다."
+            "correct_index": 1,
+            "explanation": "강아지들은 창문에 비친 자신의 모습을 보며 서로 예쁘다고 자랑하고 싶어합니다."
           },
           "fr": {
-            "question": "이 이야기에서 가장 중요한 교훈은 무엇일까요?",
+            "question": "강아지들이 '창문에 비친 내 모습을 좀 봐'라고 말하는 이유는 무엇일까요?",
             "options": [
-              "외모가 중요하다",
-              "집이 크고 좋아야 행복하다",
-              "겉모습보다 마음이 중요하다",
-              "동물은 병원에 가면 안 된다"
+              "배가 고파서",
+              "자신의 외모를 자랑하고 싶어서",
+              "심심해서",
+              "주인에게 혼나서"
             ],
-            "correct_index": 3,
-            "explanation": "겉으로 보이는 것보다 진정한 마음과 관심이 중요하다는 교훈을 줍니다."
+            "correct_index": 1,
+            "explanation": "강아지들은 창문에 비친 자신의 모습을 보며 서로 예쁘다고 자랑하고 싶어합니다."
           },
           "pt-BR": {
-            "question": "이 이야기에서 가장 중요한 교훈은 무엇일까요?",
+            "question": "강아지들이 '창문에 비친 내 모습을 좀 봐'라고 말하는 이유는 무엇일까요?",
             "options": [
-              "외모가 중요하다",
-              "집이 크고 좋아야 행복하다",
-              "겉모습보다 마음이 중요하다",
-              "동물은 병원에 가면 안 된다"
+              "배가 고파서",
+              "자신의 외모를 자랑하고 싶어서",
+              "심심해서",
+              "주인에게 혼나서"
             ],
-            "correct_index": 3,
-            "explanation": "겉으로 보이는 것보다 진정한 마음과 관심이 중요하다는 교훈을 줍니다."
+            "correct_index": 1,
+            "explanation": "강아지들은 창문에 비친 자신의 모습을 보며 서로 예쁘다고 자랑하고 싶어합니다."
           },
           "zh-TW": {
-            "question": "이 이야기에서 가장 중요한 교훈은 무엇일까요?",
+            "question": "강아지들이 '창문에 비친 내 모습을 좀 봐'라고 말하는 이유는 무엇일까요?",
             "options": [
-              "외모가 중요하다",
-              "집이 크고 좋아야 행복하다",
-              "겉모습보다 마음이 중요하다",
-              "동물은 병원에 가면 안 된다"
+              "배가 고파서",
+              "자신의 외모를 자랑하고 싶어서",
+              "심심해서",
+              "주인에게 혼나서"
             ],
-            "correct_index": 3,
-            "explanation": "겉으로 보이는 것보다 진정한 마음과 관심이 중요하다는 교훈을 줍니다."
+            "correct_index": 1,
+            "explanation": "강아지들은 창문에 비친 자신의 모습을 보며 서로 예쁘다고 자랑하고 싶어합니다."
           },
           "it": {
-            "question": "이 이야기에서 가장 중요한 교훈은 무엇일까요?",
+            "question": "강아지들이 '창문에 비친 내 모습을 좀 봐'라고 말하는 이유는 무엇일까요?",
             "options": [
-              "외모가 중요하다",
-              "집이 크고 좋아야 행복하다",
-              "겉모습보다 마음이 중요하다",
-              "동물은 병원에 가면 안 된다"
+              "배가 고파서",
+              "자신의 외모를 자랑하고 싶어서",
+              "심심해서",
+              "주인에게 혼나서"
             ],
-            "correct_index": 3,
-            "explanation": "겉으로 보이는 것보다 진정한 마음과 관심이 중요하다는 교훈을 줍니다."
+            "correct_index": 1,
+            "explanation": "강아지들은 창문에 비친 자신의 모습을 보며 서로 예쁘다고 자랑하고 싶어합니다."
           }
         },
         {
           "ko": {
-            "question": "동화 제목 '강아지 닥스훈트의 비밀'에서 '비밀'은 무엇을 의미하나요?",
+            "question": "'눈썹을 옆으로 펴면서'라는 표현은 어떤 감정을 나타낼까요?",
             "options": [
-              "닥스훈트의 숨겨진 재능",
-              "닥스훈트의 슬픈 속마음",
-              "닥스훈트가 가진 돈",
-              "닥스훈트의 맛있는 음식"
+              "기쁨",
+              "놀람 또는 의아함",
+              "슬픔",
+              "화남"
             ],
             "correct_index": 1,
-            "explanation": "겉으로는 행복해 보이는 닥스훈트에게 숨겨진 슬픔을 의미합니다."
+            "explanation": "눈썹을 옆으로 펴는 것은 무언가 이상하거나 의아하게 생각할 때 보이는 표정입니다."
           },
           "en": {
-            "question": "동화 제목 '강아지 닥스훈트의 비밀'에서 '비밀'은 무엇을 의미하나요?",
+            "question": "'눈썹을 옆으로 펴면서'라는 표현은 어떤 감정을 나타낼까요?",
             "options": [
-              "닥스훈트의 숨겨진 재능",
-              "닥스훈트의 슬픈 속마음",
-              "닥스훈트가 가진 돈",
-              "닥스훈트의 맛있는 음식"
+              "기쁨",
+              "놀람 또는 의아함",
+              "슬픔",
+              "화남"
             ],
             "correct_index": 1,
-            "explanation": "겉으로는 행복해 보이는 닥스훈트에게 숨겨진 슬픔을 의미합니다."
+            "explanation": "눈썹을 옆으로 펴는 것은 무언가 이상하거나 의아하게 생각할 때 보이는 표정입니다."
           },
           "zh-CN": {
-            "question": "동화 제목 '강아지 닥스훈트의 비밀'에서 '비밀'은 무엇을 의미하나요?",
+            "question": "'눈썹을 옆으로 펴면서'라는 표현은 어떤 감정을 나타낼까요?",
             "options": [
-              "닥스훈트의 숨겨진 재능",
-              "닥스훈트의 슬픈 속마음",
-              "닥스훈트가 가진 돈",
-              "닥스훈트의 맛있는 음식"
+              "기쁨",
+              "놀람 또는 의아함",
+              "슬픔",
+              "화남"
             ],
             "correct_index": 1,
-            "explanation": "겉으로는 행복해 보이는 닥스훈트에게 숨겨진 슬픔을 의미합니다."
+            "explanation": "눈썹을 옆으로 펴는 것은 무언가 이상하거나 의아하게 생각할 때 보이는 표정입니다."
           },
           "ja": {
-            "question": "동화 제목 '강아지 닥스훈트의 비밀'에서 '비밀'은 무엇을 의미하나요?",
+            "question": "'눈썹을 옆으로 펴면서'라는 표현은 어떤 감정을 나타낼까요?",
             "options": [
-              "닥스훈트의 숨겨진 재능",
-              "닥스훈트의 슬픈 속마음",
-              "닥스훈트가 가진 돈",
-              "닥스훈트의 맛있는 음식"
+              "기쁨",
+              "놀람 또는 의아함",
+              "슬픔",
+              "화남"
             ],
             "correct_index": 1,
-            "explanation": "겉으로는 행복해 보이는 닥스훈트에게 숨겨진 슬픔을 의미합니다."
+            "explanation": "눈썹을 옆으로 펴는 것은 무언가 이상하거나 의아하게 생각할 때 보이는 표정입니다."
           },
           "es": {
-            "question": "동화 제목 '강아지 닥스훈트의 비밀'에서 '비밀'은 무엇을 의미하나요?",
+            "question": "'눈썹을 옆으로 펴면서'라는 표현은 어떤 감정을 나타낼까요?",
             "options": [
-              "닥스훈트의 숨겨진 재능",
-              "닥스훈트의 슬픈 속마음",
-              "닥스훈트가 가진 돈",
-              "닥스훈트의 맛있는 음식"
+              "기쁨",
+              "놀람 또는 의아함",
+              "슬픔",
+              "화남"
             ],
             "correct_index": 1,
-            "explanation": "겉으로는 행복해 보이는 닥스훈트에게 숨겨진 슬픔을 의미합니다."
+            "explanation": "눈썹을 옆으로 펴는 것은 무언가 이상하거나 의아하게 생각할 때 보이는 표정입니다."
           },
           "de": {
-            "question": "동화 제목 '강아지 닥스훈트의 비밀'에서 '비밀'은 무엇을 의미하나요?",
+            "question": "'눈썹을 옆으로 펴면서'라는 표현은 어떤 감정을 나타낼까요?",
             "options": [
-              "닥스훈트의 숨겨진 재능",
-              "닥스훈트의 슬픈 속마음",
-              "닥스훈트가 가진 돈",
-              "닥스훈트의 맛있는 음식"
+              "기쁨",
+              "놀람 또는 의아함",
+              "슬픔",
+              "화남"
             ],
             "correct_index": 1,
-            "explanation": "겉으로는 행복해 보이는 닥스훈트에게 숨겨진 슬픔을 의미합니다."
+            "explanation": "눈썹을 옆으로 펴는 것은 무언가 이상하거나 의아하게 생각할 때 보이는 표정입니다."
           },
           "fr": {
-            "question": "동화 제목 '강아지 닥스훈트의 비밀'에서 '비밀'은 무엇을 의미하나요?",
+            "question": "'눈썹을 옆으로 펴면서'라는 표현은 어떤 감정을 나타낼까요?",
             "options": [
-              "닥스훈트의 숨겨진 재능",
-              "닥스훈트의 슬픈 속마음",
-              "닥스훈트가 가진 돈",
-              "닥스훈트의 맛있는 음식"
+              "기쁨",
+              "놀람 또는 의아함",
+              "슬픔",
+              "화남"
             ],
             "correct_index": 1,
-            "explanation": "겉으로는 행복해 보이는 닥스훈트에게 숨겨진 슬픔을 의미합니다."
+            "explanation": "눈썹을 옆으로 펴는 것은 무언가 이상하거나 의아하게 생각할 때 보이는 표정입니다."
           },
           "pt-BR": {
-            "question": "동화 제목 '강아지 닥스훈트의 비밀'에서 '비밀'은 무엇을 의미하나요?",
+            "question": "'눈썹을 옆으로 펴면서'라는 표현은 어떤 감정을 나타낼까요?",
             "options": [
-              "닥스훈트의 숨겨진 재능",
-              "닥스훈트의 슬픈 속마음",
-              "닥스훈트가 가진 돈",
-              "닥스훈트의 맛있는 음식"
+              "기쁨",
+              "놀람 또는 의아함",
+              "슬픔",
+              "화남"
             ],
             "correct_index": 1,
-            "explanation": "겉으로는 행복해 보이는 닥스훈트에게 숨겨진 슬픔을 의미합니다."
+            "explanation": "눈썹을 옆으로 펴는 것은 무언가 이상하거나 의아하게 생각할 때 보이는 표정입니다."
           },
           "zh-TW": {
-            "question": "동화 제목 '강아지 닥스훈트의 비밀'에서 '비밀'은 무엇을 의미하나요?",
+            "question": "'눈썹을 옆으로 펴면서'라는 표현은 어떤 감정을 나타낼까요?",
             "options": [
-              "닥스훈트의 숨겨진 재능",
-              "닥스훈트의 슬픈 속마음",
-              "닥스훈트가 가진 돈",
-              "닥스훈트의 맛있는 음식"
+              "기쁨",
+              "놀람 또는 의아함",
+              "슬픔",
+              "화남"
             ],
             "correct_index": 1,
-            "explanation": "겉으로는 행복해 보이는 닥스훈트에게 숨겨진 슬픔을 의미합니다."
+            "explanation": "눈썹을 옆으로 펴는 것은 무언가 이상하거나 의아하게 생각할 때 보이는 표정입니다."
           },
           "it": {
-            "question": "동화 제목 '강아지 닥스훈트의 비밀'에서 '비밀'은 무엇을 의미하나요?",
+            "question": "'눈썹을 옆으로 펴면서'라는 표현은 어떤 감정을 나타낼까요?",
             "options": [
-              "닥스훈트의 숨겨진 재능",
-              "닥스훈트의 슬픈 속마음",
-              "닥스훈트가 가진 돈",
-              "닥스훈트의 맛있는 음식"
+              "기쁨",
+              "놀람 또는 의아함",
+              "슬픔",
+              "화남"
             ],
             "correct_index": 1,
-            "explanation": "겉으로는 행복해 보이는 닥스훈트에게 숨겨진 슬픔을 의미합니다."
+            "explanation": "눈썹을 옆으로 펴는 것은 무언가 이상하거나 의아하게 생각할 때 보이는 표정입니다."
+          }
+        },
+        {
+          "ko": {
+            "question": "이야기에서 동물 병원에 있는 강아지들이 닥스훈트를 부러워했지만, 닥스훈트는 왜 행복하지 않았을까요?",
+            "options": [
+              "집이 너무 작아서",
+              "혼자 있는 시간이 많아서",
+              "맛있는 음식을 먹지 못해서",
+              "다른 강아지들과 어울리지 못해서"
+            ],
+            "correct_index": 1,
+            "explanation": "닥스훈트는 예쁜 집에 살았지만, 주인이 자신에게 관심을 주지 않아 혼자 있는 시간이 많아 행복하지 않았습니다."
+          },
+          "en": {
+            "question": "이야기에서 동물 병원에 있는 강아지들이 닥스훈트를 부러워했지만, 닥스훈트는 왜 행복하지 않았을까요?",
+            "options": [
+              "집이 너무 작아서",
+              "혼자 있는 시간이 많아서",
+              "맛있는 음식을 먹지 못해서",
+              "다른 강아지들과 어울리지 못해서"
+            ],
+            "correct_index": 1,
+            "explanation": "닥스훈트는 예쁜 집에 살았지만, 주인이 자신에게 관심을 주지 않아 혼자 있는 시간이 많아 행복하지 않았습니다."
+          },
+          "zh-CN": {
+            "question": "이야기에서 동물 병원에 있는 강아지들이 닥스훈트를 부러워했지만, 닥스훈트는 왜 행복하지 않았을까요?",
+            "options": [
+              "집이 너무 작아서",
+              "혼자 있는 시간이 많아서",
+              "맛있는 음식을 먹지 못해서",
+              "다른 강아지들과 어울리지 못해서"
+            ],
+            "correct_index": 1,
+            "explanation": "닥스훈트는 예쁜 집에 살았지만, 주인이 자신에게 관심을 주지 않아 혼자 있는 시간이 많아 행복하지 않았습니다."
+          },
+          "ja": {
+            "question": "이야기에서 동물 병원에 있는 강아지들이 닥스훈트를 부러워했지만, 닥스훈트는 왜 행복하지 않았을까요?",
+            "options": [
+              "집이 너무 작아서",
+              "혼자 있는 시간이 많아서",
+              "맛있는 음식을 먹지 못해서",
+              "다른 강아지들과 어울리지 못해서"
+            ],
+            "correct_index": 1,
+            "explanation": "닥스훈트는 예쁜 집에 살았지만, 주인이 자신에게 관심을 주지 않아 혼자 있는 시간이 많아 행복하지 않았습니다."
+          },
+          "es": {
+            "question": "이야기에서 동물 병원에 있는 강아지들이 닥스훈트를 부러워했지만, 닥스훈트는 왜 행복하지 않았을까요?",
+            "options": [
+              "집이 너무 작아서",
+              "혼자 있는 시간이 많아서",
+              "맛있는 음식을 먹지 못해서",
+              "다른 강아지들과 어울리지 못해서"
+            ],
+            "correct_index": 1,
+            "explanation": "닥스훈트는 예쁜 집에 살았지만, 주인이 자신에게 관심을 주지 않아 혼자 있는 시간이 많아 행복하지 않았습니다."
+          },
+          "de": {
+            "question": "이야기에서 동물 병원에 있는 강아지들이 닥스훈트를 부러워했지만, 닥스훈트는 왜 행복하지 않았을까요?",
+            "options": [
+              "집이 너무 작아서",
+              "혼자 있는 시간이 많아서",
+              "맛있는 음식을 먹지 못해서",
+              "다른 강아지들과 어울리지 못해서"
+            ],
+            "correct_index": 1,
+            "explanation": "닥스훈트는 예쁜 집에 살았지만, 주인이 자신에게 관심을 주지 않아 혼자 있는 시간이 많아 행복하지 않았습니다."
+          },
+          "fr": {
+            "question": "이야기에서 동물 병원에 있는 강아지들이 닥스훈트를 부러워했지만, 닥스훈트는 왜 행복하지 않았을까요?",
+            "options": [
+              "집이 너무 작아서",
+              "혼자 있는 시간이 많아서",
+              "맛있는 음식을 먹지 못해서",
+              "다른 강아지들과 어울리지 못해서"
+            ],
+            "correct_index": 1,
+            "explanation": "닥스훈트는 예쁜 집에 살았지만, 주인이 자신에게 관심을 주지 않아 혼자 있는 시간이 많아 행복하지 않았습니다."
+          },
+          "pt-BR": {
+            "question": "이야기에서 동물 병원에 있는 강아지들이 닥스훈트를 부러워했지만, 닥스훈트는 왜 행복하지 않았을까요?",
+            "options": [
+              "집이 너무 작아서",
+              "혼자 있는 시간이 많아서",
+              "맛있는 음식을 먹지 못해서",
+              "다른 강아지들과 어울리지 못해서"
+            ],
+            "correct_index": 1,
+            "explanation": "닥스훈트는 예쁜 집에 살았지만, 주인이 자신에게 관심을 주지 않아 혼자 있는 시간이 많아 행복하지 않았습니다."
+          },
+          "zh-TW": {
+            "question": "이야기에서 동물 병원에 있는 강아지들이 닥스훈트를 부러워했지만, 닥스훈트는 왜 행복하지 않았을까요?",
+            "options": [
+              "집이 너무 작아서",
+              "혼자 있는 시간이 많아서",
+              "맛있는 음식을 먹지 못해서",
+              "다른 강아지들과 어울리지 못해서"
+            ],
+            "correct_index": 1,
+            "explanation": "닥스훈트는 예쁜 집에 살았지만, 주인이 자신에게 관심을 주지 않아 혼자 있는 시간이 많아 행복하지 않았습니다."
+          },
+          "it": {
+            "question": "이야기에서 동물 병원에 있는 강아지들이 닥스훈트를 부러워했지만, 닥스훈트는 왜 행복하지 않았을까요?",
+            "options": [
+              "집이 너무 작아서",
+              "혼자 있는 시간이 많아서",
+              "맛있는 음식을 먹지 못해서",
+              "다른 강아지들과 어울리지 못해서"
+            ],
+            "correct_index": 1,
+            "explanation": "닥스훈트는 예쁜 집에 살았지만, 주인이 자신에게 관심을 주지 않아 혼자 있는 시간이 많아 행복하지 않았습니다."
           }
         }
       ]
     },
     "중급": {
-      "summary": "동물 병원에 있는 강아지들은 예쁜 집에서 사랑받는 닥스훈트를 부러워했지만, 닥스훈트는 새 주인을 만나러 병원에 왔다. 닥스훈트는 처음에는 사랑받았지만 시간이 지나면서 주인의 관심이 줄어들어 불행했다고 털어놓는다. 닥스훈트의 이야기를 들은 강아지들은 겉모습만 보고 행복을 판단할 수 없다는 것을 깨닫고 진정한 행복에 대해 생각하게 된다.",
+      "summary": {
+        "ko": "동물 병원에 있는 강아지들은 예쁜 집에서 사랑받는 닥스훈트를 부러워했지만, 닥스훈트는 새 주인을 만나러 병원에 왔다. 닥스훈트는 처음에는 사랑받았지만 시간이 지나면서 주인의 관심이 줄어들어 불행했다고 털어놓는다. 닥스훈트의 이야기를 들은 강아지들은 겉모습만 보고 행복을 판단할 수 없다는 것을 깨닫고 진정한 행복에 대해 생각하게 된다.",
+        "en": "The puppies at the animal hospital envied a dachshund who lived in a beautiful home and was loved. However, the dachshund revealed that he had come to the hospital to find a new owner. He confessed that, although he was initially adored, he became unhappy as his owner's attention waned over time. After hearing the dachshund's story, the puppies realized that happiness cannot be judged by appearances alone and began to contemplate the meaning of true happiness.",
+        "zh-CN": "动物医院里的小狗们羡慕着住在漂亮房子里、备受宠爱的腊肠犬。然而，腊肠犬却来到医院寻找新的主人。它坦言，起初它也备受喜爱，但随着时间推移，主人对它的关注逐渐减少，它也因此感到不快乐。听了腊肠犬的故事，小狗们意识到不能只看表面就判断幸福，并开始思考真正的幸福是什么。",
+        "ja": "動物病院にいる犬たちは、綺麗な家で愛されているダックスフントを羨ましがっていた。しかし、そのダックスフントは新しい飼い主を探しに病院へやって来たのだ。ダックスフントは、最初は愛されていたものの、時間が経つにつれて飼い主の関心が薄れ、不幸だったと打ち明ける。その話を聞いた犬たちは、外見だけで幸せを判断することはできないと気づき、本当の幸せについて考えるようになる。",
+        "es": "En una clínica veterinaria, los cachorros envidiaban a un dachshund que vivía en una casa hermosa y era amado. Sin embargo, el dachshund había llegado a la clínica para encontrar un nuevo dueño. Les contó que, aunque al principio fue muy querido, con el tiempo el interés de su dueño disminuyó, haciéndolo infeliz. Al escuchar la historia del dachshund, los cachorros se dieron cuenta de que no se puede juzgar la felicidad basándose solo en las apariencias y comenzaron a reflexionar sobre lo que realmente significa ser feliz.",
+        "de": "Die Hunde in der Tierklinik beneideten den Dackel, der in einem schönen Zuhause geliebt wurde. Doch der Dackel war in die Klinik gekommen, um ein neues Zuhause zu finden. Er erzählte, dass er anfangs geliebt wurde, aber mit der Zeit die Aufmerksamkeit seines Besitzers nachließ und er unglücklich wurde. Nachdem die Hunde die Geschichte des Dackels gehört hatten, erkannten sie, dass man Glück nicht nur nach dem äußeren Schein beurteilen kann und begannen, über wahres Glück nachzudenken.",
+        "fr": "À l'hôpital vétérinaire, les chiots enviaient le teckel, choyé dans une belle maison. Mais ce dernier était venu à l'hôpital pour trouver un nouveau propriétaire. Il confia qu'au début, il avait été aimé, mais qu'avec le temps, l'attention de son maître avait diminué, le rendant malheureux. En écoutant son histoire, les chiots réalisèrent qu'on ne pouvait pas juger du bonheur sur les apparences et commencèrent à réfléchir au vrai bonheur.",
+        "pt-BR": "No hospital veterinário, os cachorrinhos invejavam o dachshund que vivia em uma casa bonita e era amado. No entanto, o dachshund estava ali para encontrar um novo lar. Ele revelou que, embora inicialmente tenha sido muito amado, com o tempo o interesse do dono diminuiu, tornando-o infeliz. Ao ouvirem a história do dachshund, os cachorrinhos perceberam que não se pode julgar a felicidade apenas pela aparência e começaram a refletir sobre o que realmente significa ser feliz.",
+        "zh-TW": "動物醫院裡的小狗們，都羨慕著住在漂亮房子裡、備受寵愛的臘腸狗。然而，臘腸狗卻是為了尋找新主人而來到醫院的。牠坦承，起初牠也曾被愛護有加，但隨著時間流逝，主人對牠的關心逐漸減少，讓牠感到非常不快樂。聽了臘腸狗的故事，小狗們才明白，不能只看表面就判斷幸福與否，並開始思考真正的幸福是什麼。",
+        "it": "I cagnolini in una clinica veterinaria invidiavano un bassotto ben curato che viveva in una bella casa, ma il bassotto era lì per trovare un nuovo padrone. Confessò di essere stato inizialmente amato, ma col tempo l'interesse del suo padrone era diminuito, rendendolo infelice. Ascoltando la storia del bassotto, i cagnolini capirono che non si può giudicare la felicità dalle apparenze e iniziarono a riflettere sulla vera felicità."
+      },
       "paragraphs_analysis": [
         {
           "paragraph_num": 1,
@@ -2146,7 +2168,18 @@
       ]
     },
     "고급": {
-      "summary": "동물 병원에 사는 강아지들은 바깥 세상과 예쁜 집에서 사랑받는 닥스훈트를 부러워했지만, 닥스훈트는 주인의 무관심 속에 불행하게 지내고 있었다. 새 주인을 찾아 동물 병원에 온 닥스훈트의 이야기를 듣고 강아지들은 겉모습만 보고 섣불리 판단했던 자신을 반성한다. 진정한 행복은 겉모습이 아닌 사랑과 관심에 있다는 것을 깨닫게 된다.",
+      "summary": {
+        "ko": "동물 병원에 사는 강아지들은 바깥 세상과 예쁜 집에서 사랑받는 닥스훈트를 부러워했지만, 닥스훈트는 주인의 무관심 속에 불행하게 지내고 있었다. 새 주인을 찾아 동물 병원에 온 닥스훈트의 이야기를 듣고 강아지들은 겉모습만 보고 섣불리 판단했던 자신을 반성한다. 진정한 행복은 겉모습이 아닌 사랑과 관심에 있다는 것을 깨닫게 된다.",
+        "en": "The puppies living at the animal hospital envied a dachshund who lived in a beautiful home and was loved, or so they thought. However, the dachshund was actually unhappy due to his owner's neglect. After hearing the dachshund's story of ending up at the animal hospital to find a new owner, the puppies regretted judging him based on appearances. They realized that true happiness lies not in outward appearances but in love and attention.",
+        "zh-CN": "动物医院里的小狗们一直羡慕着生活在外面漂亮房子里、备受宠爱的腊肠犬。然而，腊肠犬却因为主人的漠不关心而过得并不幸福。当它来到动物医院寻找新主人时，小狗们听了它的故事，反省了自己只看外表就妄下判断的行为。它们终于明白，真正的幸福不在于外表，而在于爱和关怀。",
+        "ja": "動物病院で暮らす犬たちは、外の世界や綺麗な家で愛されるミニチュアダックスフンドを羨ましく思っていた。しかし、ダックスフンドは飼い主の無関心の中で不幸な日々を送っていた。新しい飼い主を探して動物病院にやってきたダックスフンドの話を聞き、犬たちは見かけだけで安易に判断していた自分を反省する。本当の幸せは外見ではなく、愛情と関心にあるのだと気づく。",
+        "es": "En un hospital veterinario, los cachorros envidiaban a un teckel que vivía en una casa bonita y recibía amor del mundo exterior. Sin embargo, el teckel era infeliz debido a la indiferencia de su dueño. Al escuchar la historia del teckel, que había llegado al hospital en busca de un nuevo hogar, los cachorros se arrepintieron de haber juzgado precipitadamente basándose en las apariencias. Se dieron cuenta de que la verdadera felicidad reside en el amor y la atención, no en la apariencia externa.",
+        "de": "Die Hunde in der Tierklinik beneideten den Dackel, der in der Außenwelt in einem schönen Zuhause geliebt wurde. Doch der Dackel war unglücklich, da er von seinem Besitzer vernachlässigt wurde. Nachdem die Hunde die Geschichte des Dackels hörten, der in die Tierklinik kam, um ein neues Zuhause zu finden, bereuten sie, ihn nur nach seinem Äußeren beurteilt zu haben. Sie erkannten, dass wahres Glück nicht im Äußeren liegt, sondern in Liebe und Aufmerksamkeit.",
+        "fr": "À l'hôpital vétérinaire, les chiots enviaient un teckel qui vivait dans une belle maison et était aimé, pensant qu'il avait une vie parfaite. Cependant, le teckel était malheureux, négligé par son propriétaire. En entendant son histoire, lui qui avait été amené à l'hôpital vétérinaire pour trouver un nouveau foyer, les chiots regrettèrent de l'avoir jugé hâtivement sur son apparence. Ils réalisèrent que le vrai bonheur réside dans l'amour et l'attention, et non dans les apparences.",
+        "pt-BR": "No hospital veterinário, os cachorrinhos invejavam um Dachshund que vivia em uma casa bonita e era amado, aparentemente. No entanto, o Dachshund era infeliz, negligenciado por seu dono. Ao ouvirem a história do Dachshund, que chegou ao hospital veterinário em busca de um novo lar, os cachorrinhos se arrependeram de terem julgado pelas aparências. Eles perceberam que a verdadeira felicidade reside no amor e na atenção, e não na aparência externa.",
+        "zh-TW": "在動物醫院裡的小狗們，總是羨慕著住在外面世界、在漂亮房子裡被愛戴的臘腸狗。然而，那隻臘腸狗卻因為主人的漠不關心而過得並不快樂。當牠來到動物醫院尋找新主人，並訴說了自己的遭遇後，小狗們才反省自己只看外表就妄下判斷。牠們領悟到，真正的幸福並不在於外在的表象，而在於愛與關懷。",
+        "it": "I cagnolini che vivevano in una clinica veterinaria invidiavano un bassotto che viveva in una bella casa e riceveva amore, ma il bassotto era infelice a causa della negligenza del suo padrone. Dopo aver ascoltato la storia del bassotto, arrivato alla clinica veterinaria in cerca di una nuova famiglia, i cagnolini si pentono di aver giudicato frettolosamente basandosi solo sull'apparenza. Capiscono che la vera felicità non risiede nell'aspetto esteriore, ma nell'amore e nell'attenzione."
+      },
       "paragraphs_analysis": [
         {
           "paragraph_num": 1,
@@ -2301,7 +2334,18 @@
   },
   "공룡발자국의비밀": {
     "초급": {
-      "summary": "비가 온 후 공룡 발자국이 있는 바위와 공룡 발자국이 대화를 나눕니다. 그들은 과거 공룡들이 할아버지 바위의 경고를 무시하고 미래를 대비하지 않아 멸망했다는 것을 회상합니다. 종달새가 겨울 양식을 구하러 가는 모습을 보며 대비의 중요성을 다시 한번 깨닫습니다.",
+      "summary": {
+        "ko": "비가 온 후 공룡 발자국이 있는 바위와 공룡 발자국이 대화를 나눕니다. 그들은 과거 공룡들이 할아버지 바위의 경고를 무시하고 미래를 대비하지 않아 멸망했다는 것을 회상합니다. 종달새가 겨울 양식을 구하러 가는 모습을 보며 대비의 중요성을 다시 한번 깨닫습니다.",
+        "en": "After a rain, a rock bearing dinosaur footprints and the footprints themselves converse. They reminisce about how the dinosaurs ignored Grandpa Rock's warnings and failed to prepare for the future, ultimately leading to their extinction. Watching a lark diligently gathering food for the winter, they are reminded of the importance of preparedness.",
+        "zh-CN": "雨后，带着恐龙脚印的石头和恐龙脚印聊了起来。他们回忆起过去恐龙们无视老石头爷爷的警告，没有为未来做好准备，最终走向了灭亡。看到云雀为了过冬而努力寻找食物，他们再次意识到未雨绸缪的重要性。",
+        "ja": "雨上がりの後、恐竜の足跡がついた岩と、その足跡が会話を交わします。彼らは昔、恐竜たちが祖父岩の警告を無視し、未来への備えを怠ったために滅亡したことを回想します。ヒバリが冬の食糧を求めて飛び回る姿を見て、備えの大切さを改めて悟るのでした。",
+        "es": "Después de la lluvia, una roca con huellas de dinosaurio y las propias huellas entablan una conversación. Rememoran cómo los dinosaurios del pasado, ignorando las advertencias de la roca abuela y sin prepararse para el futuro, terminaron extinguiéndose. Al observar a una alondra buscando provisiones para el invierno, reafirman la importancia de la previsión.",
+        "de": "Nach einem Regen unterhalten sich ein Felsen mit Dinosaurierfußabdrücken und die Fußabdrücke selbst. Sie erinnern sich daran, wie die Dinosaurier in der Vergangenheit die Warnungen des Großvater-Felsens ignorierten und sich nicht auf die Zukunft vorbereiteten, was zu ihrem Aussterben führte. Als sie sehen, wie eine Lerche Wintervorräte sammelt, wird ihnen die Bedeutung der Vorbereitung erneut bewusst.",
+        "fr": "Après la pluie, une roche portant des empreintes de dinosaures et les empreintes elles-mêmes engagent une conversation. Elles se souviennent que les dinosaures, dans le passé, ont ignoré les avertissements de la roche, leur grand-père, et n'ont pas su se préparer pour l'avenir, ce qui a conduit à leur extinction. En observant une alouette s'affairer à chercher de la nourriture pour l'hiver, elles prennent conscience une fois de plus de l'importance de la préparation.",
+        "pt-BR": "Após a chuva, uma rocha com pegadas de dinossauro e as próprias pegadas conversam. Elas recordam como os dinossauros do passado ignoraram os avisos da rocha avô e não se prepararam para o futuro, levando à sua extinção. Ao observarem uma cotovia buscando provisões para o inverno, reafirmam a importância da preparação.",
+        "zh-TW": "雨後，帶有恐龍腳印的岩石和恐龍腳印互相交談。他們回憶起過去的恐龍們無視爺爺岩石的警告，沒有為未來做好準備，最終走向滅亡。看著雲雀為了儲備過冬的糧食而奔波，他們再次體會到未雨綢繆的重要性。",
+        "it": "Dopo la pioggia, un'impronta di dinosauro su una roccia e la roccia stessa iniziano a conversare. Ricordano come i dinosauri del passato ignorarono gli avvertimenti della roccia, loro nonno, e non si prepararono per il futuro, portando alla loro estinzione. Osservando un'allodola che si affretta a raccogliere provviste per l'inverno, realizzano ancora una volta l'importanza della preparazione."
+      },
       "paragraphs_analysis": [
         {
           "paragraph_num": 1,
