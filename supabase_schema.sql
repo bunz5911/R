@@ -217,7 +217,54 @@ CREATE TRIGGER update_profiles_updated_at
     EXECUTE FUNCTION update_updated_at_column();
 
 -- ============================================================================
--- 10. 초기 데이터 (슈퍼바이저 계정은 수동 설정)
+-- 10. user_approvals 테이블 (승인 관리 시스템)
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS public.user_approvals (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    email TEXT NOT NULL,
+    display_name TEXT,
+    status TEXT DEFAULT 'pending', -- 'pending', 'approved', 'rejected'
+    approved_stories TEXT DEFAULT '0,1', -- 접근 가능한 목록 (예: "0,1")
+    approved_at TIMESTAMP,
+    approved_by TEXT, -- 승인자 이메일
+    approval_token TEXT UNIQUE NOT NULL, -- 승인 링크용 토큰
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- 인덱스 생성
+CREATE INDEX IF NOT EXISTS idx_user_approvals_user_id ON public.user_approvals(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_approvals_token ON public.user_approvals(approval_token);
+CREATE INDEX IF NOT EXISTS idx_user_approvals_status ON public.user_approvals(status);
+CREATE INDEX IF NOT EXISTS idx_user_approvals_email ON public.user_approvals(email);
+
+-- RLS 설정
+ALTER TABLE public.user_approvals ENABLE ROW LEVEL SECURITY;
+
+-- 사용자는 자신의 승인 상태만 조회 가능
+DROP POLICY IF EXISTS "Users can view own approval" ON public.user_approvals;
+CREATE POLICY "Users can view own approval"
+    ON public.user_approvals FOR SELECT
+    USING (auth.uid() = user_id);
+
+-- 슈퍼바이저는 모든 승인 요청 조회 및 수정 가능
+DROP POLICY IF EXISTS "Supervisors can manage approvals" ON public.user_approvals;
+CREATE POLICY "Supervisors can manage approvals"
+    ON public.user_approvals
+    USING (
+        (SELECT email FROM public.profiles WHERE id = auth.uid()) = 'bunz5911@gmail.com'
+    );
+
+-- updated_at 자동 업데이트 트리거
+DROP TRIGGER IF EXISTS update_user_approvals_updated_at ON public.user_approvals;
+CREATE TRIGGER update_user_approvals_updated_at
+    BEFORE UPDATE ON public.user_approvals
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- ============================================================================
+-- 11. 초기 데이터 (슈퍼바이저 계정은 수동 설정)
 -- ============================================================================
 
 -- bunz5911@gmail.com 계정을 슈퍼바이저로 설정하려면:

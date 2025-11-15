@@ -21,7 +21,11 @@ import glob
 import re
 import io
 import base64
+import secrets
+import smtplib
 from datetime import datetime
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 # Supabase 연동
 try:
@@ -40,6 +44,12 @@ except ImportError:
 
 app = Flask(__name__, static_folder='.', static_url_path='')
 CORS(app)
+
+# ============================================================================
+# 🚧 임시 승인 시스템 설정 (나중에 제거 가능하도록 플래그로 관리)
+# ============================================================================
+SUPERVISOR_APPROVAL_ENABLED = True  # ✅ 이 플래그만 False로 바꾸면 원래 로직으로 복귀
+SUPERVISOR_EMAIL = 'bunz5911@gmail.com'
 
 # Gemini 클라이언트 초기화
 try:
@@ -1523,11 +1533,114 @@ def auth_signup():
                     'total_coins': 10
                 }).execute()
                 
+                # 🚧 승인 시스템 활성화 시
+                if SUPERVISOR_APPROVAL_ENABLED:
+                    # 승인 토큰 생성
+                    approval_token = secrets.token_urlsafe(32)
+                    
+                    # 승인 요청 생성
+                    try:
+                        supabase_client.table('user_approvals').insert({
+                            'user_id': user.id,
+                            'email': email,
+                            'display_name': display_name or email.split('@')[0],
+                            'status': 'pending',
+                            'approved_stories': '0,1',  # 기본값: 목록 0, 1
+                            'approval_token': approval_token
+                        }).execute()
+                        
+                        # 승인 URL 생성 (호스트 정보 확인)
+                        host_url = request.host_url.rstrip('/')
+                        if 'localhost' in host_url or '127.0.0.1' in host_url:
+                            # 로컬 개발 환경
+                            approval_url = f"{host_url}/api/approve/{approval_token}"
+                        else:
+                            # 프로덕션 환경
+                            approval_url = f"{host_url}/api/approve/{approval_token}"
+                        
+                        # 슈퍼바이저에게 승인 요청 이메일 발송
+                        supervisor_subject = f"[RAKorean] 새로운 회원가입 승인 요청: {email}"
+                        supervisor_html = f"""
+                        <html>
+                        <head>
+                            <meta charset="UTF-8">
+                        </head>
+                        <body style="font-family: 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+                            <div style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: white; padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
+                                <h1 style="margin: 0; font-size: 24px;">새로운 회원가입 승인 요청</h1>
+                            </div>
+                            <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
+                                <p style="font-size: 16px; margin-bottom: 20px;">다음 사용자가 회원가입을 요청했습니다:</p>
+                                <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                                    <p style="margin: 8px 0;"><strong>이메일:</strong> {email}</p>
+                                    <p style="margin: 8px 0;"><strong>이름:</strong> {display_name or email.split('@')[0]}</p>
+                                    <p style="margin: 8px 0;"><strong>가입 시간:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+                                </div>
+                                <p style="font-size: 16px; margin-bottom: 20px;">아래 링크를 클릭하여 승인하세요:</p>
+                                <div style="text-align: center; margin: 30px 0;">
+                                    <a href="{approval_url}" 
+                                       style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); 
+                                              color: white; 
+                                              padding: 14px 28px; 
+                                              text-decoration: none; 
+                                              border-radius: 8px; 
+                                              display: inline-block;
+                                              font-weight: 600;
+                                              font-size: 16px;
+                                              box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);">
+                                        ✅ 승인하기
+                                    </a>
+                                </div>
+                                <p style="color: #6b7280; font-size: 12px; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                                    또는 다음 URL을 복사하여 브라우저에 붙여넣으세요:<br>
+                                    <a href="{approval_url}" style="color: #6366f1; word-break: break-all;">{approval_url}</a>
+                                </p>
+                            </div>
+                        </body>
+                        </html>
+                        """
+                        send_email(SUPERVISOR_EMAIL, supervisor_subject, supervisor_html)
+                        print(f"📧 슈퍼바이저에게 승인 요청 이메일 발송: {SUPERVISOR_EMAIL}", flush=True)
+                        
+                        # 사용자에게 승인 대기 이메일 발송
+                        user_subject = "[RAKorean] 회원가입이 완료되었습니다 (승인 대기 중)"
+                        user_html = f"""
+                        <html>
+                        <head>
+                            <meta charset="UTF-8">
+                        </head>
+                        <body style="font-family: 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+                            <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
+                                <h1 style="margin: 0; font-size: 24px;">회원가입이 완료되었습니다!</h1>
+                            </div>
+                            <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
+                                <p style="font-size: 16px; margin-bottom: 20px;">안녕하세요, <strong>{display_name or email.split('@')[0]}</strong>님!</p>
+                                <p style="font-size: 16px; margin-bottom: 20px;">RAKorean에 가입해주셔서 감사합니다.</p>
+                                <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px; border-radius: 8px; margin: 20px 0;">
+                                    <p style="margin: 0; color: #92400e; font-size: 14px;">
+                                        ⏳ 현재 관리자 승인을 기다리고 있습니다.<br>
+                                        승인이 완료되면 이메일로 알려드리겠습니다.
+                                    </p>
+                                </div>
+                                <p style="font-size: 14px; color: #6b7280; margin-top: 20px;">
+                                    승인 후에는 다음 동화에 접근하실 수 있습니다:<br>
+                                    • 목록 0번: 도깨비키친<br>
+                                    • 목록 1번: 강아지닥스훈트의비밀
+                                </p>
+                            </div>
+                        </body>
+                        </html>
+                        """
+                        send_email(email, user_subject, user_html)
+                        print(f"📧 사용자에게 승인 대기 이메일 발송: {email}", flush=True)
+                    except Exception as approval_error:
+                        print(f"⚠️ 승인 요청 생성 실패: {approval_error}", flush=True)
+                
                 print(f"✅ 신규 회원 가입: {email}", flush=True)
             except Exception as profile_error:
                 print(f"⚠️ 프로필 생성 실패 (이미 존재할 수 있음): {profile_error}", flush=True)
             
-            return jsonify({
+            response_data = {
                 "success": True,
                 "user": {
                     "id": user.id,
@@ -1538,7 +1651,17 @@ def auth_signup():
                     "access_token": auth_response.session.access_token if auth_response.session else None,
                     "refresh_token": auth_response.session.refresh_token if auth_response.session else None
                 }
-            })
+            }
+            
+            # 승인 시스템 활성화 시 추가 정보
+            if SUPERVISOR_APPROVAL_ENABLED:
+                response_data["requires_approval"] = True
+                response_data["message"] = "회원가입이 완료되었습니다. 관리자 승인을 기다리고 있습니다."
+            else:
+                response_data["requires_approval"] = False
+                response_data["message"] = "회원가입이 완료되었습니다."
+            
+            return jsonify(response_data)
         else:
             return jsonify({"error": "회원가입 실패"}), 400
             
@@ -1826,6 +1949,54 @@ def check_story_access(story_id):
         except Exception as e:
             print(f"⚠️ 관리자 체크 오류: {e}", flush=True)
     
+    # 🚧 승인 시스템 활성화 시 승인 상태 확인
+    if SUPERVISOR_APPROVAL_ENABLED and user_id and supabase_client:
+        try:
+            # 승인 상태 확인
+            approval_result = supabase_client.table('user_approvals')\
+                .select('status, approved_stories')\
+                .eq('user_id', user_id)\
+                .execute()
+            
+            if approval_result.data and len(approval_result.data) > 0:
+                approval = approval_result.data[0]
+                status = approval.get('status')
+                
+                if status == 'pending':
+                    return jsonify({
+                        "access": False,
+                        "reason": "approval_pending",
+                        "message": "관리자 승인을 기다리고 있습니다. 승인 후 이메일로 알려드리겠습니다."
+                    }), 403
+                
+                elif status == 'approved':
+                    # 승인된 목록 확인
+                    approved_stories_str = approval.get('approved_stories', '0,1')
+                    approved_stories = [int(s.strip()) for s in approved_stories_str.split(',') if s.strip().isdigit()]
+                    
+                    if story_id in approved_stories:
+                        return jsonify({
+                            "access": True,
+                            "reason": "approved_user",
+                            "message": "승인된 사용자"
+                        })
+                    else:
+                        return jsonify({
+                            "access": False,
+                            "reason": "not_approved_for_story",
+                            "message": f"이 동화에 대한 접근 권한이 없습니다. 현재 접근 가능: {', '.join(map(str, approved_stories))}번",
+                            "approved_stories": approved_stories
+                        }), 403
+                
+                elif status == 'rejected':
+                    return jsonify({
+                        "access": False,
+                        "reason": "approval_rejected",
+                        "message": "회원가입이 거부되었습니다."
+                    }), 403
+        except Exception as e:
+            print(f"⚠️ 승인 상태 확인 오류: {e}", flush=True)
+    
     # 21-50번은 시즌 2 (아직 미오픈)
     if story_id >= 21:
         return jsonify({
@@ -1835,13 +2006,14 @@ def check_story_access(story_id):
             "required_plan": "season_2"
         }), 403
     
-    # 1번 동화는 누구나 접근 가능
-    if story_id == 1:
-        return jsonify({
-            "access": True,
-            "reason": "free_story",
-            "message": "누구나 읽을 수 있는 동화입니다"
-        })
+    # 0번과 1번 동화는 누구나 접근 가능 (무료 티어) - 승인 시스템 비활성화 시
+    if not SUPERVISOR_APPROVAL_ENABLED:
+        if story_id == 0 or story_id == 1:
+            return jsonify({
+                "access": True,
+                "reason": "free_story",
+                "message": "누구나 읽을 수 있는 동화입니다"
+            })
     
     # 비회원 또는 테스트 사용자
     if not user_id or user_id == '00000000-0000-0000-0000-000000000001':
@@ -1852,8 +2024,8 @@ def check_story_access(story_id):
             "required_plan": "free"
         }), 403
     
-    # 로그인한 사용자 - 플랜 확인
-    if supabase_client:
+    # 🚧 승인 시스템 비활성화 시 원래 로직 실행
+    if not SUPERVISOR_APPROVAL_ENABLED and supabase_client:
         try:
             profile_result = supabase_client.table('profiles')\
                 .select('plan')\
@@ -1912,6 +2084,236 @@ def check_story_access(story_id):
             "message": "Pro 플랜이 필요합니다",
             "required_plan": "pro"
         }), 403
+
+
+# ============================================================================
+# 🚧 승인 시스템 API
+# ============================================================================
+
+@app.route('/api/approve/<token>', methods=['GET'])
+def approve_user(token):
+    """
+    슈퍼바이저 승인 링크 처리
+    GET /api/approve/<token>
+    """
+    if not SUPERVISOR_APPROVAL_ENABLED:
+        return jsonify({"error": "승인 시스템이 비활성화되어 있습니다"}), 404
+    
+    if not supabase_client:
+        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    
+    try:
+        # 승인 요청 조회
+        approval_result = supabase_client.table('user_approvals')\
+            .select('*')\
+            .eq('approval_token', token)\
+            .eq('status', 'pending')\
+            .execute()
+        
+        if not approval_result.data or len(approval_result.data) == 0:
+            return f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>승인 오류</title>
+                <style>
+                    body {{ font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f5f5f5; }}
+                    .error {{ background: white; padding: 40px; border-radius: 12px; max-width: 500px; margin: 0 auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }}
+                    .error-icon {{ color: #ef4444; font-size: 48px; margin-bottom: 20px; }}
+                </style>
+            </head>
+            <body>
+                <div class="error">
+                    <div class="error-icon">❌</div>
+                    <h2>승인 요청을 찾을 수 없습니다</h2>
+                    <p>이 승인 링크는 이미 사용되었거나 유효하지 않습니다.</p>
+                </div>
+            </body>
+            </html>
+            """, 404
+        
+        approval = approval_result.data[0]
+        user_id = approval['user_id']
+        user_email = approval['email']
+        display_name = approval.get('display_name', user_email.split('@')[0])
+        approved_stories = approval.get('approved_stories', '0,1')
+        
+        # 승인 상태 업데이트
+        supabase_client.table('user_approvals')\
+            .update({
+                'status': 'approved',
+                'approved_at': datetime.now().isoformat(),
+                'approved_by': SUPERVISOR_EMAIL,
+                'updated_at': datetime.now().isoformat()
+            })\
+            .eq('id', approval['id'])\
+            .execute()
+        
+        print(f"✅ 사용자 승인 완료: {user_email} (토큰: {token})", flush=True)
+        
+        # 사용자에게 승인 완료 이메일 발송
+        host_url = request.host_url.rstrip('/')
+        user_subject = "[RAKorean] 회원가입이 승인되었습니다!"
+        user_html = f"""
+        <html>
+        <head>
+            <meta charset="UTF-8">
+        </head>
+        <body style="font-family: 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
+                <h1 style="margin: 0; font-size: 24px;">🎉 회원가입이 승인되었습니다!</h1>
+            </div>
+            <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
+                <p style="font-size: 16px; margin-bottom: 20px;">안녕하세요, <strong>{display_name}</strong>님!</p>
+                <p style="font-size: 16px; margin-bottom: 20px;">축하합니다! RAKorean 회원가입이 승인되었습니다.</p>
+                <div style="background: #d1fae5; border-left: 4px solid #10b981; padding: 16px; border-radius: 8px; margin: 20px 0;">
+                    <p style="margin: 0; color: #065f46; font-size: 14px; font-weight: 600;">
+                        ✅ 이제 다음 동화에 접근하실 수 있습니다:
+                    </p>
+                    <ul style="margin: 10px 0 0 20px; color: #065f46;">
+                        <li>목록 0번: 도깨비키친</li>
+                        <li>목록 1번: 강아지닥스훈트의비밀</li>
+                    </ul>
+                </div>
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="{host_url}" 
+                       style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); 
+                              color: white; 
+                              padding: 14px 28px; 
+                              text-decoration: none; 
+                              border-radius: 8px; 
+                              display: inline-block;
+                              font-weight: 600;
+                              font-size: 16px;
+                              box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);">
+                        🚀 앱으로 이동하기
+                    </a>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        send_email(user_email, user_subject, user_html)
+        print(f"📧 사용자에게 승인 완료 이메일 발송: {user_email}", flush=True)
+        
+        # 승인 완료 페이지 반환
+        return f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>승인 완료</title>
+            <style>
+                body {{ 
+                    font-family: 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; 
+                    text-align: center; 
+                    padding: 50px; 
+                    background: #f5f5f5;
+                }}
+                .success {{ 
+                    background: white;
+                    padding: 40px;
+                    border-radius: 12px;
+                    max-width: 500px;
+                    margin: 0 auto;
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                }}
+                .success-icon {{ 
+                    color: #10b981; 
+                    font-size: 64px; 
+                    margin-bottom: 20px; 
+                }}
+                h2 {{
+                    color: #1f2937;
+                    margin-bottom: 20px;
+                }}
+                p {{
+                    color: #6b7280;
+                    line-height: 1.6;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="success">
+                <div class="success-icon">✅</div>
+                <h2>승인 완료!</h2>
+                <p><strong>{user_email}</strong>님의 회원가입이 승인되었습니다.</p>
+                <p>사용자에게 승인 완료 이메일이 발송되었습니다.</p>
+                <p style="margin-top: 30px; font-size: 14px; color: #9ca3af;">
+                    이제 사용자는 목록 0번과 1번 동화에 접근할 수 있습니다.
+                </p>
+            </div>
+        </body>
+        </html>
+        """, 200
+        
+    except Exception as e:
+        print(f"❌ 승인 처리 실패: {e}", flush=True)
+        import traceback
+        print(f"   상세 오류:\n{traceback.format_exc()}", flush=True)
+        return f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>승인 오류</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f5f5f5; }}
+                .error {{ background: white; padding: 40px; border-radius: 12px; max-width: 500px; margin: 0 auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }}
+                .error-icon {{ color: #ef4444; font-size: 48px; margin-bottom: 20px; }}
+            </style>
+        </head>
+        <body>
+            <div class="error">
+                <div class="error-icon">❌</div>
+                <h2>승인 처리 중 오류가 발생했습니다</h2>
+                <p>{str(e)}</p>
+            </div>
+        </body>
+        </html>
+        """, 500
+
+@app.route('/api/user/approval-status', methods=['GET'])
+def get_approval_status():
+    """
+    사용자 승인 상태 조회
+    GET /api/user/approval-status?user_id=<uuid>
+    """
+    if not SUPERVISOR_APPROVAL_ENABLED:
+        return jsonify({
+            "status": "not_required",
+            "message": "승인 시스템이 비활성화되어 있습니다"
+        })
+    
+    user_id = request.args.get('user_id')
+    if not user_id:
+        return jsonify({"error": "user_id가 필요합니다"}), 400
+    
+    if not supabase_client:
+        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    
+    try:
+        approval_result = supabase_client.table('user_approvals')\
+            .select('status, approved_stories, approved_at')\
+            .eq('user_id', user_id)\
+            .execute()
+        
+        if approval_result.data and len(approval_result.data) > 0:
+            approval = approval_result.data[0]
+            return jsonify({
+                "status": approval.get('status', 'pending'),
+                "approved_stories": approval.get('approved_stories', '0,1'),
+                "approved_at": approval.get('approved_at')
+            })
+        else:
+            return jsonify({
+                "status": "not_found",
+                "message": "승인 요청을 찾을 수 없습니다"
+            })
+    except Exception as e:
+        print(f"❌ 승인 상태 조회 실패: {e}", flush=True)
+        return jsonify({"error": str(e)}), 500
 
 
 # ============================================================================

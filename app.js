@@ -519,7 +519,7 @@ function renderStoryList() {
         // 🔑 bunz5911@gmail.com은 모든 동화 잠금 해제
         if (currentUserEmail === 'bunz5911@gmail.com') {
             return `
-                <div class="story-card" onclick="selectStory(${story.id})">
+                <div class="story-card" onclick="checkStoryAccess(${story.id})">
                     <div class="story-card-image">
                         <img src="${story.image}" alt="${story.title}" onerror="this.style.display='none'">
                         <div class="story-card-overlay">
@@ -596,8 +596,24 @@ function renderStoryList() {
 // [3] 동화 선택 및 학습 시작
 // ============================================================================
 
+// 승인 상태 확인 함수
+async function checkUserApprovalStatus() {
+    if (!isAuthenticated || !currentUserId) return null;
+    
+    try {
+        const response = await fetch(`/api/user/approval-status?user_id=${currentUserId}`);
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        }
+    } catch (e) {
+        console.error('승인 상태 확인 실패:', e);
+    }
+    return null;
+}
+
 // 동화 접근 권한 체크
-function checkStoryAccess(storyId) {
+async function checkStoryAccess(storyId) {
     // 🔑 bunz5911@gmail.com은 모든 동화 무제한 접근
     if (currentUserEmail === 'bunz5911@gmail.com') {
         selectStory(storyId);
@@ -610,8 +626,37 @@ function checkStoryAccess(storyId) {
         return;
     }
     
-    // 0번과 1번 동화는 누구나 접근 가능 (무료 티어)
+    // 🚧 승인 시스템 체크 (로그인한 사용자만)
+    if (isAuthenticated && currentUserId) {
+        const approvalStatus = await checkUserApprovalStatus();
+        if (approvalStatus && approvalStatus.status !== 'not_found') {
+            if (approvalStatus.status === 'pending') {
+                showApprovalPendingModal();
+                return;
+            }
+            if (approvalStatus.status === 'rejected') {
+                showApprovalRejectedModal();
+                return;
+            }
+            if (approvalStatus.status === 'approved') {
+                // 승인된 목록 확인
+                const approvedStories = approvalStatus.approved_stories.split(',').map(s => parseInt(s.trim()));
+                if (!approvedStories.includes(storyId)) {
+                    showNotApprovedModal(approvedStories);
+                    return;
+                }
+                // 승인된 목록에 포함되어 있으면 계속 진행
+            }
+        }
+    }
+    
+    // 승인 시스템이 비활성화되었거나 승인된 사용자: 0번과 1번 동화는 누구나 접근 가능 (무료 티어)
     if (storyId === 0 || storyId === 1) {
+        // 승인 시스템이 활성화되어 있고 로그인하지 않은 경우만 체크
+        if (!isAuthenticated) {
+            showLoginModal(storyId);
+            return;
+        }
         selectStory(storyId);
         return;
     }
@@ -622,7 +667,7 @@ function checkStoryAccess(storyId) {
         return;
     }
     
-    // 로그인 상태 - 플랜별 체크
+    // 로그인 상태 - 플랜별 체크 (승인 시스템 비활성화 시에만)
     if (currentUserPlan === 'free') {
         if (storyId <= 3) {
             selectStory(storyId);
@@ -649,6 +694,144 @@ function checkStoryAccess(storyId) {
             showUpgradeModal('pro');
         }
     }
+}
+
+// 승인 대기 모달 표시
+function showApprovalPendingModal() {
+    const modal = document.createElement('div');
+    modal.id = 'approvalPendingModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.3s ease-out;
+    `;
+    
+    modal.innerHTML = `
+        <div style="background: white; border-radius: 16px; padding: 32px; max-width: 400px; width: 90%; box-shadow: 0 20px 25px rgba(0,0,0,0.2);">
+            <div style="text-align: center; margin-bottom: 24px;">
+                <div style="font-size: 64px; margin-bottom: 16px;">⏳</div>
+                <h2 style="margin: 0; color: #1f2937; font-size: 24px;">승인 대기 중</h2>
+            </div>
+            <p style="color: #6b7280; line-height: 1.6; margin-bottom: 24px; text-align: center;">
+                관리자 승인을 기다리고 있습니다.<br>
+                승인이 완료되면 이메일로 알려드리겠습니다.
+            </p>
+            <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+                <p style="margin: 0; color: #92400e; font-size: 14px;">
+                    승인 후에는 다음 동화에 접근하실 수 있습니다:<br>
+                    • 목록 0번: 도깨비키친<br>
+                    • 목록 1번: 강아지닥스훈트의비밀
+                </p>
+            </div>
+            <button onclick="this.closest('#approvalPendingModal').remove()" 
+                    style="width: 100%; padding: 14px; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); 
+                           color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;">
+                확인
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+    });
+}
+
+// 승인 거부 모달 표시
+function showApprovalRejectedModal() {
+    const modal = document.createElement('div');
+    modal.id = 'approvalRejectedModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.3s ease-out;
+    `;
+    
+    modal.innerHTML = `
+        <div style="background: white; border-radius: 16px; padding: 32px; max-width: 400px; width: 90%; box-shadow: 0 20px 25px rgba(0,0,0,0.2);">
+            <div style="text-align: center; margin-bottom: 24px;">
+                <div style="font-size: 64px; margin-bottom: 16px;">❌</div>
+                <h2 style="margin: 0; color: #1f2937; font-size: 24px;">승인 거부</h2>
+            </div>
+            <p style="color: #6b7280; line-height: 1.6; margin-bottom: 24px; text-align: center;">
+                죄송합니다. 회원가입이 거부되었습니다.<br>
+                문의사항이 있으시면 고객센터로 연락해주세요.
+            </p>
+            <button onclick="this.closest('#approvalRejectedModal').remove()" 
+                    style="width: 100%; padding: 14px; background: #ef4444; 
+                           color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;">
+                확인
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+    });
+}
+
+// 승인되지 않은 동화 모달 표시
+function showNotApprovedModal(approvedStories) {
+    const modal = document.createElement('div');
+    modal.id = 'notApprovedModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.3s ease-out;
+    `;
+    
+    modal.innerHTML = `
+        <div style="background: white; border-radius: 16px; padding: 32px; max-width: 400px; width: 90%; box-shadow: 0 20px 25px rgba(0,0,0,0.2);">
+            <div style="text-align: center; margin-bottom: 24px;">
+                <div style="font-size: 64px; margin-bottom: 16px;">🔒</div>
+                <h2 style="margin: 0; color: #1f2937; font-size: 24px;">접근 권한 없음</h2>
+            </div>
+            <p style="color: #6b7280; line-height: 1.6; margin-bottom: 24px; text-align: center;">
+                이 동화에 대한 접근 권한이 없습니다.
+            </p>
+            <div style="background: #d1fae5; border-left: 4px solid #10b981; padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+                <p style="margin: 0; color: #065f46; font-size: 14px;">
+                    현재 접근 가능한 동화:<br>
+                    ${approvedStories.map(id => `• 목록 ${id}번`).join('<br>')}
+                </p>
+            </div>
+            <button onclick="this.closest('#notApprovedModal').remove()" 
+                    style="width: 100%; padding: 14px; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); 
+                           color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;">
+                확인
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+    });
 }
 
 // 로그인 필요 모달 표시
