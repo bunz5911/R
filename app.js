@@ -1771,16 +1771,34 @@ function showQuizQuestion() {
     }
     
     const q = quizData[currentQuizIndex];
+    
+    // ✅ 다국어 퀴즈 지원: question이 객체면 현재 언어 선택, 문자열이면 그대로 사용
+    let questionText = '';
+    let optionsList = [];
+    let correctIndex = q.correct_index || 0;
+    
+    if (typeof q.question === 'object' && q.question !== null) {
+        // 다국어 퀴즈 객체인 경우
+        const multilangQ = q.question[currentLanguage] || q.question['ko'] || q.question;
+        questionText = typeof multilangQ === 'string' ? multilangQ : (multilangQ.question || '');
+        optionsList = multilangQ.options || [];
+        correctIndex = multilangQ.correct_index !== undefined ? multilangQ.correct_index : correctIndex;
+    } else {
+        // 기존 문자열 형식인 경우 (하위 호환)
+        questionText = q.question || '';
+        optionsList = q.options || [];
+    }
+    
     contentEl.innerHTML = `
         <div class="section-title">${t('quiz.questionNumber')} ${currentQuizIndex + 1} / ${quizData.length}</div>
         ${renderCharacterImage('quiz')}
         <div class="content-box" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); font-size: 16px; font-weight: 600; color: #2d3436;">
-            ${q.question}
+            ${questionText}
         </div>
 
         <div style="margin-top: 20px;">
-            ${q.options.map((option, idx) => `
-                <div class="content-box" id="option${idx}" onclick="checkAnswer(${idx}, ${q.correct_index})" style="cursor: pointer; margin-bottom: 12px; border: 2px solid #e9ecef; transition: all 0.3s;">
+            ${optionsList.map((option, idx) => `
+                <div class="content-box" id="option${idx}" onclick="checkAnswer(${idx}, ${correctIndex})" style="cursor: pointer; margin-bottom: 12px; border: 2px solid #e9ecef; transition: all 0.3s;">
                     <strong>${String.fromCharCode(65 + idx)}.</strong> ${option}
                 </div>
             `).join('')}
@@ -1798,6 +1816,21 @@ function checkAnswer(selectedIndex, correctIndex) {
     const optionEl = document.getElementById(`option${selectedIndex}`);
     const feedbackEl = document.getElementById('quizFeedback');
     const q = quizData[currentQuizIndex];
+    
+    // ✅ 다국어 퀴즈 지원: correct_index도 다국어 객체에서 가져오기
+    if (typeof q === 'object' && q !== null && !q.question && !q.options) {
+        // 퀴즈가 언어별 객체로 구성된 경우 (예: {ko: {...}, en: {...}})
+        const multilangQ = q[currentLanguage] || q['ko'] || q;
+        if (multilangQ.correct_index !== undefined) {
+            correctIndex = multilangQ.correct_index;
+        }
+    } else if (typeof q.question === 'object' && q.question !== null) {
+        // question이 언어별 객체인 경우
+        const multilangQ = q.question[currentLanguage] || q.question['ko'] || q.question;
+        if (multilangQ.correct_index !== undefined) {
+            correctIndex = multilangQ.correct_index;
+        }
+    }
     
     if (selectedIndex === correctIndex) {
         // 정답!
@@ -1881,7 +1914,27 @@ function showCorrectAnswer(correctIndex) {
     updateCoinDisplay();
     
     const q = quizData[currentQuizIndex];
-    const correctOption = q.options[correctIndex];
+    
+    // ✅ 다국어 퀴즈 지원: options와 explanation 다국어 처리
+    let optionsList = [];
+    let explanationText = '';
+    
+    // 퀴즈 데이터 구조 확인
+    if (typeof q === 'object' && q !== null && !q.question && !q.options) {
+        // 퀴즈가 언어별 객체로 구성된 경우
+        const multilangQ = q[currentLanguage] || q['ko'] || q;
+        optionsList = multilangQ.options || [];
+        explanationText = multilangQ.explanation || '';
+    } else if (typeof q.question === 'object' && q.question !== null) {
+        const multilangQ = q.question[currentLanguage] || q.question['ko'] || q.question;
+        optionsList = multilangQ.options || q.options || [];
+        explanationText = multilangQ.explanation || q.explanation || '';
+    } else {
+        optionsList = q.options || [];
+        explanationText = q.explanation || '';
+    }
+    
+    const correctOption = optionsList[correctIndex] || '';
     const feedbackEl = document.getElementById('quizFeedback');
     
     feedbackEl.innerHTML = `
@@ -1892,7 +1945,7 @@ function showCorrectAnswer(correctIndex) {
                 ${t('quiz.correctAnswerLabel')} <strong>${correctOption}</strong>
             </div>
             <div style="font-size: 13px; opacity: 0.9; line-height: 1.6;">
-                ${q.explanation || t('quiz.defaultExplanation')}
+                ${explanationText || t('quiz.defaultExplanation')}
             </div>
             <button class="btn" onclick="continueAfterExplanation()" style="margin-top: 16px; background: white; color: #6FCF97;">
                 ${t('quiz.nextQuestion')}
