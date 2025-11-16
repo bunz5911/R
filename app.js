@@ -1,7 +1,13 @@
 /**
  * K-Context Master - 한국어 동화 학습 앱
  * 순수 JavaScript (No Framework)
+ * 버전: 20251116-FINAL-URGENT-FIX
  */
+
+// ✅ 버전 체크: 이 파일이 새로 로드되었는지 확인
+window.APP_VERSION_20251117 = true;
+console.log('🚀🚀🚀 app.js 로드됨 - 버전: 20251117-URGENT-FINAL-' + Date.now());
+console.log('✅ 새 버전 확인: APP_VERSION_20251117 =', window.APP_VERSION_20251117);
 
 // 배포 환경 감지: Netlify에서는 Render 백엔드 사용, 로컬에서는 localhost 사용
 const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
@@ -294,9 +300,16 @@ async function loadPrecomputedAnalysis() {
     try {
         console.log('📦 하드코딩된 분석 데이터 로드 시작...');
         // ✅ 최종 파일: 모든 키 공백 제거 완료
-        // 캐시 무효화를 위해 타임스탬프 추가
-        const cacheBuster = Date.now();
-        const response = await fetch(`stories_data_final.json?v=${cacheBuster}&nocache=${cacheBuster}`);
+        // 캐시 무효화를 위해 타임스탬프 추가 (레벨별 데이터 재생성 후 강제 새로고침)
+        const cacheBuster = Date.now() + Math.random();
+        const response = await fetch(`stories_data_final.json?v=${cacheBuster}&nocache=${cacheBuster}&force=${Math.random()}&t=${Date.now()}`, {
+            cache: 'no-store',  // 브라우저 캐시 완전 무시
+            headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
+            }
+        });
         if (!response.ok) {
             throw new Error(`stories_data_final.json 로드 실패: ${response.status}`);
         }
@@ -406,12 +419,86 @@ function setupEventListeners() {
                 return; // 같은 레벨이면 아무것도 하지 않음
             }
             
+            // 현재 보고 있는 탭 저장 (레벨 변경 후 다시 렌더링하기 위해)
+            const previousTab = currentTab || 'summary';
+            
+            console.log(`🔄 레벨 변경 시작:`, {
+                이전레벨: currentLevel,
+                새레벨: newLevel,
+                현재탭: currentTab,
+                previousTab: previousTab
+            });
+            
+            // ✅ 레벨 변경 전에 이전 분석 데이터 초기화 (중요!)
+            const oldAnalysis = currentAnalysis;
             currentLevel = newLevel;
             
             // ✅ 레벨 변경 시 분석 데이터 다시 로드
             if (currentStory && currentStory.id !== undefined) {
-                console.log(`🔄 레벨 변경: ${currentLevel} → 분석 데이터 다시 로드`);
-                await analyzeStory(currentStory.id);
+                console.log(`🔄 레벨 변경: ${currentLevel} → 분석 데이터 다시 로드 (현재 탭: ${previousTab})`);
+                
+                // ✅ currentTab을 명시적으로 설정 (analyzeStory 함수 내부에서 사용)
+                currentTab = previousTab;
+                
+                // ✅ 레벨 변경 시에는 렌더링을 건너뛰고 데이터만 로드
+                console.log(`📡 analyzeStory 호출 전: currentAnalysis.level=${currentAnalysis?.level}, currentLevel=${currentLevel}`);
+                await analyzeStory(currentStory.id, true);
+                console.log(`📡 analyzeStory 호출 후: currentAnalysis.level=${currentAnalysis?.level}, currentLevel=${currentLevel}`);
+                
+                // ✅ 핵심 수정: 분석 완료 후 현재 탭 다시 렌더링 (레벨별 데이터 반영)
+                if (currentAnalysis) {
+                    console.log(`🔍 currentAnalysis 상세 확인:`, {
+                        level: currentAnalysis.level,
+                        현재레벨: currentLevel,
+                        레벨일치: currentAnalysis.level === currentLevel,
+                        문단수: currentAnalysis.paragraphs_analysis?.length || 0,
+                        첫문단샘플: currentAnalysis.paragraphs_analysis?.[0]?.original_text?.substring(0, 50) || '없음',
+                        첫문단연습텍스트: currentAnalysis.paragraphs_analysis?.[0]?.practice_text?.substring(0, 50) || '없음',
+                        실생활활용첫번째: currentAnalysis.real_life_usage?.[0]?.substring(0, 50) || '없음',
+                        어휘첫번째: currentAnalysis.vocabulary?.[0]?.word || '없음'
+                    });
+                    
+                    // ✅ 레벨이 일치하든 안하든 무조건 탭 다시 렌더링
+                    console.log(`🔄 강제 탭 재렌더링 시작: ${previousTab} (레벨: ${currentLevel})`);
+                    console.log(`📊 렌더링 전 데이터 샘플:`, {
+                        실생활활용: currentAnalysis.real_life_usage?.slice(0, 2) || [],
+                        어휘: currentAnalysis.vocabulary?.slice(0, 2).map(v => v.word) || []
+                    });
+                    
+                    // ✅ 강제로 탭 다시 렌더링
+                    console.log(`🔄 switchTab 호출 전: previousTab=${previousTab}, currentLevel=${currentLevel}`);
+                    
+                    // ✅ 현재 탭이 실생활/어휘/퀴즈인 경우 강제로 재렌더링
+                    if (previousTab === 'real-life' || previousTab === 'vocabulary' || previousTab === 'quiz') {
+                        console.log(`🔄 레벨별 탭 강제 재렌더링: ${previousTab}`);
+                        // DOM을 완전히 비우고 다시 렌더링
+                        const contentEl = document.getElementById('learningContent');
+                        if (contentEl) {
+                            contentEl.innerHTML = ''; // 완전히 비우기
+                        }
+                        
+                        // 약간의 지연 후 렌더링 (DOM 업데이트 보장)
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
+                    
+                    await switchTab(previousTab);
+                    
+                    // ✅ 렌더링 후 확인
+                    console.log(`✅ 렌더링 완료, currentAnalysis.level: ${currentAnalysis.level}, currentLevel: ${currentLevel}`);
+                    console.log(`📊 렌더링 후 DOM 확인:`, {
+                        실생활활용존재: !!document.querySelector('.content-box'),
+                        탭내용길이: document.getElementById('learningContent')?.innerHTML?.length || 0,
+                        첫번째예문: document.querySelector('.content-box')?.textContent?.substring(0, 50) || '없음'
+                    });
+                } else {
+                    console.error(`❌ currentAnalysis가 없습니다!`);
+                    console.error(`❌ 분석 실패 또는 레벨 불일치:`, {
+                        currentAnalysis존재: !!currentAnalysis,
+                        분석레벨: currentAnalysis?.level,
+                        현재레벨: currentLevel,
+                        이전분석레벨: oldAnalysis?.level
+                    });
+                }
             }
         });
     });
@@ -1201,7 +1288,7 @@ async function adjustDifficultyAndStart(preference) {
     await analyzeStory(currentStory.id);
 }
 
-async function analyzeStory(storyId) {
+async function analyzeStory(storyId, skipRender = false) {
     const contentEl = document.getElementById('learningContent');
     
     // ✅ 핵심: 서버에서 받은 제목의 모든 공백 제거 (내부 키와 100% 일치시키기)
@@ -1237,12 +1324,41 @@ async function analyzeStory(storyId) {
     // ✅ matchedData 사용 (이미 찾은 데이터)
     if (matchedData && matchedData[currentLevel]) {
         console.log(`✅ 하드코딩 데이터 사용: ${internalKey} - ${currentLevel} (즉시 로드)`);
-        currentAnalysis = matchedData[currentLevel];
+        console.log(`🔍 레벨별 데이터 확인:`, {
+            사용중인레벨: currentLevel,
+            사용가능한레벨: Object.keys(matchedData),
+            문단수: matchedData[currentLevel]?.paragraphs_analysis?.length || 0,
+            첫문단샘플: matchedData[currentLevel]?.paragraphs_analysis?.[0]?.original_text?.substring(0, 50) || '없음'
+        });
+        
+        // ✅ 레벨별 데이터 복사 (원본 데이터 보호)
+        currentAnalysis = JSON.parse(JSON.stringify(matchedData[currentLevel]));
         currentAnalysis.story_id = storyId;
         currentAnalysis.title = currentStory.title;  // 화면 표시용은 원본 제목 사용
         currentAnalysis.level = currentLevel;
-        switchTab('summary');
+        
+        console.log(`✅ currentAnalysis 업데이트 완료:`, {
+            level: currentAnalysis.level,
+            문단수: currentAnalysis.paragraphs_analysis?.length || 0,
+            실생활활용수: currentAnalysis.real_life_usage?.length || 0,
+            어휘수: currentAnalysis.vocabulary?.length || 0
+        });
+        
+        // ✅ skipRender가 false일 때만 렌더링 (레벨 변경 시에는 호출부에서 렌더링)
+        if (!skipRender) {
+            const tabToRender = currentTab || 'summary';
+            console.log(`🔄 탭 렌더링 시작: ${tabToRender} (레벨: ${currentLevel})`);
+            await switchTab(tabToRender);
+        } else {
+            console.log(`⏭️ 렌더링 건너뜀 (호출부에서 처리) - currentAnalysis.level=${currentAnalysis.level}, currentLevel=${currentLevel}`);
+        }
         return;
+    } else {
+        console.error(`❌ 레벨별 데이터 없음:`, {
+            matchedData존재: !!matchedData,
+            사용중인레벨: currentLevel,
+            사용가능한레벨: matchedData ? Object.keys(matchedData) : 'matchedData 없음'
+        });
     }
     
     console.log('⚠️ 하드코딩 데이터 없음, API 호출 필요');
@@ -1255,7 +1371,12 @@ async function analyzeStory(storyId) {
         try {
             currentAnalysis = JSON.parse(cachedAnalysis);
             console.log('✅ LocalStorage 캐시 로드 (즉시 표시)');
-            switchTab('summary');
+            
+            // ✅ skipRender가 false일 때만 렌더링 (레벨 변경 시에는 호출부에서 렌더링)
+            if (!skipRender) {
+                const tabToRender = currentTab || 'summary';
+                await switchTab(tabToRender);
+            }
             return;
         } catch (e) {
             console.log('⚠️ 캐시 파싱 오류, 새로 분석합니다.');
@@ -1314,7 +1435,11 @@ async function analyzeStory(storyId) {
             session_type: 'reading'
         });
         
-        switchTab('summary'); // 요약 탭 표시
+        // ✅ skipRender가 false일 때만 렌더링 (레벨 변경 시에는 호출부에서 렌더링)
+        if (!skipRender) {
+            const tabToRender = currentTab || 'summary';
+            await switchTab(tabToRender);
+        }
         
     } catch (error) {
         console.error('❌ 분석 오류:', error);
@@ -1427,6 +1552,8 @@ function showStoryList() {
 // [4] 탭 전환
 // ============================================================================
 async function switchTab(tabName) {
+    console.log(`🔄 switchTab 호출: ${tabName} (현재 레벨: ${currentLevel}, 분석 레벨: ${currentAnalysis?.level})`);
+    
     currentTab = tabName;
     
     // 완료한 탭 추적
@@ -1446,7 +1573,19 @@ async function switchTab(tabName) {
         return;
     }
 
+    // ✅ 레벨 불일치 체크 (렌더링 전에 확인)
+    if (currentAnalysis.level !== currentLevel) {
+        console.error(`⚠️ switchTab에서 레벨 불일치 감지! currentAnalysis.level=${currentAnalysis.level}, currentLevel=${currentLevel}`);
+        console.error(`⚠️ 분석 데이터를 다시 로드합니다...`);
+        // 분석 데이터 다시 로드
+        await analyzeStory(currentStory.id, true);
+        // 다시 렌더링
+        await switchTab(tabName);
+        return;
+    }
+
     // ✅ 즉시 렌더링 (로딩 없음)
+    console.log(`🎨 탭 렌더링 시작: ${tabName} (레벨: ${currentLevel})`);
     switch(tabName) {
         case 'summary':
             await renderSummary();
@@ -1473,6 +1612,7 @@ async function switchTab(tabName) {
             renderGrowth();
             break;
     }
+    console.log(`✅ 탭 렌더링 완료: ${tabName}`);
 }
 
 // ============================================================================
@@ -1645,13 +1785,31 @@ function extractFirstSentence(text) {
 
 function renderParagraphs() {
     const contentEl = document.getElementById('learningContent');
+    
+    // ✅ 레벨 불일치 체크 및 경고
+    if (currentAnalysis && currentAnalysis.level !== currentLevel) {
+        console.error(`⚠️ 레벨 불일치 감지! currentAnalysis.level: ${currentAnalysis.level}, currentLevel: ${currentLevel}`);
+        console.error(`⚠️ 분석 데이터를 다시 로드합니다...`);
+        // 분석 데이터 다시 로드
+        analyzeStory(currentStory.id, true).then(() => {
+            switchTab('paragraphs');
+        });
+        return;
+    }
+    
     const paragraphs = currentAnalysis.paragraphs_analysis || [];
     
     console.log('📝 문단별 학습 렌더링:', {
         storyId: currentStory?.id,
         title: currentStory?.title,
+        현재레벨: currentLevel,
+        분석데이터레벨: currentAnalysis?.level,
+        레벨일치: currentAnalysis?.level === currentLevel,
         문단수: paragraphs.length,
-        첫문단: paragraphs[0]?.original_text?.substring(0, 50) || '없음'
+        첫문단원문: paragraphs[0]?.original_text?.substring(0, 50) || '없음',
+        첫문단연습텍스트: paragraphs[0]?.practice_text?.substring(0, 80) || '없음',
+        첫문단쉬운표현: paragraphs[0]?.simplified_text?.substring(0, 50) || '없음',
+        '첫문단전체데이터': paragraphs[0] ? Object.keys(paragraphs[0]) : '없음'
     });
     
     if (paragraphs.length === 0) {
@@ -1732,7 +1890,40 @@ function renderParagraphs() {
 
 function renderRealLife() {
     const contentEl = document.getElementById('learningContent');
+    
+    // ✅ 필수 체크: currentAnalysis가 없으면 에러
+    if (!currentAnalysis) {
+        console.error('❌ renderRealLife: currentAnalysis가 없습니다!');
+        contentEl.innerHTML = '<div class="content-box">데이터를 불러오는 중...</div>';
+        return;
+    }
+    
+    // ✅ 레벨 불일치 체크 및 경고
+    if (currentAnalysis.level !== currentLevel) {
+        console.error(`⚠️ 레벨 불일치 감지! currentAnalysis.level: ${currentAnalysis.level}, currentLevel: ${currentLevel}`);
+        console.error(`⚠️ 분석 데이터를 다시 로드합니다...`);
+        analyzeStory(currentStory.id, true).then(() => {
+            switchTab('real-life');
+        });
+        return;
+    }
+    
     const examples = currentAnalysis.real_life_usage || [];
+    
+    console.log('💬💬💬 실생활 활용 렌더링 시작:', {
+        현재레벨: currentLevel,
+        분석데이터레벨: currentAnalysis?.level,
+        예문수: examples.length,
+        첫예문전체: examples[0] || '없음',
+        모든예문: examples.slice(0, 5)
+    });
+    
+    // ✅ 예문이 없으면 에러
+    if (examples.length === 0) {
+        console.error('❌ 실생활 활용 예문이 없습니다!');
+        contentEl.innerHTML = '<div class="content-box">예문 데이터가 없습니다.</div>';
+        return;
+    }
     
     contentEl.innerHTML = `
         <div class="section-title">${t('tabs.realLife')} (${translateLevel(currentLevel)})</div>
@@ -1758,8 +1949,28 @@ function renderRealLife() {
 
 function renderVocabulary() {
     const contentEl = document.getElementById('learningContent');
+    
+    // ✅ 레벨 불일치 체크 및 경고
+    if (currentAnalysis && currentAnalysis.level !== currentLevel) {
+        console.error(`⚠️ 레벨 불일치 감지! currentAnalysis.level: ${currentAnalysis.level}, currentLevel: ${currentLevel}`);
+        console.error(`⚠️ 분석 데이터를 다시 로드합니다...`);
+        analyzeStory(currentStory.id, true).then(() => {
+            switchTab('vocabulary');
+        });
+        return;
+    }
+    
     const vocabulary = currentAnalysis.vocabulary || [];
     const grammar = currentAnalysis.grammar || [];
+    
+    console.log('📚 어휘/문법 렌더링:', {
+        현재레벨: currentLevel,
+        분석데이터레벨: currentAnalysis?.level,
+        어휘수: vocabulary.length,
+        문법수: grammar.length,
+        첫어휘: vocabulary[0]?.word || '없음',
+        모든어휘: vocabulary.slice(0, 3).map(v => v.word)
+    });
     
     contentEl.innerHTML = `
         <div class="section-title">${t('tabs.vocabulary')}</div>
@@ -1883,14 +2094,31 @@ let quizBlocked = false;  // 퀴즈 막힘 상태
 function renderQuiz() {
     const contentEl = document.getElementById('learningContent');
     
+    console.log('📝 퀴즈 렌더링 시작:', {
+        현재레벨: currentLevel,
+        분석데이터레벨: currentAnalysis?.level,
+        퀴즈문제수: currentAnalysis?.quiz_questions?.length || 0
+    });
+    
+    // ✅ 레벨 불일치 체크
+    if (currentAnalysis && currentAnalysis.level !== currentLevel) {
+        console.error(`⚠️ 레벨 불일치 감지! currentAnalysis.level: ${currentAnalysis.level}, currentLevel: ${currentLevel}`);
+        console.error(`⚠️ 분석 데이터를 다시 로드합니다...`);
+        analyzeStory(currentStory.id, true).then(() => {
+            switchTab('quiz');
+        });
+        return;
+    }
+    
     if (!currentAnalysis.quiz_questions || currentAnalysis.quiz_questions.length === 0) {
         // 퀴즈 생성 요청
+        console.log('📝 퀴즈 문제 없음, 생성 요청 중...');
         contentEl.innerHTML = `
             <div class="section-title">${t('tabs.quiz')}</div>
             ${renderCharacterImage('quiz')}
             <div class="loading">
                 <img src="img/loading.png" alt="Loading" class="loading-image">
-                <p>${t('messages.recording')}</p>
+                <p style="font-size: 16px; font-weight: 600; color: #333;">문제를 구성합니다...</p>
             </div>
         `;
         generateQuiz();

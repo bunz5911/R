@@ -46,6 +46,19 @@ app = Flask(__name__, static_folder='.', static_url_path='')
 CORS(app)
 
 # ============================================================================
+# 🚫 캐시 방지 헤더 추가 (정적 파일 강제 새로고침)
+# ============================================================================
+@app.after_request
+def add_no_cache_headers(response):
+    """정적 파일에 캐시 방지 헤더 추가"""
+    if request.path.endswith(('.js', '.json', '.html', '.css')):
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        response.headers['Last-Modified'] = datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT')
+    return response
+
+# ============================================================================
 # 🚧 임시 승인 시스템 설정 (나중에 제거 가능하도록 플래그로 관리)
 # ============================================================================
 SUPERVISOR_APPROVAL_ENABLED = True  # ✅ 이 플래그만 False로 바꾸면 원래 로직으로 복귀
@@ -1558,6 +1571,7 @@ def auth_signup():
             user = auth_response.user
             
             # profiles 테이블에 사용자 프로필 생성
+            profile_created = False
             try:
                 supabase_client.table('profiles').insert({
                     'id': user.id,
@@ -1574,8 +1588,18 @@ def auth_signup():
                     'total_coins': 10
                 }).execute()
                 
-                # 🚧 승인 시스템 활성화 시
-                if SUPERVISOR_APPROVAL_ENABLED:
+                profile_created = True
+                print(f"✅ 신규 회원 가입: {email}", flush=True)
+            except Exception as profile_error:
+                # 프로필이 이미 존재하는 경우도 정상 처리
+                error_msg = str(profile_error)
+                if 'duplicate key' in error_msg or 'already exists' in error_msg:
+                    print(f"ℹ️ 프로필이 이미 존재함: {email}", flush=True)
+                else:
+                    print(f"⚠️ 프로필 생성 실패: {profile_error}", flush=True)
+            
+            # 🚧 승인 시스템 활성화 시 (프로필 생성 성공/실패와 관계없이 실행)
+            if SUPERVISOR_APPROVAL_ENABLED:
                     # 승인 토큰 생성
                     approval_token = secrets.token_urlsafe(32)
                     
@@ -1676,10 +1700,8 @@ def auth_signup():
                         print(f"📧 사용자에게 승인 대기 이메일 발송: {email}", flush=True)
                     except Exception as approval_error:
                         print(f"⚠️ 승인 요청 생성 실패: {approval_error}", flush=True)
-                
-                print(f"✅ 신규 회원 가입: {email}", flush=True)
-            except Exception as profile_error:
-                print(f"⚠️ 프로필 생성 실패 (이미 존재할 수 있음): {profile_error}", flush=True)
+                        import traceback
+                        print(f"   상세 오류:\n{traceback.format_exc()}", flush=True)
             
             response_data = {
                 "success": True,
