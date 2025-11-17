@@ -36,6 +36,7 @@
     "delete": "삭제",
     "startRecording": "녹음 시작",
     "stopRecording": "녹음 중지",
+    "backToStoryList": "목록으로",
     "getAIEvaluation": "AI 평가 받기",
     "addWord": "단어 추가"
   },
