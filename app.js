@@ -1,13 +1,13 @@
 /**
  * K-Context Master - 한국어 동화 학습 앱
  * 순수 JavaScript (No Framework)
- * 버전: 20251116-FINAL-URGENT-FIX
+ * 버전: 20251117-PARAGRAPH-FIX
  */
 
 // ✅ 버전 체크: 이 파일이 새로 로드되었는지 확인
-window.APP_VERSION_20251117 = true;
-console.log('🚀🚀🚀 app.js 로드됨 - 버전: 20251117-URGENT-FINAL-' + Date.now());
-console.log('✅ 새 버전 확인: APP_VERSION_20251117 =', window.APP_VERSION_20251117);
+window.APP_VERSION_20251117_PARAGRAPH = true;
+console.log('🚀🚀🚀 app.js 로드됨 - 버전: 20251117-PARAGRAPH-FIX-' + Date.now());
+console.log('✅ 새 버전 확인: APP_VERSION_20251117_PARAGRAPH =', window.APP_VERSION_20251117_PARAGRAPH);
 
 // 배포 환경 감지: Netlify에서는 Render 백엔드 사용, 로컬에서는 localhost 사용
 const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
@@ -173,6 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // 🎨 캐릭터 이미지 매핑
 // ============================================================================
 const CHARACTER_IMAGES = {
+    'summary': 'img/characters/summary.png',        // 이야기 요약
     'full-story': 'img/characters/reading.png',      // 전체 듣기
     'paragraphs': 'img/characters/learning.png',    // 문단별 학습
     'real-life': 'img/characters/speaking.png',      // 실생활 활용
@@ -324,13 +325,21 @@ async function loadPrecomputedAnalysis() {
         // ✅ 0번 동화 확인
         if ('도깨비키친' in PRECOMPUTED_ANALYSIS) {
             const dokkaebi = PRECOMPUTED_ANALYSIS['도깨비키친'];
-            if ('초급' in dokkaebi) {
-                const paras = dokkaebi['초급'].paragraphs_analysis || [];
-                console.log('✅ 도깨비키친 데이터 확인:', {
-                    문단수: paras.length,
-                    첫문단: paras[0]?.original_text?.substring(0, 50) || '없음'
-                });
-            }
+            console.log('✅ 도깨비키친 데이터 확인:', {
+                초급문단수: dokkaebi['초급']?.paragraphs_analysis?.length || 0,
+                중급문단수: dokkaebi['중급']?.paragraphs_analysis?.length || 0,
+                고급문단수: dokkaebi['고급']?.paragraphs_analysis?.length || 0
+            });
+        }
+        
+        // ✅ 1번 동화 확인
+        if ('강아지닥스훈트의비밀' in PRECOMPUTED_ANALYSIS) {
+            const dachshund = PRECOMPUTED_ANALYSIS['강아지닥스훈트의비밀'];
+            console.log('✅ 강아지닥스훈트의비밀 데이터 확인:', {
+                초급문단수: dachshund['초급']?.paragraphs_analysis?.length || 0,
+                중급문단수: dachshund['중급']?.paragraphs_analysis?.length || 0,
+                고급문단수: dachshund['고급']?.paragraphs_analysis?.length || 0
+            });
         }
         
         // ✅ 전역 변수 확인
@@ -1639,6 +1648,10 @@ async function renderSummary() {
     // ✅ 음성 재생 버튼 제거 (텍스트만 표시)
     contentEl.innerHTML = `
         <div class="section-title">${t('tabs.summary')}</div>
+        
+        <!-- ✅ 요약 이미지 (다른 탭과 동일한 스타일 적용) -->
+        ${renderCharacterImage('summary')}
+        
         <div class="content-box">
             ${summaryText}
         </div>
@@ -1760,9 +1773,74 @@ function renderFullStory() {
             </button>
         </div>
         ${renderCharacterImage('full-story')}
-        <div class="content-box">
-            ${fullText.replace(/\n/g, '<br>')}
+        
+        <!-- ✅ 사용자가 직접 읽어야 하는 부분 - 박스로 강조 (light green 배경) -->
+        <div style="border: 3px solid #4caf50; border-radius: 12px; padding: 24px; margin-bottom: 24px; background: #c8e6c9; box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);">
+            <div style="font-size: 14px; color: #2e7d32; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;">
+                📖 직접 읽어보세요
+            </div>
+            <div style="font-size: 18px; font-weight: 700; line-height: 1.9; color: #1a1a1a; text-align: justify;">
+                ${fullText.replace(/\n/g, '<br>')}
+            </div>
         </div>
+        
+        <!-- ✅ 학습 활동 섹션 -->
+        <div style="margin-top: 32px;">
+            <div style="font-size: 20px; font-weight: 700; color: #333; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid #667eea;">
+                📚 학습 활동
+            </div>
+            
+            <!-- 가. 가장 중요한 단어 기록 -->
+            <div style="background: #fff; border: 2px solid #667eea; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <div style="font-size: 16px; font-weight: 700; color: #667eea; margin-bottom: 12px;">
+                    가. 가장 중요한 단어를 기록해주세요
+                </div>
+                <textarea 
+                    id="importantWordsInput" 
+                    placeholder="이야기에서 가장 중요하다고 생각하는 단어들을 입력해주세요..."
+                    style="width: 100%; min-height: 80px; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 15px; font-family: inherit; resize: vertical; box-sizing: border-box;"
+                ></textarea>
+            </div>
+            
+            <!-- 나. 이야기의 의미 기록 -->
+            <div style="background: #fff; border: 2px solid #667eea; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <div style="font-size: 16px; font-weight: 700; color: #667eea; margin-bottom: 12px;">
+                    나. 이 이야기는 무엇을 말하려고 하는지를 기록해주세요
+                </div>
+                <textarea 
+                    id="storyMeaningInput" 
+                    placeholder="이야기가 전달하려는 메시지나 의미를 자유롭게 작성해주세요..."
+                    style="width: 100%; min-height: 120px; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 15px; font-family: inherit; resize: vertical; box-sizing: border-box;"
+                ></textarea>
+            </div>
+            
+            <!-- 다. 소리내어 말해서 AI 평가 받기 -->
+            <div style="background: #fff; border: 2px solid #667eea; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <div style="font-size: 16px; font-weight: 700; color: #667eea; margin-bottom: 12px;">
+                    다. 위 내용을 소리내어 말해서 AI의 평가를 받아주세요
+                </div>
+                <div style="background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                    <div style="font-size: 14px; color: #666; margin-bottom: 8px;">
+                        💡 읽어볼 내용:
+                    </div>
+                    <div style="font-size: 16px; font-weight: 600; color: #333; line-height: 1.6;">
+                        ${fullText.length > 200 ? fullText.substring(0, 200) + '...' : fullText}
+                    </div>
+                </div>
+                <div class="control-buttons" id="fullStoryRecordingButtons">
+                    <button class="btn" onclick="startFullStoryRecording(${storyId}, '${escapeQuotes(fullText)}')" style="background: #667eea; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;">
+                        🎤 소리내어 읽기 시작
+                    </button>
+                </div>
+                <!-- 녹음 상태 표시 -->
+                <div class="recording-indicator" id="fullStoryRecordingIndicator" style="display: none;">
+                    <div class="recording-text">${t('messages.recording')}</div>
+                </div>
+                <!-- 평가 결과 표시 영역 -->
+                <div id="fullStoryEvaluationResult" style="margin-top: 16px; display: none;"></div>
+            </div>
+        </div>
+        
         <div class="bottom-spacer"></div>
     `;
 }
@@ -1806,11 +1884,19 @@ function renderParagraphs() {
         분석데이터레벨: currentAnalysis?.level,
         레벨일치: currentAnalysis?.level === currentLevel,
         문단수: paragraphs.length,
+        모든문단번호: paragraphs.map(p => p.paragraph_num || '없음'),
         첫문단원문: paragraphs[0]?.original_text?.substring(0, 50) || '없음',
         첫문단연습텍스트: paragraphs[0]?.practice_text?.substring(0, 80) || '없음',
         첫문단쉬운표현: paragraphs[0]?.simplified_text?.substring(0, 50) || '없음',
         '첫문단전체데이터': paragraphs[0] ? Object.keys(paragraphs[0]) : '없음'
     });
+    
+    // ✅ 문단 수 확인 및 경고
+    if (paragraphs.length === 1) {
+        console.warn('⚠️ 경고: 문단이 1개만 있습니다! 데이터를 확인해주세요.');
+        console.warn('⚠️ 현재 레벨:', currentLevel);
+        console.warn('⚠️ 현재 동화:', currentStory?.title);
+    }
     
     if (paragraphs.length === 0) {
         contentEl.innerHTML = `<div class="content-box">${t('messages.noParagraphs')}</div>`;
@@ -1828,8 +1914,17 @@ function renderParagraphs() {
         </div>
         ${paragraphs.map((p, idx) => {
             // ✅ 연습용 텍스트: AI가 레벨별로 선택한 텍스트 (없으면 첫 문장 추출)
-            const practiceText = p.practice_text || extractFirstSentence(p.original_text || '');
+            // 영어 번역 지원: 현재 언어가 영어면 영어 번역 사용, 아니면 한국어 사용
+            const practiceText = (currentLanguage === 'en' && p.practice_text_en) 
+                ? p.practice_text_en 
+                : (p.practice_text || extractFirstSentence(p.original_text || ''));
             const fullText = p.original_text || '';
+            const simplifiedText = (currentLanguage === 'en' && p.simplified_text_en) 
+                ? p.simplified_text_en 
+                : (p.simplified_text || '');
+            const explanationText = (currentLanguage === 'en' && p.explanation_en) 
+                ? p.explanation_en 
+                : (p.explanation || '');
             
             return `
             <div class="paragraph-item" id="paragraph${idx}">
@@ -1840,17 +1935,17 @@ function renderParagraphs() {
                     </button>
                 </div>
                 
-                <!-- ✅ 레벨별 연습 문장 (AI가 선택한 적절한 길이) -->
-                <div style="background: #e3f2fd; border-left: 4px solid #2196f3; padding: 16px; margin-bottom: 12px; border-radius: 8px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <div style="font-weight: 600; color: #1976d2;">🎤 ${t('descriptions.practiceSentence')}</div>
+                <!-- ✅ 레벨별 연습 문장 (AI가 선택한 적절한 길이) - 박스로 강조 (light green 배경) -->
+                <div style="border: 3px solid #4caf50; border-radius: 12px; padding: 20px; margin-bottom: 16px; background: #c8e6c9; box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <div style="font-size: 14px; color: #2e7d32; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">📖 직접 읽어보세요</div>
                         <div style="display: flex; gap: 4px;">
                             <button onclick="adjustParagraphDifficulty(${idx}, 'easier')" style="background: #84fab0; color: white; border: none; padding: 4px 8px; border-radius: 12px; font-size: 11px; cursor: pointer;" title="${t('difficulty.easier')}">⬇️</button>
                             <button onclick="adjustParagraphDifficulty(${idx}, 'harder')" style="background: #fa709a; color: white; border: none; padding: 4px 8px; border-radius: 12px; font-size: 11px; cursor: pointer;" title="${t('difficulty.harder')}">⬆️</button>
                             <button onclick="adjustParagraphDifficulty(${idx}, 'realistic')" style="background: #667eea; color: white; border: none; padding: 4px 8px; border-radius: 12px; font-size: 11px; cursor: pointer;" title="${t('difficulty.realistic')}">💬</button>
                         </div>
                     </div>
-                    <div style="font-size: 18px; font-weight: 600; line-height: 1.8; color: #333;" id="practiceText${idx}">
+                    <div style="font-size: 19px; font-weight: 700; line-height: 1.9; color: #1a1a1a; text-align: justify;" id="practiceText${idx}">
                         ${practiceText}
                     </div>
                 </div>
@@ -1863,9 +1958,9 @@ function renderParagraphs() {
                 </details>
                 
                 <div style="font-weight: 600; color: #667eea;">${t('descriptions.easyExpression')}</div>
-                <div style="margin-bottom: 12px;">${p.simplified_text || ''}</div>
+                <div style="margin-bottom: 12px;">${simplifiedText}</div>
                 <div style="font-weight: 600; color: #764ba2;">${t('descriptions.explanation')}</div>
-                <div style="margin-bottom: 16px;">${p.explanation || ''}</div>
+                <div style="margin-bottom: 16px;">${explanationText}</div>
                 
                 <!-- ✅ 읽기 평가 버튼 -->
                 <div class="control-buttons" id="recordingButtons${idx}">
@@ -2183,15 +2278,19 @@ function showQuizQuestion() {
     
     const q = quizData[currentQuizIndex];
     
-    // ✅ 다국어 퀴즈 지원: question이 객체면 현재 언어 선택, 문자열이면 그대로 사용
+    // ✅ 다국어 퀴즈 지원: 질문은 항상 한국어로, 선택지만 현재 언어에 따라 표시
     let questionText = '';
     let optionsList = [];
     let correctIndex = q.correct_index || 0;
     
     if (typeof q.question === 'object' && q.question !== null) {
         // 다국어 퀴즈 객체인 경우
+        // 질문은 항상 한국어로 표시
+        const koQ = q.question['ko'] || q.question;
+        questionText = typeof koQ === 'string' ? koQ : (koQ.question || '');
+        
+        // 선택지는 현재 언어에 따라 표시 (영어면 영어, 한국어면 한국어)
         const multilangQ = q.question[currentLanguage] || q.question['ko'] || q.question;
-        questionText = typeof multilangQ === 'string' ? multilangQ : (multilangQ.question || '');
         optionsList = multilangQ.options || [];
         correctIndex = multilangQ.correct_index !== undefined ? multilangQ.correct_index : correctIndex;
     } else {
@@ -3932,6 +4031,397 @@ function resetRecordingButton(paraIndex, paraNum, practiceText) {
             <button class="btn" onclick="startParagraphRecording(${paraIndex}, ${paraNum}, '${escapeQuotes(practiceText)}')">
                 🎤 녹음하고 평가받기
             </button>
+        `;
+    }
+}
+
+// ============================================================================
+// [7-2] 전체 이야기 녹음 및 평가
+// ============================================================================
+let fullStoryRecognition = null;
+let fullStoryRecordedText = '';
+let isFullStoryRecording = false;
+let fullStorySilenceTimeout = null;
+
+async function startFullStoryRecording(storyId, fullText) {
+    console.log(`🎙️ 전체 이야기 녹음 시작 요청: story=${storyId}`);
+    console.log(`📝 전체 텍스트 길이: ${fullText.length}`);
+    
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    // 브라우저 감지
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    
+    if (!SpeechRecognition) {
+        let message = '이 브라우저는 음성 인식을 지원하지 않습니다.\n\n';
+        
+        if (isIOS) {
+            message += '📱 iOS Safari는 음성 인식 지원이 제한적입니다.\n' +
+                      'Chrome 브라우저 사용을 권장합니다.';
+        } else if (isSafari) {
+            message += '🍎 Safari는 음성 인식 지원이 제한적입니다.\n' +
+                      'Chrome 브라우저 사용을 권장합니다.';
+        } else {
+            message += '💡 Chrome 브라우저를 사용해주세요.';
+        }
+        
+        alert(message);
+        return;
+    }
+    
+    // ✅ 마이크 권한 확인 및 요청
+    if (!microphonePermissionGranted) {
+        console.log('🎤 마이크 권한 요청 중...');
+        const permitted = await requestMicrophonePermission();
+        if (!permitted) {
+            console.error('❌ 마이크 권한 거부됨');
+            return;
+        }
+        console.log('✅ 마이크 권한 허용됨');
+    }
+    
+    // ✅ 기존 녹음 완전히 중지 및 정리
+    if (isFullStoryRecording && fullStoryRecognition) {
+        console.log('⚠️ 기존 전체 이야기 녹음 중지 및 정리');
+        try {
+            fullStoryRecognition.abort();
+            fullStoryRecognition = null;
+        } catch (e) {
+            console.error('녹음 정리 오류:', e);
+        }
+        isFullStoryRecording = false;
+        await new Promise(resolve => setTimeout(resolve, 500));
+    }
+    
+    // 타이머 정리
+    if (fullStorySilenceTimeout) {
+        clearTimeout(fullStorySilenceTimeout);
+        fullStorySilenceTimeout = null;
+    }
+    
+    // 상태 초기화
+    fullStoryRecordedText = '';
+    let speechDetected = false;
+    
+    // ✅ 매번 새로운 Recognition 객체 생성
+    console.log('🆕 새 전체 이야기 Recognition 객체 생성');
+    fullStoryRecognition = new SpeechRecognition();
+    fullStoryRecognition.lang = 'ko-KR';
+    fullStoryRecognition.continuous = true;
+    fullStoryRecognition.interimResults = true;
+    fullStoryRecognition.maxAlternatives = 1;
+    
+    // ✅ 녹음 중 안내 메시지
+    const indicator = document.getElementById('fullStoryRecordingIndicator');
+    const resultEl = document.getElementById('fullStoryEvaluationResult');
+    
+    if (indicator) {
+        indicator.style.display = 'block';
+        indicator.classList.add('active');
+        indicator.innerHTML = '<div class="recording-text">🔴 녹음 중... 지금 말하세요!</div>';
+    }
+    
+    // 읽어볼 내용 표시
+    if (resultEl) {
+        resultEl.style.display = 'block';
+        resultEl.innerHTML = `
+            <div class="content-box" style="background: #fff3cd; border-left: 4px solid #ffc107; margin-top: 16px;">
+                <div style="font-size: 16px; font-weight: 700; color: #856404; margin-bottom: 8px;">
+                    🎤 지금 바로 말하세요!
+                </div>
+                <div style="font-size: 18px; font-weight: 600; color: #333; line-height: 1.8; padding: 12px; background: white; border-radius: 8px; margin-bottom: 12px;">
+                    ${fullText.length > 300 ? fullText.substring(0, 300) + '...' : fullText}
+                </div>
+                <div style="font-size: 14px; color: #856404;">
+                    <strong>✨ 자동 중지:</strong> 말을 멈춘 후 4초가 지나면 자동으로 평가가 시작됩니다.<br>
+                    말하는 대로 텍스트가 아래에 표시됩니다.
+                </div>
+                <div id="fullStoryLiveTranscript" style="margin-top: 12px; padding: 12px; background: #e8f5e9; border-radius: 8px; min-height: 50px; font-size: 16px; line-height: 1.6;">
+                    <em style="color: #999;">녹음 중...</em>
+                </div>
+            </div>
+        `;
+    }
+    
+    // 버튼을 "중지" 버튼으로 변경
+    const buttonContainer = document.getElementById('fullStoryRecordingButtons');
+    if (buttonContainer) {
+        buttonContainer.innerHTML = `
+            <button class="btn btn-secondary" onclick="stopFullStoryRecording(${storyId})" style="background: #dc3545; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;">
+                ⏹️ 녹음 중지 및 평가받기
+            </button>
+        `;
+    }
+    
+    // ✅ STT 에러 핸들링
+    fullStoryRecognition.onerror = (event) => {
+        console.error('❌ 전체 이야기 음성 인식 오류:', event.error);
+        isFullStoryRecording = false;
+        
+        if (resultEl) {
+            let errorMessage = '음성 인식 오류가 발생했습니다.';
+            if (event.error === 'not-allowed' || event.error === 'permission-denied') {
+                errorMessage = '🔒 마이크 권한이 거부되었습니다.';
+            } else if (event.error === 'no-speech') {
+                errorMessage = '음성이 감지되지 않았습니다. 다시 시도해주세요.';
+            }
+            
+            resultEl.innerHTML = `
+                <div class="content-box" style="background: #ffebee; border-left: 4px solid #f44336; margin-top: 16px;">
+                    <div style="font-size: 18px; font-weight: 700; color: #c62828; margin-bottom: 12px;">
+                        ❌ ${errorMessage}
+                    </div>
+                    <button class="btn" onclick="startFullStoryRecording(${storyId}, '${escapeQuotes(fullText)}')">
+                        🔄 다시 녹음하기
+                    </button>
+                </div>
+            `;
+        }
+        
+        if (indicator) {
+            indicator.style.display = 'none';
+            indicator.classList.remove('active');
+        }
+    };
+    
+    // ✅ STT 결과 처리 (실시간 표시 + 침묵 감지)
+    fullStoryRecognition.onresult = (event) => {
+        console.log('📝 전체 이야기 onresult 이벤트 발생');
+        
+        let interimTranscript = '';
+        let finalTranscript = '';
+        
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+            const transcript = event.results[i][0].transcript;
+            if (event.results[i].isFinal) {
+                finalTranscript += transcript + ' ';
+                console.log('✅ Final:', transcript);
+            } else {
+                interimTranscript += transcript;
+                console.log('⏳ Interim:', transcript);
+            }
+        }
+        
+        fullStoryRecordedText = (finalTranscript || interimTranscript).trim();
+        
+        console.log(`📝 현재 녹음 텍스트 (${fullStoryRecordedText.length}자):`, fullStoryRecordedText);
+        
+        // ✅ 실시간 텍스트 표시
+        const liveEl = document.getElementById('fullStoryLiveTranscript');
+        if (liveEl && fullStoryRecordedText) {
+            liveEl.innerHTML = `
+                <div style="color: #2e7d32; font-weight: 600;">
+                    ${fullStoryRecordedText}
+                </div>
+            `;
+        }
+        
+        // ✅ 침묵 감지 타이머 (음성 감지된 후에만)
+        if (speechDetected && fullStoryRecordedText.length > 0) {
+            if (fullStorySilenceTimeout) {
+                clearTimeout(fullStorySilenceTimeout);
+            }
+            
+            // 새 타이머 시작 (4초 후 자동 중지)
+            fullStorySilenceTimeout = setTimeout(() => {
+                console.log('⏱️ 침묵 감지 - 자동 중지');
+                if (isFullStoryRecording) {
+                    stopFullStoryRecording(storyId);
+                }
+            }, 4000);
+        }
+    };
+    
+    // ✅ 음성 시작 감지
+    fullStoryRecognition.onspeechstart = () => {
+        console.log('🎤 음성 시작 감지');
+        speechDetected = true;
+    };
+    
+    // ✅ 음성 종료 감지
+    fullStoryRecognition.onspeechend = () => {
+        console.log('🔇 음성 종료 감지');
+    };
+    
+    // ✅ 녹음 시작
+    try {
+        isFullStoryRecording = true;
+        fullStoryRecognition.start();
+        console.log('✅ 전체 이야기 녹음 시작 성공');
+    } catch (e) {
+        console.error('❌ 전체 이야기 녹음 시작 실패:', e);
+        isFullStoryRecording = false;
+        if (indicator) {
+            indicator.style.display = 'none';
+            indicator.classList.remove('active');
+        }
+        alert('녹음을 시작할 수 없습니다. 페이지를 새로고침해주세요.');
+    }
+}
+
+function stopFullStoryRecording(storyId) {
+    console.log('⏹️ 전체 이야기 녹음 중지 함수 호출');
+    
+    // 타이머 정리
+    if (fullStorySilenceTimeout) {
+        clearTimeout(fullStorySilenceTimeout);
+        fullStorySilenceTimeout = null;
+    }
+    
+    // ✅ 녹음 중지
+    if (fullStoryRecognition && isFullStoryRecording) {
+        try {
+            fullStoryRecognition.stop();
+            console.log('✅ 전체 이야기 Recognition 중지 성공');
+        } catch (e) {
+            console.error('❌ 녹음 중지 오류:', e);
+        }
+    }
+    isFullStoryRecording = false;
+    
+    // UI 업데이트
+    const indicator = document.getElementById('fullStoryRecordingIndicator');
+    if (indicator) {
+        indicator.style.display = 'none';
+        indicator.classList.remove('active');
+    }
+    
+    // 버튼 복구
+    const buttonContainer = document.getElementById('fullStoryRecordingButtons');
+    const fullText = currentStory.full_text || '';
+    if (buttonContainer) {
+        buttonContainer.innerHTML = `
+            <button class="btn" onclick="startFullStoryRecording(${storyId}, '${escapeQuotes(fullText)}')" style="background: #667eea; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;">
+                🎤 소리내어 읽기 시작
+            </button>
+        `;
+    }
+    
+    console.log(`📊 전체 이야기 녹음 결과 - 텍스트 길이: ${fullStoryRecordedText.length}자`);
+    console.log(`📝 녹음된 내용: "${fullStoryRecordedText}"`);
+    
+    // ✅ 평가 시작 (텍스트 길이 체크)
+    if (fullStoryRecordedText && fullStoryRecordedText.trim().length > 0) {
+        console.log('✅ 전체 이야기 평가 시작 - 텍스트 있음');
+        evaluateFullStoryReading(storyId);
+    } else {
+        console.error('❌ 녹음된 텍스트 없음');
+        const resultEl = document.getElementById('fullStoryEvaluationResult');
+        if (resultEl) {
+            resultEl.innerHTML = `
+                <div class="content-box" style="background: #ffebee; border-left: 4px solid #f44336; margin-top: 16px;">
+                    <div style="font-size: 18px; font-weight: 700; color: #c62828; margin-bottom: 12px;">
+                        ❌ 녹음된 텍스트가 없습니다
+                    </div>
+                    <div style="font-size: 14px; color: #c62828; line-height: 1.8;">
+                        <strong>가능한 원인:</strong><br>
+                        1. 녹음 시작 후 즉시 말하지 않음<br>
+                        2. 마이크 볼륨이 너무 작음<br>
+                        3. 백그라운드 소음이 너무 큼<br>
+                        4. 브라우저가 음성을 인식하지 못함<br>
+                        <br>
+                        <strong>💡 해결 방법:</strong><br>
+                        • 녹음 버튼을 누른 후 <strong>즉시</strong> 말하기<br>
+                        • 마이크에 가까이 대고 <strong>또박또박</strong> 읽기<br>
+                        • 조용한 환경에서 시도<br>
+                        • <strong>브라우저 콘솔(F12)</strong>에서 로그 확인
+                    </div>
+                    <div style="margin-top: 16px; display: flex; gap: 8px;">
+                        <button class="btn" onclick="startFullStoryRecording(${storyId}, '${escapeQuotes(fullText)}')">
+                            🔄 다시 녹음하기
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+    }
+}
+
+async function evaluateFullStoryReading(storyId) {
+    const fullText = currentStory.full_text || '';
+    const resultEl = document.getElementById('fullStoryEvaluationResult');
+    
+    console.log(`📊 전체 이야기 평가 시작 - 녹음된 텍스트 길이: ${fullStoryRecordedText.length}`);
+    console.log(`📝 녹음된 내용: "${fullStoryRecordedText}"`);
+    
+    // 로딩 표시
+    resultEl.innerHTML = `
+        <div class="loading" style="margin-top: 20px;">
+            <img src="img/loading.png" alt="Loading" class="loading-image">
+            <p>AI가 평가하는 중...</p>
+        </div>
+    `;
+    
+    try {
+        console.log(`📡 전체 이야기 평가 API 호출: story=${storyId}`);
+        console.log(`📝 원문 길이: ${fullText.length}, 녹음 길이: ${fullStoryRecordedText.length}`);
+        
+        const response = await fetch(`${API_BASE}/story/${storyId}/evaluate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: currentUserId,
+                paragraph_num: 0,  // 전체 이야기는 paragraph_num을 0으로 설정
+                original_text: fullText,
+                user_text: fullStoryRecordedText
+            })
+        });
+        
+        console.log(`📡 응답 상태: ${response.status}`);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('❌ 서버 에러:', errorText);
+            throw new Error(`서버 오류 (${response.status})`);
+        }
+        
+        const result = await response.json();
+        console.log('✅ 전체 이야기 평가 결과 수신:', result);
+        
+        if (result.error) {
+            throw new Error(result.error);
+        }
+        
+        // 평가 결과 표시
+        resultEl.innerHTML = `
+            <div class="content-box" style="background: #e8f5e9; border-left: 4px solid #4caf50; margin-top: 16px;">
+                <div style="font-size: 20px; font-weight: 700; color: #2e7d32; margin-bottom: 16px;">
+                    ✅ 평가 완료
+                </div>
+                <div style="font-size: 16px; font-weight: 600; color: #333; margin-bottom: 12px;">
+                    점수: ${result.score || 0}점
+                </div>
+                <div style="font-size: 15px; color: #555; line-height: 1.8; margin-bottom: 16px;">
+                    ${result.feedback || '평가가 완료되었습니다.'}
+                </div>
+                ${result.suggestions ? `
+                    <div style="background: #fff3cd; padding: 12px; border-radius: 8px; margin-top: 12px;">
+                        <div style="font-size: 14px; font-weight: 600; color: #856404; margin-bottom: 8px;">
+                            💡 개선 제안:
+                        </div>
+                        <div style="font-size: 14px; color: #856404; line-height: 1.6;">
+                            ${result.suggestions}
+                        </div>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+        
+    } catch (error) {
+        console.error('❌ 전체 이야기 평가 실패:', error);
+        resultEl.innerHTML = `
+            <div class="content-box" style="background: #ffebee; border-left: 4px solid #f44336; margin-top: 16px;">
+                <div style="font-size: 18px; font-weight: 700; color: #c62828; margin-bottom: 12px;">
+                    ❌ 평가 실패
+                </div>
+                <div style="font-size: 14px; color: #c62828; line-height: 1.8;">
+                    ${error.message || '평가 중 오류가 발생했습니다.'}
+                </div>
+                <button class="btn" onclick="startFullStoryRecording(${storyId}, '${escapeQuotes(fullText)}')" style="margin-top: 12px;">
+                    🔄 다시 녹음하기
+                </button>
+            </div>
         `;
     }
 }
