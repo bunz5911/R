@@ -5,61 +5,193 @@
       "paragraphs_analysis": [
         {
           "paragraph_num": 1,
-          "original_text": "수민이는 반에서 제일 인기 많은 써니의 생일에 초대받고 걱정이 이만저만 아니에요.\n\n함께 초대받은 준이는 써니가 좋아하는 인형을 선물하겠다며 벌써부터 자랑이에요.\n\n“나는 수민이네 김밥과 떡볶이가 제일 맛있더라.”\n\n“내가 엄마랑 같이 만든 거야. 이번 생일에 만들어 줄게.”\n\n“어머~! 나는 직접 만들어 주는 게 제일 좋더라. 수민아, 고마워.”\n\n써니가 좋아한다는 말에 먹기만 하던 수민이는 거짓말을 했어요.\n\n‘내일 김밥하고 떡볶이를 가져가야 하는데⋯.’ 엄마가 여행에서 돌아오시지 않아\n\n수민이는 걱정이 이만저만 아니었던 거예요.",
-          "practice_text": "수민이는 걱정이 많아요.",
-          "simplified_text": "수민이는 써니 생일에 가요. 수민이는 걱정해요.",
-          "explanation": "수민이는 써니의 생일 파티에 초대받았어요. 하지만 수민이는 요리를 잘 못해서 걱정하고 있어요."
+          "original_text": "수민이는 반에서 제일 인기 많은 써니의 생일에 초대받고 걱정이 이만저만 아니에요. 함께 초대받은 준이는 써니가 좋아하는 인형을 선물하겠다며 벌써부터 자랑이에요.",
+          "practice_text": "수민이는 써니의 생일에 초대받았어요. 준이는 인형을 선물하겠다고 자랑해요.",
+          "simplified_text": "수민이는 써니 생일 파티에 갔어요. 준이는 써니에게 줄 인형을 보여주면서 자랑했어요.",
+          "explanation": "수민이는 써니의 생일 파티에 초대받았지만 걱정이 많아요. 준이는 써니에게 줄 선물을 자랑하고 있어요.",
+          "practice_text_en": "Sumin was invited to Sunny's birthday party. Jun boasted that he would give her a doll as a gift.",
+          "simplified_text_en": "Sumin went to Sunny's birthday party. Jun boasted about the doll he was going to give to Sunny, showing it off.",
+          "explanation_en": "Sumin is invited to Sunny's birthday party but is worried. Jun is showing off the gift he's giving to Sunny."
+        },
+        {
+          "paragraph_num": 2,
+          "original_text": "\"나는 수민이네 김밥과 떡볶이가 제일 맛있더라.\" \"내가 엄마랑 같이 만든 거야. 이번 생일에 만들어 줄게.\" \"어머~! 나는 직접 만들어 주는 게 제일 좋더라. 수민아, 고마워.\"",
+          "practice_text": "\"나는 수민이네 김밥이 제일 맛있더라.\" \"수민아, 고마워.\"",
+          "simplified_text": "써니가 수민이의 김밥이 맛있다고 했어요. 써니는 수민이에게 고맙다고 말했어요.",
+          "explanation": "써니는 수민이의 김밥과 떡볶이가 맛있다고 말하며 직접 만들어 주는 것을 좋아한다고 했어요.",
+          "practice_text_en": "I think Sumin's Kimbap is the best. Thanks, Sumin.",
+          "simplified_text_en": "Sunny said Sumin's kimbap was delicious. Sunny thanked Sumin.",
+          "explanation_en": "Sunny said that she enjoys Su-min's kimbap and tteokbokki because they are delicious, and that she likes making them for her."
+        },
+        {
+          "paragraph_num": 3,
+          "original_text": "써니가 좋아한다는 말에 먹기만 하던 수민이는 거짓말을 했어요. '내일 김밥하고 떡볶이를 가져가야 하는데⋯.' 엄마가 여행에서 돌아오시지 않아 수민이는 걱정이 이만저만 아니었던 거예요.",
+          "practice_text": "수민이는 거짓말을 했어요. 엄마가 없어서 수민이는 걱정했어요.",
+          "simplified_text": "수민이는 써니가 좋아해서 거짓말을 했어요. 하지만 엄마가 없어서 김밥과 떡볶이를 만들 걱정을 했어요.",
+          "explanation": "수민이는 써니가 좋아한다는 말에 자기도 만들어 주겠다고 거짓말을 했어요. 하지만 엄마가 여행 중이라 혼자 만들 생각을 하니 걱정이 많았어요.",
+          "practice_text_en": "Sumin lied. Because she didn't have her mother, Sumin was worried.",
+          "simplified_text_en": "Sumin lied because she liked Sunny. However, she worried about making kimbap and tteokbokki because her mom wasn't around.",
+          "explanation_en": "When Sumin heard that Sunny liked it, she lied and said she would make one for her too. But her mom was traveling, and the thought of making it alone worried her."
+        },
+        {
+          "paragraph_num": 4,
+          "original_text": "'아, 떡볶이는 어떻게 하지⋯. 김밥도 이 모양인데.' 혼자서 이것저것 연습해 봐도 엄마 손맛을 낼 수 없었던 수민이는 밤에 잠도 잘 수가 없었어요.",
+          "practice_text": "수민이는 떡볶이를 어떻게 할지 걱정했어요. 수민이는 잠도 잘 수 없었어요.",
+          "simplified_text": "수민이는 떡볶이 만드는 방법을 몰라서 걱정했어요. 엄마처럼 맛있게 만들 수 없어서 잠도 못 잤어요.",
+          "explanation": "수민이는 혼자 떡볶이와 김밥을 만들 자신이 없었어요. 엄마처럼 맛있는 음식을 만들 수 없을까 봐 잠도 제대로 못 잤어요.",
+          "practice_text_en": "Sumin was worried about how to make tteokbokki. She couldn't even sleep.",
+          "simplified_text_en": "Sumin was worried because she didn't know how to make tteokbokki. She couldn't even sleep because she couldn't make it as delicious as her mom's.",
+          "explanation_en": "Sumin didn't feel confident making tteokbokki and kimbap by herself. She couldn't sleep well, worried she wouldn't be able to make food as delicious as her mom's."
+        },
+        {
+          "paragraph_num": 5,
+          "original_text": "달그락달그락~ '무슨 소리지?' 주방에서 이상한 소리가 들려 수민이는 잠에서 깼어요. \"오늘도 없네? 여기 오면 늘 있었는데⋯.\" 누군가 냉장고를 뒤지며 중얼거리고 있었어요.",
+          "practice_text": "주방에서 이상한 소리가 들렸어요. 누군가 냉장고를 뒤지고 있었어요.",
+          "simplified_text": "수민이는 이상한 소리를 듣고 잠에서 깼어요. 부엌에서 누가 냉장고를 찾고 있었어요.",
+          "explanation": "수민이는 부엌에서 나는 이상한 소리 때문에 잠에서 깼어요. 누군가가 냉장고를 뒤적거리고 있었어요.",
+          "practice_text_en": "I heard a strange noise coming from the kitchen. It sounded like someone was rummaging through the refrigerator.",
+          "simplified_text_en": "Sumin woke up to a strange noise. It sounded like someone was rummaging through the refrigerator in the kitchen.",
+          "explanation_en": "Sumin woke up to a strange noise coming from the kitchen. It sounded like someone was rummaging through the refrigerator."
+        },
+        {
+          "paragraph_num": 6,
+          "original_text": "\"도대체 김밥은 어디 있는 거야? 벌써 며칠째 허탕이네. 후~ 화난다!\" 갑자기 그의 입에서 불꽃이 뿜어져 나왔어요. '헉⋯ 무슨 일이야?' 집에 불이 날까 봐 걱정이 된 수민이는 얼떨결에 소리 질렀어요.",
+          "practice_text": "\"김밥은 어디 있는 거야?\" 입에서 불꽃이 나왔어요. 수민이는 소리 질렀어요.",
+          "simplified_text": "누군가가 김밥을 찾다가 화를 내며 입에서 불을 뿜었어요. 수민이는 깜짝 놀라 소리쳤어요.",
+          "explanation": "김밥을 찾던 사람이 화가 나서 입에서 불이 나왔어요. 집에 불이 날까 봐 걱정된 수민이는 무서워서 소리를 질렀어요.",
+          "practice_text_en": "\"Where's the kimbap?\" Fire practically shot out of her mouth. Sumin yelled.",
+          "simplified_text_en": "Someone, in a fit of anger while searching for kimbap, breathed fire from their mouth. Sumin, startled, screamed.",
+          "explanation_en": "The person looking for kimbap got so angry that fire came out of their mouth. Soomin was scared and screamed, worried that the house would catch fire."
+        },
+        {
+          "paragraph_num": 7,
+          "original_text": "\"내, 내가 김밥을, 만들어 줄게.\" \"어⋯ 내가 보인다고? 진짜 내가 보여? 그럼 김밥 좀 만들어 봐.\"",
+          "practice_text": "\"내가 김밥을 만들어 줄게.\" \"진짜 내가 보여?\"",
+          "simplified_text": "수민이는 김밥을 만들어 주겠다고 말했어요. 그 사람은 수민이에게 자기가 보이냐고 물었어요.",
+          "explanation": "수민이는 불을 끄려고 김밥을 만들어 주겠다고 말했어요. 그러자 그 사람은 수민이에게 자신이 보이는지 확인했어요.",
+          "practice_text_en": "I'll make you some kimbap.\" \"Can you really see me?",
+          "simplified_text_en": "Sumin said she would make kimbap. The person asked Sumin if she could see them.",
+          "explanation_en": "Sumin offered to make him kimbap to make up for turning off the lights. Then, the person checked to see if Sumin could see him."
+        },
+        {
+          "paragraph_num": 8,
+          "original_text": "수민이는 김을 펴고 그 위에 밥을 올리고는 떨리는 손으로 김밥을 쌌어요. \"자, 먹어 봐!\" \"윽, 이게 무슨 맛이야? 에퉤퉤! 장난하는 것도 아니고. 너무 짜잖아~ 이게 뭐야?\"",
+          "practice_text": "수민이는 김밥을 쌌어요. \"자, 먹어 봐!\"",
+          "simplified_text": "수민이는 김밥을 만들어서 그 사람에게 줬어요. 그 사람은 김밥이 너무 짜다고 했어요.",
+          "explanation": "수민이는 떨리는 손으로 김밥을 만들어서 그 사람에게 줬어요. 하지만 김밥이 너무 짜서 맛이 없다고 했어요.",
+          "practice_text_en": "Sumin made kimbap. \"Here, try it!\"",
+          "simplified_text_en": "Sumin made kimbap and gave it to him/her. He/She said the kimbap was too salty.",
+          "explanation_en": "With trembling hands, Sumin made kimbap and gave it to him. But he said it was too salty and didn't taste good."
+        },
+        {
+          "paragraph_num": 9,
+          "original_text": "'아이쿠! 조미료인 줄 알았는데, 소금을 넣었어.' 수민이 얼굴도 소금을 먹은 것 같았어요. 정신을 차리고 보니 엄마가 준비해 둔 오이와 당근, 단무지가 수민이 눈에 들어왔어요. 그리고 밥에 넣는 엄마의 비법 소스도 찾았어요.",
+          "practice_text": "수민이는 소금을 넣었어요. 오이, 당근, 단무지가 보였어요.",
+          "simplified_text": "수민이는 소금을 잘못 넣은 것을 알았어요. 그리고 엄마가 준비해 둔 재료들을 발견했어요.",
+          "explanation": "수민이는 조미료 대신 소금을 넣어서 김밥이 짰던 것을 깨달았어요. 그리고 엄마가 김밥에 넣으려고 준비해 둔 재료들을 찾았어요.",
+          "practice_text_en": "Sumin added salt. Cucumbers, carrots, and pickled radish were visible.",
+          "simplified_text_en": "Sumin realized she had added the salt incorrectly. Then, she discovered the ingredients her mother had prepared.",
+          "explanation_en": "Sumin realized the kimbap was salty because she had used salt instead of seasoning. Then, she found the ingredients her mom had prepared to put in the kimbap."
+        },
+        {
+          "paragraph_num": 10,
+          "original_text": "\"다시 먹어 봐!\" \"오~ 맛있는데? 아까보다 먹을 만해⋯.\" \"나는 주방을 지키는 도깨비 카비야. 사람들 눈에는 안 보이는데 너는 내가 보인다니, 신기하네⋯. 너는 수민이지?\" \"너희 엄마가 만든 떡볶이를 좋아하는데⋯. 엄마는 어디 가셨니?\"",
+          "practice_text": "\"다시 먹어 봐!\" \"나는 도깨비 카비야.\"",
+          "simplified_text": "수민이는 다시 김밥을 만들어서 줬어요. 도깨비 카비는 수민이에게 자기를 소개했어요.",
+          "explanation": "수민이는 다시 만든 김밥을 카비에게 줬어요. 카비는 자기가 주방을 지키는 도깨비라고 소개하면서 수민이 엄마를 찾았어요.",
+          "practice_text_en": "Try it again! I'm Goblin Kabia.",
+          "simplified_text_en": "Sumin made kimbap again and gave it to him. The goblin Kabi introduced himself to Sumin.",
+          "explanation_en": "Sumin gave the remade kimbap to Kabi. Kabi introduced himself as a goblin guarding the kitchen and looked for Sumin's mom."
+        },
+        {
+          "paragraph_num": 11,
+          "original_text": "\"응~ 떡볶이는 내가 만들어 볼게. 나는 우리 엄마 아들이니까, 엄마랑 비슷한 맛을 낼 수 있을 거야. 믿어 봐.\" \"흠~ 이 맛이 아니야⋯.\" 수민이는 큰소리를 쳤지만, 매콤하면서도 달달한 엄마의 손맛을 내기가 어려웠어요. \"미안해. 엄마의 소스는 흉내 낼 수가 없네⋯.\" 지치고 상심한 수민의 표정은 금세 눈물을 터뜨릴 것 같았어요.",
+          "practice_text": "\"떡볶이는 내가 만들어 볼게.\" \"미안해. 흉내 낼 수가 없네...\"",
+          "simplified_text": "수민이는 떡볶이를 만들 수 있다고 했지만, 엄마처럼 만들 수 없었어요. 수민이는 슬펐어요.",
+          "explanation": "수민이는 떡볶이도 만들 수 있다고 큰소리쳤지만, 엄마처럼 맛있는 떡볶이를 만들 수 없어서 슬퍼하며 울 것 같았어요.",
+          "simplified_text_en": "Sumin said she could make tteokbokki, but she couldn't make it like her mom. Sumin was sad.",
+          "explanation_en": "Sumin boasted that she could make tteokbokki, but she was on the verge of tears, sad that she couldn't make it as delicious as her mom's."
+        },
+        {
+          "paragraph_num": 12,
+          "original_text": "전쟁이라도 난 것 같은 주방과 수민을 바라보던 카비가 말했어요. \"ㅎㅎㅎ~ 내 방망이는 무엇이든 만들 수 있어. 너도 들어봤지? 도깨비 방망이!\" 카비는 수민이를 가리키며 주문을 외웠어요. \"엄마의 떡볶이 비법 소스, 나와라~ 뚝딱!\" 그러자 수민의 손이 오케스트라 지휘자처럼 현란하게 움직이기 시작했어요. 떡볶이 소스가 순식간에 만들어지고, 재료들이 퐁당퐁당 다이빙을 했어요. 김이 모락모락 나는 떡볶이를 집어 먹으면서 카비와 수민은 동시에 외쳤어요. \"우와~ 신기해~ 엄마 손맛이야~!\"",
+          "practice_text": "카비는 \"도깨비 방망이!\"라고 말했어요. \"우와~ 엄마 손맛이야~!\"",
+          "simplified_text": "카비는 도깨비 방망이로 떡볶이 소스를 만들었어요. 수민이와 카비는 떡볶이가 맛있다고 말했어요.",
+          "explanation": "카비는 도깨비 방망이로 엄마의 떡볶이 소스를 만들었어요. 수민이와 카비는 엄마가 만든 것처럼 맛있는 떡볶이를 먹고 기뻐했어요.",
+          "practice_text_en": "Magic wand!\" Kirby exclaimed. \"Wow, this tastes just like Mom's cooking!",
+          "simplified_text_en": "Kabi used a magic club to make tteokbokki sauce. Sumin and Kabi said the tteokbokki was delicious.",
+          "explanation_en": "Kabi used his magic club to make his mom's tteokbokki sauce. Sumin and Kabi were happy to eat tteokbokki that tasted just like their mom's."
+        },
+        {
+          "paragraph_num": 13,
+          "original_text": "다음 날 수민은 김밥과 떡볶이를 가지고 써니의 생일 파티에 갔어요. \"너무 맛있어. 수민아~ 네 선물이 최고야!\" 활짝 웃는 써니를 보니 수민은 뿌듯했어요. 여행에서 돌아온 엄마가 물었어요. \"수민아, 이거 어디서 사온 거야?\" \"엄마, 그거 제가 만든 거예요.\" \"진짜? 맛있는데!\" 엄마는 깜짝 놀랐어요.",
+          "practice_text": "수민이는 김밥과 떡볶이를 가지고 써니의 생일 파티에 갔어요. 써니는 \"너무 맛있어!\"라고 말했어요.",
+          "simplified_text": "수민이는 써니 생일 파티에 김밥과 떡볶이를 가져갔어요. 써니는 아주 좋아했어요. 엄마도 수민이가 만든 음식이 맛있다고 칭찬했어요.",
+          "explanation": "수민이는 써니의 생일 파티에 김밥과 떡볶이를 가져갔고, 써니는 매우 기뻐했어요. 여행에서 돌아온 엄마도 수민이가 직접 만든 음식 맛에 놀랐어요.",
+          "practice_text_en": "Sumin went to Sunny's birthday party with kimbap and tteokbokki. Sunny said, \"It's so delicious!\"",
+          "simplified_text_en": "Sumin brought kimbap and tteokbokki to Sunny's birthday party. Sunny loved it. Her mom also complimented Sumin on how delicious the food was.",
+          "explanation_en": "Sumin brought kimbap and tteokbokki to Sunny's birthday party, which made Sunny very happy. Sunny's mom, who had returned from a trip, was also surprised by the taste of the food Sumin had made herself."
+        },
+        {
+          "paragraph_num": 14,
+          "original_text": "쉿! 비밀이야! '재료를 춤추게 하고 비법 소스를 만드는 도깨비 방망이가 있다는 건 비밀!' 도깨비 친구가 있으니 이제 어떤 요리든 문제없어요. \"카비야, 우리 시작해 볼까? '도깨비 키친' 어때?\"",
+          "practice_text": "도깨비 친구가 있으니 문제없어요. \"카비야, 우리 시작해 볼까?\"",
+          "simplified_text": "도깨비 카비 덕분에 이제 요리는 걱정 없어요. 수민이는 카비와 함께 '도깨비 키친'을 시작하려고 해요.",
+          "explanation": "도깨비 방망이와 카비 덕분에 수민이는 이제 어떤 요리도 만들 수 있게 되었어요. 수민이는 카비와 함께 '도깨비 키친'을 시작할 계획을 세우고 있어요.",
+          "practice_text_en": "With a goblin friend, there's no problem. \"Kaviya, shall we get started?\"",
+          "simplified_text_en": "Thanks to Goblin Kabi, cooking is no longer a worry. Sumin is planning to start \"Goblin Kitchen\" with Kabi.",
+          "explanation_en": "Thanks to the Goblin's Club and Kabi, Sumin can now make any dish. Sumin is planning to start \"Goblin Kitchen\" with Kabi."
         }
       ],
       "real_life_usage": [
         "안녕하세요. (Hello.)",
-        "이름이 뭐예요? (What is your name?)",
-        "저는 수민이에요. (I am Sumin.)",
+        "이름이 뭐예요? (What's your name?)",
+        "저는 수민이에요. (I'm Sumin.)",
         "만나서 반가워요. (Nice to meet you.)",
         "이거 맛있어요. (This is delicious.)",
         "감사합니다. (Thank you.)",
         "천만에요. (You're welcome.)",
-        "잘 먹겠습니다. (I will eat well.)",
-        "잘 먹었습니다. (I ate well.)",
+        "잘 먹겠습니다. (Let's eat.)",
+        "잘 먹었습니다. (Thank you for the meal.)",
         "또 만나요. (See you again.)"
       ],
       "vocabulary": [
         {
           "word": "생일 (saeng-il)",
-          "meaning": "birthday",
+          "meaning": "birthday (Birthday)",
           "example": "오늘 제 생일이에요. (Today is my birthday.)"
         },
         {
           "word": "걱정 (geok-jeong)",
-          "meaning": "worry",
+          "meaning": "worry (Worry)",
           "example": "걱정하지 마세요. (Don't worry.)"
         },
         {
           "word": "친구 (chin-gu)",
-          "meaning": "friend",
+          "meaning": "friend (friend)",
           "example": "저는 친구가 있어요. (I have a friend.)"
         },
         {
           "word": "맛있다 (mas-it-da)",
-          "meaning": "delicious",
+          "meaning": "delicious (Delicious.)",
           "example": "이 김밥은 맛있어요. (This kimbap is delicious.)"
         },
         {
           "word": "만들다 (man-deul-da)",
-          "meaning": "to make",
-          "example": "저는 김밥을 만들어요. (I make kimbap.)"
+          "meaning": "to make (to make)",
+          "example": "저는 김밥을 만들어요. (I am making kimbap.)"
         }
       ],
       "grammar": [
         {
           "pattern": "-이에요/예요 (-ie-yo/ye-yo)",
-          "explanation": "명사를 설명할 때 사용합니다. (Used to describe a noun.)",
-          "example": "저는 수민이에요. (I am Sumin.)"
+          "explanation": "명사를 설명할 때 사용합니다. (Used to describe nouns.)",
+          "example": "저는 수민이에요. (I'm Sumin.)"
         },
         {
           "pattern": "-이/가 (-i/ga)",
-          "explanation": "주어를 나타내는 조사입니다. (Subject marker)",
-          "example": "수민이가 걱정해요. (Sumin worries.)"
+          "explanation": "주어를 나타내는 조사입니다. (It's a particle that indicates the subject of a sentence.)",
+          "example": "수민이가 걱정해요. (Sumin is worried.)"
         }
       ],
       "key_expressions": [
@@ -73,76 +205,217 @@
       "paragraphs_analysis": [
         {
           "paragraph_num": 1,
-          "original_text": "수민이는 반에서 제일 인기 많은 써니의 생일에 초대받고 걱정이 이만저만 아니에요.\n\n함께 초대받은 준이는 써니가 좋아하는 인형을 선물하겠다며 벌써부터 자랑이에요.\n\n“나는 수민이네 김밥과 떡볶이가 제일 맛있더라.”\n\n“내가 엄마랑 같이 만든 거야. 이번 생일에 만들어 줄게.”\n\n“어머~! 나는 직접 만들어 주는 게 제일 좋더라. 수민아, 고마워.”\n\n써니가 좋아한다는 말에 먹기만 하던 수민이는 거짓말을 했어요.\n\n‘내일 김밥하고 떡볶이를 가져가야 하는데⋯.’ 엄마가 여행에서 돌아오시지 않아\n\n수민이는 걱정이 이만저만 아니었던 거예요.",
-          "practice_text": "수민이는 반에서 제일 인기 많은 써니의 생일에 초대받고 걱정이 이만저만 아니에요. 써니가 좋아한다는 말에 먹기만 하던 수민이는 거짓말을 했어요. ‘내일 김밥하고 떡볶이를 가져가야 하는데⋯.’ 엄마가 여행에서 돌아오시지 않아 수민이는 걱정이 이만저만 아니었던 거예요.",
-          "simplified_text": "수민이는 학교에서 가장 인기 있는 써니의 생일 파티에 초대를 받았는데, 걱정이 아주 많습니다. 써니가 좋아하는 것을 안 수민이는 자기도 모르게 거짓말을 했습니다. 엄마가 여행에서 돌아오지 않아서, 수민이는 내일 파티에 가져갈 김밥과 떡볶이를 어떻게 만들어야 할지 매우 걱정하고 있습니다.",
-          "explanation": "이 문단은 이야기의 배경과 수민이의 갈등을 소개합니다. 수민이는 친구 써니의 생일 파티에 초대받았지만, 직접 음식을 만들어야 하는 상황 때문에 걱정하고 있습니다. 특히 엄마가 없는 상황에서 음식을 만들어야 한다는 부담감이 크게 작용하고 있습니다."
+          "original_text": "수민이는 반에서 제일 인기 많은 써니의 생일에 초대받고 걱정이 이만저만 아니에요.\n함께 초대받은 준이는 써니가 좋아하는 인형을 선물하겠다며 벌써부터 자랑이에요.",
+          "practice_text": "수민이는 반에서 제일 인기 많은 써니의 생일에 초대받고 걱정이 이만저만 아니에요. 함께 초대받은 준이는 써니가 좋아하는 인형을 선물하겠다며 벌써부터 자랑이에요.",
+          "simplified_text": "수민이는 반에서 가장 인기 있는 써니의 생일 파티에 초대받았지만 걱정이 많습니다. 함께 초대받은 준이는 써니가 좋아하는 인형을 선물하겠다고 자랑하고 있습니다.",
+          "explanation": "이 문단은 이야기의 배경과 주인공 수민이의 걱정을 소개합니다. 써니의 생일 파티에 초대받은 수민이는 다른 친구 준이와 비교하며 선물을 준비하는 것에 대한 부담감을 느끼고 있음을 보여줍니다.",
+          "practice_text_en": "Sumin is invited to the birthday party of Sunny, the most popular girl in class, and she's incredibly worried. Jun, who was also invited, is already bragging about the doll he's going to give Sunny as a gift, saying it's her favorite.",
+          "simplified_text_en": "Sumin was invited to Sunny's birthday party, which is the most popular girl in class, but she's very worried. Jun, who was also invited, is bragging that he's going to give Sunny the doll she likes as a present.",
+          "explanation_en": "This paragraph introduces the story's setting and the protagonist, Sumin's, worries. Invited to Sunny's birthday party, Sumin feels pressured about preparing a gift, comparing herself to her friend Jun."
+        },
+        {
+          "paragraph_num": 2,
+          "original_text": "\"나는 수민이네 김밥과 떡볶이가 제일 맛있더라.\"\n\"내가 엄마랑 같이 만든 거야. 이번 생일에 만들어 줄게.\"\n\"어머~! 나는 직접 만들어 주는 게 제일 좋더라. 수민아, 고마워.\"",
+          "practice_text": "\"나는 수민이네 김밥과 떡볶이가 제일 맛있더라.\" \"내가 엄마랑 같이 만든 거야. 이번 생일에 만들어 줄게.\" \"어머~! 나는 직접 만들어 주는 게 제일 좋더라. 수민아, 고마워.\"",
+          "simplified_text": "써니가 수민이의 김밥과 떡볶이가 맛있다고 칭찬하자, 수민이는 이번 생일에 직접 만들어 주겠다고 약속합니다. 써니는 직접 만든 선물을 좋아한다고 말하며 수민이에게 고마움을 표현합니다.",
+          "explanation": "이 문단은 수민이가 써니에게 김밥과 떡볶이를 만들어 주겠다고 약속하는 장면을 묘사합니다. 써니의 칭찬에 수민이는 부담감을 느끼면서도 약속을 하게 됩니다.",
+          "practice_text_en": "I think Sumin's kimbap and tteokbokki are the best.\" \"I made them with my mom. I'll make them for you on your birthday.\" \"Oh my! I like it best when someone makes it for me. Thanks, Sumin.",
+          "simplified_text_en": "When Sunny complimented Sumin's kimbap and tteokbokki, Sumin promised to make them for Sunny's birthday. Sunny said she loves homemade gifts and thanked Sumin.",
+          "explanation_en": "This paragraph describes a scene where Sumin promises Sunny that she will make her kimbap and tteokbokki. Sumin feels pressured by Sunny's compliments, but still makes the promise."
+        },
+        {
+          "paragraph_num": 3,
+          "original_text": "써니가 좋아한다는 말에 먹기만 하던 수민이는 거짓말을 했어요.\n'내일 김밥하고 떡볶이를 가져가야 하는데⋯.' 엄마가 여행에서 돌아오시지 않아\n수민이는 걱정이 이만저만 아니었던 거예요.",
+          "practice_text": "써니가 좋아한다는 말에 먹기만 하던 수민이는 거짓말을 했어요. '내일 김밥하고 떡볶이를 가져가야 하는데⋯.' 엄마가 여행에서 돌아오시지 않아 수민이는 걱정이 이만저만 아니었던 거예요.",
+          "simplified_text": "써니가 좋아한다는 말에 수민이는 자기도 모르게 거짓말을 했습니다. 하지만 엄마가 여행 중이라 김밥과 떡볶이를 직접 만들어야 한다는 생각에 걱정이 커집니다.",
+          "explanation": "수민이가 써니에게 김밥과 떡볶이를 만들어 주겠다고 한 것이 거짓말이었음을 밝히고, 엄마가 없어서 혼자 만들어야 하는 상황에 대한 걱정을 드러냅니다.",
+          "practice_text_en": "Upon hearing that Sunny liked him, Sumin, who had only been eating, told a lie. \"I need to bring kimbap and tteokbokki tomorrow...\" Sumin was extremely worried because her mom hadn't returned from her trip.",
+          "simplified_text_en": "Upon hearing that Sunny liked him, Sumin blurted out a lie without thinking. However, the thought of having to make kimbap and tteokbokki herself because her mom was traveling filled her with worry.",
+          "explanation_en": "Sumin confessed to Sunny that she had lied about making her kimbap and tteokbokki, and expressed her worries about having to make it all by herself because her mom wasn't home."
+        },
+        {
+          "paragraph_num": 4,
+          "original_text": "'아, 떡볶이는 어떻게 하지⋯. 김밥도 이 모양인데.'\n혼자서 이것저것 연습해 봐도 엄마 손맛을 낼 수 없었던 수민이는 밤에 잠도 잘 수가 없었어요.",
+          "practice_text": "혼자서 이것저것 연습해 봐도 엄마 손맛을 낼 수 없었던 수민이는 밤에 잠도 잘 수가 없었어요.",
+          "simplified_text": "수민이는 혼자서 김밥과 떡볶이를 만들어 보려고 노력했지만, 엄마의 맛을 낼 수 없어서 밤에 잠도 제대로 자지 못했습니다.",
+          "explanation": "수민이가 혼자 요리 연습을 하지만 엄마의 솜씨를 따라갈 수 없어 어려움을 겪고, 그로 인해 잠까지 설칠 정도로 걱정하는 모습을 보여줍니다.",
+          "practice_text_en": "Even after practicing various recipes on her own, Sumin couldn't replicate her mom's cooking, and she couldn't sleep well at night.",
+          "simplified_text_en": "Soomin tried hard to make kimbap and tteokbokki by herself, but she couldn't replicate her mom's taste, which kept her up at night.",
+          "explanation_en": "Sumin practices cooking alone but struggles to match her mother's skills, causing her so much worry that she even has trouble sleeping."
+        },
+        {
+          "paragraph_num": 5,
+          "original_text": "달그락달그락~ '무슨 소리지?'\n주방에서 이상한 소리가 들려 수민이는 잠에서 깼어요.\n\"오늘도 없네? 여기 오면 늘 있었는데⋯.\" 누군가 냉장고를 뒤지며 중얼거리고 있었어요.",
+          "practice_text": "달그락달그락~ '무슨 소리지?' 주방에서 이상한 소리가 들려 수민이는 잠에서 깼어요. \"오늘도 없네? 여기 오면 늘 있었는데⋯.\" 누군가 냉장고를 뒤지며 중얼거리고 있었어요.",
+          "simplified_text": "수민이는 부엌에서 나는 이상한 소리에 잠에서 깼습니다. 냉장고를 뒤지면서 혼잣말을 하는 누군가가 있었습니다.",
+          "explanation": "이야기에 새로운 등장인물(도깨비)이 나타날 것을 암시하는 장면입니다. 수민이는 이상한 소리를 듣고 잠에서 깨어나 부엌에서 누군가가 냉장고를 뒤지고 있는 것을 발견합니다.",
+          "practice_text_en": "Clang, clang... \"What's that noise?\" Soomin woke up to a strange sound coming from the kitchen. \"Not here again? It was always here when I came...\" Someone was rummaging through the refrigerator, muttering to themselves.",
+          "simplified_text_en": "Sumin woke up to a strange noise coming from the kitchen. It sounded like someone was rummaging through the refrigerator and talking to themselves.",
+          "explanation_en": "The scene hints at the introduction of a new character (a goblin). Sumin wakes up to a strange noise and finds someone rummaging through the refrigerator in the kitchen."
+        },
+        {
+          "paragraph_num": 6,
+          "original_text": "\"도대체 김밥은 어디 있는 거야? 벌써 며칠째 허탕이네. 후~ 화난다!\"\n갑자기 그의 입에서 불꽃이 뿜어져 나왔어요.\n'헉⋯ 무슨 일이야?'",
+          "practice_text": "\"도대체 김밥은 어디 있는 거야? 벌써 며칠째 허탕이네. 후~ 화난다!\" 갑자기 그의 입에서 불꽃이 뿜어져 나왔어요.",
+          "simplified_text": "냉장고를 뒤지던 존재는 김밥을 찾지 못해 화를 내며 입에서 불꽃을 뿜어냈습니다. 수민이는 깜짝 놀랐습니다.",
+          "explanation": "냉장고를 뒤지던 존재가 도깨비임을 암시하는 장면입니다. 도깨비는 김밥을 찾지 못해 화를 내고, 그 모습에 수민이는 놀랍니다.",
+          "practice_text_en": "\"Where on earth is the kimbap? I've been striking out for days. Ugh, I'm so frustrated!\" Suddenly, flames erupted from his mouth.",
+          "simplified_text_en": "Frustrated by not finding the kimbap in the fridge, the creature breathed fire from its mouth. Sumin was startled.",
+          "explanation_en": "The scene implies the being rummaging through the fridge is a goblin. The goblin is frustrated at not finding any kimbap, and Sumin is startled by the sight."
+        },
+        {
+          "paragraph_num": 7,
+          "original_text": "집에 불이 날까 봐 걱정이 된 수민이는 얼떨결에 소리 질렀어요.\n\"내, 내가 김밥을, 만들어 줄게.\"\n\"어⋯ 내가 보인다고? 진짜 내가 보여? 그럼 김밥 좀 만들어 봐.\"",
+          "practice_text": "집에 불이 날까 봐 걱정이 된 수민이는 얼떨결에 소리 질렀어요. \"내, 내가 김밥을, 만들어 줄게.\" \"어⋯ 내가 보인다고? 진짜 내가 보여? 그럼 김밥 좀 만들어 봐.\"",
+          "simplified_text": "집에 불이 날까 봐 걱정한 수민이는 무심결에 김밥을 만들어 주겠다고 소리쳤습니다. 도깨비는 수민이가 자신을 볼 수 있다는 사실에 놀라며 김밥을 만들어 달라고 부탁합니다.",
+          "explanation": "수민이가 도깨비에게 김밥을 만들어 주겠다고 제안하는 장면입니다. 도깨비는 수민이가 자신을 볼 수 있다는 것에 놀라움을 표현합니다.",
+          "practice_text_en": "Soomin, worried that the house might catch fire, blurted out, \"I, I'll make you kimbap.\" \"Uh... you can see me? You can really see me? Then make some kimbap.\"",
+          "simplified_text_en": "Worried about a fire breaking out at home, Sumin blurted out that she would make kimbap. The goblin, surprised that Sumin could see him, asked her to make him some.",
+          "explanation_en": "The scene shows Sumin offering to make kimbap for the goblin. The goblin expresses surprise that Sumin can see him."
+        },
+        {
+          "paragraph_num": 8,
+          "original_text": "수민이는 김을 펴고 그 위에 밥을 올리고는 떨리는 손으로 김밥을 쌌어요.\n\"자, 먹어 봐!\"\n\"윽, 이게 무슨 맛이야?\n에퉤퉤! 장난하는 것도 아니고. 너무 짜잖아~ 이게 뭐야?\"",
+          "practice_text": "수민이는 김을 펴고 그 위에 밥을 올리고는 떨리는 손으로 김밥을 쌌어요. \"자, 먹어 봐!\" \"윽, 이게 무슨 맛이야? 에퉤퉤! 장난하는 것도 아니고. 너무 짜잖아~ 이게 뭐야?\"",
+          "simplified_text": "수민이는 떨리는 손으로 김밥을 만들어 도깨비에게 주었습니다. 하지만 도깨비는 김밥이 너무 짜다며 맛없다고 불평합니다.",
+          "explanation": "수민이가 처음으로 만든 김밥이 실패하는 장면입니다. 긴장한 탓에 실수를 저질러 김밥이 너무 짜게 만들어졌습니다.",
+          "practice_text_en": "Sumin spread out the seaweed, placed rice on top, and nervously rolled the kimbap. \"Here, try it!\" \"Ugh, what is this taste? Yuck, yuck! Are you kidding me? It's way too salty! What is this?\"",
+          "explanation_en": "This is a scene where Sumin fails at making kimbap for the first time. Due to nervousness, she makes a mistake and the kimbap turns out too salty."
+        },
+        {
+          "paragraph_num": 9,
+          "original_text": "'아이쿠! 조미료인 줄 알았는데, 소금을 넣었어.' 수민이 얼굴도 소금을 먹은 것 같았어요.\n정신을 차리고 보니\n엄마가 준비해 둔 오이와 당근, 단무지가 수민이 눈에 들어왔어요.\n그리고 밥에 넣는 엄마의 비법 소스도 찾았어요.",
+          "practice_text": "'아이쿠! 조미료인 줄 알았는데, 소금을 넣었어.' 수민이 얼굴도 소금을 먹은 것 같았어요. 정신을 차리고 보니 엄마가 준비해 둔 오이와 당근, 단무지가 수민이 눈에 들어왔어요. 그리고 밥에 넣는 엄마의 비법 소스도 찾았어요.",
+          "simplified_text": "수민이는 조미료인 줄 알고 소금을 넣었다는 사실을 깨닫고 당황합니다. 정신을 차리고 보니 엄마가 준비해 둔 김밥 재료와 비법 소스를 발견합니다.",
+          "explanation": "수민이가 김밥을 망친 이유를 알게 되고, 다시 만들 기회를 얻게 되는 장면입니다. 엄마가 준비해 둔 재료와 비법 소스를 발견하면서 김밥을 성공적으로 만들 수 있다는 희망을 갖게 됩니다.",
+          "practice_text_en": "\"Oops! I thought it was seasoning, but I added salt.\" Sumin's face looked as salty as the food. After snapping out of it, Sumin noticed the cucumbers, carrots, and pickled radish that her mom had prepared. And she also found her mom's secret sauce for the rice.",
+          "simplified_text_en": "Sumin realizes she added salt instead of seasoning and panics. Regaining her composure, she discovers the kimbap ingredients and secret sauce her mom prepared.",
+          "explanation_en": "Sumin learns why she ruined the kimbap and gets a chance to make it again. Discovering the ingredients and secret sauce her mom prepared, she feels hopeful that she can successfully make kimbap."
+        },
+        {
+          "paragraph_num": 10,
+          "original_text": "\"다시 먹어 봐!\"\n\"오~ 맛있는데? 아까보다 먹을 만해⋯.\" \"나는 주방을 지키는 도깨비 카비야. 사람들 눈에는 안 보이는데\n너는 내가 보인다니, 신기하네⋯. 너는 수민이지?\"",
+          "practice_text": "\"다시 먹어 봐!\" \"오~ 맛있는데? 아까보다 먹을 만해⋯.\" \"나는 주방을 지키는 도깨비 카비야. 사람들 눈에는 안 보이는데 너는 내가 보인다니, 신기하네⋯. 너는 수민이지?\"",
+          "simplified_text": "수민이가 다시 만든 김밥을 먹어본 도깨비는 맛있다고 칭찬합니다. 도깨비는 자신을 카비라고 소개하며, 수민이가 자신을 볼 수 있다는 사실에 놀라워합니다.",
+          "explanation": "수민이가 다시 만든 김밥이 성공하고, 도깨비가 자신을 소개하는 장면입니다. 수민이와 도깨비 카비의 관계가 시작됨을 알 수 있습니다.",
+          "practice_text_en": "Try it again!\" \"Oh, it's good! It's actually edible now...better than before.\" \"I'm Kabiya, a goblin who guards the kitchen. I'm invisible to most people, but you can see me. That's amazing... You're Sumin, right?",
+          "simplified_text_en": "The goblin, after trying the kimbap Sumin made again, praised it as delicious. The goblin introduced himself as Kabi and was surprised that Sumin could see him.",
+          "explanation_en": "Sumin's remade kimbap is a success, and the goblin introduces himself. We see the beginning of Sumin and the goblin Kabi's relationship."
+        },
+        {
+          "paragraph_num": 11,
+          "original_text": "\"너희 엄마가 만든 떡볶이를 좋아하는데⋯. 엄마는 어디 가셨니?\"\n\"응~ 떡볶이는 내가 만들어 볼게. 나는 우리 엄마 아들이니까,\n엄마랑 비슷한 맛을 낼 수 있을 거야. 믿어 봐.\"",
+          "practice_text": "\"너희 엄마가 만든 떡볶이를 좋아하는데⋯. 엄마는 어디 가셨니?\" \"응~ 떡볶이는 내가 만들어 볼게. 나는 우리 엄마 아들이니까, 엄마랑 비슷한 맛을 낼 수 있을 거야. 믿어 봐.\"",
+          "simplified_text": "카비는 수민이 엄마가 만든 떡볶이를 좋아한다고 말하며 엄마의 행방을 묻습니다. 수민이는 떡볶이도 직접 만들어 보겠다고 자신 있게 말합니다.",
+          "explanation": "카비가 떡볶이에 대한 관심을 보이고, 수민이가 떡볶이 만들기에 도전하는 장면입니다. 수민이는 엄마의 아들이니까 엄마와 비슷한 맛을 낼 수 있을 거라고 자신합니다.",
+          "practice_text_en": "I love the tteokbokki your mom makes... Where did she go?\" \"Hmm, I'll try making the tteokbokki. I'm her son, so I should be able to make it taste similar to hers. Trust me.",
+          "simplified_text_en": "Kabi says he likes the tteokbokki that Sumin's mom makes and asks where she is. Sumin confidently says she will try making tteokbokki herself.",
+          "explanation_en": "Kabi shows interest in tteokbokki, and Sumin attempts to make it. Sumin is confident that he can recreate his mother's flavor since he's her son."
+        },
+        {
+          "paragraph_num": 12,
+          "original_text": "\"흠~ 이 맛이 아니야⋯.\"\n수민이는 큰소리를 쳤지만, 매콤하면서도 달달한 엄마의 손맛을 내기가 어려웠어요.\n\"미안해. 엄마의 소스는 흉내 낼 수가 없네⋯.\" 지치고 상심한 수민의 표정은 금세\n눈물을 터뜨릴 것 같았어요.",
+          "practice_text": "\"흠~ 이 맛이 아니야⋯.\" 수민이는 큰소리를 쳤지만, 매콤하면서도 달달한 엄마의 손맛을 내기가 어려웠어요. \"미안해. 엄마의 소스는 흉내 낼 수가 없네⋯.\" 지치고 상심한 수민의 표정은 금세 눈물을 터뜨릴 것 같았어요.",
+          "simplified_text": "수민이는 떡볶이를 만들었지만 엄마의 맛을 낼 수 없었습니다. 실망한 수민이는 눈물을 글썽거립니다.",
+          "explanation": "수민이가 떡볶이 만들기에 실패하고 실망하는 장면입니다. 김밥과는 달리 떡볶이는 엄마의 비법 소스가 없이는 만들 수 없다는 것을 깨닫고 좌절합니다.",
+          "practice_text_en": "\"Hmm~ This isn't it...\" Sumin exclaimed, but it was difficult to replicate her mom's spicy and sweet flavor. \"I'm sorry. I can't imitate Mom's sauce...\" Sumin's exhausted and disheartened expression looked like she was about to burst into tears.",
+          "explanation_en": "It's a scene where Sumin fails at making tteokbokki and is disappointed. She realizes that unlike kimbap, tteokbokki can't be made without her mom's secret sauce, and she becomes frustrated."
+        },
+        {
+          "paragraph_num": 13,
+          "original_text": "전쟁이라도 난 것 같은 주방과 수민을 바라보던 카비가 말했어요.\n\"ㅎㅎㅎ~ 내 방망이는 무엇이든 만들 수 있어. 너도 들어봤지? 도깨비 방망이!\"\n카비는 수민이를 가리키며 주문을 외웠어요. \"엄마의 떡볶이 비법 소스, 나와라~ 뚝딱!\"\n그러자 수민의 손이 오케스트라 지휘자처럼 현란하게 움직이기 시작했어요.\n떡볶이 소스가 순식간에 만들어지고, 재료들이 퐁당퐁당 다이빙을 했어요.",
+          "practice_text": "\"ㅎㅎㅎ~ 내 방망이는 무엇이든 만들 수 있어. 너도 들어봤지? 도깨비 방망이!\" 카비는 수민이를 가리키며 주문을 외웠어요. \"엄마의 떡볶이 비법 소스, 나와라~ 뚝딱!\" 그러자 수민의 손이 오케스트라 지휘자처럼 현란하게 움직이기 시작했어요.",
+          "simplified_text": "카비는 도깨비 방망이로 무엇이든 만들 수 있다고 말하며 수민이에게 주문을 외웁니다. 그러자 수민이의 손이 저절로 움직여 떡볶이 소스를 만들기 시작합니다.",
+          "explanation": "카비가 도깨비 방망이의 힘으로 수민이를 도와 떡볶이를 만들게 해주는 장면입니다. 도깨비 방망이의 마법적인 힘이 발휘됩니다.",
+          "practice_text_en": "Hehe~ My bat can make anything. You've heard of a goblin's club, right? Kabi pointed at Sumin and chanted, \"Mom's secret tteokbokki sauce, come out~ presto!\" Then, Sumin's hands began to move as dazzlingly as an orchestra conductor.",
+          "simplified_text_en": "Kabi tells Sumin that he can make anything with his goblin club and casts a spell on her. Then, Sumin's hands start moving on their own and begin making tteokbokki sauce.",
+          "explanation_en": "Kabi uses the magic club's power to help Sumin make tteokbokki. The magic club's mystical power is unleashed."
+        },
+        {
+          "paragraph_num": 14,
+          "original_text": "김이 모락모락 나는 떡볶이를 집어 먹으면서 카비와 수민은 동시에 외쳤어요.\n\"우와~ 신기해~ 엄마 손맛이야~!\"\n다음 날 수민은 김밥과 떡볶이를 가지고 써니의 생일 파티에 갔어요.\n\"너무 맛있어. 수민아~ 네 선물이 최고야!\" 활짝 웃는 써니를 보니\n수민은 뿌듯했어요.",
+          "practice_text": "김이 모락모락 나는 떡볶이를 집어 먹으면서 카비와 수민은 동시에 외쳤어요. \"우와~ 신기해~ 엄마 손맛이야~!\" 다음 날 수민은 김밥과 떡볶이를 가지고 써니의 생일 파티에 갔어요.",
+          "simplified_text": "카비와 수민이는 떡볶이를 먹고 엄마의 맛과 똑같다며 감탄합니다. 다음 날 수민이는 김밥과 떡볶이를 가지고 써니의 생일 파티에 가서 칭찬을 받습니다.",
+          "explanation": "수민이가 카비의 도움으로 떡볶이를 성공적으로 만들고, 써니의 생일 파티에서 칭찬을 받는 장면입니다. 수민이는 선물을 성공적으로 준비했다는 기쁨을 느낍니다.",
+          "practice_text_en": "As Kavi and Sumin ate the steaming tteokbokki, they exclaimed in unison, \"Wow, this is amazing! It tastes just like Mom's!\" The next day, Sumin took kimbap and tteokbokki to Sunny's birthday party.",
+          "simplified_text_en": "Kabi and Sumin eat tteokbokki and exclaim that it tastes just like their mom's. The next day, Sumin brings kimbap and tteokbokki to Sunny's birthday party and receives compliments.",
+          "explanation_en": "Sumin successfully made tteokbokki with Kavi's help and received compliments at Sunny's birthday party. Sumin felt the joy of successfully preparing the gift."
+        },
+        {
+          "paragraph_num": 15,
+          "original_text": "여행에서 돌아온 엄마가 물었어요. \"수민아, 이거 어디서 사온 거야?\" \"엄마, 그거 제가 만든 거예요.\"\n\"진짜? 맛있는데!\" 엄마는 깜짝 놀랐어요.\n쉿!\n비밀이야!\n'재료를 춤추게 하고 비법 소스를 만드는 도깨비 방망이가 있다는 건 비밀!' 도깨비 친구가 있으니\n이제 어떤 요리든 문제없어요.\n\"카비야, 우리 시작해 볼까? '도깨비 키친' 어때?\"",
+          "practice_text": "여행에서 돌아온 엄마가 물었어요. \"수민아, 이거 어디서 사온 거야?\" \"엄마, 그거 제가 만든 거예요.\" \"진짜? 맛있는데!\" 엄마는 깜짝 놀랐어요. 도깨비 친구가 있으니 이제 어떤 요리든 문제없어요.",
+          "simplified_text": "여행에서 돌아온 엄마는 수민이가 만든 음식을 어디서 사 왔냐고 묻고, 수민이가 직접 만들었다는 사실에 놀랍니다. 수민이는 도깨비 친구가 있어서 이제 어떤 요리든 할 수 있다고 생각하며 카비에게 '도깨비 키친'을 시작하자고 제안합니다.",
+          "explanation": "이야기의 결말 부분으로, 수민이가 엄마에게 칭찬을 받고, 카비와 함께 '도깨비 키친'을 시작하려는 희망찬 미래를 암시하며 이야기가 마무리됩니다. 도깨비 방망이의 존재는 비밀로 남겨둡니다.",
+          "practice_text_en": "\"Where did you buy this?\" Mom asked after returning from her trip. \"Mom, I made it,\" Sumin replied. \"Really? It's delicious!\" Mom was surprised. With a goblin friend, no dish is a problem anymore.",
+          "simplified_text_en": "Upon returning from her trip, Mom asked Sumin where she bought the food, surprised to learn that Sumin had made it herself. Sumin, believing she could now cook anything thanks to her goblin friend, suggested to Kabi that they start \"Goblin Kitchen.\"",
+          "explanation_en": "As the story concludes, Sumin receives praise from her mother, and the narrative ends with a hopeful glimpse into the future, hinting at her plans to start \"Goblin Kitchen\" with Kabi. The existence of the goblin club remains a secret."
         }
       ],
       "real_life_usage": [
-        "친구 생일 파티에 가는데, 직접 만든 음식을 가져가기로 했어. 하지만 요리를 잘 못해서 걱정이야. (I'm going to a friend's birthday party and decided to bring homemade food, but I'm worried because I'm not good at cooking.)",
-        "엄마가 여행 가셔서 혼자서 저녁을 만들어야 해. 평소에는 엄마가 만들어 주셨는데, 이번에는 직접 해야 해서 부담스러워. (My mom went on a trip, so I have to make dinner by myself. Usually mom makes it for me, so I feel burdened having to do it myself this time.)",
-        "친구가 내가 만든 김밥이 맛있다고 칭찬해 줘서 정말 기분이 좋았어. 처음에는 실패할까 봐 걱정했는데, 성공해서 뿌듯했어. (I felt really good when my friend praised my kimbap. I was worried it might fail at first, but I was proud when it succeeded.)",
-        "요리하는 것은 생각보다 어렵지만, 완성된 음식을 보면 뿌듯함을 느껴. 그래서 계속 연습하고 있어. (Cooking is harder than I thought, but I feel proud when I see the finished dish. That's why I keep practicing.)",
-        "새로운 레시피를 따라 해 봤는데, 중간에 실수해서 맛이 이상해졌어. 다음에는 더 조심해서 만들어야겠어. (I tried following a new recipe, but I made a mistake in the middle and it tasted strange. I need to be more careful next time.)",
-        "할머니가 여행에서 돌아오셔서 맛있는 음식을 만들어 주셨어. 할머니의 손맛은 정말 특별해. (My grandmother returned from her trip and made delicious food for me. Grandmother's special touch is really special.)",
-        "친구들과 함께 떡볶이를 만들어 먹었어. 처음에는 어려웠지만, 함께 하니까 재미있었어. (I made and ate tteokbokki with my friends. It was difficult at first, but it was fun doing it together.)",
-        "요리 실력을 늘리기 위해 유튜브에서 요리 영상을 보면서 배우고 있어. 조금씩 나아지고 있는 것 같아. (I'm learning by watching cooking videos on YouTube to improve my cooking skills. I think I'm getting better little by little.)",
-        "엄마가 만들어 주시던 김밥 맛이 그리워서 직접 만들어 봤어. 엄마의 손맛을 완전히 따라 하기는 어렵지만, 비슷하게 만들 수 있었어. (I missed the taste of the kimbap my mom used to make, so I tried making it myself. It's hard to completely replicate mom's special touch, but I could make it similar.)",
-        "생일 파티에 가져갈 음식을 준비하는데, 친구들이 좋아할지 걱정돼. 그래도 정성껏 만들었으니 좋아해 줄 거야. (I'm preparing food to bring to the birthday party, and I'm worried whether my friends will like it. But I made it with care, so they'll like it.)"
+        "친구 생일 파티에 가는데, 직접 만든 음식을 가져가기로 했어. 하지만 요리를 잘 못해서 걱정이야. (I'm going to a friend's birthday party, and I decided to bring homemade food. But I'm worried because I'm not very good at cooking.)",
+        "엄마가 여행 가셔서 혼자서 저녁을 만들어야 해. 평소에는 엄마가 만들어 주셨는데, 이번에는 직접 해야 해서 부담스러워. (Mom is away on a trip, so I have to make dinner by myself. Mom usually makes it for me, but this time I have to do it myself, which is a little nerve-wracking.)",
+        "친구가 내가 만든 김밥이 맛있다고 칭찬해 줘서 정말 기분이 좋았어. 처음에는 실패할까 봐 걱정했는데, 성공해서 뿌듯했어. (I felt so good when my friend complimented my kimbap and said it was delicious. I was worried I might fail at first, but I was proud that I succeeded.)",
+        "요리하는 것은 생각보다 어렵지만, 완성된 음식을 보면 뿌듯함을 느껴. 그래서 계속 연습하고 있어. (Cooking is harder than it looks, but seeing the finished dish makes me feel so proud. That's why I keep practicing.)",
+        "새로운 레시피를 따라 해 봤는데, 중간에 실수해서 맛이 이상해졌어. 다음에는 더 조심해서 만들어야겠어. (I tried following a new recipe, but I made a mistake in the middle and the taste turned out weird. I'll have to be more careful next time.)",
+        "할머니가 여행에서 돌아오셔서 맛있는 음식을 만들어 주셨어. 할머니의 손맛은 정말 특별해. (Grandma came back from her trip and made us delicious food. Her cooking is truly special.)",
+        "친구들과 함께 떡볶이를 만들어 먹었어. 처음에는 어려웠지만, 함께 하니까 재미있었어. (I made tteokbokki with my friends. It was difficult at first, but it was fun because we did it together.)",
+        "요리 실력을 늘리기 위해 유튜브에서 요리 영상을 보면서 배우고 있어. 조금씩 나아지고 있는 것 같아. (I'm learning to cook by watching cooking videos on YouTube to improve my skills. I think I'm getting better little by little.)",
+        "엄마가 만들어 주시던 김밥 맛이 그리워서 직접 만들어 봤어. 엄마의 손맛을 완전히 따라 하기는 어렵지만, 비슷하게 만들 수 있었어. (I missed the taste of the kimbap my mom used to make, so I tried making it myself. It's hard to perfectly replicate her touch, but I was able to make something similar.)",
+        "생일 파티에 가져갈 음식을 준비하는데, 친구들이 좋아할지 걱정돼. 그래도 정성껏 만들었으니 좋아해 줄 거야. (I'm preparing food to bring to the birthday party, and I'm worried my friends won't like it. But I made it with care, so I hope they will.)"
       ],
       "vocabulary": [
         {
           "word": "이만저만 아니다",
-          "meaning": "정도가 매우 심하다, 꽤 크다 (to be quite a lot, to be significant)",
-          "example": "시험이 코앞이라 걱정이 이만저만이 아니에요. (I'm very worried because the exam is just around the corner.)"
+          "meaning": "정도가 매우 심하다, 꽤 크다 (very severe, quite large)",
+          "example": "시험이 코앞이라 걱정이 이만저만이 아니에요. (I'm incredibly worried because the exam is just around the corner.)"
         },
         {
           "word": "자랑하다",
-          "meaning": "자신의 좋은 점을 남에게 드러내어 말하다 (to boast, to brag)",
-          "example": "준이는 자기가 받은 상을 친구들에게 자랑했어요. (Jun boasted to his friends about the award he received.)"
+          "meaning": "자신의 좋은 점을 남에게 드러내어 말하다 (To boast about one's strengths to others.)",
+          "example": "준이는 자기가 받은 상을 친구들에게 자랑했어요. (Jun proudly showed off the award he received to his friends.)"
         },
         {
           "word": "거짓말",
-          "meaning": "사실이 아닌 것을 사실인 것처럼 꾸며서 하는 말 (lie)",
+          "meaning": "사실이 아닌 것을 사실인 것처럼 꾸며서 하는 말 (A statement that presents something untrue as if it were true.)",
           "example": "솔직하게 말하는 것이 중요하고, 거짓말은 나쁜 습관이에요. (It's important to be honest, and lying is a bad habit.)"
         },
         {
           "word": "손맛",
-          "meaning": "음식을 만드는 솜씨나 솜씨에서 비롯되는 특별한 맛 (taste of homemade food, special flavor from someone's cooking skills)",
-          "example": "할머니의 손맛이 담긴 김치는 정말 최고예요. (Grandmother's kimchi with her special touch is the best.)"
+          "meaning": "음식을 만드는 솜씨나 솜씨에서 비롯되는 특별한 맛 (A knack for cooking or the special flavor that comes from it.)",
+          "example": "할머니의 손맛이 담긴 김치는 정말 최고예요. (Grandma's kimchi is the best; it's made with love.)"
         },
         {
           "word": "흉내 내다",
-          "meaning": "다른 사람의 행동이나 소리, 물건의 모양 등을 비슷하게 따라 하다 (to imitate, to mimic)",
-          "example": "동생은 TV에 나오는 연예인을 흉내 내는 것을 좋아해요. (My younger sibling likes to imitate celebrities on TV.)"
+          "meaning": "다른 사람의 행동이나 소리, 물건의 모양 등을 비슷하게 따라 하다 (To imitate or mimic someone else's actions, sounds, or the appearance of objects.)",
+          "example": "동생은 TV에 나오는 연예인을 흉내 내는 것을 좋아해요. (My younger sibling loves to imitate celebrities on TV.)"
         },
         {
           "word": "상심하다",
-          "meaning": "마음이 아프거나 슬퍼하다 (to be disheartened, to be grieved)",
-          "example": "시험 결과가 좋지 않아서 많이 상심했어요. (I was very disheartened because the exam results were not good.)"
+          "meaning": "마음이 아프거나 슬퍼하다 (Feeling heartbroken or sad.)",
+          "example": "시험 결과가 좋지 않아서 많이 상심했어요. (I was very disappointed with my test results.)"
         },
         {
           "word": "뿌듯하다",
-          "meaning": "마음에 가득 차서 흐뭇하다 (to be proud, to be satisfied)",
-          "example": "어려운 일을 해냈을 때 뿌듯함을 느껴요. (I feel proud when I accomplish a difficult task.)"
+          "meaning": "마음에 가득 차서 흐뭇하다 (My heart is full and content.)",
+          "example": "어려운 일을 해냈을 때 뿌듯함을 느껴요. (I feel a sense of accomplishment when I complete a difficult task.)"
         }
       ],
       "grammar": [
         {
           "pattern": "-는/은/ㄴ/ㄹ 모양이다",
-          "explanation": "어떤 것에 대해 추측하거나 짐작할 때 사용하는 표현입니다. (An expression used to speculate or guess about something.)",
-          "example": "밖에 비가 오는 모양이다. 창문이 젖어 있네. (It seems to be raining outside. The window is wet.)"
+          "explanation": "어떤 것에 대해 추측하거나 짐작할 때 사용하는 표현입니다. (This is an expression used when guessing or speculating about something.)",
+          "example": "밖에 비가 오는 모양이다. 창문이 젖어 있네. (It looks like it's raining outside. The window is wet.)"
         },
         {
           "pattern": "-기가 어렵다/쉽다",
-          "explanation": "어떤 행동을 하는 것이 어렵거나 쉽다는 것을 나타내는 표현입니다. (An expression that indicates that it is difficult or easy to do something.)",
-          "example": "혼자서 이 많은 음식을 다 만들기가 어려워요. (It's difficult to make all this food by myself.)"
+          "explanation": "어떤 행동을 하는 것이 어렵거나 쉽다는 것을 나타내는 표현입니다. (This expresses whether an action is difficult or easy to do.)",
+          "example": "혼자서 이 많은 음식을 다 만들기가 어려워요. (It's hard to make all this food by myself.)"
         },
         {
           "pattern": "-더니",
           "explanation": "과거의 경험이나 사실을 바탕으로 현재의 상황을 설명할 때 사용합니다. (Used to explain the current situation based on past experiences or facts.)",
-          "example": "어제 밤에 늦게까지 공부하더니, 오늘 아침에 늦잠을 잤어요. (I studied late last night, and I overslept this morning.)"
+          "example": "어제 밤에 늦게까지 공부하더니, 오늘 아침에 늦잠을 잤어요. (I stayed up late studying last night, so I overslept this morning.)"
         }
       ],
       "key_expressions": [
@@ -226,69 +499,69 @@
         }
       ],
       "real_life_usage": [
-        "친구 생일 파티에 직접 만든 음식을 가져가기로 약속했는데, 막상 만들려고 하니 걱정이 이만저만 아니야. 요리를 잘 못하는데 어떻게 해야 할까? (I promised to bring homemade food to my friend's birthday party, but when I actually tried to make it, I was really worried. I'm not good at cooking, so what should I do?)",
-        "엄마가 여행을 가셔서 집에 혼자 있어야 해. 평소에는 엄마가 음식을 만들어 주셨는데, 이번에는 직접 만들어야 해서 부담이 커. (My mom went on a trip, so I have to be home alone. Usually mom makes food for me, but I have to make it myself this time, so the burden is big.)",
-        "친구가 내가 만든 김밥을 맛있게 먹어 줘서 정말 기쁘고 뿌듯했어. 처음에는 실패할까 봐 걱정했지만, 성공해서 자신감이 생겼어. (I was really happy and proud when my friend enjoyed the kimbap I made. I was worried it might fail at first, but I gained confidence when it succeeded.)",
-        "요리하는 것은 생각보다 어렵지만, 완성된 음식을 보면 뿌듯함을 느껴서 계속 연습하게 돼. 조금씩 나아지고 있는 것 같아. (Cooking is harder than I thought, but I feel proud when I see the finished dish, so I keep practicing. I think I'm improving little by little.)",
-        "새로운 레시피를 따라 해 봤는데, 중간에 실수해서 맛이 이상해졌어. 다음에는 더 조심해서 만들고, 실패해도 포기하지 않고 다시 도전해야겠어. (I tried following a new recipe, but I made a mistake in the middle and it tasted strange. Next time I'll be more careful, and even if I fail, I won't give up and will try again.)",
-        "할머니가 여행에서 돌아오셔서 특별한 손맛이 담긴 음식을 만들어 주셨어. 할머니의 요리는 항상 특별하고 맛있어서 그리워했어. (My grandmother returned from her trip and made food with her special touch. Grandmother's cooking is always special and delicious, so I missed it.)",
-        "친구들과 함께 떡볶이를 만들어 먹었는데, 처음에는 어려웠지만 함께 하니까 재미있었고, 맛도 좋았어. 다음에도 함께 요리하고 싶어. (I made and ate tteokbokki with my friends. It was difficult at first, but it was fun doing it together, and it tasted good too. I want to cook together again next time.)",
-        "요리 실력을 늘리기 위해 유튜브에서 요리 영상을 보면서 배우고 있어. 처음에는 어려웠지만, 계속 연습하니까 조금씩 나아지고 있어. (I'm learning by watching cooking videos on YouTube to improve my cooking skills. It was difficult at first, but I'm improving little by little as I keep practicing.)",
-        "엄마가 만들어 주시던 김밥 맛이 그리워서 직접 만들어 봤어. 엄마의 손맛을 완전히 따라 하기는 어렵지만, 비슷하게 만들 수 있어서 뿌듯했어. (I missed the taste of the kimbap my mom used to make, so I tried making it myself. It's hard to completely replicate mom's special touch, but I was proud that I could make it similar.)",
-        "생일 파티에 가져갈 음식을 준비하는데, 친구들이 좋아할지 걱정이 되지만, 정성껏 만들었으니 좋아해 줄 거라고 생각해. 그래도 걱정은 돼. (I'm preparing food to bring to the birthday party, and I'm worried whether my friends will like it, but I think they'll like it since I made it with care. Still, I'm worried.)"
+        "친구 생일 파티에 직접 만든 음식을 가져가기로 약속했는데, 막상 만들려고 하니 걱정이 이만저만 아니야. 요리를 잘 못하는데 어떻게 해야 할까? (I promised to bring homemade food to my friend's birthday party, but now that I'm about to make it, I'm really worried. I'm not good at cooking, so what should I do?)",
+        "엄마가 여행을 가셔서 집에 혼자 있어야 해. 평소에는 엄마가 음식을 만들어 주셨는데, 이번에는 직접 만들어야 해서 부담이 커. (Mom is going on a trip, so I have to stay home alone. Usually, Mom makes my meals, but this time I have to make them myself, which is a big responsibility.)",
+        "친구가 내가 만든 김밥을 맛있게 먹어 줘서 정말 기쁘고 뿌듯했어. 처음에는 실패할까 봐 걱정했지만, 성공해서 자신감이 생겼어. (I was so happy and proud that my friend enjoyed the kimbap I made. I was worried I would fail at first, but I succeeded, and now I feel more confident.)",
+        "요리하는 것은 생각보다 어렵지만, 완성된 음식을 보면 뿌듯함을 느껴서 계속 연습하게 돼. 조금씩 나아지고 있는 것 같아. (Cooking is harder than I thought, but seeing the finished dish makes me feel so proud that I keep practicing. I think I'm getting better little by little.)",
+        "새로운 레시피를 따라 해 봤는데, 중간에 실수해서 맛이 이상해졌어. 다음에는 더 조심해서 만들고, 실패해도 포기하지 않고 다시 도전해야겠어. (I tried a new recipe, but I messed up in the middle, and the taste turned out weird. Next time, I'll be more careful and won't give up even if I fail. I'll try again.)",
+        "할머니가 여행에서 돌아오셔서 특별한 손맛이 담긴 음식을 만들어 주셨어. 할머니의 요리는 항상 특별하고 맛있어서 그리워했어. (Grandma came back from her trip and made us a special meal with her loving touch. I always missed her cooking because it's so special and delicious.)",
+        "친구들과 함께 떡볶이를 만들어 먹었는데, 처음에는 어려웠지만 함께 하니까 재미있었고, 맛도 좋았어. 다음에도 함께 요리하고 싶어. (I made tteokbokki with my friends, and it was difficult at first, but it was fun to do together, and it tasted great. I want to cook with them again next time.)",
+        "요리 실력을 늘리기 위해 유튜브에서 요리 영상을 보면서 배우고 있어. 처음에는 어려웠지만, 계속 연습하니까 조금씩 나아지고 있어. (I'm learning to cook by watching cooking videos on YouTube to improve my skills. It was difficult at first, but I'm gradually getting better with practice.)",
+        "엄마가 만들어 주시던 김밥 맛이 그리워서 직접 만들어 봤어. 엄마의 손맛을 완전히 따라 하기는 어렵지만, 비슷하게 만들 수 있어서 뿌듯했어. (I missed the taste of the kimbap my mom used to make, so I tried making it myself. It's hard to perfectly replicate her touch, but I was proud that I could make it similar.)",
+        "생일 파티에 가져갈 음식을 준비하는데, 친구들이 좋아할지 걱정이 되지만, 정성껏 만들었으니 좋아해 줄 거라고 생각해. 그래도 걱정은 돼. (I'm preparing food to bring to the birthday party, and I'm worried my friends won't like it, but I put a lot of care into making it, so I think they will. Still, I'm worried.)"
       ],
       "vocabulary": [
         {
           "word": "선망(羨望)",
-          "meaning": "부러워하며 바람",
-          "example": "그녀는 모든 이들의 선망의 대상이다."
+          "meaning": "부러워하며 바람 (Envy in the Wind)",
+          "example": "그녀는 모든 이들의 선망의 대상이다. (She is the envy of everyone.)"
         },
         {
           "word": "고뇌(苦惱)",
-          "meaning": "괴로워하며 생각함",
-          "example": "그는 진로 문제로 깊은 고뇌에 빠졌다."
+          "meaning": "괴로워하며 생각함 (Thinking in anguish)",
+          "example": "그는 진로 문제로 깊은 고뇌에 빠졌다. (He was deeply troubled by his career path.)"
         },
         {
           "word": "수심(愁心)",
-          "meaning": "걱정하는 마음",
-          "example": "그녀의 얼굴에는 짙은 수심이 드리워져 있었다."
+          "meaning": "걱정하는 마음 (A Worried Heart)",
+          "example": "그녀의 얼굴에는 짙은 수심이 드리워져 있었다. (A deep shadow of sorrow lay on her face.)"
         },
         {
           "word": "전전긍긍(戰戰兢兢)",
-          "meaning": "몹시 두려워하며 조심함",
-          "example": "그는 혹시 실수할까 봐 전전긍긍했다."
+          "meaning": "몹시 두려워하며 조심함 (With great fear and caution.)",
+          "example": "그는 혹시 실수할까 봐 전전긍긍했다. (He was terrified of making a mistake.)"
         },
         {
           "word": "낭패(狼狽)",
-          "meaning": "일이 잘못되어 곤란한 지경에 빠짐",
-          "example": "계획에 차질이 생겨 낭패를 보았다."
+          "meaning": "일이 잘못되어 곤란한 지경에 빠짐 (In trouble because things went wrong.)",
+          "example": "계획에 차질이 생겨 낭패를 보았다. (My plans went awry, and I was left in a bind.)"
         }
       ],
       "grammar": [
         {
           "pattern": "-는/은커녕",
-          "explanation": "앞의 내용과 반대되거나 더 나쁜 내용이 뒤에 옴을 나타냄",
-          "example": "칭찬은커녕 오히려 혼이 났다."
+          "explanation": "앞의 내용과 반대되거나 더 나쁜 내용이 뒤에 옴을 나타냄 (On the contrary, or even worse.)",
+          "example": "칭찬은커녕 오히려 혼이 났다. (Instead of praise, I was scolded.)"
         },
         {
           "pattern": "-ㄹ/을 턱이 없다",
-          "explanation": "절대로 ~할 가능성이 없음을 강조",
-          "example": "그가 그런 거짓말을 할 턱이 없다."
+          "explanation": "절대로 ~할 가능성이 없음을 강조 (There is absolutely no chance that...)",
+          "example": "그가 그런 거짓말을 할 턱이 없다. (There's no way he would tell such a lie.)"
         },
         {
           "pattern": "-에 불과하다",
-          "explanation": "겨우 ~정도밖에 안 됨을 나타냄. 가치를 폄하하는 뉘앙스",
-          "example": "그것은 단순한 의견에 불과하다."
+          "explanation": "겨우 ~정도밖에 안 됨을 나타냄. 가치를 폄하하는 뉘앙스 (Only. Implies a dismissive or belittling tone.)",
+          "example": "그것은 단순한 의견에 불과하다. (That's just an opinion.)"
         },
         {
           "pattern": "-(으)ㄹ 뿐더러",
-          "explanation": "앞의 내용에 더하여 뒤의 내용도 그러함을 나타냄",
-          "example": "그는 똑똑할 뿐더러 성격도 좋다."
+          "explanation": "앞의 내용에 더하여 뒤의 내용도 그러함을 나타냄 (In addition to the above, the following is also true.)",
+          "example": "그는 똑똑할 뿐더러 성격도 좋다. (He is not only smart but also has a good personality.)"
         },
         {
           "pattern": "-(으)ㄹ라치면",
-          "explanation": "어떤 행동을 하려고 하면 예상치 못한 문제가 발생함을 나타냄",
-          "example": "책을 읽을라치면 졸음이 쏟아진다."
+          "explanation": "어떤 행동을 하려고 하면 예상치 못한 문제가 발생함을 나타냄 (Things don't always go as planned.)",
+          "example": "책을 읽을라치면 졸음이 쏟아진다. (I get sleepy whenever I try to read a book.)"
         }
       ],
       "key_expressions": [
@@ -304,20 +577,133 @@
       "paragraphs_analysis": [
         {
           "paragraph_num": 1,
-          "original_text": "동물 병원에는 아픈 동물만 있을까요?\n\n아니에요. 건강하고 예쁜 동물들도 있어요.\n\n말티즈, 슈나우저, 푸들이 창문을 똑똑똑 두드리고 있어요.\n\n강아지들은 병원 밖으로 나가고 싶었어요.",
-          "practice_text": "아니에요. 예쁜 동물들도 있어요.",
-          "simplified_text": "동물 병원에는 아픈 동물만 있나요? 아니에요. 예쁜 동물도 있어요.",
-          "explanation": "이 문단은 동물 병원에 아픈 동물만 있는 것이 아니라 예쁜 동물도 있다는 것을 알려줍니다. 강아지들이 창문을 두드리는 모습이 나와요."
+          "original_text": "동물 병원에는 아픈 동물만 있을까요? 아니에요. 건강하고 예쁜 동물들도 있어요.",
+          "practice_text": "동물 병원에는 아픈 동물만 있을까요? 아니에요.",
+          "simplified_text": "동물 병원에는 아픈 동물만 있는 건 아니에요. 건강한 동물도 있어요.",
+          "explanation": "이 문단은 이야기가 시작되는 부분이에요. 동물 병원에 아픈 동물만 있는 것이 아니라는 것을 알려줘요.",
+          "practice_text_en": "Are there only sick animals at the animal hospital? No.",
+          "simplified_text_en": "Animal hospitals aren't just for sick animals; healthy animals go there too.",
+          "explanation_en": "This paragraph marks the beginning of the story. It reveals that the animal hospital isn't just for sick animals."
+        },
+        {
+          "paragraph_num": 2,
+          "original_text": "말티즈, 슈나우저, 푸들이 창문을 똑똑똑 두드리고 있어요. 강아지들은 병원 밖으로 나가고 싶었어요.",
+          "practice_text": "말티즈, 슈나우저, 푸들이 있어요. 강아지들은 나가고 싶었어요.",
+          "simplified_text": "말티즈, 슈나우저, 푸들 강아지 세 마리가 있어요. 이 강아지들은 병원 밖으로 나가고 싶어해요.",
+          "explanation": "여기서 세 마리의 강아지가 등장해요. 이 강아지들은 병원을 나가고 싶어합니다.",
+          "practice_text_en": "I have a Maltese, a Schnauzer, and a Poodle. The dogs wanted to go outside.",
+          "simplified_text_en": "I have three puppies: a Maltese, a Schnauzer, and a Poodle. They want to leave the hospital.",
+          "explanation_en": "Three puppies appear here. These puppies want to leave the hospital."
+        },
+        {
+          "paragraph_num": 3,
+          "original_text": "\"나처럼 귀여운 강아지를 왜 안 데려갈까?\" 슈나우저가 말했어요. \"친구들아, 창문에 비친 내 모습을 좀 봐. 정말 예쁘지 않니? 내가 봐도 참 예뻐.\"",
+          "practice_text": "\"나처럼 귀여운 강아지를 왜 안 데려갈까?\" 슈나우저가 말했어요.",
+          "simplified_text": "슈나우저가 '나는 귀여운데 왜 나를 데려가지 않을까?' 하고 생각했어요. 그리고 친구들에게 '나는 정말 예뻐' 라고 말했어요.",
+          "explanation": "슈나우저는 자기가 귀엽고 예쁘다고 생각해요. 그래서 사람들이 자기를 데려가지 않는 것을 이상하게 생각해요.",
+          "practice_text_en": "\"Why won't they take a cute puppy like me?\" said the Schnauzer.",
+          "simplified_text_en": "The Schnauzer thought, \"I'm so cute, why won't anyone take me home?\" And he told his friends, \"I'm really pretty.\"",
+          "explanation_en": "The Schnauzer thinks he's cute and beautiful. That's why he finds it strange that people don't take him home."
+        },
+        {
+          "paragraph_num": 4,
+          "original_text": "푸들이 뒷발을 들면서 말했어요. \"내 꼬리를 좀 봐. 정말 멋있지? 조금 전에 지나간 사람도 창문 밖에서 나를 보면서 웃었어.\"",
+          "practice_text": "푸들이 말했어요. \"내 꼬리를 좀 봐. 정말 멋있지?\"",
+          "simplified_text": "푸들도 '내 꼬리 좀 봐. 정말 멋있지?'라고 말했어요. 사람들이 자기 꼬리를 보고 웃었다고 자랑했어요.",
+          "explanation": "푸들은 자기 꼬리가 멋있다고 자랑해요. 다른 사람들도 자기 꼬리를 보고 웃었다는 것을 이야기해요.",
+          "practice_text_en": "The poodle said, \"Look at my tail. Isn't it magnificent?\"",
+          "simplified_text_en": "The poodle said, \"Look at my tail! Isn't it fabulous?\" It bragged that people laughed when they saw its tail.",
+          "explanation_en": "The poodle boasts about how beautiful its tail is, mentioning that others have laughed when they saw it."
+        },
+        {
+          "paragraph_num": 5,
+          "original_text": "말티즈도 꼬리를 흔들며 말했어요. 슈나우저, 푸들, 말티즈는 서로 자기의 아름다운 모습을 자랑했어요.",
+          "practice_text": "말티즈도 꼬리를 흔들었어요. 강아지들은 서로 자랑했어요.",
+          "simplified_text": "말티즈도 꼬리를 흔들면서 자기가 예쁘다고 자랑했어요. 세 마리 강아지들은 서로 자기가 더 예쁘다고 자랑했어요.",
+          "explanation": "말티즈도 자기를 자랑하고, 세 마리 강아지들은 서로 자기가 더 예쁘다고 생각해요.",
+          "practice_text_en": "The Maltese wagged its tail too. The puppies showed off to each other.",
+          "simplified_text_en": "The Maltese wagged its tail, boasting about how pretty it was. The three puppies bragged to each other about who was the prettiest.",
+          "explanation_en": "Even the Maltese is proud of itself, and the three puppies all think they're the prettiest."
+        },
+        {
+          "paragraph_num": 6,
+          "original_text": "동물 병원 건너편에는 예쁜 이층집이 있었어요. 그 집에는 강아지 닥스훈트가 살고 있었어요. 동물 병원에 있는 강아지들은 거기에 사는 닥스훈트를 부러워했어요.",
+          "practice_text": "건너편에 예쁜 집이 있었어요. 닥스훈트가 살고 있었어요.",
+          "simplified_text": "동물 병원 맞은편에 예쁜 이층집이 있었어요. 그 집에는 닥스훈트 강아지가 살고 있었고, 병원 강아지들은 닥스훈트를 부러워했어요.",
+          "explanation": "동물 병원 강아지들은 건너편 예쁜 집에 사는 닥스훈트를 부러워해요. 닥스훈트가 좋은 집에 산다고 생각하는 거죠.",
+          "practice_text_en": "There was a pretty house across the street. A dachshund lived there.",
+          "simplified_text_en": "Across from the animal hospital stood a pretty two-story house. A dachshund puppy lived there, and the hospital dogs envied him.",
+          "explanation_en": "The dogs at the animal hospital envy the dachshund who lives in the pretty house across the street. They think he lives in a good home."
+        },
+        {
+          "paragraph_num": 7,
+          "original_text": "하지만 강아지들이 볼 때마다 닥스훈트는 행복하지 않은 것 같았어요. 어느 날은 창문 밖을 보면서 왈왈 짖고, 어느 날은 고개를 숙이고 움직이지 않았어요. 세 마리 강아지들은 그런 닥스훈트가 이상했어요.",
+          "practice_text": "닥스훈트는 행복하지 않은 것 같았어요. 강아지들은 닥스훈트가 이상했어요.",
+          "simplified_text": "하지만 동물 병원 강아지들이 보기에 닥스훈트는 행복해 보이지 않았어요. 닥스훈트가 이상하게 행동해서 강아지들은 궁금해했어요.",
+          "explanation": "겉으로는 좋은 집에 사는 닥스훈트지만, 사실은 행복하지 않은 것 같아요. 강아지들은 왜 그런지 궁금해해요.",
+          "practice_text_en": "The dachshund didn't seem happy. The puppies thought the dachshund was strange.",
+          "simplified_text_en": "However, the dachshund didn't seem happy to the puppies at the animal hospital. They were curious because the dachshund was acting strangely.",
+          "explanation_en": "The dachshund lives in a nice house, but doesn't seem happy. The puppies wonder why."
+        },
+        {
+          "paragraph_num": 8,
+          "original_text": "\"나도 닥스훈트처럼 예쁜 이층집에서 살고 싶어. 그곳에서 주인의 사랑을 받고 싶어. 그러면 정말 행복할 것 같아.\" 말티즈가 말했어요. \"맞아. 닥스훈트는 저렇게 멋진 집에서 살면서 왜 저렇게 이상한 표정일까?\" 푸들도 말했어요. 슈나우저도 눈썹을 옆으로 펴면서 말했어요. \"우리보다 행복한 걸 자랑하고 싶은 걸까? 나 참!\"",
+          "practice_text": "말티즈가 말했어요. \"나도 예쁜 집에서 살고 싶어.\" 푸들도 말했어요.",
+          "simplified_text": "말티즈는 닥스훈트처럼 예쁜 집에서 사랑받으며 살고 싶다고 했어요. 푸들도 닥스훈트가 좋은 집에 살면서 왜 이상한 표정을 짓는지 궁금해했어요. 슈나우저는 닥스훈트가 행복한 척한다고 생각했어요.",
+          "explanation": "강아지들은 닥스훈트처럼 좋은 집에 살고 싶어하지만, 닥스훈트가 행복해 보이지 않아서 이상하게 생각해요.",
+          "practice_text_en": "The Maltese said, \"I want to live in a beautiful house too.\" The Poodle also said something.",
+          "simplified_text_en": "The Maltese said it wished it could live in a beautiful home and be loved, just like the Dachshund. The Poodle wondered why the Dachshund made a strange face while living in such a nice house. The Schnauzer thought the Dachshund was pretending to be happy.",
+          "explanation_en": "Dogs want to live in nice homes like dachshunds, but they find it strange that dachshunds don't seem happy."
+        },
+        {
+          "paragraph_num": 9,
+          "original_text": "세 마리 강아지들은 빨리 동물 병원 밖으로 나가고 싶었어요. 닥스훈트처럼 동물 병원을 나가서 예쁘고 행복한 집에서 살고 싶었어요. 그래서 날마다 예쁜 옷을 입고 귀여운 표정으로 사람들을 만났어요.",
+          "practice_text": "강아지들은 나가고 싶었어요. 예쁜 옷을 입었어요.",
+          "simplified_text": "세 마리 강아지들은 빨리 병원에서 나가서 닥스훈트처럼 예쁜 집에서 살고 싶었어요. 그래서 매일 예쁜 옷을 입고 귀여운 척을 했어요.",
+          "explanation": "강아지들은 닥스훈트처럼 좋은 집에 가기 위해 노력해요. 예쁜 옷을 입고 사람들에게 잘 보이려고 하는 거죠.",
+          "practice_text_en": "The dogs wanted to go out. They put on their pretty clothes.",
+          "simplified_text_en": "The three puppies were eager to leave the hospital and live in a pretty home, just like a dachshund. So, every day they dressed in cute outfits and acted adorable.",
+          "explanation_en": "Dogs, like dachshunds, try hard to find good homes. They wear pretty clothes and try to make a good impression on people."
+        },
+        {
+          "paragraph_num": 10,
+          "original_text": "그러던 어느 날, 닥스훈트가 동물 병원에 왔어요. 닥스훈트는 아픈 것 같았어요. \"많이 아프니? 어디가 아파서 왔어?\" 걱정하는 얼굴로 말티즈가 물었어요. \"아니야, 아프지 않아. 아파서 온 게 아니야.\" 슬픈 얼굴로 닥스훈트가 대답했어요. \"그럼 왜 왔어?\" 푸들하고 슈나우저가 동시에 물었어요. \"나는 새 주인을 만나러 왔어.\"",
+          "practice_text": "닥스훈트가 병원에 왔어요. 말티즈가 물었어요. \"아파요?\" 닥스훈트가 말했어요. \"아니요.\"",
+          "simplified_text": "어느 날, 닥스훈트가 동물 병원에 왔어요. 닥스훈트는 아픈 것 같았지만, 아픈 게 아니라고 했어요. 닥스훈트는 새로운 주인을 만나러 왔다고 했어요.",
+          "explanation": "닥스훈트가 병원에 다시 왔어요. 아픈 게 아니라 새로운 주인을 찾으러 온 것이라고 말해요.",
+          "practice_text_en": "A dachshund came to the hospital. A Maltese asked, \"Are you sick?\" The dachshund said, \"No.\"",
+          "simplified_text_en": "One day, a dachshund came to the animal hospital. The dachshund seemed sick, but said it wasn't. The dachshund said it had come to meet its new owner.",
+          "explanation_en": "The dachshund is back at the clinic, but says he's not sick - he's here to find a new owner."
+        },
+        {
+          "paragraph_num": 11,
+          "original_text": "닥스훈트의 눈에서 눈물이 흘렀어요. \"지금 주인은 예쁜 나의 모습을 보고 마음에 들어서 데리고 갔어. 그리고 며칠 나를 사랑해줬어. 그런데...\" 닥스훈트는 잠깐 말을 못하고 울었어요. 세 마리 강아지들은 아무 말도 못하고 닥스훈트의 이야기를 기다렸어요. \"시간이 지나니까 같이 놀지도 않고 가끔 먹이도 주지 않았어. 내가 그 집에 살고 있는 걸 잊어버린 것 같았어.\" 닥스훈트의 말을 듣고 있는 강아지들은 깜짝 놀랐어요. \"내 주인은 나에게 관심이 점점 없어졌어. 나는 하루 종일 집에 혼자 있었어. 깜깜한 밤에도. 이제 내 주인은 나를 사랑하지 않나 봐.\" 이야기를 다 한 닥스훈트는 엎드려서 울었어요.",
+          "practice_text": "닥스훈트의 눈에서 눈물이 흘렀어요. 주인은 나를 사랑하지 않았어요.",
+          "simplified_text": "닥스훈트는 눈물을 흘리면서, 예쁜 모습 때문에 새 주인에게 갔지만, 시간이 지나면서 주인이 자기를 사랑하지 않게 되었다고 말했어요. 강아지들은 닥스훈트의 이야기에 놀랐어요.",
+          "explanation": "닥스훈트는 슬픈 이야기를 해요. 처음에는 사랑받았지만, 시간이 지나면서 주인의 관심이 사라졌다는 거죠. 강아지들은 이 이야기에 충격을 받아요.",
+          "practice_text_en": "Tears streamed from the dachshund's eyes. Its owner didn't love me.",
+          "simplified_text_en": "With tears in its eyes, the dachshund said it had gone to its new owner because of its adorable appearance, but over time, the owner stopped loving it. The puppies were shocked by the dachshund's story.",
+          "explanation_en": "The dachshund tells a sad tale. It was loved at first, but over time, its owner's attention faded away. The puppies are shocked by this story."
+        },
+        {
+          "paragraph_num": 12,
+          "original_text": "세 마리 강아지는 우는 닥스훈트를 보면서 슬펐어요. 그리고 생각했어요. '왜 처음 마음과 나중 마음이 달랐을까? '닥스훈트 주인처럼 나를 데리고 가서 나를 잊으면 어떡하지? 먹이 주는 것도 잊으면 어떡하지?' 말티즈는 갑자기 걱정이 되었어요. 그때 누군가 말티즈를 데리러 왔어요. 말티즈는 심장이 콩닥콩닥 뛰기 시작했어요.",
+          "practice_text": "강아지들은 슬펐어요. 말티즈는 걱정했어요. 심장이 뛰기 시작했어요.",
+          "simplified_text": "강아지들은 닥스훈트 때문에 슬퍼하고 걱정했어요. '나도 닥스훈트처럼 버려지면 어떡하지?' 하고 생각한 거죠. 그때 말티즈를 데리러 사람이 왔고, 말티즈는 너무 긴장했어요.",
+          "explanation": "닥스훈트의 이야기를 듣고 강아지들은 걱정하게 돼요. 그리고 마침 말티즈를 데리러 사람이 와서 말티즈는 긴장해요. 이야기가 끝나는 부분이에요.",
+          "practice_text_en": "The dogs were sad. The Maltese was worried. Its heart started to race.",
+          "simplified_text_en": "The dogs were sad and worried because of the dachshund. They were thinking, \"What if I get abandoned like the dachshund?\" Then, someone came to pick up the Maltese, and the Maltese was very nervous.",
+          "explanation_en": "The puppies get worried after hearing the dachshund's story. Then, someone comes to pick up the Maltese, making the Maltese nervous. That's how the story ends."
         }
       ],
       "real_life_usage": [
         "안녕하세요. (Hello.)",
-        "이름이 뭐예요? (What is your name?)",
+        "이름이 뭐예요? (What's your name?)",
         "저는 학생이에요. (I am a student.)",
         "감사합니다. (Thank you.)",
         "천만에요. (You're welcome.)",
         "잘 지내세요? (How are you?)",
-        "네, 잘 지내요. (Yes, I'm fine.)",
+        "네, 잘 지내요. (Yes, I'm doing well.)",
         "이것은 책이에요. (This is a book.)",
         "물이 필요해요. (I need water.)",
         "집에 가고 싶어요. (I want to go home.)"
@@ -325,39 +711,39 @@
       "vocabulary": [
         {
           "word": "강아지",
-          "meaning": "개 (dog)의 아기 (baby)",
-          "example": "귀여운 강아지가 있어요. (There is a cute puppy.)"
+          "meaning": "개 (The Dog)",
+          "example": "귀여운 강아지가 있어요. (I have a cute puppy.)"
         },
         {
           "word": "병원",
-          "meaning": "아픈 사람이나 동물이 가는 곳 (place where sick people or animals go)",
+          "meaning": "아픈 사람이나 동물이 가는 곳 (A place where sick people or animals go.)",
           "example": "저는 병원에 갔어요. (I went to the hospital.)"
         },
         {
           "word": "예쁘다",
-          "meaning": "아름답다 (beautiful)",
+          "meaning": "아름답다 (Beautiful.)",
           "example": "꽃이 예뻐요. (The flower is pretty.)"
         },
         {
           "word": "집",
-          "meaning": "사는 곳 (place to live)",
+          "meaning": "사는 곳 (Where I Live)",
           "example": "저는 집에 있어요. (I am at home.)"
         },
         {
           "word": "슬프다",
-          "meaning": "마음이 아프다 (sad)",
+          "meaning": "마음이 아프다 (My heart aches.)",
           "example": "저는 슬퍼요. (I am sad.)"
         }
       ],
       "grammar": [
         {
           "pattern": "-이에요/예요",
-          "explanation": "명사를 설명할 때 사용 (used to describe a noun)",
+          "explanation": "명사를 설명할 때 사용 (Used to describe nouns.)",
           "example": "저는 학생이에요. (I am a student.)"
         },
         {
           "pattern": "-가/이",
-          "explanation": "주어를 나타내는 조사 (subject marker)",
+          "explanation": "주어를 나타내는 조사 (Subject Markers)",
           "example": "강아지가 귀여워요. (The puppy is cute.)"
         }
       ],
@@ -372,66 +758,209 @@
       "paragraphs_analysis": [
         {
           "paragraph_num": 1,
-          "original_text": "동물 병원에는 아픈 동물만 있을까요?\n\n아니에요. 건강하고 예쁜 동물들도 있어요.\n\n말티즈, 슈나우저, 푸들이 창문을 똑똑똑 두드리고 있어요.\n\n강아지들은 병원 밖으로 나가고 싶었어요.",
-          "practice_text": "동물 병원에는 아픈 동물만 있을까요? 아니에요, 건강하고 예쁜 동물들도 있어요. 말티즈, 슈나우저, 푸들이 창문을 똑똑똑 두드리고 있는데, 강아지들은 병원 밖으로 나가고 싶어합니다.",
-          "simplified_text": "동물 병원에는 아픈 동물만 있는 것은 아닙니다. 건강하고 예쁜 강아지들도 있어요. 예를 들어 말티즈, 슈나우저, 푸들 같은 강아지들이 창문을 두드리면서 병원 밖으로 나가고 싶어하는 상황입니다.",
-          "explanation": "이 문단은 동물 병원에 대한 흔한 오해를 풀고, 이야기에 등장하는 강아지들의 배경과 소망을 소개합니다. '똑똑똑 두드리고 있다'는 표현은 강아지들의 행동을 생생하게 묘사하며, '나가고 싶어했다'는 문장은 앞으로 벌어질 사건에 대한 궁금증을 유발합니다."
+          "original_text": "동물 병원에는 아픈 동물만 있을까요?\n아니에요. 건강하고 예쁜 동물들도 있어요.",
+          "practice_text": "동물 병원에는 아픈 동물만 있을까요? 아니에요. 건강하고 예쁜 동물들도 있어요.",
+          "simplified_text": "동물 병원에는 아픈 동물만 있는 것이 아니라 건강하고 예쁜 동물도 있습니다.",
+          "explanation": "이야기의 시작으로, 동물 병원에 대한 일반적인 생각을 뒤집으며 흥미를 유발합니다.",
+          "practice_text_en": "Are there only sick animals at the vet? No. There are also healthy and beautiful animals.",
+          "simplified_text_en": "Animal hospitals aren't just for sick animals; they also have healthy and beautiful ones.",
+          "explanation_en": "To begin the story, let's challenge common perceptions of animal hospitals and spark curiosity."
+        },
+        {
+          "paragraph_num": 2,
+          "original_text": "말티즈, 슈나우저, 푸들이 창문을 똑똑똑 두드리고 있어요.\n강아지들은 병원 밖으로 나가고 싶었어요.",
+          "practice_text": "말티즈, 슈나우저, 푸들이 창문을 똑똑똑 두드리고 있어요. 강아지들은 병원 밖으로 나가고 싶었어요.",
+          "simplified_text": "말티즈, 슈나우저, 푸들 세 마리의 강아지들이 창문을 두드리며 병원 밖으로 나가고 싶어합니다.",
+          "explanation": "이야기의 주요 등장인물인 세 마리 강아지를 소개하고, 그들이 병원 밖으로 나가고 싶어하는 이유를 제시합니다.",
+          "practice_text_en": "A Maltese, a Schnauzer, and a Poodle are tapping on the window. The puppies wanted to go outside the hospital.",
+          "simplified_text_en": "Three dogs – a Maltese, a Schnauzer, and a Poodle – are at the window, pawing to get out of the hospital.",
+          "explanation_en": "Introducing the three main puppy characters and establishing their desire to leave the hospital."
+        },
+        {
+          "paragraph_num": 3,
+          "original_text": "\"나처럼 귀여운 강아지를 왜 안 데려갈까?\"\n슈나우저가 말했어요. \n\"친구들아, 창문에 비친 내 모습을 좀 봐. \n정말 예쁘지 않니? 내가 봐도 참 예뻐.\"",
+          "practice_text": "\"나처럼 귀여운 강아지를 왜 안 데려갈까?\" 슈나우저가 말했어요. \"친구들아, 창문에 비친 내 모습을 좀 봐. 정말 예쁘지 않니?\"",
+          "simplified_text": "슈나우저는 자신이 귀여운데 왜 사람들이 자신을 데려가지 않는지 궁금해하며, 친구들에게 창문에 비친 자신의 모습이 예쁘다고 자랑합니다.",
+          "explanation": "슈나우저의 시각을 통해 강아지들이 자신들의 외모에 자신감을 가지고 있다는 것을 보여줍니다.",
+          "practice_text_en": "Why won't they take a cute puppy like me?\" the Schnauzer said. \"Friends, just look at my reflection in the window. Aren't I adorable?",
+          "simplified_text_en": "The Schnauzer wonders why people don't take him home, even though he knows he's cute, and he brags to his friends about how handsome he looks in the window reflection.",
+          "explanation_en": "Schnauzers show us that puppies can be confident in their looks."
+        },
+        {
+          "paragraph_num": 4,
+          "original_text": "푸들이 뒷발을 들면서 말했어요.\n\"내 꼬리를 좀 봐. 정말 멋있지? \n조금 전에 지나간 사람도 창문 밖에서 나를 보면서 웃었어.\"",
+          "practice_text": "푸들이 뒷발을 들면서 말했어요. \"내 꼬리를 좀 봐. 정말 멋있지? 조금 전에 지나간 사람도 창문 밖에서 나를 보면서 웃었어.\"",
+          "simplified_text": "푸들은 뒷발을 들며 자신의 꼬리가 멋있다고 자랑하고, 지나가는 사람이 자신을 보고 웃었다는 것을 이야기합니다.",
+          "explanation": "푸들 역시 자신의 외모에 대한 자신감을 드러내며 다른 강아지들과 마찬가지로 입양되기를 바라는 마음을 표현합니다.",
+          "practice_text_en": "The poodle lifted its hind leg and said, \"Look at my tail. Isn't it magnificent? Even the person who just passed by smiled at me from the window.\"",
+          "simplified_text_en": "The poodle, lifting its hind leg, brags about how beautiful its tail is, and mentions that a passerby laughed when they saw it.",
+          "explanation_en": "Poodles, too, express confidence in their appearance and a desire to be adopted, just like other dogs."
+        },
+        {
+          "paragraph_num": 5,
+          "original_text": "말티즈도 꼬리를 흔들며 말했어요.\n슈나우저, 푸들, 말티즈는 서로 자기의 아름다운 모습을 자랑했어요.",
+          "practice_text": "말티즈도 꼬리를 흔들며 말했어요. 슈나우저, 푸들, 말티즈는 서로 자기의 아름다운 모습을 자랑했어요.",
+          "simplified_text": "말티즈도 꼬리를 흔들며 자신의 매력을 어필하고, 세 마리 강아지들은 서로 자신들의 아름다움을 자랑합니다.",
+          "explanation": "세 마리 강아지들이 서로의 외모를 칭찬하며 입양되기를 바라는 마음을 강조합니다.",
+          "practice_text_en": "The Maltese, wagging its tail, chimed in. The Schnauzer, Poodle, and Maltese boasted about their beautiful appearances to each other.",
+          "simplified_text_en": "Even the Maltese wags its tail, showing off its charm, and the three puppies boast about their beauty to each other.",
+          "explanation_en": "Three puppies compliment each other's looks, emphasizing their desire to be adopted."
+        },
+        {
+          "paragraph_num": 6,
+          "original_text": "동물 병원 건너편에는 예쁜 이층집이 있었어요.\n그 집에는 강아지 닥스훈트가 살고 있었어요.\n동물 병원에 있는 강아지들은 거기에 사는 닥스훈트를 부러워했어요.",
+          "practice_text": "동물 병원 건너편에는 예쁜 이층집이 있었어요. 그 집에는 강아지 닥스훈트가 살고 있었어요. 동물 병원에 있는 강아지들은 거기에 사는 닥스훈트를 부러워했어요.",
+          "simplified_text": "동물 병원 맞은편에는 예쁜 이층집이 있었고, 그곳에는 닥스훈트 강아지가 살고 있었습니다. 병원에 있는 강아지들은 닥스훈트를 부러워했습니다.",
+          "explanation": "이야기의 배경을 확장하고, 닥스훈트라는 새로운 등장인물을 소개하며 갈등의 씨앗을 심습니다.",
+          "practice_text_en": "Across from the animal hospital was a pretty two-story house. A dachshund lived in that house. The dogs at the animal hospital envied the dachshund who lived there.",
+          "simplified_text_en": "Across from the animal hospital was a pretty two-story house, and a dachshund puppy lived there. The puppies at the hospital envied the dachshund.",
+          "explanation_en": "Expand the story's setting, introduce a new character named Dachshund, and plant the seeds of conflict."
+        },
+        {
+          "paragraph_num": 7,
+          "original_text": "하지만 강아지들이 볼 때마다 닥스훈트는 행복하지 않은 것 같았어요.\n어느 날은 창문 밖을 보면서 왈왈 짖고, \n어느 날은 고개를 숙이고 움직이지 않았어요.\n세 마리 강아지들은 그런 닥스훈트가 이상했어요.",
+          "practice_text": "하지만 강아지들이 볼 때마다 닥스훈트는 행복하지 않은 것 같았어요. 어느 날은 창문 밖을 보면서 왈왈 짖고, 어느 날은 고개를 숙이고 움직이지 않았어요.",
+          "simplified_text": "세 마리 강아지들이 보기에 닥스훈트는 행복해 보이지 않았습니다. 때로는 창밖을 향해 짖고, 때로는 고개를 숙인 채 움직이지 않았습니다. 그들은 닥스훈트의 행동을 이상하게 생각했습니다.",
+          "explanation": "닥스훈트의 겉모습과는 다른 내면의 감정을 보여주며, 행복의 진정한 의미에 대한 질문을 던집니다.",
+          "practice_text_en": "However, whenever the dogs saw the dachshund, it didn't seem happy. Some days it would bark at something outside the window, and other days it would hang its head and not move.",
+          "simplified_text_en": "The dachshund didn't seem happy to the three puppies. Sometimes it would bark at the window, and other times it would just stand still with its head down. They found the dachshund's behavior strange.",
+          "explanation_en": "It reveals the inner emotions of a dachshund, contrasting with its outward appearance, and poses questions about the true meaning of happiness."
+        },
+        {
+          "paragraph_num": 8,
+          "original_text": "\"나도 닥스훈트처럼 예쁜 이층집에서 살고 싶어. \n그곳에서 주인의 사랑을 받고 싶어. \n그러면 정말 행복할 것 같아.\" 말티즈가 말했어요.\n\"맞아. 닥스훈트는 저렇게 멋진 집에서 살면서 왜 저렇게 이상한 표정일까?\" \n푸들도 말했어요. 슈나우저도 눈썹을 옆으로 펴면서 말했어요.\n\"우리보다 행복한 걸 자랑하고 싶은 걸까? 나 참!\"",
+          "practice_text": "\"나도 닥스훈트처럼 예쁜 이층집에서 살고 싶어. 그곳에서 주인의 사랑을 받고 싶어. 그러면 정말 행복할 것 같아.\" 말티즈가 말했어요. \"맞아. 닥스훈트는 저렇게 멋진 집에서 살면서 왜 저렇게 이상한 표정일까?\"",
+          "simplified_text": "말티즈는 닥스훈트처럼 예쁜 집에서 살며 주인의 사랑을 받는 것이 행복할 것이라고 생각했습니다. 푸들은 닥스훈트가 멋진 집에서 살면서도 이상한 표정을 짓는 이유를 궁금해했습니다. 슈나우저는 닥스훈트가 자신들보다 행복한 것을 자랑하는 것 같다고 생각했습니다.",
+          "explanation": "세 마리 강아지들의 오해와 닥스훈트에 대한 질투심을 보여주며, 겉모습만 보고 판단하는 것에 대한 경고를 담고 있습니다.",
+          "practice_text_en": "I wish I could live in a beautiful two-story house like a dachshund. I want to be loved by my owner there. I think I would be really happy then,\" said the Maltese. \"Yeah, why does the dachshund look so strange when he lives in such a wonderful house?",
+          "simplified_text_en": "The Maltese thought the Dachshund must be happy living in such a beautiful house and being loved by its owner. The Poodle wondered why the Dachshund always had a strange look on its face, even while living in that wonderful house. The Schnauzer felt like the Dachshund was showing off about being happier than them.",
+          "explanation_en": "Highlighting the misunderstandings and jealousy of three puppies towards a dachshund, serving as a cautionary tale against judging by appearances."
+        },
+        {
+          "paragraph_num": 9,
+          "original_text": "세 마리 강아지들은 빨리 동물 병원 밖으로 나가고 싶었어요.\n닥스훈트처럼 동물 병원을 나가서 예쁘고 행복한 집에서 살고 싶었어요.\n그래서 날마다 예쁜 옷을 입고 귀여운 표정으로 사람들을 만났어요.",
+          "practice_text": "세 마리 강아지들은 빨리 동물 병원 밖으로 나가고 싶었어요. 닥스훈트처럼 동물 병원을 나가서 예쁘고 행복한 집에서 살고 싶었어요. 그래서 날마다 예쁜 옷을 입고 귀여운 표정으로 사람들을 만났어요.",
+          "simplified_text": "세 마리 강아지들은 닥스훈트처럼 예쁘고 행복한 집에서 살고 싶어서, 매일 예쁜 옷을 입고 귀여운 표정을 지으며 사람들을 만났습니다. 그들은 빨리 동물 병원을 나가고 싶어했습니다.",
+          "explanation": "세 마리 강아지들이 닥스훈트처럼 되기 위해 노력하는 모습을 보여주며, 외적인 조건에 대한 집착을 드러냅니다.",
+          "practice_text_en": "The three puppies were eager to get out of the animal hospital. They longed to leave and live in a beautiful, happy home, just like dachshunds. So, every day, they put on pretty outfits and greeted people with cute expressions.",
+          "simplified_text_en": "The three puppies, hoping to live in a lovely, happy home like dachshunds, dressed in pretty clothes and put on cute expressions every day when they met people. They were eager to leave the animal hospital quickly.",
+          "explanation_en": "Three puppies strive to resemble dachshunds, revealing an obsession with external appearances."
+        },
+        {
+          "paragraph_num": 10,
+          "original_text": "그러던 어느 날, 닥스훈트가 동물 병원에 왔어요.\n닥스훈트는 아픈 것 같았어요. \n\"많이 아프니? 어디가 아파서 왔어?\"\n걱정하는 얼굴로 말티즈가 물었어요. \n\"아니야, 아프지 않아. 아파서 온 게 아니야.\"\n슬픈 얼굴로 닥스훈트가 대답했어요.",
+          "practice_text": "그러던 어느 날, 닥스훈트가 동물 병원에 왔어요. 닥스훈트는 아픈 것 같았어요. \"많이 아프니? 어디가 아파서 왔어?\" 걱정하는 얼굴로 말티즈가 물었어요.",
+          "simplified_text": "어느 날, 닥스훈트가 동물 병원에 왔는데 아파 보였습니다. 말티즈는 걱정스러운 얼굴로 닥스훈트에게 어디가 아픈지 물었습니다. 닥스훈트는 슬픈 얼굴로 아파서 온 것이 아니라고 대답했습니다.",
+          "explanation": "닥스훈트가 병원에 온 이유에 대한 궁금증을 유발하며, 이야기의 전환점을 제시합니다.",
+          "practice_text_en": "Then one day, a dachshund came to the animal hospital. The dachshund seemed to be in pain. \"Are you hurting a lot? What's wrong?\" a Maltese asked with a worried look.",
+          "simplified_text_en": "One day, a dachshund came to the animal hospital looking unwell. A Maltese, with a worried expression, asked the dachshund what was wrong. The dachshund, with a sad face, replied that he wasn't there because he was sick.",
+          "explanation_en": "The dachshund's reason for being at the vet sparks curiosity and introduces a turning point in the story."
+        },
+        {
+          "paragraph_num": 11,
+          "original_text": "\"그럼 왜 왔어?\" 푸들하고 슈나우저가 동시에 물었어요. \n\"나는 새 주인을 만나러 왔어.\"\n닥스훈트의 눈에서 눈물이 흘렀어요.\n\"지금 주인은 예쁜 나의 모습을 보고 마음에 들어서 데리고 갔어. \n그리고 며칠 나를 사랑해줬어. 그런데...\"",
+          "practice_text": "\"그럼 왜 왔어?\" 푸들하고 슈나우저가 동시에 물었어요. \"나는 새 주인을 만나러 왔어.\" 닥스훈트의 눈에서 눈물이 흘렀어요.",
+          "simplified_text": "푸들과 슈나우저는 동시에 닥스훈트에게 왜 왔는지 물었습니다. 닥스훈트는 눈물을 흘리며 새 주인을 만나러 왔다고 대답했습니다. 그는 현재 주인이 자신의 예쁜 모습에 반해 데려갔지만, 며칠 동안만 사랑해줬다고 말했습니다.",
+          "explanation": "닥스훈트가 병원에 온 이유가 밝혀지면서 예상치 못한 반전이 드러납니다. 닥스훈트의 슬픔은 겉모습만 보고 판단하는 인간의 변심을 보여줍니다.",
+          "practice_text_en": "\"Then why did you come?\" the poodle and schnauzer asked at the same time. \"I came to meet my new owner,\" the dachshund said, tears welling up in its eyes.",
+          "simplified_text_en": "The poodle and schnauzer simultaneously asked the dachshund why he had come. The dachshund, with tears in his eyes, replied that he was there to meet a new owner. He explained that his current owner had been captivated by his charming appearance and taken him in, but had only loved him for a few days.",
+          "explanation_en": "The reason the dachshund came to the hospital is revealed, revealing an unexpected twist. The dachshund's sadness highlights the fickleness of humans who judge by appearances."
+        },
+        {
+          "paragraph_num": 12,
+          "original_text": "닥스훈트는 잠깐 말을 못하고 울었어요.\n세 마리 강아지들은 아무 말도 못하고 닥스훈트의 이야기를 기다렸어요.\n\"시간이 지나니까 같이 놀지도 않고 가끔 먹이도 주지 않았어. \n내가 그 집에 살고 있는 걸 잊어버린 것 같았어.\"\n닥스훈트의 말을 듣고 있는 강아지들은 깜짝 놀랐어요.",
+          "practice_text": "닥스훈트는 잠깐 말을 못하고 울었어요. 세 마리 강아지들은 아무 말도 못하고 닥스훈트의 이야기를 기다렸어요. \"시간이 지나니까 같이 놀지도 않고 가끔 먹이도 주지 않았어.",
+          "simplified_text": "닥스훈트는 잠시 울먹이며 말을 잇지 못했고, 세 마리 강아지들은 아무 말 없이 닥스훈트의 이야기를 기다렸습니다. 닥스훈트는 시간이 지나면서 주인이 자신과 놀아주지도 않고, 가끔 먹이도 주지 않아서 자신이 집에 살고 있다는 것을 잊은 것 같다고 말했습니다. 닥스훈트의 이야기를 들은 강아지들은 깜짝 놀랐습니다.",
+          "explanation": "닥스훈트의 경험은 세 마리 강아지들에게 충격을 주며, 진정한 행복의 의미에 대해 다시 생각하게 만드는 계기가 됩니다.",
+          "practice_text_en": "The dachshund was speechless for a moment, and then cried. The three puppies waited silently for the dachshund to continue its story. \"As time went on, they stopped playing with me and sometimes didn't even feed me.\"",
+          "simplified_text_en": "The dachshund choked up for a moment, unable to continue, and the three puppies waited silently for him to go on. He explained that over time, his owner stopped playing with him and sometimes even forgot to feed him, making him feel like he was forgotten in his own home. The puppies were shocked to hear the dachshund's story.",
+          "explanation_en": "The dachshund's experience shocks the three puppies, leading them to reconsider the meaning of true happiness."
+        },
+        {
+          "paragraph_num": 13,
+          "original_text": "\"내 주인은 나에게 관심이 점점 없어졌어. \n나는 하루 종일 집에 혼자 있었어. 깜깜한 밤에도. 이제 내 주인은 나를 사랑하지 않나 봐.\"\n이야기를 다 한 닥스훈트는 엎드려서 울었어요.\n세 마리 강아지는 우는 닥스훈트를 보면서 슬펐어요. 그리고 생각했어요.",
+          "practice_text": "\"내 주인은 나에게 관심이 점점 없어졌어. 나는 하루 종일 집에 혼자 있었어. 깜깜한 밤에도. 이제 내 주인은 나를 사랑하지 않나 봐.\" 이야기를 다 한 닥스훈트는 엎드려서 울었어요.",
+          "simplified_text": "닥스훈트는 주인이 자신에게 점점 관심을 잃어갔고, 하루 종일 혼자 집에 있었으며, 이제 주인이 자신을 사랑하지 않는 것 같다고 말했습니다. 이야기를 마친 닥스훈트는 엎드려 울었습니다. 세 마리 강아지들은 우는 닥스훈트를 보며 슬픔을 느꼈고, 생각에 잠겼습니다.",
+          "explanation": "닥스훈트의 슬픈 이야기는 세 마리 강아지들에게 깊은 공감을 불러일으키고, 그들의 가치관에 변화를 가져옵니다.",
+          "practice_text_en": "\"My owner doesn't seem to care about me anymore. I'm home alone all day, even in the dark of night. I don't think my owner loves me anymore.\" The dachshund finished his story and lay down, crying.",
+          "simplified_text_en": "The dachshund said that his owner was losing interest in him, that he was home alone all day, and that he didn't think his owner loved him anymore. After finishing his story, the dachshund lay down and cried. The three puppies felt sad watching the crying dachshund and fell into thought.",
+          "explanation_en": "The dachshund's sad story deeply resonates with the three puppies, changing their values."
+        },
+        {
+          "paragraph_num": 14,
+          "original_text": "'왜 처음 마음과 나중 마음이 달랐을까?'\n'닥스훈트 주인처럼\n나를 데리고 가서 나를 잊으면 어떡하지? \n먹이 주는 것도 잊으면 어떡하지?'\n말티즈는 갑자기 걱정이 되었어요.",
+          "practice_text": "'왜 처음 마음과 나중 마음이 달랐을까?' '닥스훈트 주인처럼 나를 데리고 가서 나를 잊으면 어떡하지? 먹이 주는 것도 잊으면 어떡하지?'",
+          "simplified_text": "세 마리 강아지들은 '왜 사람들의 처음 마음과 나중 마음이 다를까?'라는 질문을 던지며 걱정했습니다. '닥스훈트의 주인처럼 나를 데려가서 잊어버리면 어떡하지? 먹이 주는 것조차 잊으면 어떡하지?' 말티즈는 갑자기 걱정되었습니다.",
+          "explanation": "세 마리 강아지들은 인간의 변심 가능성에 대한 불안감을 느끼며, 입양에 대한 생각이 바뀌기 시작합니다.",
+          "practice_text_en": "Why did my feelings change from the beginning to now? What if, like a dachshund owner, they take me in and then forget about me? What if they forget to feed me?",
+          "simplified_text_en": "The three puppies worried, pondering the question, \"Why do people's initial feelings change later on?\" The Maltese suddenly became anxious, thinking, \"What if I'm taken in and then forgotten like the dachshund's owner? What if they even forget to feed me?\"",
+          "explanation_en": "The three puppies, feeling insecure about the possibility of human fickleness, begin to have second thoughts about being adopted."
+        },
+        {
+          "paragraph_num": 15,
+          "original_text": "그때 누군가 말티즈를 데리러 왔어요.\n말티즈는 심장이 콩닥콩닥 뛰기 시작했어요.",
+          "practice_text": "그때 누군가 말티즈를 데리러 왔어요. 말티즈는 심장이 콩닥콩닥 뛰기 시작했어요.",
+          "simplified_text": "바로 그때, 누군가가 말티즈를 데리러 왔습니다. 말티즈는 심장이 두근거리기 시작했습니다.",
+          "explanation": "이야기의 결말을 암시하며, 말티즈의 미래에 대한 궁금증을 남깁니다. 닥스훈트의 이야기가 말티즈의 선택에 어떤 영향을 미칠지 독자에게 상상력을 자극합니다.",
+          "practice_text_en": "Then someone came to pick up the Maltese. The Maltese's heart started to pound.",
+          "simplified_text_en": "Just then, someone came to pick up the Maltese. Its heart began to race.",
+          "explanation_en": "The ending hints at what's to come, leaving readers wondering about the Maltese's future. The dachshund's story prompts readers to imagine how it will influence the Maltese's choices."
         }
       ],
       "real_life_usage": [
-        "동물 병원에 강아지를 데려갔는데, 다른 강아지들도 많이 있었어. 모두 새 주인을 만나기를 기다리고 있었어. (I took my puppy to the animal hospital, and there were many other puppies there. They were all waiting to meet new owners.)",
-        "친구가 예쁜 집에 사는 강아지를 보여줬어. 나도 그런 집에서 살고 싶다고 생각했지만, 나중에 그 강아지가 슬퍼 보인다는 걸 알았어. (My friend showed me a dog that lives in a beautiful house. I thought I wanted to live in such a house too, but later I realized that the dog looked sad.)",
-        "강아지를 키우기로 했는데, 처음에는 많이 관심을 가졌어. 하지만 시간이 지나니까 점점 관심이 줄어들었어. 이게 맞는 건지 고민이야. (I decided to raise a puppy, and at first I paid a lot of attention to it. But as time passed, my interest gradually decreased. I'm worried if this is right.)",
-        "동물을 키울 때는 처음뿐만 아니라 계속 관심을 가져야 해. 그렇지 않으면 동물이 외로워하고 슬퍼할 거야. (When raising an animal, you need to pay attention not only at first but continuously. Otherwise, the animal will feel lonely and sad.)",
-        "새로운 가족을 만나러 갈 때는 기대도 되고 걱정도 돼. 좋은 사람을 만나서 행복하게 살 수 있을까? (When going to meet a new family, I feel both excited and worried. Will I meet a good person and be able to live happily?)",
-        "겉모습만 보고 판단하면 안 돼. 예쁘고 좋아 보여도 실제로는 슬플 수 있어. 진짜 행복한지 확인해야 해. (You shouldn't judge just by appearance. Even if it looks pretty and good, it can actually be sad. You need to check if it's truly happy.)",
-        "동물을 키우기로 했다면 책임감을 가져야 해. 먹이를 주는 것뿐만 아니라 함께 시간을 보내고 관심을 가져야 해. (If you decide to raise an animal, you need to have responsibility. Not only feeding it, but also spending time together and paying attention to it.)",
-        "혼자 있는 시간이 많아지니까 외로워졌어. 누군가 나를 기억해 주고 관심을 가져 주길 바라게 돼. (As I spent more time alone, I became lonely. I started hoping someone would remember me and pay attention to me.)",
-        "처음에는 사랑받는 것 같았는데, 시간이 지나니까 관심이 없어졌어. 이게 정말 사랑인지 의문이 들어. (At first it seemed like I was being loved, but as time passed, the interest disappeared. I wonder if this is really love.)",
-        "새로운 시작을 하려고 해. 이번에는 나를 진심으로 사랑해 주고 관심을 가져 줄 사람을 만나고 싶어. (I'm trying to make a new start. This time I want to meet someone who will truly love me and pay attention to me.)"
+        "동물 병원에 강아지를 데려갔는데, 다른 강아지들도 많이 있었어. 모두 새 주인을 만나기를 기다리고 있었어. (I took my puppy to the animal hospital, and there were many other puppies there. They were all waiting to meet their new owners.)",
+        "친구가 예쁜 집에 사는 강아지를 보여줬어. 나도 그런 집에서 살고 싶다고 생각했지만, 나중에 그 강아지가 슬퍼 보인다는 걸 알았어. (My friend showed me a puppy that lived in a beautiful house. I wished I could live in a house like that too, but later I noticed the puppy looked sad.)",
+        "강아지를 키우기로 했는데, 처음에는 많이 관심을 가졌어. 하지만 시간이 지나니까 점점 관심이 줄어들었어. 이게 맞는 건지 고민이야. (I decided to get a puppy, and at first, I was really interested in it. But as time went on, I became less and less interested. I'm wondering if this is the right thing to do.)",
+        "동물을 키울 때는 처음뿐만 아니라 계속 관심을 가져야 해. 그렇지 않으면 동물이 외로워하고 슬퍼할 거야. (When you have a pet, you need to care for it not just at the beginning, but always. Otherwise, the pet will get lonely and sad.)",
+        "새로운 가족을 만나러 갈 때는 기대도 되고 걱정도 돼. 좋은 사람을 만나서 행복하게 살 수 있을까? (Going to meet a new family is exciting and nerve-wracking. Will I meet good people and live happily?)",
+        "겉모습만 보고 판단하면 안 돼. 예쁘고 좋아 보여도 실제로는 슬플 수 있어. 진짜 행복한지 확인해야 해. (Don't judge a book by its cover. Something may look pretty and good, but it could actually be sad inside. You need to see if it's truly happy.)",
+        "동물을 키우기로 했다면 책임감을 가져야 해. 먹이를 주는 것뿐만 아니라 함께 시간을 보내고 관심을 가져야 해. (If you decide to have a pet, you need to be responsible. It's not just about feeding them; you also need to spend time with them and give them attention.)",
+        "혼자 있는 시간이 많아지니까 외로워졌어. 누군가 나를 기억해 주고 관심을 가져 주길 바라게 돼. (Spending so much time alone has made me lonely. I find myself wishing someone would remember me and show me some attention.)",
+        "처음에는 사랑받는 것 같았는데, 시간이 지나니까 관심이 없어졌어. 이게 정말 사랑인지 의문이 들어. (At first, I felt loved, but as time went on, the interest faded. I'm starting to wonder if this is really love.)",
+        "새로운 시작을 하려고 해. 이번에는 나를 진심으로 사랑해 주고 관심을 가져 줄 사람을 만나고 싶어. (I'm looking for a fresh start. This time, I want to meet someone who will truly love and care for me.)"
       ],
       "vocabulary": [
         {
           "word": "부러워하다",
-          "meaning": "남이 가진 것을 갖고 싶어하고 샘내다.",
-          "example": "나는 친구가 새 차를 산 것을 부러워했어요."
+          "meaning": "남이 가진 것을 갖고 싶어하고 샘내다. (To covet what others have and be envious.)",
+          "example": "나는 친구가 새 차를 산 것을 부러워했어요. (I was envious of my friend for buying a new car.)"
         },
         {
           "word": "무관심",
-          "meaning": "관심이 없음. 아무렇지도 않게 생각함.",
-          "example": "그는 정치에 대해 무관심한 태도를 보였다."
+          "meaning": "관심이 없음. 아무렇지도 않게 생각함. (Not interested. Doesn't care.)",
+          "example": "그는 정치에 대해 무관심한 태도를 보였다. (He showed an indifferent attitude towards politics.)"
         },
         {
           "word": "왈왈",
-          "meaning": "개 짖는 소리를 흉내내는 말.",
-          "example": "집에 도둑이 들자 개가 왈왈 짖기 시작했다."
+          "meaning": "개 짖는 소리를 흉내내는 말. (The horse that imitated a dog's bark.)",
+          "example": "집에 도둑이 들자 개가 왈왈 짖기 시작했다. (When a thief broke into the house, the dog started barking loudly.)"
         },
         {
           "word": "깜깜하다",
-          "meaning": "아주 어둡다.",
-          "example": "밤이 되니 방 안이 깜깜해졌다."
+          "meaning": "아주 어둡다. (It is very dark.)",
+          "example": "밤이 되니 방 안이 깜깜해졌다. (As night fell, the room became dark.)"
         },
         {
           "word": "콩닥콩닥",
-          "meaning": "심장이 빠르게 뛰는 모양을 나타내는 말.",
-          "example": "긴장해서 심장이 콩닥콩닥 뛰었다."
+          "meaning": "심장이 빠르게 뛰는 모양을 나타내는 말. (A word that describes the sound of a rapidly beating heart.)",
+          "example": "긴장해서 심장이 콩닥콩닥 뛰었다. (My heart pounded with nervousness.)"
         }
       ],
       "grammar": [
         {
           "pattern": "-(으)ㄹ 것 같다",
-          "explanation": "추측이나 불확실한 미래를 나타내는 표현. '-ㄹ/을 것이다'보다 약한 추측을 나타낸다.",
+          "explanation": "추측이나 불확실한 미래를 나타내는 표현. '-ㄹ/을 것이다'보다 약한 추측을 나타낸다. (An expression used to indicate a guess or an uncertain future. It expresses a weaker conjecture than '-ㄹ/을 것이다'.)",
           "example": "내일 비가 올 것 같아요. (I think it will rain tomorrow.)"
         },
         {
           "pattern": "-아/어/여서",
-          "explanation": "이유나 원인을 나타내는 연결 어미. 앞 문장이 뒷 문장의 이유나 원인이 됨을 나타낸다.",
+          "explanation": "이유나 원인을 나타내는 연결 어미. 앞 문장이 뒷 문장의 이유나 원인이 됨을 나타낸다. (A connective ending indicating reason or cause. The preceding clause serves as the reason or cause for the following clause.)",
           "example": "피곤해서 일찍 잤어요. (I was tired, so I went to bed early.)"
         },
         {
           "pattern": "-는/(으)ㄴ 것",
-          "explanation": "명사절을 만드는 문법 요소. 동사나 형용사를 명사처럼 사용할 수 있게 한다.",
-          "example": "제가 좋아하는 것은 음악 감상이에요. (What I like is listening to music.)"
+          "explanation": "명사절을 만드는 문법 요소. 동사나 형용사를 명사처럼 사용할 수 있게 한다. (Grammatical elements that create noun clauses, allowing verbs or adjectives to be used like nouns.)",
+          "example": "제가 좋아하는 것은 음악 감상이에요. (Listening to music is what I enjoy.)"
         }
       ],
       "key_expressions": [
@@ -550,94 +1079,94 @@
         }
       ],
       "real_life_usage": [
-        "동물 병원에 강아지를 데려갔을 때, 다른 강아지들이 창문을 두드리면서 밖으로 나가고 싶어 하는 모습을 봤어. 모두 새 주인을 만나기를 기다리고 있었어. (When I took my puppy to the animal hospital, I saw other puppies knocking on the window wanting to go outside. They were all waiting to meet new owners.)",
-        "친구가 예쁜 집에 사는 강아지를 보여줬는데, 처음에는 부러웠어. 하지만 나중에 그 강아지가 슬퍼 보인다는 걸 알게 되었어. 겉모습만 보고 판단하면 안 되는 것 같아. (My friend showed me a dog that lives in a beautiful house, and I was envious at first. But later I realized that the dog looked sad. I think you shouldn't judge just by appearance.)",
-        "강아지를 키우기로 했을 때, 처음에는 많이 관심을 가졌어. 하지만 시간이 지나니까 점점 관심이 줄어들었고, 가끔 먹이를 주는 것도 잊어버리게 되었어. 이게 맞는 건지 고민이 되었어. (When I decided to raise a puppy, I paid a lot of attention to it at first. But as time passed, my interest gradually decreased, and I even forgot to feed it sometimes. I became worried if this was right.)",
-        "동물을 키울 때는 처음뿐만 아니라 계속 관심을 가져야 해. 그렇지 않으면 동물이 외로워하고 슬퍼하게 될 거야. 진짜 책임감을 가져야 해. (When raising an animal, you need to pay attention not only at first but continuously. Otherwise, the animal will feel lonely and sad. You need to have real responsibility.)",
-        "새로운 가족을 만나러 갈 때는 기대도 되고 걱정도 돼. 좋은 사람을 만나서 행복하게 살 수 있을까? 나를 진심으로 사랑해 줄 사람일까? (When going to meet a new family, I feel both excited and worried. Will I meet a good person and be able to live happily? Will they be someone who truly loves me?)",
-        "겉모습만 보고 판단하면 안 돼. 예쁘고 좋아 보여도 실제로는 슬플 수 있어. 진짜 행복한지 확인해야 하고, 관심을 가져 주는지 봐야 해. (You shouldn't judge just by appearance. Even if it looks pretty and good, it can actually be sad. You need to check if it's truly happy and if they pay attention to it.)",
-        "동물을 키우기로 했다면 책임감을 가져야 해. 먹이를 주는 것뿐만 아니라 함께 시간을 보내고 관심을 가져야 해. 그렇지 않으면 동물이 불행해질 거야. (If you decide to raise an animal, you need to have responsibility. Not only feeding it, but also spending time together and paying attention to it. Otherwise, the animal will become unhappy.)",
-        "혼자 있는 시간이 많아지니까 외로워졌어. 누군가 나를 기억해 주고 관심을 가져 주길 바라게 돼. 함께 시간을 보내고 싶어. (As I spent more time alone, I became lonely. I started hoping someone would remember me and pay attention to me. I want to spend time together.)",
-        "처음에는 사랑받는 것 같았는데, 시간이 지나니까 관심이 없어졌어. 이게 정말 사랑인지 의문이 들어. 진짜 사랑은 시간이 지나도 변하지 않는 거 아닐까? (At first it seemed like I was being loved, but as time passed, the interest disappeared. I wonder if this is really love. Isn't true love something that doesn't change even as time passes?)",
-        "새로운 시작을 하려고 해. 이번에는 나를 진심으로 사랑해 주고 계속 관심을 가져 줄 사람을 만나고 싶어. 그런 사람과 함께 행복하게 살고 싶어. (I'm trying to make a new start. This time I want to meet someone who will truly love me and continue to pay attention to me. I want to live happily with such a person.)"
+        "동물 병원에 강아지를 데려갔을 때, 다른 강아지들이 창문을 두드리면서 밖으로 나가고 싶어 하는 모습을 봤어. 모두 새 주인을 만나기를 기다리고 있었어. (When I took my puppy to the animal hospital, I saw other puppies tapping on the window, wanting to go outside. They were all waiting to meet their new owners.)",
+        "친구가 예쁜 집에 사는 강아지를 보여줬는데, 처음에는 부러웠어. 하지만 나중에 그 강아지가 슬퍼 보인다는 걸 알게 되었어. 겉모습만 보고 판단하면 안 되는 것 같아. (A friend showed me a puppy living in a beautiful house, and at first, I was envious. But later, I realized the puppy looked sad. I guess you shouldn't judge by appearances.)",
+        "강아지를 키우기로 했을 때, 처음에는 많이 관심을 가졌어. 하지만 시간이 지나니까 점점 관심이 줄어들었고, 가끔 먹이를 주는 것도 잊어버리게 되었어. 이게 맞는 건지 고민이 되었어. (When I first decided to get a puppy, I was really interested in it. But as time went on, my interest gradually decreased, and sometimes I even forgot to feed it. I started to wonder if this was the right thing to do.)",
+        "동물을 키울 때는 처음뿐만 아니라 계속 관심을 가져야 해. 그렇지 않으면 동물이 외로워하고 슬퍼하게 될 거야. 진짜 책임감을 가져야 해. (When you raise an animal, you need to show interest not just at the beginning, but continuously. Otherwise, the animal will get lonely and sad. You need to have real responsibility.)",
+        "새로운 가족을 만나러 갈 때는 기대도 되고 걱정도 돼. 좋은 사람을 만나서 행복하게 살 수 있을까? 나를 진심으로 사랑해 줄 사람일까? (Going to meet a new family brings both excitement and worry. Will I meet good people and live happily? Will they truly love me?)",
+        "겉모습만 보고 판단하면 안 돼. 예쁘고 좋아 보여도 실제로는 슬플 수 있어. 진짜 행복한지 확인해야 하고, 관심을 가져 주는지 봐야 해. (Don't judge a book by its cover. Something may look pretty and good, but it could actually be sad. You need to see if it's truly happy and if it's getting the attention it needs.)",
+        "동물을 키우기로 했다면 책임감을 가져야 해. 먹이를 주는 것뿐만 아니라 함께 시간을 보내고 관심을 가져야 해. 그렇지 않으면 동물이 불행해질 거야. (If you decide to raise an animal, you must be responsible. It's not just about feeding them; you also need to spend time with them and give them attention. Otherwise, the animal will become unhappy.)",
+        "혼자 있는 시간이 많아지니까 외로워졌어. 누군가 나를 기억해 주고 관심을 가져 주길 바라게 돼. 함께 시간을 보내고 싶어. (Spending so much time alone has made me lonely. I find myself wishing someone would remember me and care about me. I want to spend time with others.)",
+        "처음에는 사랑받는 것 같았는데, 시간이 지나니까 관심이 없어졌어. 이게 정말 사랑인지 의문이 들어. 진짜 사랑은 시간이 지나도 변하지 않는 거 아닐까? (At first, I felt loved, but as time went on, the interest faded. I'm starting to wonder if this is really love. Shouldn't true love stay the same, even as time passes?)",
+        "새로운 시작을 하려고 해. 이번에는 나를 진심으로 사랑해 주고 계속 관심을 가져 줄 사람을 만나고 싶어. 그런 사람과 함께 행복하게 살고 싶어. (I'm looking to start fresh. This time, I want to meet someone who will truly love me and continue to care about me. I want to live happily with that person.)"
       ],
       "vocabulary": [
         {
           "word": "선망 (羨望)",
-          "meaning": "부러워하며 바람",
-          "example": "그녀는 뛰어난 재능과 부를 모두 가진 사람들을 선망의 눈으로 바라봤다."
+          "meaning": "부러워하며 바람 (Envy in the Wind)",
+          "example": "그녀는 뛰어난 재능과 부를 모두 가진 사람들을 선망의 눈으로 바라봤다. (She looked at those with great talent and wealth with envious eyes.)"
         },
         {
           "word": "애처롭다",
-          "meaning": "가엾고 불쌍하다",
-          "example": "굶주린 아이들의 애처로운 눈빛에 마음이 아팠다."
+          "meaning": "가엾고 불쌍하다 (Poor thing.)",
+          "example": "굶주린 아이들의 애처로운 눈빛에 마음이 아팠다. (My heart ached at the pitiful eyes of the starving children.)"
         },
         {
           "word": "망각 (忘却)",
-          "meaning": "잊어버림",
-          "example": "오랜 시간이 지나자 과거의 기억은 망각 속으로 사라져 갔다."
+          "meaning": "잊어버림 (The Forgetting)",
+          "example": "오랜 시간이 지나자 과거의 기억은 망각 속으로 사라져 갔다. (As time passed, memories of the past faded into oblivion.)"
         },
         {
           "word": "갈망 (渴望)",
-          "meaning": "간절히 바람",
-          "example": "그는 성공에 대한 갈망으로 밤낮없이 공부에 매달렸다."
+          "meaning": "간절히 바람 (A Heartfelt Wish)",
+          "example": "그는 성공에 대한 갈망으로 밤낮없이 공부에 매달렸다. (Driven by a burning desire for success, he devoted himself to studying day and night.)"
         },
         {
           "word": "침울하다 (沈鬱)",
-          "meaning": "마음이 가라앉아 슬프다",
-          "example": "시험 결과가 좋지 않자 그는 며칠 동안 침울한 표정을 지었다."
+          "meaning": "마음이 가라앉아 슬프다 (My heart feels heavy and sad.)",
+          "example": "시험 결과가 좋지 않자 그는 며칠 동안 침울한 표정을 지었다. (He wore a gloomy expression for days after his test results came back poorly.)"
         },
         {
           "word": "빈정거리다",
-          "meaning": "비꼬는 말투로 말하다",
-          "example": "그는 항상 남의 노력을 폄하하며 빈정거리는 태도를 보였다."
+          "meaning": "비꼬는 말투로 말하다 (To speak in a sarcastic tone.)",
+          "example": "그는 항상 남의 노력을 폄하하며 빈정거리는 태도를 보였다. (He always belittled others' efforts and had a sarcastic attitude.)"
         },
         {
           "word": "호감 (好感)",
-          "meaning": "좋은 감정",
-          "example": "그녀는 밝고 긍정적인 성격으로 누구에게나 호감을 얻었다."
+          "meaning": "좋은 감정 (Good Feelings)",
+          "example": "그녀는 밝고 긍정적인 성격으로 누구에게나 호감을 얻었다. (Her bright and positive personality made her likable to everyone.)"
         },
         {
           "word": "매료 (魅了)",
-          "meaning": "마음을 사로잡음",
-          "example": "그녀의 아름다운 목소리에 모든 관객들이 매료되었다."
+          "meaning": "마음을 사로잡음 (Captivating the Heart)",
+          "example": "그녀의 아름다운 목소리에 모든 관객들이 매료되었다. (Her beautiful voice captivated the entire audience.)"
         },
         {
           "word": "경악 (驚愕)",
-          "meaning": "몹시 놀람",
-          "example": "끔찍한 사고 소식에 사람들은 경악을 금치 못했다."
+          "meaning": "몹시 놀람 (Greatly surprised.)",
+          "example": "끔찍한 사고 소식에 사람들은 경악을 금치 못했다. (People were horrified by the news of the terrible accident.)"
         },
         {
           "word": "절망 (絶望)",
-          "meaning": "희망이 없음",
-          "example": "사업 실패 후 그는 절망에 빠져 하루하루를 보냈다."
+          "meaning": "희망이 없음 (No Hope)",
+          "example": "사업 실패 후 그는 절망에 빠져 하루하루를 보냈다. (After his business failed, he fell into despair and spent his days in misery.)"
         }
       ],
       "grammar": [
         {
           "pattern": "-(으)ㄹ 따름이다",
-          "explanation": "단지 ~할 뿐이다. 다른 뜻은 없고 오직 그것뿐임을 강조하는 표현입니다.",
-          "example": "저는 시키는 대로 했을 따름입니다. (I only did as I was told.)"
+          "explanation": "단지 ~할 뿐이다. 다른 뜻은 없고 오직 그것뿐임을 강조하는 표현입니다. (It simply means. It's used to emphasize that there's no other meaning or intention besides that one thing.)",
+          "example": "저는 시키는 대로 했을 따름입니다. (I was only doing as I was told.)"
         },
         {
           "pattern": "-(으)ㄹ 리 만무하다",
-          "explanation": "~할 리가 전혀 없다. 강한 부정을 나타내는 표현입니다.",
-          "example": "그가 거짓말을 할 리 만무하다. (There is absolutely no way he would lie.)"
+          "explanation": "~할 리가 전혀 없다. 강한 부정을 나타내는 표현입니다. (There's absolutely no way. This expression indicates a strong negation.)",
+          "example": "그가 거짓말을 할 리 만무하다. (There's no way he would lie.)"
         },
         {
           "pattern": "-는/ㄴ 셈이다",
-          "explanation": "~라고 할 수 있다. 어떤 사실을 다른 각도에서 평가하거나 결론을 내릴 때 사용합니다.",
-          "example": "거의 다 끝났으니 이제 마무리 단계에 접어든 셈이다. (It's almost done, so we can say we've entered the final stage.)"
+          "explanation": "~라고 할 수 있다. 어떤 사실을 다른 각도에서 평가하거나 결론을 내릴 때 사용합니다. (This can be said to be...)",
+          "example": "거의 다 끝났으니 이제 마무리 단계에 접어든 셈이다. (We're almost done, so we're in the final stages now.)"
         },
         {
           "pattern": "-기 짝이 없다",
-          "explanation": "더할 나위 없이 ~하다. 매우 강한 정도를 나타내는 표현입니다.",
-          "example": "그녀는 칭찬을 받으면 부끄러워하기 짝이 없다. (She is extremely shy when praised.)"
+          "explanation": "더할 나위 없이 ~하다. 매우 강한 정도를 나타내는 표현입니다. (It means something is beyond perfect or extremely strong.)",
+          "example": "그녀는 칭찬을 받으면 부끄러워하기 짝이 없다. (She is easily embarrassed when praised.)"
         },
         {
           "pattern": "-(으)ㄹ 나위 없다",
-          "explanation": "~할 필요가 없다. 불필요함을 나타내는 표현입니다.",
-          "example": "더 이상 설명할 나위 없이 상황은 명백하다. (The situation is clear without any further explanation.)"
+          "explanation": "~할 필요가 없다. 불필요함을 나타내는 표현입니다. (\"~할 필요가 없다\" is an expression used to indicate that something is unnecessary.)",
+          "example": "더 이상 설명할 나위 없이 상황은 명백하다. (The situation is clear beyond any further explanation.)"
         }
       ],
       "key_expressions": [

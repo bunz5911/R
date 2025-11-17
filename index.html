@@ -1306,11 +1306,11 @@
     </div>
 
     <!-- 강제 캐시 무효화: app.js 직접 참조 (매번 새로고침) -->
-    <script src="app.js?v=20251117-URGENT-FINAL-1763307000"></script>
+    <script src="app.js?v=20251117-PARAGRAPH-FIX-1763358000"></script>
     <script>
         // 버전 체크: 새 파일이 로드되었는지 확인
         setTimeout(function() {
-            if (!window.APP_VERSION_20251117) {
+            if (!window.APP_VERSION_20251117_PARAGRAPH) {
                 console.error('❌ 이전 버전의 app.js가 로드되었습니다!');
                 console.error('❌ 브라우저 캐시를 삭제하고 강제 새로고침하세요: Cmd+Shift+R (Mac) 또는 Ctrl+Shift+R (Windows)');
                 alert('⚠️ 브라우저가 캐시된 버전을 사용하고 있습니다.\n\n강제 새로고침을 해주세요:\n- Mac: Cmd + Shift + R\n- Windows: Ctrl + Shift + R\n\n또는 브라우저를 완전히 닫고 다시 열어주세요.');
