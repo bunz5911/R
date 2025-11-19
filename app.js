@@ -348,7 +348,9 @@ async function loadPrecomputedAnalysis() {
         return true;
     } catch (error) {
         console.error('❌ 하드코딩 데이터 로드 실패:', error);
-        console.error('📁 파일 경로 확인: stories_data_final.json이 루트에 있어야 합니다');
+        console.warn('⚠️ 분석 데이터 없이 계속 진행합니다. 서버에서 실시간 분석을 사용합니다.');
+        // ✅ 실패해도 빈 객체로 초기화하여 앱이 계속 작동하도록 함
+        PRECOMPUTED_ANALYSIS = {};
         return false;
     }
 }
@@ -359,14 +361,26 @@ async function loadPrecomputedAnalysis() {
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 앱 초기화 시작...');
     
-    // ✅ 하드코딩된 분석 데이터 먼저 로드 (즉시 표시용)
-    await loadPrecomputedAnalysis();
+    // ✅ 하드코딩된 분석 데이터 먼저 로드 (실패해도 계속 진행)
+    try {
+        const analysisLoaded = await loadPrecomputedAnalysis();
+        if (!analysisLoaded) {
+            console.warn('⚠️ 분석 데이터 로드 실패, 서버 분석을 사용합니다.');
+        }
+    } catch (error) {
+        console.error('❌ 분석 데이터 로드 중 오류:', error);
+        PRECOMPUTED_ANALYSIS = {};
+    }
     
     // ✅ 온보딩 체크 (첫 방문자)
     checkOnboarding();
     
-    // ✅ 코인 초기화 - 서버에서 코인 불러오기
-    await loadUserCoins();
+    // ✅ 코인 초기화 - 서버에서 코인 불러오기 (실패해도 계속 진행)
+    try {
+        await loadUserCoins();
+    } catch (error) {
+        console.warn('⚠️ 코인 로드 실패:', error);
+    }
     
     // 즉시 헤더에 표시
     const coinAmount = document.getElementById('coinAmount');
@@ -380,8 +394,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     initializeTTS();
     initializeSTT();
     
-    // ✅ Anna 음성 로드 (반드시 완료 대기)
-    await loadGoogleTTSVoices();
+    // ✅ Anna 음성 로드 (실패해도 계속 진행)
+    try {
+        await loadGoogleTTSVoices();
+    } catch (error) {
+        console.warn('⚠️ 음성 로드 실패:', error);
+    }
     
     // ✅ 초기화 후 설정 확인
     console.log('🎤 초기화 완료 - TTS 설정:', {
@@ -390,8 +408,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         voicesCount: googleTTSVoices.length
     });
     
-    loadUserCoins();  // ✅ 사용자 코인 로드 (Supabase)
-    loadStories();
+    // ✅ 동화 목록 로드 (반드시 실행되어야 함)
+    try {
+        loadStories();
+    } catch (error) {
+        console.error('❌ 동화 목록 로드 실패:', error);
+        // 에러 발생 시에도 로딩 상태 해제
+        const listEl = document.getElementById('storyList');
+        if (listEl) {
+            listEl.innerHTML = '<div class="loading"><p>동화 목록을 불러올 수 없습니다. 페이지를 새로고침해주세요.</p></div>';
+        }
+    }
+    
     setupEventListeners();
     // loadVoicePreference() 제거 - loadGoogleTTSVoices()에서 처리됨
 });
@@ -592,9 +620,19 @@ async function recordStudySession(data) {
 // [2] 동화 목록 로드 (하드코딩 데이터 즉시 표시)
 // ============================================================================
 async function loadStories() {
-    // ✅ 즉시 하드코딩된 목록 표시 (0.1초 이내)
-    currentStories = PRELOADED_STORIES;
-    renderStoryList();
+    try {
+        // ✅ 즉시 하드코딩된 목록 표시 (0.1초 이내)
+        currentStories = PRELOADED_STORIES;
+        renderStoryList();
+        console.log('✅ 동화 목록 렌더링 완료:', currentStories.length, '개');
+    } catch (error) {
+        console.error('❌ 동화 목록 렌더링 실패:', error);
+        // 에러 발생 시에도 로딩 상태 해제
+        const listEl = document.getElementById('storyList');
+        if (listEl) {
+            listEl.innerHTML = '<div class="loading"><p>동화 목록을 불러올 수 없습니다. 페이지를 새로고침해주세요.</p></div>';
+        }
+    }
     
     // 백그라운드에서 서버 데이터 동기화 (선택사항)
     try {
