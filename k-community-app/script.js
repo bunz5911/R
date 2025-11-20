@@ -467,12 +467,25 @@ const app = {
             return;
         }
         
-        // Search in both regular posts and K-content posts
-        let post = this.data.posts.find(p => p.id === postId);
+        // postId를 문자열로 변환 (UUID는 문자열)
+        const postIdStr = String(postId);
+        
+        // Search in state.posts (Supabase에서 로드된 게시글)
+        let post = this.state.posts.find(p => String(p.id) === postIdStr);
         if (!post) {
-            post = this.data.kcontentPosts.find(p => p.id === postId);
+            // 하위 호환성: data.posts에서도 찾기
+            post = this.data.posts.find(p => String(p.id) === postIdStr);
         }
-        if (!post) return;
+        if (!post) {
+            // K-content 게시글에서도 찾기
+            post = this.data.kcontentPosts?.find(p => String(p.id) === postIdStr);
+        }
+        
+        if (!post) {
+            console.error('❌ 게시글을 찾을 수 없습니다:', postIdStr);
+            alert('게시글을 찾을 수 없습니다.');
+            return;
+        }
 
         try {
             // Supabase에 댓글 추가
