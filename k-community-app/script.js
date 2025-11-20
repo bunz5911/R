@@ -651,7 +651,7 @@ const app = {
                         <span style="font-size: 12px; color: var(--text-secondary);">${post.author}</span>
                     </div>
                     <div class="card-stats">
-                        <button class="like-btn" data-post-id="${post.id}" aria-label="${isLiked ? '좋아요 취소' : '좋아요'}" style="background: none; border: none; cursor: pointer; color: ${isLiked ? '#ff3b30' : 'inherit'}; padding: 0; display: flex; align-items: center; gap: 4px;">
+                        <button class="like-btn" data-post-id="${postId}" aria-label="${isLiked ? '좋아요 취소' : '좋아요'}" style="background: none; border: none; cursor: pointer; color: ${isLiked ? '#ff3b30' : 'inherit'}; padding: 0; display: flex; align-items: center; gap: 4px;">
                             <i class="${isLiked ? 'ph-fill' : 'ph'} ph-heart" aria-hidden="true"></i> ${post.likes}
                         </button>
                         <span aria-label="${commentCount}개의 댓글"><i class="ph-fill ph-chat-circle" aria-hidden="true"></i> ${commentCount}</span>
@@ -723,7 +723,7 @@ const app = {
                         
                         <div style="margin-top: 30px;">
                             <textarea id="comment-input" placeholder="Add a comment..." aria-label="댓글 입력" style="width: 100%; min-height: 100px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; color: var(--text-primary); font-size: 15px; font-family: inherit; resize: vertical;"></textarea>
-                            <button class="button" onclick="app.handleCommentSubmit(${post.id}, document.getElementById('comment-input').value)" style="margin-top: 12px;" aria-label="댓글 게시">
+                            <button class="button" id="comment-submit-btn" style="margin-top: 12px;" aria-label="댓글 게시">
                                 Post Comment
                             </button>
                         </div>
@@ -784,9 +784,13 @@ const app = {
                 }
                 
                 console.log(`✅ Supabase에서 ${this.data.posts.length}개 게시글 로드 완료`);
+            } else {
+                console.log('ℹ️ Supabase에 게시글이 없습니다. 하드코딩된 예시 데이터를 사용합니다.');
+                // Supabase에 게시글이 없으면 하드코딩된 데이터 유지
             }
         } catch (error) {
             console.error('❌ 게시글 로드 실패:', error);
+            console.log('⚠️ 하드코딩된 예시 데이터를 사용합니다.');
             // 에러 발생 시 하드코딩된 데이터 사용
         }
     },
