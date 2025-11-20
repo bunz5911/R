@@ -695,7 +695,7 @@ const app = {
         this.bindPostEvents();
     },
 
-    createPostCard(post, onClickHandler = null) {
+    createPostCard(post) {
         const isLiked = this.state.user.likedPosts.includes(post.id);
         const commentCount = Array.isArray(post.comments) ? post.comments.length : (post.comments || 0);
         // post.id를 문자열로 변환 (UUID는 문자열)
@@ -713,12 +713,9 @@ const app = {
         };
         
         const viewName = categoryToView[post.tag] || 'grammar';
-        
-        // 클릭 핸들러가 지정되지 않았으면 기본 동작 (상세 페이지)
-        const clickHandler = onClickHandler || `app.handlePostClick('${postId}')`;
 
         return `
-            <div class="card post-card" data-post-id="${postId}" data-view="${viewName}" style="cursor: pointer;" onclick="${clickHandler}">
+            <div class="card post-card" data-post-id="${postId}" data-view="${viewName}" style="cursor: pointer;">
                     <div class="card-header">
                     <span class="tag">${post.tag}</span>
                     <button class="icon-btn-menu" aria-label="더보기 메뉴" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; padding: 4px;">
