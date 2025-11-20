@@ -5636,20 +5636,20 @@ async function showCheckinModal() {
     `;
     
     modal.innerHTML = `
-        <div style="background: white; border-radius: 24px; padding: 40px; max-width: 500px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: slideUp 0.3s;">
+        <div style="background: #1f2937; border-radius: 24px; padding: 40px; max-width: 500px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.5); animation: slideUp 0.3s;">
             <div style="font-size: 64px; margin-bottom: 20px;">📅</div>
-            <h2 style="font-size: 24px; font-weight: 800; color: #333; margin-bottom: 12px;">출석 체크</h2>
-            <p style="font-size: 15px; color: #666; line-height: 1.6; margin-bottom: 32px;">
+            <h2 style="font-size: 24px; font-weight: 800; color: #f9fafb; margin-bottom: 12px;">출석 체크</h2>
+            <p style="font-size: 15px; color: #d1d5db; line-height: 1.6; margin-bottom: 32px;">
                 매일 출석하고 코인을 받으세요!
             </p>
             
             <div id="checkinContent" style="min-height: 200px;">
                 <div style="text-align: center; padding: 40px;">
-                    <div class="loading-spinner" style="border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+                    <div class="loading-spinner" style="border: 4px solid #374151; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto;"></div>
                 </div>
             </div>
             
-            <button onclick="closeCheckinModal()" style="width: 100%; padding: 12px; background: #f0f0f0; color: #666; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 20px;">
+            <button onclick="closeCheckinModal()" style="width: 100%; padding: 12px; background: #374151; color: #f9fafb; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 20px; transition: background 0.2s;">
                 닫기
             </button>
         </div>
@@ -5731,10 +5731,10 @@ async function loadCheckinAndMissions() {
         } else if (alreadyChecked) {
             // 이미 출석함
             contentEl.innerHTML = `
-                <div style="background: #f8f9fa; padding: 24px; border-radius: 16px; margin-bottom: 24px;">
+                <div style="background: #374151; padding: 24px; border-radius: 16px; margin-bottom: 24px;">
                     <div style="font-size: 48px; margin-bottom: 12px;">✓</div>
-                    <h3 style="font-size: 18px; font-weight: 700; color: #333;">오늘 이미 출석했습니다</h3>
-                    <p style="font-size: 14px; color: #666; margin-top: 8px;">내일 다시 만나요!</p>
+                    <h3 style="font-size: 18px; font-weight: 700; color: #f9fafb;">오늘 이미 출석했습니다</h3>
+                    <p style="font-size: 14px; color: #d1d5db; margin-top: 8px;">내일 다시 만나요!</p>
                 </div>
             `;
         }
@@ -5756,24 +5756,24 @@ async function loadCheckinAndMissions() {
                 const icon = missionIcons[mission.mission_type] || '📝';
                 
                 return `
-                    <div style="background: ${completed ? '#e8f5e9' : '#f8f9fa'}; border: 2px solid ${completed ? '#27ae60' : '#e0e0e0'}; border-radius: 12px; padding: 16px; margin-bottom: 12px; text-align: left;">
+                    <div style="background: ${completed ? '#1e3a2e' : '#374151'}; border: 2px solid ${completed ? '#27ae60' : '#4b5563'}; border-radius: 12px; padding: 16px; margin-bottom: 12px; text-align: left;">
                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <span style="font-size: 24px;">${icon}</span>
                                 <div>
-                                    <div style="font-size: 15px; font-weight: 700; color: #333;">${mission.title}</div>
-                                    <div style="font-size: 13px; color: #666;">${mission.description}</div>
+                                    <div style="font-size: 15px; font-weight: 700; color: #f9fafb;">${mission.title}</div>
+                                    <div style="font-size: 13px; color: #d1d5db;">${mission.description}</div>
                                 </div>
                             </div>
-                            <div style="font-size: 14px; font-weight: 700; color: ${completed ? '#27ae60' : '#667eea'};">
+                            <div style="font-size: 14px; font-weight: 700; color: ${completed ? '#27ae60' : '#818cf8'};">
                                 ${completed ? '✓' : progress + '/' + target}
                             </div>
                         </div>
-                        <div style="background: #e0e0e0; height: 6px; border-radius: 3px; overflow: hidden;">
-                            <div style="background: ${completed ? '#27ae60' : '#667eea'}; width: ${percentage}%; height: 100%; transition: width 0.3s;"></div>
+                        <div style="background: #4b5563; height: 6px; border-radius: 3px; overflow: hidden;">
+                            <div style="background: ${completed ? '#27ae60' : '#818cf8'}; width: ${percentage}%; height: 100%; transition: width 0.3s;"></div>
                         </div>
                         <div style="text-align: right; margin-top: 6px;">
-                            <span style="font-size: 12px; color: #888;">🟡 ${mission.coins_reward}코인</span>
+                            <span style="font-size: 12px; color: #d1d5db;">🟡 ${mission.coins_reward}코인</span>
                         </div>
                     </div>
                 `;
@@ -5781,7 +5781,7 @@ async function loadCheckinAndMissions() {
             
             contentEl.innerHTML += `
                 <div style="margin-top: 20px;">
-                    <h3 style="font-size: 18px; font-weight: 700; color: #333; margin-bottom: 16px; text-align: left;">📋 오늘의 미션</h3>
+                    <h3 style="font-size: 18px; font-weight: 700; color: #f9fafb; margin-bottom: 16px; text-align: left;">📋 오늘의 미션</h3>
                     ${missionsHTML}
                 </div>
             `;
@@ -5792,8 +5792,8 @@ async function loadCheckinAndMissions() {
         contentEl.innerHTML = `
             <div style="padding: 40px; text-align: center;">
                 <div style="font-size: 48px; margin-bottom: 16px;">😕</div>
-                <p style="color: #e74c3c; font-size: 15px;">출석 체크에 실패했습니다</p>
-                <p style="color: #666; font-size: 13px; margin-top: 8px;">잠시 후 다시 시도해주세요</p>
+                <p style="color: #ef4444; font-size: 15px;">출석 체크에 실패했습니다</p>
+                <p style="color: #d1d5db; font-size: 13px; margin-top: 8px;">잠시 후 다시 시도해주세요</p>
             </div>
         `;
     }
