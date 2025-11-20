@@ -294,7 +294,7 @@
             margin-bottom: var(--space-sm);
             font-weight: 700;
             cursor: pointer;
-            transition: opacity var(--transition-base);
+            transition: all var(--transition-base);
             color: var(--text-primary);
             /* Apple 스타일 타이포그래피 */
             line-height: var(--line-height-tight);
@@ -303,7 +303,8 @@
         
         .header h1:hover {
             opacity: 0.8;
-            transition: opacity var(--transition-fast);
+            transform: scale(1.02); /* 호버 시 살짝 확대 */
+            transition: all var(--transition-fast);
         }
 
         .header p {
@@ -360,7 +361,7 @@
         }
 
         .story-card:hover {
-            transform: translateY(-6px) scale(1.02);
+            transform: translateY(-8px) scale(1.03); /* 더 명확한 호버 효과 */
             box-shadow: var(--shadow-xl);
             border-color: var(--color-primary);
             z-index: 10;
@@ -450,7 +451,7 @@
         }
         
         .back-button:hover {
-            transform: translateY(-2px) scale(1.02);
+            transform: translateY(-3px) scale(1.05); /* 더 명확한 호버 효과 */
             box-shadow: var(--shadow-xl);
             background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
             transition: all var(--transition-fast);
@@ -497,8 +498,8 @@
         .tab-button:hover {
             background: var(--bg-tertiary);
             border-color: var(--color-primary);
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: var(--shadow-md);
+            transform: translateY(-3px) scale(1.05); /* 더 명확한 호버 효과 */
+            box-shadow: var(--shadow-lg);
             transition: all var(--transition-fast);
         }
 
@@ -630,19 +631,21 @@
             letter-spacing: var(--letter-spacing-normal);
         }
 
-        /* 캐릭터 이미지 스타일 */
+        /* 캐릭터 이미지 스타일 - 크기 2배 증가 */
         .character-image-container {
             text-align: center;
-            margin: var(--space-md) 0 var(--space-md) 0;
-            padding: 0;
+            margin: var(--space-lg) 0 var(--space-xl) 0;
+            padding: var(--space-md);
         }
 
         .character-image {
-            max-width: 200px;
-            width: 50%;
+            max-width: 400px; /* 기존 200px → 400px (2배) */
+            width: 80%; /* 기존 50% → 80% */
             height: auto;
             display: inline-block;
             animation: characterFloat 3s ease-in-out infinite;
+            /* Apple 스타일 부드러운 애니메이션 */
+            transition: transform var(--transition-smooth);
         }
 
         /* 캐릭터 위아래 움직임 애니메이션 - Apple 스타일 적용 */
@@ -651,7 +654,7 @@
                 transform: translateY(0px);
             }
             50% {
-                transform: translateY(-10px);
+                transform: translateY(-15px); /* 기존 -10px → -15px (더 부드럽게) */
             }
         }
         
@@ -682,15 +685,16 @@
         /* 태블릿 이상 */
         @media (min-width: 769px) {
             .character-image {
-                max-width: 250px;
-                width: auto;
+                max-width: 500px; /* 기존 250px → 500px (2배) */
+                width: 70%;
             }
         }
 
         /* 데스크톱 */
         @media (min-width: 1025px) {
             .character-image {
-                max-width: 300px;
+                max-width: 600px; /* 기존 300px → 600px (2배) */
+                width: 60%;
             }
         }
 
@@ -727,8 +731,8 @@
         }
 
         .btn:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: var(--shadow-lg);
+            transform: translateY(-3px) scale(1.03); /* 더 명확한 호버 효과 */
+            box-shadow: var(--shadow-xl);
             background: linear-gradient(135deg, #059669 0%, var(--color-success) 100%);
             transition: all var(--transition-fast);
         }
