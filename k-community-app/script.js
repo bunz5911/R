@@ -509,22 +509,18 @@ const app = {
 
         switch (viewName) {
             case 'home':
-                this.renderHome();
+                await this.renderHome();
                 break;
             case 'sentences':
-                this.renderSentences();
-                break;
-            case 'pronunciation':
-                this.renderPronunciation();
-                break;
+            case 'speaking':
             case 'grammar':
             case 'tips':
             case 'culture':
             case 'kcontent':
-                this.renderFeed(viewName); // Re-use feed layout for these
+                await this.renderFeed(viewName); // 모든 카테고리에서 게시판 기능 사용
                 break;
             default:
-                this.renderHome();
+                await this.renderHome();
         }
     },
 
