@@ -363,6 +363,16 @@ def home():
     """루트 경로 - index.html 제공"""
     return send_file('index.html')
 
+@app.route('/k-community-app/<path:filename>')
+def community_app(filename):
+    """커뮤니티 앱 정적 파일 제공"""
+    return send_file(f'k-community-app/{filename}')
+
+@app.route('/k-community-app/')
+def community_app_index():
+    """커뮤니티 앱 인덱스 페이지"""
+    return send_file('k-community-app/index.html')
+
 @app.route('/health', methods=['GET'])
 def health():
     """API 상태 확인 및 헬스체크"""
