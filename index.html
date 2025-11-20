@@ -22,21 +22,21 @@
             --color-warning: #f59e0b; /* 앰버 */
             --color-danger: #ef4444; /* 레드 */
             
-            /* Surface 계층 - 더 부드러운 그레이 */
-            --bg-primary: #fafafa;
-            --bg-secondary: #ffffff;
-            --bg-tertiary: #f5f5f5;
-            --bg-quaternary: #e5e5e5;
+            /* Surface 계층 - 다크모드 기본값 (다른 페이지들과 통일) */
+            --bg-primary: #111827;
+            --bg-secondary: #1f2937;
+            --bg-tertiary: #374151;
+            --bg-quaternary: #4b5563;
             
-            /* 텍스트 색상 - 더 높은 대비 */
-            --text-primary: #1f2937;
-            --text-secondary: #6b7280;
+            /* 텍스트 색상 - 다크모드 기본값 */
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
             --text-tertiary: #9ca3af;
             --text-inverse: #ffffff;
             
-            /* Border - 더 부드러운 색상 */
-            --border-color: #e5e7eb;
-            --border-color-light: #f3f4f6;
+            /* Border - 다크모드 기본값 */
+            --border-color: #374151;
+            --border-color-light: #4b5563;
             --border-radius-sm: 10px;
             --border-radius-md: 16px;
             --border-radius-lg: 20px;
@@ -88,24 +88,29 @@
             --letter-spacing-wide: 0.01em;
         }
         
-        /* 다크모드 - 더 현대적인 다크 팔레트 */
-        [data-theme="dark"] {
-            --bg-primary: #111827;
-            --bg-secondary: #1f2937;
-            --bg-tertiary: #374151;
-            --bg-quaternary: #4b5563;
+        /* 라이트모드 - 사용자가 명시적으로 선택한 경우에만 적용 */
+        [data-theme="light"] {
+            --bg-primary: #fafafa;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f5f5f5;
+            --bg-quaternary: #e5e5e5;
             
-            --text-primary: #f9fafb;
-            --text-secondary: #d1d5db;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
             --text-tertiary: #9ca3af;
             
-            --border-color: #374151;
-            --border-color-light: #4b5563;
+            --border-color: #e5e7eb;
+            --border-color-light: #f3f4f6;
             
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.4);
-            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.6), 0 4px 6px rgba(0, 0, 0, 0.5);
-            --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.7), 0 10px 10px rgba(0, 0, 0, 0.6);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.12), 0 4px 6px rgba(0, 0, 0, 0.08);
+            --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15), 0 10px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 다크모드 - 기본값 (다른 페이지들과 통일) */
+        [data-theme="dark"] {
+            /* 기본값과 동일하므로 재정의 불필요, 명시성을 위해 유지 */
         }
         
         /* 아이폰 16 Pro Max 최적화 (430 x 932px) */
