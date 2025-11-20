@@ -494,9 +494,9 @@ const app = {
                 <div class="hero-content" style="position: relative; z-index: 2; padding-top: 50px;">
                     <h1 class="typography-headline" style="color: white; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">Welcome back, ${this.state.user.name}!</h1>
                     <p class="typography-intro" style="color: rgba(255,255,255,0.9); text-shadow: 0 1px 5px rgba(0,0,0,0.5);">Ready to continue your daily streak? You're doing great!</p>
-                    <button class="button" style="margin-top: 30px;" aria-label="Start Daily Practice">
+                    <a href="../index.html" class="button" style="margin-top: 30px; text-decoration: none; display: inline-block;" aria-label="메인 앱으로 이동">
                         Start Daily Practice
-                    </button>
+                    </a>
                 </div>
             </div>
 
