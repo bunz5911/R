@@ -503,7 +503,6 @@
                 const redirectUrl = window.location.origin + window.location.pathname;
                 
                 console.log('🔐 Google 로그인 리다이렉트 URL:', redirectUrl);
-                console.log('📍 현재 환경:', isLocal ? '로컬' : '프로덕션');
                 console.log('🌐 현재 origin:', window.location.origin);
                 
                 const { data, error } = await supabase.auth.signInWithOAuth({
