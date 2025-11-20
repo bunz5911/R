@@ -432,7 +432,25 @@
         
         // Supabase 초기화 (설정된 경우만)
         if (typeof CONFIG !== 'undefined' && CONFIG.SUPABASE_URL && CONFIG.SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
-            supabase = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+            // 현재 origin을 사용하여 리다이렉트 URL 설정
+            const currentOrigin = window.location.origin;
+            const currentPath = window.location.pathname;
+            const redirectUrl = currentOrigin + currentPath;
+            
+            console.log('🔧 Supabase 클라이언트 초기화');
+            console.log('🌐 현재 origin:', currentOrigin);
+            console.log('📍 현재 pathname:', currentPath);
+            console.log('🔗 리다이렉트 URL:', redirectUrl);
+            
+            // Supabase 클라이언트 생성 시 auth 옵션에 redirectTo 설정
+            supabase = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
+                auth: {
+                    redirectTo: redirectUrl,
+                    autoRefreshToken: true,
+                    persistSession: true,
+                    detectSessionInUrl: true
+                }
+            });
             console.log('✅ Supabase 클라이언트 초기화 완료');
             
             // OAuth 콜백 처리
