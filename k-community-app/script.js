@@ -457,11 +457,14 @@ const app = {
         }
     },
 
-    renderView(viewName) {
+    async renderView(viewName) {
         this.container.innerHTML = ''; // Clear current view
         this.container.classList.remove('fade-in');
         void this.container.offsetWidth; // Trigger reflow
         this.container.classList.add('fade-in');
+        
+        // 현재 뷰 업데이트
+        this.state.currentView = viewName;
 
         switch (viewName) {
             case 'home':
