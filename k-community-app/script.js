@@ -1,3 +1,84 @@
+// Supabase 클라이언트 초기화
+let supabase = null;
+let currentUserId = null;
+let currentUserEmail = null;
+let currentDisplayName = null;
+let isAuthenticated = false;
+
+// Supabase 초기화 함수
+function initSupabase() {
+    // 메인 앱의 config.js에서 Supabase 설정 가져오기
+    if (typeof CONFIG !== 'undefined' && CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY) {
+        supabase = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+        console.log('✅ Supabase 클라이언트 초기화 완료');
+        return true;
+    }
+    
+    // config.js가 없으면 localStorage에서 가져오기 (메인 앱에서 설정된 경우)
+    const supabaseUrl = localStorage.getItem('supabase_url');
+    const supabaseKey = localStorage.getItem('supabase_anon_key');
+    
+    if (supabaseUrl && supabaseKey) {
+        supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        console.log('✅ Supabase 클라이언트 초기화 완료 (localStorage)');
+        return true;
+    }
+    
+    console.warn('⚠️ Supabase 설정을 찾을 수 없습니다. 게시판 기능이 제한됩니다.');
+    return false;
+}
+
+// 로그인 상태 확인 함수
+async function checkAuthStatus() {
+    // localStorage에서 메인 앱의 로그인 정보 확인
+    const accessToken = localStorage.getItem('access_token');
+    const userId = localStorage.getItem('userId');
+    const userEmail = localStorage.getItem('userEmail');
+    const displayName = localStorage.getItem('displayName');
+    
+    if (accessToken && userId) {
+        isAuthenticated = true;
+        currentUserId = userId;
+        currentUserEmail = userEmail;
+        currentDisplayName = displayName || userEmail?.split('@')[0] || 'User';
+        
+        // Supabase 세션 설정
+        if (supabase) {
+            await supabase.auth.setSession({
+                access_token: accessToken,
+                refresh_token: localStorage.getItem('refresh_token') || ''
+            });
+        }
+        
+        updateAuthUI();
+        return true;
+    }
+    
+    isAuthenticated = false;
+    currentUserId = null;
+    currentUserEmail = null;
+    currentDisplayName = null;
+    updateAuthUI();
+    return false;
+}
+
+// 인증 UI 업데이트
+function updateAuthUI() {
+    const signInLink = document.getElementById('signInLink');
+    const userDisplayName = document.getElementById('userDisplayName');
+    
+    if (isAuthenticated) {
+        if (signInLink) signInLink.style.display = 'none';
+        if (userDisplayName) {
+            userDisplayName.style.display = 'inline';
+            userDisplayName.textContent = currentDisplayName || 'User';
+        }
+    } else {
+        if (signInLink) signInLink.style.display = 'inline';
+        if (userDisplayName) userDisplayName.style.display = 'none';
+    }
+}
+
 const app = {
     state: {
         currentView: 'home',
@@ -7,7 +88,7 @@ const app = {
             name: 'RAKorean',
             level: 3,
             xp: 450,
-            likedPosts: [2] // Posts user has liked
+            likedPosts: [] // Posts user has liked (Supabase에서 로드)
         }
     },
 
@@ -173,9 +254,16 @@ const app = {
         ]
     },
 
-    init() {
+    async init() {
+        // Supabase 초기화
+        initSupabase();
+        
+        // 로그인 상태 확인
+        await checkAuthStatus();
+        
         this.cacheDOM();
         this.bindEvents();
+        await this.loadPostsFromSupabase(); // Supabase에서 게시글 로드
         this.renderView('home');
         this.startOnlineUserSimulation();
     },
@@ -224,7 +312,7 @@ const app = {
         this.renderView(viewName);
     },
 
-    handlePostClick(postId) {
+    async handlePostClick(postId) {
         // Search in both regular posts and K-content posts
         let post = this.data.posts.find(p => p.id === postId);
         if (!post) {
@@ -232,12 +320,24 @@ const app = {
         }
 
         if (post) {
+            // 댓글 로드 (아직 로드되지 않은 경우)
+            if (!post.comments || post.comments.length === 0) {
+                await this.loadCommentsForPost(postId);
+                post = this.data.posts.find(p => p.id === postId) || this.data.kcontentPosts.find(p => p.id === postId);
+            }
+            
             this.state.currentPost = post;
             this.renderPostDetail(post);
         }
     },
 
-    handleLikeClick(postId) {
+    async handleLikeClick(postId) {
+        if (!isAuthenticated || !currentUserId) {
+            alert('로그인이 필요합니다.');
+            window.location.href = '../login.html';
+            return;
+        }
+        
         // Search in both regular posts and K-content posts
         let post = this.data.posts.find(p => p.id === postId);
         if (!post) {
@@ -247,39 +347,114 @@ const app = {
 
         const isLiked = this.state.user.likedPosts.includes(postId);
 
-        if (isLiked) {
-            // Unlike
-            this.state.user.likedPosts = this.state.user.likedPosts.filter(id => id !== postId);
-            post.likes--;
-        } else {
-            // Like
-            this.state.user.likedPosts.push(postId);
-            post.likes++;
-        }
+        try {
+            if (isLiked) {
+                // Unlike - Supabase에서 삭제
+                if (supabase) {
+                    const { error } = await supabase
+                        .from('community_likes')
+                        .delete()
+                        .eq('post_id', postId)
+                        .eq('user_id', currentUserId);
+                    
+                    if (error) throw error;
+                }
+                
+                this.state.user.likedPosts = this.state.user.likedPosts.filter(id => id !== postId);
+                post.likes = Math.max(0, post.likes - 1);
+            } else {
+                // Like - Supabase에 추가
+                if (supabase) {
+                    const { error } = await supabase
+                        .from('community_likes')
+                        .insert({
+                            post_id: postId,
+                            user_id: currentUserId
+                        });
+                    
+                    if (error) throw error;
+                }
+                
+                this.state.user.likedPosts.push(postId);
+                post.likes++;
+            }
 
-        // Re-render current view
-        if (this.state.currentPost && this.state.currentPost.id === postId) {
-            this.renderPostDetail(post);
-        } else {
-            this.renderView(this.state.currentView);
+            // Re-render current view
+            if (this.state.currentPost && this.state.currentPost.id === postId) {
+                this.renderPostDetail(post);
+            } else {
+                this.renderView(this.state.currentView);
+            }
+        } catch (error) {
+            console.error('❌ 좋아요 처리 실패:', error);
+            alert('좋아요 처리 중 오류가 발생했습니다.');
         }
     },
 
-    handleCommentSubmit(postId, commentText) {
+    async handleCommentSubmit(postId, commentText) {
+        if (!isAuthenticated || !currentUserId) {
+            alert('로그인이 필요합니다.');
+            window.location.href = '../login.html';
+            return;
+        }
+        
+        if (!commentText.trim()) {
+            alert('댓글 내용을 입력해주세요.');
+            return;
+        }
+        
         // Search in both regular posts and K-content posts
         let post = this.data.posts.find(p => p.id === postId);
         if (!post) {
             post = this.data.kcontentPosts.find(p => p.id === postId);
         }
-        if (!post || !commentText.trim()) return;
+        if (!post) return;
 
-        post.comments.push({
-            author: this.state.user.name,
-            content: commentText,
-            time: 'Just now'
-        });
+        try {
+            // Supabase에 댓글 추가
+            if (supabase) {
+                const { data, error } = await supabase
+                    .from('community_comments')
+                    .insert({
+                        post_id: postId,
+                        user_id: currentUserId,
+                        content: commentText.trim()
+                    })
+                    .select(`
+                        *,
+                        profiles:user_id (
+                            display_name,
+                            email
+                        )
+                    `)
+                    .single();
+                
+                if (error) throw error;
+                
+                // 댓글 추가
+                post.comments.push({
+                    author: data.profiles?.display_name || data.profiles?.email?.split('@')[0] || currentDisplayName || 'User',
+                    content: data.content,
+                    time: 'Just now'
+                });
+            } else {
+                // Supabase가 없으면 로컬에만 추가
+                post.comments.push({
+                    author: currentDisplayName || 'User',
+                    content: commentText.trim(),
+                    time: 'Just now'
+                });
+            }
 
-        this.renderPostDetail(post);
+            this.renderPostDetail(post);
+            
+            // 댓글 입력 필드 초기화
+            const commentInput = document.getElementById('comment-input');
+            if (commentInput) commentInput.value = '';
+        } catch (error) {
+            console.error('❌ 댓글 작성 실패:', error);
+            alert('댓글 작성 중 오류가 발생했습니다.');
+        }
     },
 
     renderView(viewName) {
@@ -386,14 +561,30 @@ const app = {
         // Determine which posts to show
         let postsToShow;
         if (category === 'kcontent') {
-            postsToShow = this.data.kcontentPosts;
-        } else {
-            const filteredPosts = this.data.posts.filter(p =>
-                category === 'culture' ? p.tag === 'Culture' :
-                    category === 'grammar' ? p.tag === 'Grammar' :
-                        category === 'tips' ? p.tag === 'Tips' : true
+            // K-content 카테고리
+            postsToShow = this.data.posts.filter(p => 
+                p.tag === 'K-pop' || p.tag === 'K-drama'
             );
-            postsToShow = filteredPosts.length > 0 ? filteredPosts : this.data.posts;
+            if (postsToShow.length === 0) {
+                postsToShow = this.data.kcontentPosts; // 하드코딩된 데이터 fallback
+            }
+        } else {
+            // 카테고리 매핑
+            const categoryMapping = {
+                'culture': 'Culture',
+                'grammar': 'Grammar',
+                'tips': 'Tips',
+                'sentences': 'Sentences',
+                'speaking': 'Speaking'
+            };
+            
+            const targetTag = categoryMapping[category];
+            postsToShow = this.data.posts.filter(p => p.tag === targetTag);
+            
+            // 필터링된 게시글이 없으면 모든 게시글 표시
+            if (postsToShow.length === 0) {
+                postsToShow = this.data.posts;
+            }
         }
 
         const displayTitle = category === 'kcontent' ? 'K-content' : categoryTitle;
@@ -529,6 +720,158 @@ const app = {
         this.bindPostEvents();
     },
 
+    // Supabase에서 게시글 로드
+    async loadPostsFromSupabase() {
+        if (!supabase) {
+            console.warn('⚠️ Supabase가 초기화되지 않아 하드코딩된 데이터를 사용합니다.');
+            return;
+        }
+        
+        try {
+            // 모든 게시글 가져오기
+            const { data: posts, error } = await supabase
+                .from('community_posts')
+                .select(`
+                    *,
+                    profiles:user_id (
+                        display_name,
+                        email
+                    )
+                `)
+                .order('created_at', { ascending: false })
+                .limit(100);
+            
+            if (error) throw error;
+            
+            // 데이터 변환
+            if (posts && posts.length > 0) {
+                this.data.posts = posts.map(post => ({
+                    id: post.id,
+                    tag: this.mapCategoryToTag(post.category),
+                    title: post.title,
+                    content: post.content.length > 100 ? post.content.substring(0, 100) + '...' : post.content,
+                    fullContent: post.content,
+                    author: post.profiles?.display_name || post.profiles?.email?.split('@')[0] || 'Anonymous',
+                    likes: post.likes_count || 0,
+                    comments: [], // 댓글은 별도로 로드
+                    time: this.formatTimeAgo(post.created_at)
+                }));
+                
+                // 각 게시글의 댓글 로드
+                for (let post of this.data.posts) {
+                    await this.loadCommentsForPost(post.id);
+                }
+                
+                // 사용자가 좋아요한 게시글 로드
+                if (isAuthenticated && currentUserId) {
+                    await this.loadUserLikes();
+                }
+                
+                console.log(`✅ Supabase에서 ${this.data.posts.length}개 게시글 로드 완료`);
+            }
+        } catch (error) {
+            console.error('❌ 게시글 로드 실패:', error);
+            // 에러 발생 시 하드코딩된 데이터 사용
+        }
+    },
+    
+    // 카테고리를 태그로 매핑
+    mapCategoryToTag(category) {
+        const mapping = {
+            'grammar': 'Grammar',
+            'culture': 'Culture',
+            'tips': 'Tips',
+            'kcontent': 'K-pop',
+            'sentences': 'Sentences',
+            'speaking': 'Speaking'
+        };
+        return mapping[category] || 'General';
+    },
+    
+    // 태그를 카테고리로 매핑
+    mapTagToCategory(tag) {
+        const mapping = {
+            'Grammar': 'grammar',
+            'Culture': 'culture',
+            'Tips': 'tips',
+            'K-pop': 'kcontent',
+            'K-drama': 'kcontent',
+            'Sentences': 'sentences',
+            'Speaking': 'speaking'
+        };
+        return mapping[tag] || 'grammar';
+    },
+    
+    // 게시글의 댓글 로드
+    async loadCommentsForPost(postId) {
+        if (!supabase) return;
+        
+        try {
+            const { data: comments, error } = await supabase
+                .from('community_comments')
+                .select(`
+                    *,
+                    profiles:user_id (
+                        display_name,
+                        email
+                    )
+                `)
+                .eq('post_id', postId)
+                .order('created_at', { ascending: true });
+            
+            if (error) throw error;
+            
+            // 해당 게시글 찾아서 댓글 추가
+            const post = this.data.posts.find(p => p.id === postId);
+            if (post && comments) {
+                post.comments = comments.map(comment => ({
+                    author: comment.profiles?.display_name || comment.profiles?.email?.split('@')[0] || 'Anonymous',
+                    content: comment.content,
+                    time: this.formatTimeAgo(comment.created_at)
+                }));
+            }
+        } catch (error) {
+            console.error(`❌ 댓글 로드 실패 (postId: ${postId}):`, error);
+        }
+    },
+    
+    // 사용자가 좋아요한 게시글 로드
+    async loadUserLikes() {
+        if (!supabase || !isAuthenticated || !currentUserId) return;
+        
+        try {
+            const { data: likes, error } = await supabase
+                .from('community_likes')
+                .select('post_id')
+                .eq('user_id', currentUserId);
+            
+            if (error) throw error;
+            
+            if (likes) {
+                this.state.user.likedPosts = likes.map(like => like.post_id);
+            }
+        } catch (error) {
+            console.error('❌ 좋아요 로드 실패:', error);
+        }
+    },
+    
+    // 시간 포맷팅
+    formatTimeAgo(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+        const diffDays = Math.floor(diffMs / 86400000);
+        
+        if (diffMins < 1) return 'Just now';
+        if (diffMins < 60) return `${diffMins}m ago`;
+        if (diffHours < 24) return `${diffHours}h ago`;
+        if (diffDays < 7) return `${diffDays}d ago`;
+        
+        return date.toLocaleDateString();
+    },
+    
     bindPostEvents() {
         // Bind post card clicks
         document.querySelectorAll('.post-card').forEach(card => {
@@ -536,7 +879,7 @@ const app = {
                 // Don't trigger if clicking on like button
                 if (e.target.closest('.like-btn')) return;
 
-                const postId = parseInt(card.dataset.postId);
+                const postId = card.dataset.postId; // UUID이므로 parseInt 제거
                 this.handlePostClick(postId);
             });
         });
@@ -545,7 +888,7 @@ const app = {
         document.querySelectorAll('.like-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const postId = parseInt(btn.dataset.postId);
+                const postId = btn.dataset.postId; // UUID이므로 parseInt 제거
                 this.handleLikeClick(postId);
             });
         });
