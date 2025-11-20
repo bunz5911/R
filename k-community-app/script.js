@@ -504,20 +504,28 @@ const app = {
                         user_id: currentUserId,
                         content: commentText.trim()
                     })
-                    .select(`
-                        *,
-                        profiles:user_id (
-                            display_name,
-                            email
-                        )
-                    `)
+                    .select('*')
                     .single();
                 
                 if (error) throw error;
                 
+                // 프로필 정보 별도 조회
+                let authorName = currentDisplayName || 'User';
+                if (data.user_id) {
+                    const { data: profile } = await supabase
+                        .from('profiles')
+                        .select('display_name, email')
+                        .eq('id', data.user_id)
+                        .single();
+                    
+                    if (profile) {
+                        authorName = profile.display_name || profile.email?.split('@')[0] || currentDisplayName || 'User';
+                    }
+                }
+                
             // 댓글 추가 (state.posts와 data.posts 모두 업데이트)
             const newComment = {
-                author: data.profiles?.display_name || data.profiles?.email?.split('@')[0] || currentDisplayName || 'User',
+                author: authorName,
                 content: data.content,
                 time: 'Just now'
             };
