@@ -16,7 +16,7 @@
 
         body {
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #111827; /* 메인 앱과 동일한 다크모드 배경 */
             min-height: 100vh;
             min-height: 100dvh; /* 동적 뷰포트 */
             display: flex;
@@ -27,16 +27,18 @@
             padding-bottom: max(20px, env(safe-area-inset-bottom));
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+            color: #f9fafb; /* 다크모드 텍스트 색상 */
         }
 
         .signup-container {
-            background: white;
+            background: #1f2937; /* 다크모드 카드 배경 */
             border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
             width: 100%;
             max-width: 420px;
             padding: 48px 40px;
             animation: fadeIn 0.5s ease;
+            color: #f9fafb;
         }
 
         @keyframes fadeIn {
@@ -67,7 +69,7 @@
 
         .logo p {
             font-size: 14px;
-            color: #888;
+            color: #d1d5db; /* 다크모드 텍스트 */
         }
 
         .form-group {
@@ -78,12 +80,12 @@
             display: block;
             font-size: 14px;
             font-weight: 600;
-            color: #333;
+            color: #f9fafb; /* 다크모드 텍스트 */
             margin-bottom: 8px;
         }
 
         .form-group label .optional {
-            color: #999;
+            color: #9ca3af; /* 다크모드 텍스트 */
             font-weight: 400;
             font-size: 12px;
         }
@@ -91,31 +93,33 @@
         .form-group input {
             width: 100%;
             padding: 14px 16px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid #374151; /* 다크모드 보더 */
             border-radius: 12px;
             font-size: 15px;
             transition: all 0.3s;
             outline: none;
+            background: #374151; /* 다크모드 입력 필드 배경 */
+            color: #f9fafb; /* 다크모드 텍스트 */
         }
 
         .form-group input:focus {
             border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
         }
 
         .form-group input::placeholder {
-            color: #bbb;
+            color: #9ca3af; /* 다크모드 플레이스홀더 */
         }
 
         .form-group .helper-text {
             font-size: 12px;
-            color: #888;
+            color: #9ca3af; /* 다크모드 텍스트 */
             margin-top: 6px;
         }
 
         .form-group .error-text {
             font-size: 12px;
-            color: #e74c3c;
+            color: #fca5a5; /* 다크모드 에러 텍스트 */
             margin-top: 6px;
             display: none;
         }
@@ -132,7 +136,7 @@
             display: flex;
             align-items: center;
             font-size: 14px;
-            color: #333;
+            color: #f9fafb; /* 다크모드 텍스트 */
             cursor: pointer;
             padding: 10px 0;
         }
@@ -145,7 +149,7 @@
         }
 
         .checkbox-group a {
-            color: #667eea;
+            color: #818cf8; /* 다크모드 링크 색상 */
             text-decoration: none;
             margin-left: 4px;
         }
@@ -196,15 +200,15 @@
             top: 50%;
             width: 100%;
             height: 1px;
-            background: #e0e0e0;
+            background: #374151; /* 다크모드 구분선 */
         }
 
         .divider span {
-            background: white;
+            background: #1f2937; /* 다크모드 카드 배경 */
             padding: 0 16px;
             position: relative;
             font-size: 13px;
-            color: #888;
+            color: #9ca3af; /* 다크모드 텍스트 */
             font-weight: 600;
         }
 
@@ -217,7 +221,7 @@
         .btn-social {
             width: 100%;
             padding: 14px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid #374151; /* 다크모드 보더 */
             border-radius: 12px;
             font-size: 15px;
             font-weight: 600;
@@ -227,16 +231,17 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            background: white;
+            background: #374151; /* 다크모드 버튼 배경 */
+            color: #f9fafb; /* 다크모드 텍스트 */
         }
 
         .btn-social:hover {
-            border-color: #ccc;
-            background: #f9f9f9;
+            border-color: #4b5563; /* 다크모드 호버 보더 */
+            background: #4b5563; /* 다크모드 호버 배경 */
         }
 
         .btn-google {
-            color: #333;
+            color: #f9fafb; /* 다크모드 텍스트 */
         }
 
         .btn-kakao {
@@ -254,11 +259,11 @@
             text-align: center;
             margin-top: 24px;
             font-size: 14px;
-            color: #666;
+            color: #d1d5db; /* 다크모드 텍스트 */
         }
 
         .login-link a {
-            color: #667eea;
+            color: #818cf8; /* 다크모드 링크 색상 */
             text-decoration: none;
             font-weight: 700;
         }
@@ -268,9 +273,9 @@
         }
 
         .error-message {
-            background: #fee;
-            border: 1px solid #fcc;
-            color: #c33;
+            background: #7f1d1d; /* 다크모드 에러 배경 */
+            border: 1px solid #991b1b;
+            color: #fca5a5; /* 다크모드 에러 텍스트 */
             padding: 12px;
             border-radius: 8px;
             font-size: 14px;
@@ -283,9 +288,9 @@
         }
 
         .success-message {
-            background: #efe;
-            border: 1px solid #cfc;
-            color: #3c3;
+            background: #14532d; /* 다크모드 성공 배경 */
+            border: 1px solid #166534;
+            color: #86efac; /* 다크모드 성공 텍스트 */
             padding: 12px;
             border-radius: 8px;
             font-size: 14px;

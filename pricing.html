@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #111827; /* 메인 앱과 동일한 다크모드 배경 */
             min-height: 100vh;
             min-height: 100dvh; /* 동적 뷰포트 */
             padding: 40px 20px;
@@ -21,6 +21,7 @@
             padding-bottom: max(60px, env(safe-area-inset-bottom) + 40px);
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+            color: #f9fafb; /* 다크모드 텍스트 */
         }
 
         .pricing-container {
@@ -88,26 +89,26 @@
         .plan-name {
             font-size: 24px;
             font-weight: 800;
-            color: #333;
+            color: #f9fafb; /* 다크모드 텍스트 */
             margin-bottom: 12px;
         }
 
         .plan-price {
             font-size: 42px;
             font-weight: 800;
-            color: #667eea;
+            color: #818cf8; /* 다크모드 강조 색상 */
             margin-bottom: 8px;
         }
 
         .plan-price span {
             font-size: 18px;
-            color: #888;
+            color: #9ca3af; /* 다크모드 텍스트 */
             font-weight: 600;
         }
 
         .plan-description {
             font-size: 14px;
-            color: #666;
+            color: #d1d5db; /* 다크모드 텍스트 */
             margin-bottom: 24px;
         }
 
@@ -118,7 +119,7 @@
 
         .plan-features li {
             font-size: 15px;
-            color: #555;
+            color: #d1d5db; /* 다크모드 텍스트 */
             margin-bottom: 12px;
             padding-left: 28px;
             position: relative;
