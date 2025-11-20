@@ -624,11 +624,11 @@ const app = {
         let postsToShow;
         if (category === 'kcontent') {
             // K-content 카테고리
-            postsToShow = this.data.posts.filter(p => 
+            postsToShow = this.state.posts.filter(p => 
                 p.tag === 'K-pop' || p.tag === 'K-drama'
             );
             if (postsToShow.length === 0) {
-                postsToShow = this.data.kcontentPosts; // 하드코딩된 데이터 fallback
+                postsToShow = this.data.kcontentPosts || []; // 하드코딩된 데이터 fallback
             }
         } else {
             // 카테고리 매핑
@@ -641,15 +641,23 @@ const app = {
             };
             
             const targetTag = categoryMapping[category];
-            postsToShow = this.data.posts.filter(p => p.tag === targetTag);
+            postsToShow = this.state.posts.filter(p => p.tag === targetTag);
             
-            // 필터링된 게시글이 없으면 모든 게시글 표시
+            // 필터링된 게시글이 없으면 빈 배열 표시
             if (postsToShow.length === 0) {
-                postsToShow = this.data.posts;
+                postsToShow = [];
             }
         }
 
-        const displayTitle = category === 'kcontent' ? 'K-content' : categoryTitle;
+        // 카테고리 표시 이름 설정
+        let displayTitle;
+        if (category === 'kcontent') {
+            displayTitle = 'K-content';
+        } else if (category === 'speaking') {
+            displayTitle = 'Speaking';
+        } else {
+            displayTitle = categoryTitle;
+        }
 
         const html = `
             <div class="section-content">
