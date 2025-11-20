@@ -444,10 +444,10 @@ const app = {
             }
 
             // Re-render current view
-            if (this.state.currentPost && this.state.currentPost.id === postId) {
-                this.renderPostDetail(post);
+            if (this.state.currentPost && String(this.state.currentPost.id) === String(postId)) {
+                await this.renderPostDetail(post);
             } else {
-                this.renderView(this.state.currentView);
+                await this.renderView(this.state.currentView);
             }
         } catch (error) {
             console.error('❌ 좋아요 처리 실패:', error);
