@@ -469,6 +469,27 @@
         async function handleOAuthCallback() {
             if (!supabase) return;
             
+            // 현재 URL 정보 로깅
+            const currentUrl = window.location.href;
+            const currentOrigin = window.location.origin;
+            const currentHostname = window.location.hostname;
+            
+            console.log('📍 현재 URL:', currentUrl);
+            console.log('🌐 현재 origin:', currentOrigin);
+            console.log('📍 현재 hostname:', currentHostname);
+            
+            // localhost:3000으로 리다이렉트된 경우 강제로 올바른 URL로 이동
+            if (currentHostname === 'localhost' && window.location.port === '3000') {
+                console.error('❌ localhost:3000으로 잘못된 리다이렉트 감지!');
+                console.log('🔧 올바른 URL로 강제 리다이렉트');
+                
+                // Netlify URL로 강제 리다이렉트
+                const correctUrl = 'https://marvelous-cat-d90804.netlify.app/signup.html';
+                console.log('🔗 올바른 URL:', correctUrl);
+                window.location.replace(correctUrl);
+                return;
+            }
+            
             const hashParams = new URLSearchParams(window.location.hash.substring(1));
             const accessToken = hashParams.get('access_token');
             const refreshToken = hashParams.get('refresh_token');
