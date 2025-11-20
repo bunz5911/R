@@ -617,7 +617,7 @@ const app = {
         `;
     },
 
-    renderFeed(category) {
+    async renderFeed(category) {
         const categoryTitle = category.charAt(0).toUpperCase() + category.slice(1);
 
         // Determine which posts to show
