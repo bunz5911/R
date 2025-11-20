@@ -1018,13 +1018,7 @@ const app = {
         try {
             const { data: comments, error } = await supabase
                 .from('community_comments')
-                .select(`
-                    *,
-                    profiles:user_id (
-                        display_name,
-                        email
-                    )
-                `)
+                .select('*')
                 .eq('post_id', postId)
                 .order('created_at', { ascending: true });
             
@@ -1038,11 +1032,29 @@ const app = {
             }
             
             if (post && comments) {
-                const formattedComments = comments.map(comment => ({
-                    author: comment.profiles?.display_name || comment.profiles?.email?.split('@')[0] || 'Anonymous',
-                    content: comment.content,
-                    time: this.formatTimeAgo(comment.created_at)
-                }));
+                // 각 댓글의 작성자 프로필 정보 조회
+                const formattedComments = await Promise.all(
+                    comments.map(async (comment) => {
+                        let authorName = 'Anonymous';
+                        if (comment.user_id) {
+                            const { data: profile } = await supabase
+                                .from('profiles')
+                                .select('display_name, email')
+                                .eq('id', comment.user_id)
+                                .single();
+                            
+                            if (profile) {
+                                authorName = profile.display_name || profile.email?.split('@')[0] || 'Anonymous';
+                            }
+                        }
+                        
+                        return {
+                            author: authorName,
+                            content: comment.content,
+                            time: this.formatTimeAgo(comment.created_at)
+                        };
+                    })
+                );
                 
                 post.comments = formattedComments;
                 
@@ -1235,16 +1247,27 @@ const app = {
                     title: title,
                     content: content
                 })
-                .select(`
-                    *,
-                    profiles:user_id (
-                        display_name,
-                        email
-                    )
-                `)
+                .select('*')
                 .single();
             
             if (error) throw error;
+            
+            // 프로필 정보 별도 조회
+            let authorName = 'Anonymous';
+            if (newPost.user_id) {
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('display_name, email')
+                    .eq('id', newPost.user_id)
+                    .single();
+                
+                if (profile) {
+                    authorName = profile.display_name || profile.email?.split('@')[0] || 'Anonymous';
+                } else {
+                    // 프로필이 없으면 이메일에서 추출
+                    authorName = currentUserEmail?.split('@')[0] || currentDisplayName || 'Anonymous';
+                }
+            }
             
             // 새 게시글을 데이터에 추가
             const post = {
@@ -1253,7 +1276,7 @@ const app = {
                 title: newPost.title,
                 content: newPost.content.length > 100 ? newPost.content.substring(0, 100) + '...' : newPost.content,
                 fullContent: newPost.content,
-                author: newPost.profiles?.display_name || newPost.profiles?.email?.split('@')[0] || 'Anonymous',
+                author: authorName,
                 likes: newPost.likes_count || 0,
                 comments: [],
                 time: 'Just now'
