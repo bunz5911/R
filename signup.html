@@ -631,7 +631,9 @@
                 const { data, error } = await supabase.auth.signInWithOAuth({
                     provider: 'google',
                     options: {
-                        redirectTo: window.location.origin + '/signup.html'
+                        redirectTo: (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                            ? 'http://localhost:8080/signup.html'
+                            : window.location.origin + '/signup.html')
                     }
                 });
                 

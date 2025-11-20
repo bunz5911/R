@@ -491,10 +491,15 @@
             }
             
             try {
+                // 올바른 리다이렉트 URL 설정 (로컬: 8080, 프로덕션: 실제 도메인)
+                const redirectUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                    ? 'http://localhost:8080/login.html'
+                    : window.location.origin + '/login.html';
+                
                 const { data, error } = await supabase.auth.signInWithOAuth({
                     provider: 'google',
                     options: {
-                        redirectTo: window.location.origin + '/login.html'
+                        redirectTo: redirectUrl
                     }
                 });
                 
