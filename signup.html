@@ -778,11 +778,11 @@
                     </div>
                     
                     <div style="display: flex; flex-direction: column; gap: 16px;">
-                        <button onclick="location.href='index.html'" style="width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
+                        <button onclick="location.href=window.location.origin + '/index.html'" style="width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
                             무료 회원으로 시작하기
                         </button>
                         
-                        <button onclick="location.href='pricing.html'" style="width: 100%; padding: 16px; background: white; color: #667eea; border: 2px solid #667eea; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer;">
+                        <button onclick="location.href=window.location.origin + '/pricing.html'" style="width: 100%; padding: 16px; background: white; color: #667eea; border: 2px solid #667eea; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer;">
                             유료 플랜 보기 (Pro/Premier)
                         </button>
                     </div>
@@ -796,7 +796,10 @@
 
         // 이미 로그인 상태면 홈으로 리다이렉트
         if (localStorage.getItem('access_token')) {
-            window.location.href = 'index.html';
+            // 절대 URL로 리다이렉트 (모바일/프로덕션 환경 대응)
+            const basePath = window.location.origin + '/index.html';
+            console.log('🔗 리다이렉트 URL:', basePath);
+            window.location.href = basePath;
         }
     </script>
 </body>

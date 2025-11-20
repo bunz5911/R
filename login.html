@@ -423,11 +423,13 @@
                         showSuccess('Google 로그인 성공! 홈으로 이동합니다...');
                         
                         setTimeout(() => {
-                            // 절대 경로로 리다이렉트 (프로덕션 환경 대응)
-                            const redirectPath = window.location.pathname.includes('/k-community-app/')
-                                ? '../index.html'
-                                : 'index.html';
-                            window.location.href = redirectPath;
+                            // 절대 URL로 리다이렉트 (모바일/프로덕션 환경 대응)
+                            const baseUrl = window.location.origin;
+                            const basePath = window.location.pathname.includes('/k-community-app/')
+                                ? baseUrl + '/index.html'
+                                : baseUrl + '/index.html';
+                            console.log('🔗 리다이렉트 URL:', basePath);
+                            window.location.href = basePath;
                         }, 1000);
                     }
                 } catch (error) {
@@ -472,11 +474,13 @@
                     showSuccess('로그인 성공! 홈으로 이동합니다...');
                     
                     setTimeout(() => {
-                        // 절대 경로로 리다이렉트 (프로덕션 환경 대응)
-                        const redirectPath = window.location.pathname.includes('/k-community-app/')
-                            ? '../index.html'
-                            : 'index.html';
-                        window.location.href = redirectPath;
+                        // 절대 URL로 리다이렉트 (모바일/프로덕션 환경 대응)
+                        const baseUrl = window.location.origin;
+                        const basePath = window.location.pathname.includes('/k-community-app/')
+                            ? baseUrl + '/index.html'
+                            : baseUrl + '/index.html';
+                        console.log('🔗 리다이렉트 URL:', basePath);
+                        window.location.href = basePath;
                     }, 1000);
                 } else {
                     showError(data.error || '로그인에 실패했습니다');
@@ -573,11 +577,13 @@
                                     showSuccess('카카오 로그인 성공! 홈으로 이동합니다...');
                                     
                                     setTimeout(() => {
-                                        // 절대 경로로 리다이렉트 (프로덕션 환경 대응)
-                                        const redirectPath = window.location.pathname.includes('/k-community-app/')
-                                            ? '../index.html'
-                                            : 'index.html';
-                                        window.location.href = redirectPath;
+                                        // 절대 URL로 리다이렉트 (모바일/프로덕션 환경 대응)
+                                        const baseUrl = window.location.origin;
+                                        const basePath = window.location.pathname.includes('/k-community-app/')
+                                            ? baseUrl + '/index.html'
+                                            : baseUrl + '/index.html';
+                                        console.log('🔗 리다이렉트 URL:', basePath);
+                                        window.location.href = basePath;
                                     }, 1000);
                                 } else {
                                     showError(loginData.error || '카카오 로그인에 실패했습니다');
@@ -622,11 +628,13 @@
 
         // 이미 로그인 상태면 홈으로 리다이렉트
         if (localStorage.getItem('access_token')) {
-            // 절대 경로로 리다이렉트 (프로덕션 환경 대응)
-            const redirectPath = window.location.pathname.includes('/k-community-app/')
-                ? '../index.html'
-                : 'index.html';
-            window.location.href = redirectPath;
+            // 절대 URL로 리다이렉트 (모바일/프로덕션 환경 대응)
+            const baseUrl = window.location.origin;
+            const basePath = window.location.pathname.includes('/k-community-app/')
+                ? baseUrl + '/index.html'
+                : baseUrl + '/index.html';
+            console.log('🔗 리다이렉트 URL:', basePath);
+            window.location.href = basePath;
         }
     </script>
 </body>
