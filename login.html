@@ -622,7 +622,11 @@
 
         // 이미 로그인 상태면 홈으로 리다이렉트
         if (localStorage.getItem('access_token')) {
-            window.location.href = 'index.html';
+            // 절대 경로로 리다이렉트 (프로덕션 환경 대응)
+            const redirectPath = window.location.pathname.includes('/k-community-app/')
+                ? '../index.html'
+                : 'index.html';
+            window.location.href = redirectPath;
         }
     </script>
 </body>
