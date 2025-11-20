@@ -28,9 +28,52 @@ venv/
 env/
 *.egg-info/
 
-# 로그
+# 로그 및 임시 파일
 *.log
+*.txt
+!requirements.txt
+!README.md
 server.log
+server_test.log
+server_output.log
+generate.log
+notify_log.txt
+quiz_translate_log.txt
+quiz_task_log.txt
+translate_log.txt
+
+# 백업 파일
+*.backup
+*.backup.*
+stories_data_final.json.backup.*
+analysis_data.json.backup.*
+
+# 개발용 스크립트 (배포에 불필요)
+auto_check_completion.sh
+check_and_push.sh
+check_translation_status.sh
+notify_completion.sh
+cleanup_multilang.py
+generate_and_translate_quiz.py
+process_one_task.py
+process_one_task_ko_en.py
+regenerate_dokkaebi_advanced.py
+regenerate_level_data.py
+translate_quiz.py
+translate_stories_0_1_english.py
+translate_summaries.py
+
+# 중복 파일
+app_new.js
+
+# 참고 자료 (배포에 불필요)
+Ref/
+
+# 임시 파일
+Icon
+.quiz_translation_complete
+.summary_translation_complete
+stories_precomputed.json
 
 # OS
 .DS_Store
