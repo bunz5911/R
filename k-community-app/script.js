@@ -1,0 +1,557 @@
+const app = {
+    state: {
+        currentView: 'home',
+        currentPost: null,
+        onlineUsers: Math.floor(Math.random() * 50) + 120, // Random 120-170
+        user: {
+            name: 'RAKorean',
+            level: 3,
+            xp: 450,
+            likedPosts: [2] // Posts user has liked
+        }
+    },
+
+    data: {
+        posts: [
+            {
+                id: 1,
+                tag: 'Culture',
+                title: 'Why do Koreans bow?',
+                content: 'I noticed people bowing when saying hello. Is there a rule for the angle?',
+                fullContent: 'I\'ve been in Korea for 2 months now and I noticed that people bow when greeting each other. Sometimes it\'s just a slight nod, other times it\'s a deeper bow. Is there a specific rule about the angle? Does it depend on age or social status?',
+                author: 'Sarah J.',
+                likes: 24,
+                comments: [
+                    { author: 'Kim S.', content: 'Yes! The angle depends on respect level. Deeper bow = more respect.', time: '1h ago' },
+                    { author: 'John D.', content: 'I learned that 15° is casual, 30° is formal, and 45° is very formal!', time: '45m ago' },
+                    { author: 'Min J.', content: 'Don\'t worry too much! A slight nod is fine for most situations.', time: '20m ago' }
+                ],
+                time: '2h ago'
+            },
+            {
+                id: 2,
+                tag: 'Grammar',
+                title: 'Difference between 은/는 and 이/가',
+                content: 'This is still so confusing to me! Can someone explain it simply?',
+                fullContent: 'I\'ve been studying Korean for 6 months and I still can\'t understand when to use 은/는 vs 이/가. Every explanation I find online is too complicated. Can someone explain this in simple terms with examples?',
+                author: 'Mike T.',
+                likes: 156,
+                comments: [
+                    { author: 'Teacher Lee', content: '은/는 is for topics (what you\'re talking about), 이/가 is for subjects (who does the action).', time: '4h ago' },
+                    { author: 'Anna K.', content: 'Think of it this way: 나는 학생이에요 (I am a student - topic). 누가 왔어요? 친구가 왔어요 (Who came? Friend came - subject)', time: '3h ago' }
+                ],
+                time: '5h ago'
+            },
+            {
+                id: 3,
+                tag: 'Tips',
+                title: 'Best way to memorize vocabulary?',
+                content: 'Flashcards aren\'t working for me anymore. Any app suggestions?',
+                fullContent: 'I\'ve been using Anki for vocabulary but I feel like I\'m not retaining words well. I can recognize them in flashcards but can\'t use them in conversation. What methods do you use?',
+                author: 'Yuki M.',
+                likes: 42,
+                comments: [
+                    { author: 'Chris P.', content: 'Try writing sentences with each word! It helps with context.', time: '12h ago' },
+                    { author: 'Soo Y.', content: 'I use the words in real conversations (even if awkward). That\'s the best way!', time: '8h ago' }
+                ],
+                time: '1d ago'
+            },
+            {
+                id: 4,
+                tag: 'Culture',
+                title: 'Korean drinking culture explained',
+                content: 'What are the etiquette rules when drinking with Koreans?',
+                fullContent: 'I\'m going to a company dinner next week and I heard there are specific rules about drinking. Can someone explain the basics?',
+                author: 'David L.',
+                likes: 89,
+                comments: [
+                    { author: 'Park M.', content: 'Always pour for others, never yourself! And use two hands when receiving from elders.', time: '2d ago' }
+                ],
+                time: '2d ago'
+            },
+            {
+                id: 5,
+                tag: 'Grammar',
+                title: 'When to use 요 ending?',
+                content: 'Is it always necessary to add 요 at the end?',
+                fullContent: 'Sometimes I hear people drop the 요 ending even in polite conversation. When is it okay to not use it?',
+                author: 'Emma W.',
+                likes: 67,
+                comments: [],
+                time: '3d ago'
+            }
+        ],
+        sentences: [
+            {
+                kr: '안녕하세요, 만나서 반가워요.',
+                en: 'Hello, nice to meet you.',
+                difficulty: 'Easy'
+            },
+            {
+                kr: '이거 얼마예요?',
+                en: 'How much is this?',
+                difficulty: 'Easy'
+            },
+            {
+                kr: '한국 음식을 정말 좋아해요.',
+                en: 'I really like Korean food.',
+                difficulty: 'Medium'
+            }
+        ],
+        kcontentPosts: [
+            {
+                id: 101,
+                tag: 'K-pop',
+                title: 'NCT DREAM "Smoothie" lyrics meaning?',
+                content: '"Yes, I\'m a smoothie" - What does this mean in Korean context?',
+                fullContent: 'I have been listening to NCT DREAM new song "Smoothie" and I am confused about some lyrics. The chorus goes "Yes, I am a smoothie, smoothie, smoothie." I know they are mixing Korean and English, but what is the deeper meaning? Also, there is a line "달콤한 나의 적들을 씹어 삼켜" - can someone explain this metaphor?',
+                author: 'Kpop_Learner',
+                likes: 234,
+                comments: [
+                    { author: 'NCTzen_KR', content: '"달콤한 나의 적들을 씹어 삼켜" means "chew and swallow my sweet enemies." It is a metaphor about overcoming haters by turning negativity into strength!', time: '2h ago' },
+                    { author: 'Korean_Teacher_Min', content: 'The smoothie metaphor is brilliant! Just like blending different fruits, they are mixing different experiences (good and bad) to become stronger. 씹어 삼키다 (chew and swallow) is a powerful expression in Korean.', time: '1h ago' },
+                    { author: 'Mark_Lee_Fan', content: 'Mark rap part "가시밭길 위를 맨발로 걸어왔어" (walked barefoot on a thorny path) is so poetic. It shows their journey was not easy.', time: '45m ago' },
+                    { author: 'Linguistics_Nerd', content: 'Fun fact: The word play with "smoothie" sounds like "스무디" in Korean, and they use it to represent blending all their experiences into something sweet!', time: '20m ago' }
+                ],
+                time: '3h ago'
+            },
+            {
+                id: 102,
+                tag: 'K-drama',
+                title: 'Understanding "아이고" in different contexts',
+                content: 'I hear this in every drama but the meaning seems to change?',
+                fullContent: 'In Korean dramas, I constantly hear "아이고" but sometimes it seems like surprise, sometimes pain, sometimes just exasperation. How do I know which meaning it is?',
+                author: 'Drama_Addict',
+                likes: 178,
+                comments: [
+                    { author: 'Seoul_Native', content: 'It is all about tone! High pitch = surprise, low groan = pain/tiredness, quick = frustration. Context is everything!', time: '5h ago' },
+                    { author: 'Kim_Soo', content: 'My grandma says "아이고" like 50 times a day. It is basically a universal expression for any emotion!', time: '4h ago' }
+                ],
+                time: '6h ago'
+            },
+            {
+                id: 103,
+                tag: 'K-pop',
+                title: 'BTS "Spring Day" hidden meanings',
+                content: 'Is this song really about the Sewol Ferry tragedy?',
+                fullContent: 'I have heard that BTS "Spring Day" has deeper meanings related to Korean history. Can someone explain the symbolism?',
+                author: 'ARMY_Forever',
+                likes: 445,
+                comments: [
+                    { author: 'History_Buff', content: 'While BTS never confirmed it, many Koreans interpret it as a tribute. The yellow ribbons, the imagery of waiting - it all connects.', time: '1d ago' },
+                    { author: 'Poetry_Lover', content: 'The line "보고 싶다" (I miss you) hits different when you understand the cultural context of longing and loss in Korean society.', time: '1d ago' }
+                ],
+                time: '1d ago'
+            },
+            {
+                id: 104,
+                tag: 'K-drama',
+                title: 'Why do characters in dramas always eat ramyeon?',
+                content: 'Is "ramyeon" code for something else?',
+                fullContent: 'In every K-drama, when someone asks "Do you want to come up for ramyeon?" it seems like it means more than just eating noodles. What is the cultural context here?',
+                author: 'Curious_Viewer',
+                likes: 312,
+                comments: [
+                    { author: 'Korean_Culture_101', content: 'Haha yes! "라면 먹고 갈래?" (Want to eat ramyeon?) is often used as a subtle invitation to spend more time together, sometimes with romantic implications', time: '2d ago' },
+                    { author: 'Seoul_Student', content: 'But sometimes it literally just means ramyeon! You have to read the situation', time: '2d ago' }
+                ],
+                time: '2d ago'
+            },
+            {
+                id: 105,
+                tag: 'K-pop',
+                title: 'NewJeans "Ditto" - What does the title mean?',
+                content: 'Is "ditto" a Korean word or English?',
+                fullContent: 'NewJeans song "Ditto" - I know "ditto" means "same" in English, but how does it relate to the Korean lyrics "똑같은 마음"?',
+                author: 'NewJeans_Stan',
+                likes: 189,
+                comments: [
+                    { author: 'Bilingual_Teacher', content: '"Ditto" and "똑같은" both mean "same"! They are playing with bilingual wordplay. The song is about mutual feelings.', time: '3d ago' }
+                ],
+                time: '3d ago'
+            }
+        ]
+    },
+
+    init() {
+        this.cacheDOM();
+        this.bindEvents();
+        this.renderView('home');
+        this.startOnlineUserSimulation();
+    },
+
+    startOnlineUserSimulation() {
+        // Simulate online user count changes
+        setInterval(() => {
+            const change = Math.floor(Math.random() * 5) - 2; // -2 to +2
+            this.state.onlineUsers = Math.max(100, Math.min(200, this.state.onlineUsers + change));
+            this.updateOnlineUserCount();
+        }, 5000); // Update every 5 seconds
+    },
+
+    updateOnlineUserCount() {
+        // 클래스 기반으로 모든 온라인 사용자 카운터 업데이트
+        const counters = document.querySelectorAll('.online-users-count');
+        counters.forEach(counter => {
+            counter.textContent = this.state.onlineUsers;
+        });
+    },
+
+    cacheDOM() {
+        this.container = document.getElementById('view-container');
+        this.navLinks = document.querySelectorAll('.nav-links li');
+    },
+
+    bindEvents() {
+        this.navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const view = link.dataset.view;
+                this.handleNavClick(link, view);
+            });
+        });
+    },
+
+    handleNavClick(activeLink, viewName) {
+        // Update Active State
+        this.navLinks.forEach(l => l.classList.remove('active'));
+        activeLink.classList.add('active');
+
+        // Reset post detail view
+        this.state.currentPost = null;
+
+        // Render View
+        this.renderView(viewName);
+    },
+
+    handlePostClick(postId) {
+        // Search in both regular posts and K-content posts
+        let post = this.data.posts.find(p => p.id === postId);
+        if (!post) {
+            post = this.data.kcontentPosts.find(p => p.id === postId);
+        }
+
+        if (post) {
+            this.state.currentPost = post;
+            this.renderPostDetail(post);
+        }
+    },
+
+    handleLikeClick(postId) {
+        // Search in both regular posts and K-content posts
+        let post = this.data.posts.find(p => p.id === postId);
+        if (!post) {
+            post = this.data.kcontentPosts.find(p => p.id === postId);
+        }
+        if (!post) return;
+
+        const isLiked = this.state.user.likedPosts.includes(postId);
+
+        if (isLiked) {
+            // Unlike
+            this.state.user.likedPosts = this.state.user.likedPosts.filter(id => id !== postId);
+            post.likes--;
+        } else {
+            // Like
+            this.state.user.likedPosts.push(postId);
+            post.likes++;
+        }
+
+        // Re-render current view
+        if (this.state.currentPost && this.state.currentPost.id === postId) {
+            this.renderPostDetail(post);
+        } else {
+            this.renderView(this.state.currentView);
+        }
+    },
+
+    handleCommentSubmit(postId, commentText) {
+        // Search in both regular posts and K-content posts
+        let post = this.data.posts.find(p => p.id === postId);
+        if (!post) {
+            post = this.data.kcontentPosts.find(p => p.id === postId);
+        }
+        if (!post || !commentText.trim()) return;
+
+        post.comments.push({
+            author: this.state.user.name,
+            content: commentText,
+            time: 'Just now'
+        });
+
+        this.renderPostDetail(post);
+    },
+
+    renderView(viewName) {
+        this.container.innerHTML = ''; // Clear current view
+        this.container.classList.remove('fade-in');
+        void this.container.offsetWidth; // Trigger reflow
+        this.container.classList.add('fade-in');
+
+        switch (viewName) {
+            case 'home':
+                this.renderHome();
+                break;
+            case 'sentences':
+                this.renderSentences();
+                break;
+            case 'pronunciation':
+                this.renderPronunciation();
+                break;
+            case 'grammar':
+            case 'tips':
+            case 'culture':
+            case 'kcontent':
+                this.renderFeed(viewName); // Re-use feed layout for these
+                break;
+            default:
+                this.renderHome();
+        }
+    },
+
+    renderHome() {
+        const html = `
+            <div class="section hero" style="background-image: url('img/header.png'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative; min-height: 500px;">
+                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.4);"></div>
+                <div class="hero-content" style="position: relative; z-index: 2; padding-top: 50px;">
+                    <h1 class="typography-headline" style="color: white; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">Welcome back, ${this.state.user.name}!</h1>
+                    <p class="typography-intro" style="color: rgba(255,255,255,0.9); text-shadow: 0 1px 5px rgba(0,0,0,0.5);">Ready to continue your daily streak? You're doing great!</p>
+                    <button class="button" style="margin-top: 30px;" aria-label="Start Daily Practice">
+                        Start Daily Practice
+                    </button>
+                </div>
+            </div>
+
+            <div class="section-content" style="padding-top: 17px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+                    <h2 class="typography-headline-reduced">Trending Discussions</h2>
+                    <div style="display: flex; align-items: center; gap: 8px; color: var(--text-secondary); font-size: 14px;">
+                        <div style="width: 8px; height: 8px; background: #30d158; border-radius: 50%; animation: pulse 2s infinite;" aria-hidden="true"></div>
+                        <span><span class="online-users-count">${this.state.onlineUsers}</span> online now</span>
+                    </div>
+                </div>
+                <div class="grid-3-up">
+                    ${this.data.posts.slice(0, 6).map(post => this.createPostCard(post)).join('')}
+                </div>
+            </div>
+        `;
+        this.container.innerHTML = html;
+        this.bindPostEvents();
+    },
+
+    renderSentences() {
+        const html = `
+            <div class="section-content">
+                <h2 class="typography-headline-reduced">Sentence Practice</h2>
+                <p class="typography-intro" style="margin-bottom: 40px;">Master Korean sentences with native audio.</p>
+                
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    ${this.data.sentences.map(s => `
+                        <div class="sentence-card">
+                            <span class="tag">${s.difficulty}</span>
+                            <div class="sentence-kr">${s.kr}</div>
+                            <div class="sentence-en">${s.en}</div>
+                            <div class="controls">
+                                <button class="icon-btn primary" aria-label="음성 재생"><i class="ph-fill ph-speaker-high" aria-hidden="true"></i></button>
+                                <button class="icon-btn" aria-label="음성 녹음"><i class="ph-fill ph-microphone" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        this.container.innerHTML = html;
+    },
+
+    renderPronunciation() {
+        this.container.innerHTML = `
+            <div class="section-content pronunciation-container">
+                <h2 class="typography-headline-reduced">Pronunciation Lab</h2>
+                <p class="typography-intro" style="margin-bottom: 60px;">Record your voice and get AI feedback on your intonation.</p>
+                
+                <div class="record-btn-wrapper">
+                    <div class="record-ripple"></div>
+                    <button class="record-btn" aria-label="음성 녹음 시작">
+                        <i class="ph-fill ph-microphone" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <p class="typography-body">Tap to Record</p>
+            </div>
+        `;
+    },
+
+    renderFeed(category) {
+        const categoryTitle = category.charAt(0).toUpperCase() + category.slice(1);
+
+        // Determine which posts to show
+        let postsToShow;
+        if (category === 'kcontent') {
+            postsToShow = this.data.kcontentPosts;
+        } else {
+            const filteredPosts = this.data.posts.filter(p =>
+                category === 'culture' ? p.tag === 'Culture' :
+                    category === 'grammar' ? p.tag === 'Grammar' :
+                        category === 'tips' ? p.tag === 'Tips' : true
+            );
+            postsToShow = filteredPosts.length > 0 ? filteredPosts : this.data.posts;
+        }
+
+        const displayTitle = category === 'kcontent' ? 'K-content' : categoryTitle;
+
+        const html = `
+            <div class="section-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+                    <div>
+                        <h2 class="typography-headline-reduced">${displayTitle} Community</h2>
+                        <div style="display: flex; align-items: center; gap: 8px; color: var(--text-secondary); font-size: 14px; margin-top: 8px;">
+                            <div style="width: 8px; height: 8px; background: #30d158; border-radius: 50%; animation: pulse 2s infinite;" aria-hidden="true"></div>
+                            <span><span class="online-users-count">${this.state.onlineUsers}</span> online now</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <span class="tag hot">Hot</span>
+                        <span class="tag new">New</span>
+                    </div>
+                </div>
+                <div class="grid-3-up">
+                    ${postsToShow.map(post => this.createPostCard(post)).join('')}
+                </div>
+            </div>
+        `;
+        this.container.innerHTML = html;
+        this.bindPostEvents();
+    },
+
+    createPostCard(post) {
+        const isLiked = this.state.user.likedPosts.includes(post.id);
+        const commentCount = Array.isArray(post.comments) ? post.comments.length : post.comments;
+
+        return `
+            <div class="card post-card" data-post-id="${post.id}" style="cursor: pointer;">
+                    <div class="card-header">
+                    <span class="tag">${post.tag}</span>
+                    <button class="icon-btn-menu" aria-label="더보기 메뉴" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; padding: 4px;">
+                        <i class="ph-fill ph-dots-three" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <h3 class="typography-label" style="margin-bottom: 8px;">${post.title}</h3>
+                <p class="typography-body" style="margin-bottom: 20px; flex-grow: 1;">${post.content}</p>
+                <div class="card-footer">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 24px; height: 24px; background: #333; border-radius: 50%; overflow: hidden;">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${post.author}" alt="${post.author}의 프로필 이미지" style="width: 100%; height: 100%;">
+                        </div>
+                        <span style="font-size: 12px; color: var(--text-secondary);">${post.author}</span>
+                    </div>
+                    <div class="card-stats">
+                        <button class="like-btn" data-post-id="${post.id}" aria-label="${isLiked ? '좋아요 취소' : '좋아요'}" style="background: none; border: none; cursor: pointer; color: ${isLiked ? '#ff3b30' : 'inherit'}; padding: 0; display: flex; align-items: center; gap: 4px;">
+                            <i class="${isLiked ? 'ph-fill' : 'ph'} ph-heart" aria-hidden="true"></i> ${post.likes}
+                        </button>
+                        <span aria-label="${commentCount}개의 댓글"><i class="ph-fill ph-chat-circle" aria-hidden="true"></i> ${commentCount}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    },
+
+    renderPostDetail(post) {
+        const isLiked = this.state.user.likedPosts.includes(post.id);
+
+        const html = `
+            <div class="section-content">
+                <button class="button secondary" onclick="app.renderView(app.state.currentView)" style="margin-bottom: 20px; padding: 8px 16px;" aria-label="뒤로 가기">
+                    <i class="ph ph-arrow-left" aria-hidden="true"></i> Back
+                </button>
+                
+                <div class="card" style="max-width: 800px; margin: 0 auto;">
+                    <div class="card-header">
+                        <span class="tag">${post.tag}</span>
+                        <span style="font-size: 12px; color: var(--text-secondary);">${post.time}</span>
+                    </div>
+                    
+                    <h1 class="typography-headline-reduced" style="margin: 20px 0;">${post.title}</h1>
+                    
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <div style="width: 40px; height: 40px; background: #333; border-radius: 50%; overflow: hidden;">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${post.author}" alt="${post.author}의 프로필 이미지" style="width: 100%; height: 100%;">
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; color: var(--text-primary);">${post.author}</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">${post.time}</div>
+                        </div>
+                    </div>
+                    
+                    <p class="typography-body" style="font-size: 19px; line-height: 1.6; color: var(--text-primary); margin-bottom: 30px;">
+                        ${post.fullContent}
+                    </p>
+                    
+                    <div style="display: flex; gap: 20px; padding: 20px 0; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <button class="like-btn" data-post-id="${post.id}" aria-label="${isLiked ? '좋아요 취소' : '좋아요'}" style="background: none; border: none; color: ${isLiked ? '#ff3b30' : 'var(--text-secondary)'}; cursor: pointer; font-size: 16px; display: flex; align-items: center; gap: 8px; transition: color 0.2s;">
+                            <i class="${isLiked ? 'ph-fill' : 'ph'} ph-heart" style="font-size: 24px;" aria-hidden="true"></i>
+                            <span>${post.likes} likes</span>
+                        </button>
+                        <div style="color: var(--text-secondary); font-size: 16px; display: flex; align-items: center; gap: 8px;" aria-label="${post.comments.length}개의 댓글">
+                            <i class="ph-fill ph-chat-circle" style="font-size: 24px;" aria-hidden="true"></i>
+                            <span>${post.comments.length} comments</span>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 40px;">
+                        <h3 class="typography-label" style="margin-bottom: 20px;">Comments</h3>
+                        
+                        ${post.comments.map(comment => `
+                            <div style="padding: 20px; background: rgba(255,255,255,0.03); border-radius: 12px; margin-bottom: 12px;">
+                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                                    <div style="width: 32px; height: 32px; background: #333; border-radius: 50%; overflow: hidden;">
+                                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${comment.author}" alt="${comment.author}의 프로필 이미지" style="width: 100%; height: 100%;">
+                                    </div>
+                                    <div>
+                                        <div style="font-weight: 600; font-size: 14px;">${comment.author}</div>
+                                        <div style="font-size: 12px; color: var(--text-secondary);">${comment.time}</div>
+                                    </div>
+                                </div>
+                                <p style="color: var(--text-primary); line-height: 1.5;">${comment.content}</p>
+                            </div>
+                        `).join('')}
+                        
+                        <div style="margin-top: 30px;">
+                            <textarea id="comment-input" placeholder="Add a comment..." aria-label="댓글 입력" style="width: 100%; min-height: 100px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; color: var(--text-primary); font-size: 15px; font-family: inherit; resize: vertical;"></textarea>
+                            <button class="button" onclick="app.handleCommentSubmit(${post.id}, document.getElementById('comment-input').value)" style="margin-top: 12px;" aria-label="댓글 게시">
+                                Post Comment
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        this.container.innerHTML = html;
+        this.bindPostEvents();
+    },
+
+    bindPostEvents() {
+        // Bind post card clicks
+        document.querySelectorAll('.post-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                // Don't trigger if clicking on like button
+                if (e.target.closest('.like-btn')) return;
+
+                const postId = parseInt(card.dataset.postId);
+                this.handlePostClick(postId);
+            });
+        });
+
+        // Bind like button clicks
+        document.querySelectorAll('.like-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const postId = parseInt(btn.dataset.postId);
+                this.handleLikeClick(postId);
+            });
+        });
+    }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    app.init();
+});
