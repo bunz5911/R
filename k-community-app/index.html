@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko" class="theme-dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAKorean</title>
+
+    <!-- Fonts (Simulating SF Pro with available web fonts) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Noto+Sans+KR:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Font Patch for non-Mac users to simulate SF Pro */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Noto Sans KR", sans-serif;
+        }
+
+        .typography-headline,
+        .typography-headline-reduced,
+        .typography-label {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Noto Sans KR", sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Global Header (Apple Style) -->
+    <header id="globalheader">
+        <div class="gh-content">
+            <div class="gh-logo">
+                <a href="../index.html" style="color: white; font-weight: 600; font-size: 19px; display: flex; align-items: center; gap: 8px;" aria-label="메인 앱으로 이동">
+                    <i class="ph ph-arrow-left" style="font-size: 16px;" aria-hidden="true"></i>
+                    <span>RAKorean Community</span>
+                </a>
+            </div>
+            <ul class="gh-nav nav-links">
+                <li class="active" data-view="home"><a href="#">Home</a></li>
+                <li data-view="sentences"><a href="#">Sentences</a></li>
+                <li data-view="pronunciation"><a href="#">Speaking</a></li>
+                <li data-view="grammar"><a href="#">Grammar</a></li>
+                <li data-view="culture"><a href="#">Culture</a></li>
+                <li data-view="kcontent"><a href="#">K-content</a></li>
+            </ul>
+            <div class="gh-actions">
+                <a href="#" style="font-size: 12px; color: #2997ff;">Sign In</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div id="view-container" class="fade-in">
+            <!-- Dynamic Content injected by script.js -->
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <span>Copyright © 2025 RAKorean Storynara Inc. All rights reserved.</span>
+            <div style="display: flex; gap: 20px;">
+                <a href="#" style="color: var(--text-secondary);">Privacy Policy</a>
+                <a href="#" style="color: var(--text-secondary);">Terms of Use</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
