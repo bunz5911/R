@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-            background: #f5f7fa;
+            background: #111827; /* 메인 앱과 동일한 다크모드 배경 */
             min-height: 100vh;
             min-height: 100dvh; /* 동적 뷰포트 */
             padding: 20px;
@@ -21,6 +21,7 @@
             padding-bottom: max(60px, env(safe-area-inset-bottom)); /* 하단 넉넉한 여백 */
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+            color: #f9fafb; /* 다크모드 텍스트 */
         }
 
         .profile-container {
@@ -55,13 +56,13 @@
             width: 100px;
             height: 100px;
             border-radius: 50%;
-            background: white;
+            background: #1f2937; /* 다크모드 아바타 배경 */
             margin: 0 auto 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 48px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
         }
 
         .profile-name {
@@ -76,20 +77,20 @@
         }
 
         .section {
-            background: white;
+            background: #1f2937; /* 다크모드 카드 배경 */
             padding: 32px;
             border-radius: 16px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
         .section-title {
             font-size: 20px;
             font-weight: 800;
-            color: #333;
+            color: #f9fafb; /* 다크모드 텍스트 */
             margin-bottom: 20px;
             padding-bottom: 12px;
-            border-bottom: 2px solid #f0f0f0;
+            border-bottom: 2px solid #374151; /* 다크모드 보더 */
         }
 
         .info-grid {
@@ -100,7 +101,7 @@
         }
 
         .info-card {
-            background: #f8f9fa;
+            background: #374151; /* 다크모드 카드 배경 */
             padding: 20px;
             border-radius: 12px;
             text-align: center;
@@ -108,7 +109,7 @@
 
         .info-label {
             font-size: 13px;
-            color: #888;
+            color: #9ca3af; /* 다크모드 텍스트 */
             margin-bottom: 8px;
             font-weight: 600;
         }
@@ -116,7 +117,7 @@
         .info-value {
             font-size: 24px;
             font-weight: 800;
-            color: #333;
+            color: #f9fafb; /* 다크모드 텍스트 */
         }
 
         .info-value.highlight {
