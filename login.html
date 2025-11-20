@@ -343,6 +343,29 @@
     </div>
 
     <script>
+        // 페이지 로드 시 즉시 localhost:3000 체크 및 차단
+        (function() {
+            const hostname = window.location.hostname;
+            const port = window.location.port;
+            
+            // localhost:3000으로 접근한 경우 즉시 Netlify URL로 리다이렉트
+            if (hostname === 'localhost' && port === '3000') {
+                console.error('❌ localhost:3000 접근 감지 - Netlify URL로 강제 리다이렉트');
+                window.location.replace('https://marvelous-cat-d90804.netlify.app/login.html');
+                return;
+            }
+            
+            // 프로덕션 환경에서 localhost로 리다이렉트된 경우
+            if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                // 포트가 8080이 아니면 Netlify로 리다이렉트
+                if (port !== '8080' && port !== '') {
+                    console.error('❌ 잘못된 로컬 포트 감지:', port);
+                    window.location.replace('https://marvelous-cat-d90804.netlify.app/login.html');
+                    return;
+                }
+            }
+        })();
+        
         // 배포 환경 감지: Netlify에서는 Render 백엔드 사용, 로컬에서는 localhost 사용
         const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
             ? 'http://localhost:8080/api'
@@ -587,21 +610,33 @@
                 return;
             }
             
+            // 현재 URL 검증
+            const currentOrigin = window.location.origin;
+            const currentHostname = window.location.hostname;
+            const currentPort = window.location.port;
+            
+            // localhost:3000인 경우 차단
+            if (currentHostname === 'localhost' && currentPort === '3000') {
+                console.error('❌ localhost:3000에서 Google 로그인 시도 차단');
+                window.location.replace('https://marvelous-cat-d90804.netlify.app/login.html');
+                return;
+            }
+            
             try {
-                // 올바른 리다이렉트 URL 설정 (현재 페이지의 origin 사용)
-                const currentOrigin = window.location.origin;
-                const currentPath = window.location.pathname;
-                const redirectUrl = currentOrigin + currentPath;
+                // 프로덕션 환경에서는 항상 Netlify URL 사용
+                let redirectUrl;
+                if (currentHostname === 'localhost' || currentHostname === '127.0.0.1') {
+                    // 로컬 환경
+                    redirectUrl = currentOrigin + window.location.pathname;
+                } else {
+                    // 프로덕션 환경 - Netlify URL 강제 사용
+                    redirectUrl = 'https://marvelous-cat-d90804.netlify.app' + window.location.pathname;
+                }
                 
                 console.log('🔐 Google 로그인 시작');
                 console.log('🌐 현재 origin:', currentOrigin);
-                console.log('📍 현재 pathname:', currentPath);
+                console.log('📍 현재 hostname:', currentHostname);
                 console.log('🔗 리다이렉트 URL:', redirectUrl);
-                
-                // localhost가 아닌 경우에만 진행
-                if (!currentOrigin.includes('localhost') && !currentOrigin.includes('127.0.0.1')) {
-                    console.log('✅ 프로덕션 환경에서 Google 로그인 시작');
-                }
                 
                 const { data, error } = await supabase.auth.signInWithOAuth({
                     provider: 'google',
