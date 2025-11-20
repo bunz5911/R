@@ -620,6 +620,9 @@ const app = {
     async renderFeed(category) {
         const categoryTitle = category.charAt(0).toUpperCase() + category.slice(1);
 
+        // Supabase에서 게시글 로드
+        await this.loadPostsFromSupabase();
+
         // Determine which posts to show
         let postsToShow;
         if (category === 'kcontent') {
