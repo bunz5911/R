@@ -255,8 +255,30 @@ const app = {
     },
 
     async init() {
+        // config.js 로드를 기다림 (동기 로드이지만 안전을 위해 확인)
+        if (typeof CONFIG === 'undefined') {
+            console.warn('⚠️ CONFIG가 아직 로드되지 않았습니다. 잠시 대기합니다...');
+            await new Promise((resolve) => {
+                let attempts = 0;
+                const checkConfig = setInterval(() => {
+                    attempts++;
+                    if (typeof CONFIG !== 'undefined' || attempts > 30) {
+                        clearInterval(checkConfig);
+                        resolve();
+                    }
+                }, 100);
+            });
+        }
+        
         // Supabase 초기화
-        initSupabase();
+        const supabaseInitialized = initSupabase();
+        
+        if (!supabaseInitialized) {
+            console.error('❌ Supabase 초기화 실패. 게시판 기능이 제한됩니다.');
+            console.log('💡 해결 방법:');
+            console.log('   1. 메인 앱에서 먼저 로그인하세요');
+            console.log('   2. config.js 파일이 ../config.js 경로에 있는지 확인하세요');
+        }
         
         // 로그인 상태 확인
         await checkAuthStatus();
@@ -264,7 +286,7 @@ const app = {
         this.cacheDOM();
         this.bindEvents();
         await this.loadPostsFromSupabase(); // Supabase에서 게시글 로드
-        this.renderView('home');
+        await this.renderView('home');
         this.startOnlineUserSimulation();
     },
 
