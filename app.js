@@ -98,6 +98,9 @@ function updateUI() {
     const kContentBtn = document.getElementById('kContentBtn');
     if (kContentBtn) kContentBtn.innerHTML = `🎬 ${t('nav.kContent')}`;
     
+    const communityBtnText = document.getElementById('communityBtnText');
+    if (communityBtnText) communityBtnText.textContent = t('nav.community');
+    
     const adminBtn = document.getElementById('adminBtn');
     if (adminBtn) adminBtn.innerHTML = `🛠️ ${t('nav.admin')}`;
     
