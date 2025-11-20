@@ -599,13 +599,29 @@ const app = {
                             <span><span class="online-users-count">${this.state.onlineUsers}</span> online now</span>
                         </div>
                     </div>
-                    <div style="display: flex; gap: 10px;">
+                    <div style="display: flex; gap: 10px; align-items: center;">
                         <span class="tag hot">Hot</span>
                         <span class="tag new">New</span>
+                        ${isAuthenticated ? `
+                            <button class="button" onclick="app.showCreatePostModal('${category}')" style="padding: 8px 16px; font-size: 14px;">
+                                <i class="ph ph-plus" style="margin-right: 4px;"></i> 새 게시글
+                            </button>
+                        ` : ''}
                     </div>
                 </div>
                 <div class="grid-3-up">
-                    ${postsToShow.map(post => this.createPostCard(post)).join('')}
+                    ${postsToShow.length > 0 ? postsToShow.map(post => this.createPostCard(post)).join('') : `
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--text-secondary);">
+                            <p style="font-size: 18px; margin-bottom: 20px;">아직 게시글이 없습니다.</p>
+                            ${isAuthenticated ? `
+                                <button class="button" onclick="app.showCreatePostModal('${category}')">
+                                    첫 게시글 작성하기
+                                </button>
+                            ` : `
+                                <p style="font-size: 14px;">게시글을 작성하려면 <a href="../login.html" style="color: var(--c-blue-light);">로그인</a>이 필요합니다.</p>
+                            `}
+                        </div>
+                    `}
                 </div>
             </div>
         `;
@@ -870,6 +886,186 @@ const app = {
         if (diffDays < 7) return `${diffDays}d ago`;
         
         return date.toLocaleDateString();
+    },
+    
+    // 게시글 작성 모달 표시
+    showCreatePostModal(category) {
+        if (!isAuthenticated || !currentUserId) {
+            alert('로그인이 필요합니다.');
+            window.location.href = '../login.html';
+            return;
+        }
+        
+        const categoryTitle = category === 'kcontent' ? 'K-content' : category.charAt(0).toUpperCase() + category.slice(1);
+        
+        const modal = document.createElement('div');
+        modal.id = 'createPostModal';
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        `;
+        
+        modal.innerHTML = `
+            <div style="background: var(--bg-card); border-radius: 18px; padding: 40px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                    <h2 class="typography-headline-reduced" style="margin: 0;">새 게시글 작성</h2>
+                    <button onclick="document.getElementById('createPostModal').remove()" style="background: none; border: none; color: var(--text-secondary); font-size: 24px; cursor: pointer; padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                        <i class="ph ph-x"></i>
+                    </button>
+                </div>
+                
+                <form id="createPostForm" onsubmit="app.handleCreatePost(event, '${category}'); return false;">
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; color: var(--text-secondary); font-size: 14px;">카테고리</label>
+                        <div style="display: inline-block; padding: 8px 16px; background: rgba(255,255,255,0.1); border-radius: 8px; color: var(--text-primary);">
+                            ${categoryTitle}
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label for="postTitle" style="display: block; margin-bottom: 8px; color: var(--text-secondary); font-size: 14px;">제목</label>
+                        <input 
+                            type="text" 
+                            id="postTitle" 
+                            required
+                            style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text-primary); font-size: 16px; font-family: inherit;"
+                            placeholder="게시글 제목을 입력하세요"
+                        />
+                    </div>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <label for="postContent" style="display: block; margin-bottom: 8px; color: var(--text-secondary); font-size: 14px;">내용</label>
+                        <textarea 
+                            id="postContent" 
+                            required
+                            rows="10"
+                            style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text-primary); font-size: 15px; font-family: inherit; resize: vertical;"
+                            placeholder="게시글 내용을 입력하세요"
+                        ></textarea>
+                    </div>
+                    
+                    <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                        <button 
+                            type="button" 
+                            onclick="document.getElementById('createPostModal').remove()"
+                            class="button secondary"
+                            style="padding: 12px 24px;"
+                        >
+                            취소
+                        </button>
+                        <button 
+                            type="submit" 
+                            class="button"
+                            style="padding: 12px 24px;"
+                        >
+                            게시하기
+                        </button>
+                    </div>
+                </form>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // 모달 외부 클릭 시 닫기
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
+    },
+    
+    // 게시글 작성 처리
+    async handleCreatePost(event, category) {
+        event.preventDefault();
+        
+        if (!isAuthenticated || !currentUserId) {
+            alert('로그인이 필요합니다.');
+            return;
+        }
+        
+        const title = document.getElementById('postTitle').value.trim();
+        const content = document.getElementById('postContent').value.trim();
+        
+        if (!title || !content) {
+            alert('제목과 내용을 모두 입력해주세요.');
+            return;
+        }
+        
+        // 카테고리 매핑
+        const categoryMapping = {
+            'grammar': 'grammar',
+            'culture': 'culture',
+            'tips': 'tips',
+            'kcontent': 'kcontent',
+            'sentences': 'sentences',
+            'speaking': 'speaking'
+        };
+        
+        const dbCategory = categoryMapping[category] || 'grammar';
+        
+        try {
+            if (!supabase) {
+                alert('Supabase가 초기화되지 않았습니다.');
+                return;
+            }
+            
+            // 게시글 작성
+            const { data: newPost, error } = await supabase
+                .from('community_posts')
+                .insert({
+                    user_id: currentUserId,
+                    category: dbCategory,
+                    title: title,
+                    content: content
+                })
+                .select(`
+                    *,
+                    profiles:user_id (
+                        display_name,
+                        email
+                    )
+                `)
+                .single();
+            
+            if (error) throw error;
+            
+            // 새 게시글을 데이터에 추가
+            const post = {
+                id: newPost.id,
+                tag: this.mapCategoryToTag(newPost.category),
+                title: newPost.title,
+                content: newPost.content.length > 100 ? newPost.content.substring(0, 100) + '...' : newPost.content,
+                fullContent: newPost.content,
+                author: newPost.profiles?.display_name || newPost.profiles?.email?.split('@')[0] || 'Anonymous',
+                likes: newPost.likes_count || 0,
+                comments: [],
+                time: 'Just now'
+            };
+            
+            this.data.posts.unshift(post); // 맨 앞에 추가
+            
+            // 모달 닫기
+            document.getElementById('createPostModal').remove();
+            
+            // 현재 뷰 다시 렌더링
+            this.renderView(this.state.currentView);
+            
+            alert('게시글이 작성되었습니다!');
+        } catch (error) {
+            console.error('❌ 게시글 작성 실패:', error);
+            alert('게시글 작성 중 오류가 발생했습니다: ' + error.message);
+        }
     },
     
     bindPostEvents() {
