@@ -803,7 +803,7 @@ const app = {
         `;
     },
 
-    renderPostDetail(post) {
+    async renderPostDetail(post) {
         const isLiked = this.state.user.likedPosts.includes(post.id);
         // post.id를 문자열로 변환 (UUID는 문자열)
         const postId = String(post.id);
