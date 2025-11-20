@@ -492,9 +492,14 @@
             
             try {
                 // 올바른 리다이렉트 URL 설정 (로컬: 8080, 프로덕션: 실제 도메인)
-                const redirectUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                const redirectUrl = isLocal
                     ? 'http://localhost:8080/login.html'
                     : window.location.origin + '/login.html';
+                
+                console.log('🔐 Google 로그인 리다이렉트 URL:', redirectUrl);
+                console.log('📍 현재 환경:', isLocal ? '로컬' : '프로덕션');
+                console.log('🌐 현재 origin:', window.location.origin);
                 
                 const { data, error } = await supabase.auth.signInWithOAuth({
                     provider: 'google',
