@@ -939,13 +939,7 @@ const app = {
             // 모든 게시글 가져오기
             const { data: posts, error } = await supabase
                 .from('community_posts')
-                .select(`
-                    *,
-                    profiles:user_id (
-                        display_name,
-                        email
-                    )
-                `)
+                .select('*')
                 .order('created_at', { ascending: false })
                 .limit(100);
             
@@ -953,17 +947,37 @@ const app = {
             
             // 데이터 변환
             if (posts && posts.length > 0) {
-                this.state.posts = posts.map(post => ({
-                    id: post.id,
-                    tag: this.mapCategoryToTag(post.category),
-                    title: post.title,
-                    content: post.content.length > 100 ? post.content.substring(0, 100) + '...' : post.content,
-                    fullContent: post.content,
-                    author: post.profiles?.display_name || post.profiles?.email?.split('@')[0] || 'Anonymous',
-                    likes: post.likes_count || 0,
-                    comments: [], // 댓글은 별도로 로드
-                    time: this.formatTimeAgo(post.created_at)
-                }));
+                // 각 게시글의 작성자 프로필 정보 조회
+                const postsWithProfiles = await Promise.all(
+                    posts.map(async (post) => {
+                        let authorName = 'Anonymous';
+                        if (post.user_id) {
+                            const { data: profile } = await supabase
+                                .from('profiles')
+                                .select('display_name, email')
+                                .eq('id', post.user_id)
+                                .single();
+                            
+                            if (profile) {
+                                authorName = profile.display_name || profile.email?.split('@')[0] || 'Anonymous';
+                            }
+                        }
+                        
+                        return {
+                            id: post.id,
+                            tag: this.mapCategoryToTag(post.category),
+                            title: post.title,
+                            content: post.content.length > 100 ? post.content.substring(0, 100) + '...' : post.content,
+                            fullContent: post.content,
+                            author: authorName,
+                            likes: post.likes_count || 0,
+                            comments: [], // 댓글은 별도로 로드
+                            time: this.formatTimeAgo(post.created_at)
+                        };
+                    })
+                );
+                
+                this.state.posts = postsWithProfiles;
                 
                 // this.data.posts에도 동기화 (하위 호환성)
                 this.data.posts = this.state.posts;
