@@ -628,11 +628,8 @@
             }
             
             try {
-                // 올바른 리다이렉트 URL 설정 (로컬: 8080, 프로덕션: 실제 도메인)
-                const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-                const redirectUrl = isLocal
-                    ? 'http://localhost:8080/signup.html'
-                    : window.location.origin + '/signup.html';
+                // 올바른 리다이렉트 URL 설정 (현재 페이지의 origin 사용)
+                const redirectUrl = window.location.origin + window.location.pathname;
                 
                 console.log('🔐 Google 회원가입 리다이렉트 URL:', redirectUrl);
                 console.log('📍 현재 환경:', isLocal ? '로컬' : '프로덕션');
