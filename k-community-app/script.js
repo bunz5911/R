@@ -864,10 +864,19 @@ const app = {
         // 댓글 작성 버튼 이벤트 바인딩
         const commentSubmitBtn = document.getElementById('comment-submit-btn');
         if (commentSubmitBtn) {
-            commentSubmitBtn.addEventListener('click', () => {
+            // 기존 이벤트 리스너 제거 (중복 방지)
+            const newBtn = commentSubmitBtn.cloneNode(true);
+            commentSubmitBtn.parentNode.replaceChild(newBtn, commentSubmitBtn);
+            
+            newBtn.addEventListener('click', async () => {
                 const commentInput = document.getElementById('comment-input');
-                if (commentInput) {
-                    this.handleCommentSubmit(postId, commentInput.value);
+                if (commentInput && commentInput.value.trim()) {
+                    console.log('💬 댓글 작성:', postId, commentInput.value);
+                    await this.handleCommentSubmit(postId, commentInput.value);
+                    // 댓글 입력 필드 초기화
+                    commentInput.value = '';
+                } else {
+                    alert('댓글 내용을 입력해주세요.');
                 }
             });
         }
