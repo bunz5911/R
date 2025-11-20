@@ -357,7 +357,25 @@
         
         // Supabase 초기화 (설정된 경우만)
         if (typeof CONFIG !== 'undefined' && CONFIG.SUPABASE_URL && CONFIG.SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
-            supabase = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+            // 현재 origin을 사용하여 리다이렉트 URL 설정
+            const currentOrigin = window.location.origin;
+            const currentPath = window.location.pathname;
+            const redirectUrl = currentOrigin + currentPath;
+            
+            console.log('🔧 Supabase 클라이언트 초기화');
+            console.log('🌐 현재 origin:', currentOrigin);
+            console.log('📍 현재 pathname:', currentPath);
+            console.log('🔗 리다이렉트 URL:', redirectUrl);
+            
+            // Supabase 클라이언트 생성 시 auth 옵션에 redirectTo 설정
+            supabase = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
+                auth: {
+                    redirectTo: redirectUrl,
+                    autoRefreshToken: true,
+                    persistSession: true,
+                    detectSessionInUrl: true
+                }
+            });
             console.log('✅ Supabase 클라이언트 초기화 완료');
             
             // OAuth 콜백 처리
@@ -377,14 +395,38 @@
             if (!supabase) return;
             
             // 현재 URL 정보 로깅
-            console.log('📍 현재 URL:', window.location.href);
-            console.log('🌐 현재 origin:', window.location.origin);
+            const currentUrl = window.location.href;
+            const currentOrigin = window.location.origin;
+            const currentHostname = window.location.hostname;
+            
+            console.log('📍 현재 URL:', currentUrl);
+            console.log('🌐 현재 origin:', currentOrigin);
+            console.log('📍 현재 hostname:', currentHostname);
             console.log('📍 현재 pathname:', window.location.pathname);
             
+            // localhost:3000으로 리다이렉트된 경우 강제로 올바른 URL로 이동
+            if (currentHostname === 'localhost' && window.location.port === '3000') {
+                console.error('❌ localhost:3000으로 잘못된 리다이렉트 감지!');
+                console.log('🔧 올바른 URL로 강제 리다이렉트');
+                
+                // Netlify URL로 강제 리다이렉트
+                const correctUrl = 'https://marvelous-cat-d90804.netlify.app/login.html';
+                console.log('🔗 올바른 URL:', correctUrl);
+                window.location.replace(correctUrl);
+                return;
+            }
+            
             // localhost로 리다이렉트하려는 시도 감지 및 차단
-            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                // 로컬 환경에서는 정상 동작
-                console.log('✅ 로컬 환경에서 OAuth 콜백 처리');
+            if (currentHostname === 'localhost' || currentHostname === '127.0.0.1') {
+                // 로컬 환경에서는 정상 동작 (포트 8080만 허용)
+                if (window.location.port === '8080' || !window.location.port) {
+                    console.log('✅ 로컬 환경에서 OAuth 콜백 처리');
+                } else {
+                    console.error('❌ 잘못된 로컬 포트:', window.location.port);
+                    // 올바른 로컬 URL로 리다이렉트
+                    window.location.replace('http://localhost:8080/login.html');
+                    return;
+                }
             } else {
                 // 프로덕션 환경에서 localhost로 리다이렉트 시도 감지
                 console.log('✅ 프로덕션 환경에서 OAuth 콜백 처리');
@@ -438,15 +480,20 @@
                         
                         setTimeout(() => {
                             // 절대 URL로 리다이렉트 (모바일/프로덕션 환경 대응)
-                            // localhost가 아닌 경우에만 리다이렉트
                             const currentOrigin = window.location.origin;
-                            const isLocalhost = currentOrigin.includes('localhost') || currentOrigin.includes('127.0.0.1');
+                            const currentHostname = window.location.hostname;
+                            const isLocalhost = currentHostname === 'localhost' || currentHostname === '127.0.0.1';
                             
-                            if (isLocalhost) {
-                                // 로컬 환경
-                                const basePath = window.location.pathname.includes('/k-community-app/')
-                                    ? currentOrigin + '/index.html'
-                                    : currentOrigin + '/index.html';
+                            // localhost:3000인 경우 강제로 Netlify URL 사용
+                            if (currentHostname === 'localhost' && window.location.port === '3000') {
+                                console.error('❌ localhost:3000 감지 - Netlify URL로 강제 리다이렉트');
+                                window.location.replace('https://marvelous-cat-d90804.netlify.app/index.html');
+                                return;
+                            }
+                            
+                            if (isLocalhost && (window.location.port === '8080' || !window.location.port)) {
+                                // 로컬 환경 (포트 8080만 허용)
+                                const basePath = currentOrigin + '/index.html';
                                 console.log('🔗 로컬 리다이렉트 URL:', basePath);
                                 window.location.href = basePath;
                             } else {
