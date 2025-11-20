@@ -1128,6 +1128,84 @@
             color: var(--text-inverse);
             border: none;
         }
+        
+        /* 커뮤니티 버튼 반짝반짝 애니메이션 */
+        .header-btn#communityBtn {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--text-inverse);
+            border: none;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.5), 0 0 20px rgba(118, 75, 162, 0.3);
+            animation: sparkle 2s ease-in-out infinite;
+        }
+        
+        .header-btn#communityBtn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.3) 50%,
+                transparent 70%
+            );
+            animation: sparkleShine 3s linear infinite;
+            pointer-events: none;
+        }
+        
+        .header-btn#communityBtn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(
+                circle at 50% 50%,
+                rgba(255, 255, 255, 0.2) 0%,
+                transparent 70%
+            );
+            animation: sparkleGlow 2s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+        
+        @keyframes sparkle {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(102, 126, 234, 0.5), 0 0 20px rgba(118, 75, 162, 0.3);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(102, 126, 234, 0.8), 0 0 30px rgba(118, 75, 162, 0.5), 0 0 40px rgba(102, 126, 234, 0.3);
+                transform: scale(1.02);
+            }
+        }
+        
+        @keyframes sparkleShine {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
+        }
+        
+        @keyframes sparkleGlow {
+            0% {
+                opacity: 0.3;
+            }
+            100% {
+                opacity: 0.7;
+            }
+        }
+        
+        .header-btn#communityBtn:hover {
+            animation: sparkle 1s ease-in-out infinite;
+            box-shadow: 0 0 25px rgba(102, 126, 234, 0.9), 0 0 35px rgba(118, 75, 162, 0.6), 0 0 50px rgba(102, 126, 234, 0.4);
+        }
 
         .coin-shop-btn {
             background: rgba(255, 255, 255, 0.3);
