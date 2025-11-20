@@ -631,10 +631,12 @@ const app = {
 
     createPostCard(post) {
         const isLiked = this.state.user.likedPosts.includes(post.id);
-        const commentCount = Array.isArray(post.comments) ? post.comments.length : post.comments;
+        const commentCount = Array.isArray(post.comments) ? post.comments.length : (post.comments || 0);
+        // post.id를 문자열로 변환 (UUID는 문자열)
+        const postId = String(post.id);
 
         return `
-            <div class="card post-card" data-post-id="${post.id}" style="cursor: pointer;">
+            <div class="card post-card" data-post-id="${postId}" style="cursor: pointer;">
                     <div class="card-header">
                     <span class="tag">${post.tag}</span>
                     <button class="icon-btn-menu" aria-label="더보기 메뉴" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; padding: 4px;">
