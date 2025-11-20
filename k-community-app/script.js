@@ -529,11 +529,24 @@ const app = {
     },
 
     renderHome() {
+        // 사용자 이름 가져오기 (로그인된 사용자 또는 기본값)
+        const userName = currentDisplayName || this.state.user.name || 'User';
+        
+        // 모든 카테고리에서 최신 게시글 가져오기 (최대 6개)
+        const trendingPosts = this.data.posts
+            .sort((a, b) => {
+                // 좋아요 수와 댓글 수를 합산하여 인기 순으로 정렬
+                const aScore = (a.likes || 0) + (Array.isArray(a.comments) ? a.comments.length : 0);
+                const bScore = (b.likes || 0) + (Array.isArray(b.comments) ? b.comments.length : 0);
+                return bScore - aScore;
+            })
+            .slice(0, 6);
+        
         const html = `
             <div class="section hero" style="background-image: url('img/header.png'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative; min-height: 500px;">
                 <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.4);"></div>
                 <div class="hero-content" style="position: relative; z-index: 2; padding-top: 50px;">
-                    <h1 class="typography-headline" style="color: white; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">Welcome back, ${this.state.user.name}!</h1>
+                    <h1 class="typography-headline" style="color: white; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">Welcome back, ${userName}!</h1>
                     <p class="typography-intro" style="color: rgba(255,255,255,0.9); text-shadow: 0 1px 5px rgba(0,0,0,0.5);">Ready to continue your daily streak? You're doing great!</p>
                     <a href="../index.html" class="button" style="margin-top: 30px; text-decoration: none; display: inline-block;" aria-label="메인 앱으로 이동">
                         Start Daily Practice
@@ -550,7 +563,16 @@ const app = {
                     </div>
                 </div>
                 <div class="grid-3-up">
-                    ${this.data.posts.slice(0, 6).map(post => this.createPostCard(post)).join('')}
+                    ${trendingPosts.length > 0 ? trendingPosts.map(post => this.createPostCard(post)).join('') : `
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--text-secondary);">
+                            <p style="font-size: 18px; margin-bottom: 20px;">아직 게시글이 없습니다.</p>
+                            ${isAuthenticated ? `
+                                <p style="font-size: 14px;">첫 게시글을 작성해보세요!</p>
+                            ` : `
+                                <p style="font-size: 14px;">게시글을 작성하려면 <a href="../login.html" style="color: var(--c-blue-light);">로그인</a>이 필요합니다.</p>
+                            `}
+                        </div>
+                    `}
                 </div>
             </div>
         `;
@@ -673,14 +695,30 @@ const app = {
         this.bindPostEvents();
     },
 
-    createPostCard(post) {
+    createPostCard(post, onClickHandler = null) {
         const isLiked = this.state.user.likedPosts.includes(post.id);
         const commentCount = Array.isArray(post.comments) ? post.comments.length : (post.comments || 0);
         // post.id를 문자열로 변환 (UUID는 문자열)
         const postId = String(post.id);
+        
+        // 카테고리를 뷰 이름으로 매핑
+        const categoryToView = {
+            'Grammar': 'grammar',
+            'Culture': 'culture',
+            'Tips': 'tips',
+            'K-pop': 'kcontent',
+            'K-drama': 'kcontent',
+            'Sentences': 'sentences',
+            'Speaking': 'speaking'
+        };
+        
+        const viewName = categoryToView[post.tag] || 'grammar';
+        
+        // 클릭 핸들러가 지정되지 않았으면 기본 동작 (상세 페이지)
+        const clickHandler = onClickHandler || `app.handlePostClick('${postId}')`;
 
         return `
-            <div class="card post-card" data-post-id="${postId}" style="cursor: pointer;">
+            <div class="card post-card" data-post-id="${postId}" data-view="${viewName}" style="cursor: pointer;" onclick="${clickHandler}">
                     <div class="card-header">
                     <span class="tag">${post.tag}</span>
                     <button class="icon-btn-menu" aria-label="더보기 메뉴" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; padding: 4px;">
