@@ -3,7 +3,8 @@
 .env.*
 start_server.sh
 cloudtext2speechapi.json
-config.js
+# config.js는 Supabase Anon Key만 포함하므로 공개 가능 (RLS로 보호됨)
+# config.js
 *_api_key*
 *credentials*.json
 *.pem
