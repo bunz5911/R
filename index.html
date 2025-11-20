@@ -73,10 +73,19 @@
             --font-size-3xl: 32px;
             --font-size-4xl: 48px;
             
-            /* 전환 애니메이션 */
-            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+            /* 전환 애니메이션 - Apple 스타일 적용 */
+            --transition-fast: 150ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition-base: 200ms cubic-bezier(0.075, 0.82, 0.165, 1); /* Apple 표준 easing */
+            --transition-slow: 300ms cubic-bezier(0.075, 0.82, 0.165, 1);
+            --transition-smooth: 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 부드러운 전환 */
+            
+            /* 타이포그래피 - Apple 스타일 적용 */
+            --line-height-tight: 1.2;
+            --line-height-normal: 1.42859; /* Apple 표준 line-height */
+            --line-height-relaxed: 1.6;
+            --letter-spacing-tight: -0.01em;
+            --letter-spacing-normal: normal;
+            --letter-spacing-wide: 0.01em;
         }
         
         /* 다크모드 - 더 현대적인 다크 팔레트 */
@@ -114,6 +123,11 @@
             color: var(--text-primary);
             overflow-x: hidden;
             transition: background-color var(--transition-base), color var(--transition-base);
+            /* Apple 스타일 타이포그래피 */
+            line-height: var(--line-height-normal);
+            letter-spacing: var(--letter-spacing-normal);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             /* iOS Safe Area Insets */
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
@@ -280,18 +294,25 @@
             margin-bottom: var(--space-sm);
             font-weight: 700;
             cursor: pointer;
-            transition: opacity var(--transition-fast);
+            transition: opacity var(--transition-base);
             color: var(--text-primary);
+            /* Apple 스타일 타이포그래피 */
+            line-height: var(--line-height-tight);
+            letter-spacing: var(--letter-spacing-tight);
         }
         
         .header h1:hover {
             opacity: 0.8;
+            transition: opacity var(--transition-fast);
         }
 
         .header p {
             font-size: var(--font-size-base);
             opacity: 0.9;
             color: var(--text-secondary);
+            /* Apple 스타일 타이포그래피 */
+            line-height: var(--line-height-normal);
+            letter-spacing: var(--letter-spacing-normal);
         }
 
         /* 동화 목록 화면 */
@@ -332,7 +353,8 @@
             box-shadow: var(--shadow-md);
             border: 1px solid var(--border-color-light);
             cursor: pointer;
-            transition: all var(--transition-base);
+            /* Apple 스타일 카드 애니메이션 */
+            transition: all var(--transition-smooth);
             position: relative;
             overflow: hidden;
         }
@@ -342,11 +364,13 @@
             box-shadow: var(--shadow-xl);
             border-color: var(--color-primary);
             z-index: 10;
+            transition: all var(--transition-base);
         }
         
         .story-card:active {
             transform: translateY(-2px) scale(0.99);
             box-shadow: var(--shadow-md);
+            transition: all 100ms cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .story-card-image {
@@ -417,18 +441,24 @@
             position: sticky;
             top: 0;
             z-index: 10;
-            transition: all var(--transition-fast);
-            letter-spacing: 0.5px;
+            /* Apple 스타일 버튼 애니메이션 */
+            transition: all var(--transition-base);
+            letter-spacing: var(--letter-spacing-wide);
+            /* Apple 스타일 타이포그래피 */
+            line-height: var(--line-height-normal);
+            -webkit-font-smoothing: antialiased;
         }
         
         .back-button:hover {
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.02);
             box-shadow: var(--shadow-xl);
             background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+            transition: all var(--transition-fast);
         }
         
         .back-button:active {
-            transform: scale(0.97) translateY(0);
+            transform: scale(0.98) translateY(0);
+            transition: all 100ms cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .learning-tabs {
@@ -451,19 +481,25 @@
             font-weight: 600;
             cursor: pointer;
             white-space: nowrap;
-            transition: all var(--transition-fast);
+            /* Apple 스타일 버튼 애니메이션 */
+            transition: all var(--transition-base);
             text-align: center;
             overflow: hidden;
             text-overflow: ellipsis;
             color: var(--text-primary);
             box-shadow: var(--shadow-sm);
+            /* Apple 스타일 타이포그래피 */
+            line-height: var(--line-height-normal);
+            letter-spacing: var(--letter-spacing-normal);
+            -webkit-font-smoothing: antialiased;
         }
         
         .tab-button:hover {
             background: var(--bg-tertiary);
             border-color: var(--color-primary);
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.02);
             box-shadow: var(--shadow-md);
+            transition: all var(--transition-fast);
         }
 
         .tab-button.active {
@@ -471,11 +507,13 @@
             color: var(--text-inverse);
             border-color: var(--color-success);
             box-shadow: var(--shadow-success);
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.02);
+            transition: all var(--transition-base);
         }
 
         .tab-button:active {
             transform: scale(0.96) translateY(0);
+            transition: all 100ms cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .learning-content {
@@ -502,6 +540,9 @@
             color: var(--color-primary);
             margin-bottom: var(--space-md);
             transition: color var(--transition-base);
+            /* Apple 스타일 타이포그래피 */
+            line-height: var(--line-height-tight);
+            letter-spacing: var(--letter-spacing-tight);
         }
 
         .content-box {
@@ -509,8 +550,10 @@
             border-radius: var(--border-radius-lg);
             padding: var(--space-lg);
             margin-bottom: var(--space-md);
-            line-height: 1.8;
+            /* Apple 스타일 타이포그래피 */
+            line-height: var(--line-height-relaxed);
             font-size: var(--font-size-md);
+            letter-spacing: var(--letter-spacing-normal);
             border: 1px solid var(--border-color-light);
             box-shadow: var(--shadow-sm);
             transition: all var(--transition-base);
@@ -564,18 +607,27 @@
             color: var(--color-primary);
             margin-bottom: var(--space-xs);
             transition: color var(--transition-base);
+            /* Apple 스타일 타이포그래피 */
+            line-height: var(--line-height-normal);
+            letter-spacing: var(--letter-spacing-normal);
         }
 
         .vocab-meaning {
             font-size: var(--font-size-base);
             color: var(--text-secondary);
             margin-bottom: var(--space-xs);
+            /* Apple 스타일 타이포그래피 */
+            line-height: var(--line-height-normal);
+            letter-spacing: var(--letter-spacing-normal);
         }
 
         .vocab-example {
             font-size: var(--font-size-base);
             color: var(--text-tertiary);
             font-style: italic;
+            /* Apple 스타일 타이포그래피 */
+            line-height: var(--line-height-relaxed);
+            letter-spacing: var(--letter-spacing-normal);
         }
 
         /* 캐릭터 이미지 스타일 */
@@ -593,13 +645,37 @@
             animation: characterFloat 3s ease-in-out infinite;
         }
 
-        /* 캐릭터 위아래 움직임 애니메이션 */
+        /* 캐릭터 위아래 움직임 애니메이션 - Apple 스타일 적용 */
         @keyframes characterFloat {
             0%, 100% {
                 transform: translateY(0px);
             }
             50% {
                 transform: translateY(-10px);
+            }
+        }
+        
+        /* Apple 스타일 부드러운 페이드 인 애니메이션 */
+        @keyframes appleFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Apple 스타일 부드러운 스케일 애니메이션 */
+        @keyframes appleScaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
             }
         }
 
@@ -638,22 +714,28 @@
             font-weight: 600;
             cursor: pointer;
             box-shadow: var(--shadow-success);
-            transition: all var(--transition-fast);
+            /* Apple 스타일 버튼 애니메이션 */
+            transition: all var(--transition-base);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: var(--space-xs);
-            letter-spacing: 0.3px;
+            letter-spacing: var(--letter-spacing-wide);
+            /* Apple 스타일 타이포그래피 */
+            line-height: var(--line-height-normal);
+            -webkit-font-smoothing: antialiased;
         }
 
         .btn:hover {
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.02);
             box-shadow: var(--shadow-lg);
             background: linear-gradient(135deg, #059669 0%, var(--color-success) 100%);
+            transition: all var(--transition-fast);
         }
 
         .btn:active {
-            transform: scale(0.97) translateY(0);
+            transform: scale(0.98) translateY(0);
+            transition: all 100ms cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .btn.playing {
@@ -768,16 +850,21 @@
             color: var(--text-primary);
             font-weight: 600;
             cursor: pointer;
-            transition: all var(--transition-fast);
+            /* Apple 스타일 버튼 애니메이션 */
+            transition: all var(--transition-base);
             box-shadow: var(--shadow-sm);
-            letter-spacing: 0.5px;
+            letter-spacing: var(--letter-spacing-wide);
+            /* Apple 스타일 타이포그래피 */
+            line-height: var(--line-height-normal);
+            -webkit-font-smoothing: antialiased;
         }
         
         .level-btn:hover {
             background: var(--bg-tertiary);
             border-color: var(--color-primary);
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.02);
             box-shadow: var(--shadow-md);
+            transition: all var(--transition-fast);
         }
 
         .level-btn.active {
@@ -785,11 +872,13 @@
             color: var(--text-inverse);
             border-color: var(--color-success);
             box-shadow: var(--shadow-success);
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.02);
+            transition: all var(--transition-base);
         }
         
         .level-btn:active {
             transform: scale(0.96) translateY(0);
+            transition: all 100ms cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* 평가 결과 */
@@ -813,7 +902,9 @@
 
         .feedback-text {
             font-size: var(--font-size-md);
-            line-height: 1.6;
+            /* Apple 스타일 타이포그래피 */
+            line-height: var(--line-height-relaxed);
+            letter-spacing: var(--letter-spacing-normal);
             color: var(--text-primary);
         }
 
