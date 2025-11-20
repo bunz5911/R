@@ -102,6 +102,7 @@ const app = {
     state: {
         currentView: 'home',
         currentPost: null,
+        posts: [], // Supabase에서 로드된 게시글 저장
         onlineUsers: Math.floor(Math.random() * 50) + 120, // Random 120-170
         user: {
             name: 'RAKorean',
@@ -354,19 +355,41 @@ const app = {
     },
 
     async handlePostClick(postId) {
-        // Search in both regular posts and K-content posts
-        let post = this.data.posts.find(p => p.id === postId);
+        // postId를 문자열로 변환 (UUID는 문자열)
+        const postIdStr = String(postId);
+        console.log('🔍 게시글 찾기:', postIdStr);
+        
+        // Find post in state.posts (Supabase에서 로드된 게시글)
+        let post = this.state.posts.find(p => String(p.id) === postIdStr);
         if (!post) {
-            post = this.data.kcontentPosts.find(p => p.id === postId);
+            // 하위 호환성: data.posts에서도 찾기
+            post = this.data.posts.find(p => String(p.id) === postIdStr);
         }
-
+        if (!post) {
+            // K-content 게시글에서도 찾기
+            post = this.data.kcontentPosts?.find(p => String(p.id) === postIdStr);
+        }
+        
+        if (!post) {
+            console.error('❌ 게시글을 찾을 수 없습니다:', postIdStr);
+            console.log('📋 state.posts:', this.state.posts);
+            console.log('📋 data.posts:', this.data.posts);
+            alert('게시글을 찾을 수 없습니다.');
+            return;
+        }
+        
+        console.log('✅ 게시글 찾음:', post.title);
+        
+        // 댓글 로드 (아직 로드되지 않은 경우)
+        if (!post.comments || post.comments.length === 0) {
+            await this.loadCommentsForPost(postIdStr);
+            // 다시 찾기
+            post = this.state.posts.find(p => String(p.id) === postIdStr) || 
+                   this.data.posts.find(p => String(p.id) === postIdStr) ||
+                   this.data.kcontentPosts?.find(p => String(p.id) === postIdStr);
+        }
+        
         if (post) {
-            // 댓글 로드 (아직 로드되지 않은 경우)
-            if (!post.comments || post.comments.length === 0) {
-                await this.loadCommentsForPost(postId);
-                post = this.data.posts.find(p => p.id === postId) || this.data.kcontentPosts.find(p => p.id === postId);
-            }
-            
             this.state.currentPost = post;
             this.renderPostDetail(post);
         }
@@ -472,12 +495,20 @@ const app = {
                 
                 if (error) throw error;
                 
-                // 댓글 추가
-                post.comments.push({
-                    author: data.profiles?.display_name || data.profiles?.email?.split('@')[0] || currentDisplayName || 'User',
-                    content: data.content,
-                    time: 'Just now'
-                });
+            // 댓글 추가 (state.posts와 data.posts 모두 업데이트)
+            const newComment = {
+                author: data.profiles?.display_name || data.profiles?.email?.split('@')[0] || currentDisplayName || 'User',
+                content: data.content,
+                time: 'Just now'
+            };
+            
+            post.comments.push(newComment);
+            
+            // state.posts에서도 동일한 게시글 찾아서 댓글 추가
+            const statePost = this.state.posts.find(p => String(p.id) === String(postId));
+            if (statePost) {
+                statePost.comments.push(newComment);
+            }
             } else {
                 // Supabase가 없으면 로컬에만 추가
                 post.comments.push({
@@ -524,12 +555,17 @@ const app = {
         }
     },
 
-    renderHome() {
+    async renderHome() {
         // 사용자 이름 가져오기 (로그인된 사용자 또는 기본값)
         const userName = currentDisplayName || this.state.user.name || 'User';
         
+        // Supabase에서 게시글 로드 (아직 로드되지 않은 경우)
+        if (this.state.posts.length === 0) {
+            await this.loadPostsFromSupabase();
+        }
+        
         // 모든 카테고리에서 최신 게시글 가져오기 (최대 6개)
-        const trendingPosts = this.data.posts
+        const trendingPosts = this.state.posts
             .sort((a, b) => {
                 // 좋아요 수와 댓글 수를 합산하여 인기 순으로 정렬
                 const aScore = (a.likes || 0) + (Array.isArray(a.comments) ? a.comments.length : 0);
@@ -862,7 +898,7 @@ const app = {
             
             // 데이터 변환
             if (posts && posts.length > 0) {
-                this.data.posts = posts.map(post => ({
+                this.state.posts = posts.map(post => ({
                     id: post.id,
                     tag: this.mapCategoryToTag(post.category),
                     title: post.title,
@@ -874,8 +910,11 @@ const app = {
                     time: this.formatTimeAgo(post.created_at)
                 }));
                 
+                // this.data.posts에도 동기화 (하위 호환성)
+                this.data.posts = this.state.posts;
+                
                 // 각 게시글의 댓글 로드
-                for (let post of this.data.posts) {
+                for (let post of this.state.posts) {
                     await this.loadCommentsForPost(post.id);
                 }
                 
@@ -884,10 +923,12 @@ const app = {
                     await this.loadUserLikes();
                 }
                 
-                console.log(`✅ Supabase에서 ${this.data.posts.length}개 게시글 로드 완료`);
+                console.log(`✅ Supabase에서 ${this.state.posts.length}개 게시글 로드 완료`);
             } else {
                 console.log('ℹ️ Supabase에 게시글이 없습니다. 하드코딩된 예시 데이터를 사용합니다.');
-                // Supabase에 게시글이 없으면 하드코딩된 데이터 유지
+                // Supabase에 게시글이 없으면 빈 배열로 초기화
+                this.state.posts = [];
+                this.data.posts = [];
             }
         } catch (error) {
             console.error('❌ 게시글 로드 실패:', error);
@@ -942,14 +983,27 @@ const app = {
             
             if (error) throw error;
             
-            // 해당 게시글 찾아서 댓글 추가
-            const post = this.data.posts.find(p => p.id === postId);
+            // 해당 게시글 찾아서 댓글 추가 (state.posts와 data.posts 모두 업데이트)
+            const postIdStr = String(postId);
+            let post = this.state.posts.find(p => String(p.id) === postIdStr);
+            if (!post) {
+                post = this.data.posts.find(p => String(p.id) === postIdStr);
+            }
+            
             if (post && comments) {
-                post.comments = comments.map(comment => ({
+                const formattedComments = comments.map(comment => ({
                     author: comment.profiles?.display_name || comment.profiles?.email?.split('@')[0] || 'Anonymous',
                     content: comment.content,
                     time: this.formatTimeAgo(comment.created_at)
                 }));
+                
+                post.comments = formattedComments;
+                
+                // state.posts와 data.posts 동기화
+                const statePost = this.state.posts.find(p => String(p.id) === postIdStr);
+                if (statePost) {
+                    statePost.comments = formattedComments;
+                }
             }
         } catch (error) {
             console.error(`❌ 댓글 로드 실패 (postId: ${postId}):`, error);
@@ -1179,12 +1233,20 @@ const app = {
     bindPostEvents() {
         // Bind post card clicks
         document.querySelectorAll('.post-card').forEach(card => {
-            card.addEventListener('click', (e) => {
-                // Don't trigger if clicking on like button
+            // 기존 이벤트 리스너 제거 (중복 방지)
+            const newCard = card.cloneNode(true);
+            card.parentNode.replaceChild(newCard, card);
+            
+            newCard.addEventListener('click', (e) => {
+                // Don't trigger if clicking on like button or menu button
                 if (e.target.closest('.like-btn')) return;
+                if (e.target.closest('.icon-btn-menu')) return;
 
-                const postId = card.dataset.postId; // UUID이므로 parseInt 제거
-                this.handlePostClick(postId);
+                const postId = newCard.dataset.postId; // UUID이므로 문자열로 처리
+                if (postId) {
+                    console.log('📝 게시글 클릭:', postId);
+                    this.handlePostClick(postId);
+                }
             });
         });
 
@@ -1192,8 +1254,11 @@ const app = {
         document.querySelectorAll('.like-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const postId = btn.dataset.postId; // UUID이므로 parseInt 제거
-                this.handleLikeClick(postId);
+                const postId = btn.dataset.postId; // UUID이므로 문자열로 처리
+                if (postId) {
+                    console.log('❤️ 좋아요 클릭:', postId);
+                    this.handleLikeClick(postId);
+                }
             });
         });
     }
