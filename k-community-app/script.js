@@ -301,7 +301,14 @@ const app = {
         }
         
         // 로그인 상태 확인
-        await checkAuthStatus();
+        const isLoggedIn = await checkAuthStatus();
+        
+        // 로그인하지 않은 사용자는 로그인 페이지로 리다이렉트
+        if (!isLoggedIn) {
+            console.log('⚠️ 로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+            window.location.href = '../login.html';
+            return;
+        }
         
         this.cacheDOM();
         this.bindEvents();
