@@ -343,11 +343,11 @@
         <!-- 공지사항 탭 -->
         <div id="notificationsTab" class="section tab-content">
             <div class="section-title">이메일 공지</div>
-            <p style="color: #999; margin-bottom: 20px;">전체 회원 또는 특정 플랜 회원에게 이메일을 발송할 수 있습니다.</p>
+            <p style="color: #9ca3af; margin-bottom: 20px;">전체 회원 또는 특정 플랜 회원에게 이메일을 발송할 수 있습니다.</p>
             
             <div style="margin-bottom: 20px;">
-                <label style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px;">수신 대상</label>
-                <select id="emailTarget" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 14px;">
+                <label style="display: block; font-size: 14px; font-weight: 600; color: #f9fafb; margin-bottom: 8px;">수신 대상</label>
+                <select id="emailTarget" style="width: 100%; padding: 12px; border: 2px solid #374151; border-radius: 10px; font-size: 14px; background: #374151; color: #f9fafb;">
                     <option value="all">전체 회원</option>
                     <option value="free">무료 회원</option>
                     <option value="pro">Pro 회원</option>
@@ -356,13 +356,13 @@
             </div>
 
             <div style="margin-bottom: 20px;">
-                <label style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px;">제목</label>
-                <input type="text" id="emailSubject" placeholder="이메일 제목" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 14px;">
+                <label style="display: block; font-size: 14px; font-weight: 600; color: #f9fafb; margin-bottom: 8px;">제목</label>
+                <input type="text" id="emailSubject" placeholder="이메일 제목" style="width: 100%; padding: 12px; border: 2px solid #374151; border-radius: 10px; font-size: 14px; background: #374151; color: #f9fafb;">
             </div>
 
             <div style="margin-bottom: 20px;">
-                <label style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px;">내용</label>
-                <textarea id="emailContent" placeholder="이메일 내용" rows="10" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 14px; resize: vertical;"></textarea>
+                <label style="display: block; font-size: 14px; font-weight: 600; color: #f9fafb; margin-bottom: 8px;">내용</label>
+                <textarea id="emailContent" placeholder="이메일 내용" rows="10" style="width: 100%; padding: 12px; border: 2px solid #374151; border-radius: 10px; font-size: 14px; resize: vertical; background: #374151; color: #f9fafb;"></textarea>
             </div>
 
             <button onclick="alert('이메일 발송 기능은 준비 중입니다')" style="padding: 14px 32px; background: #667eea; color: white; border: none; border-radius: 10px; font-weight: 700; font-size: 15px; cursor: pointer;">
@@ -627,19 +627,19 @@
         function loadAnalytics() {
             document.getElementById('analyticsContent').innerHTML = `
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-                    <div style="background: #f8f9fa; padding: 20px; border-radius: 12px;">
-                        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px;">📈 채널 로그</h3>
-                        <p style="font-size: 14px; color: #666; margin-bottom: 8px;">준비 중입니다</p>
+                    <div style="background: #374151; padding: 20px; border-radius: 12px;">
+                        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: #f9fafb;">📈 채널 로그</h3>
+                        <p style="font-size: 14px; color: #d1d5db; margin-bottom: 8px;">준비 중입니다</p>
                     </div>
                     
-                    <div style="background: #f8f9fa; padding: 20px; border-radius: 12px;">
-                        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px;">⏱️ 평균 체류시간</h3>
-                        <p style="font-size: 14px; color: #666; margin-bottom: 8px;">준비 중입니다</p>
+                    <div style="background: #374151; padding: 20px; border-radius: 12px;">
+                        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: #f9fafb;">⏱️ 평균 체류시간</h3>
+                        <p style="font-size: 14px; color: #d1d5db; margin-bottom: 8px;">준비 중입니다</p>
                     </div>
                     
-                    <div style="background: #f8f9fa; padding: 20px; border-radius: 12px;">
-                        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px;">📊 사용 패턴</h3>
-                        <p style="font-size: 14px; color: #666; margin-bottom: 8px;">준비 중입니다</p>
+                    <div style="background: #374151; padding: 20px; border-radius: 12px;">
+                        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: #f9fafb;">📊 사용 패턴</h3>
+                        <p style="font-size: 14px; color: #d1d5db; margin-bottom: 8px;">준비 중입니다</p>
                     </div>
                 </div>
             `;
