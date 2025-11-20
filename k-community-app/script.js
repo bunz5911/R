@@ -391,7 +391,7 @@ const app = {
         
         if (post) {
             this.state.currentPost = post;
-            this.renderPostDetail(post);
+            await this.renderPostDetail(post);
         }
     },
 
@@ -480,7 +480,7 @@ const app = {
                 const { data, error } = await supabase
                     .from('community_comments')
                     .insert({
-                        post_id: postId,
+                        post_id: postIdStr,
                         user_id: currentUserId,
                         content: commentText.trim()
                     })
@@ -505,24 +505,42 @@ const app = {
             post.comments.push(newComment);
             
             // state.posts에서도 동일한 게시글 찾아서 댓글 추가
-            const statePost = this.state.posts.find(p => String(p.id) === String(postId));
+            const statePost = this.state.posts.find(p => String(p.id) === postIdStr);
             if (statePost) {
                 statePost.comments.push(newComment);
             }
+            
+            // data.posts와 동기화
+            const dataPost = this.data.posts.find(p => String(p.id) === postIdStr);
+            if (dataPost) {
+                dataPost.comments.push(newComment);
+            }
             } else {
                 // Supabase가 없으면 로컬에만 추가
-                post.comments.push({
+                const localComment = {
                     author: currentDisplayName || 'User',
                     content: commentText.trim(),
                     time: 'Just now'
-                });
+                };
+                post.comments.push(localComment);
+                
+                // state.posts와 data.posts 동기화
+                const statePost = this.state.posts.find(p => String(p.id) === postIdStr);
+                if (statePost) {
+                    statePost.comments.push(localComment);
+                }
+                const dataPost = this.data.posts.find(p => String(p.id) === postIdStr);
+                if (dataPost) {
+                    dataPost.comments.push(localComment);
+                }
             }
 
-            this.renderPostDetail(post);
-            
             // 댓글 입력 필드 초기화
             const commentInput = document.getElementById('comment-input');
             if (commentInput) commentInput.value = '';
+            
+            // 게시글 상세 화면 다시 렌더링 (댓글 반영)
+            await this.renderPostDetail(post);
         } catch (error) {
             console.error('❌ 댓글 작성 실패:', error);
             alert('댓글 작성 중 오류가 발생했습니다.');
