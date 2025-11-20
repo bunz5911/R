@@ -13,8 +13,9 @@
 
         body {
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-            background: #f5f7fa;
+            background: #111827; /* 다크모드 배경 */
             min-height: 100vh;
+            color: #f9fafb; /* 다크모드 텍스트 */
         }
 
         .admin-container {
@@ -24,11 +25,11 @@
         }
 
         .header {
-            background: white;
+            background: #1f2937; /* 다크모드 카드 배경 */
             padding: 24px 32px;
             border-radius: 16px;
             margin-bottom: 24px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -37,12 +38,12 @@
         .header h1 {
             font-size: 28px;
             font-weight: 800;
-            color: #333;
+            color: #f9fafb; /* 다크모드 텍스트 */
         }
 
         .header .admin-info {
             font-size: 14px;
-            color: #666;
+            color: #d1d5db; /* 다크모드 보조 텍스트 */
         }
 
         .stats-grid {
@@ -53,15 +54,15 @@
         }
 
         .stat-card {
-            background: white;
+            background: #1f2937; /* 다크모드 카드 배경 */
             padding: 24px;
             border-radius: 16px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
         .stat-card .label {
             font-size: 13px;
-            color: #888;
+            color: #d1d5db; /* 다크모드 보조 텍스트 */
             margin-bottom: 8px;
             font-weight: 600;
         }
@@ -69,7 +70,7 @@
         .stat-card .value {
             font-size: 32px;
             font-weight: 800;
-            color: #333;
+            color: #f9fafb; /* 다크모드 텍스트 */
             margin-bottom: 4px;
         }
 
@@ -88,17 +89,17 @@
         }
 
         .section {
-            background: white;
+            background: #1f2937; /* 다크모드 카드 배경 */
             padding: 32px;
             border-radius: 16px;
             margin-bottom: 24px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
         .section-title {
             font-size: 20px;
             font-weight: 800;
-            color: #333;
+            color: #f9fafb; /* 다크모드 텍스트 */
             margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
@@ -114,14 +115,20 @@
         .search-bar input {
             flex: 1;
             padding: 12px 16px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid #374151; /* 다크모드 보더 */
             border-radius: 10px;
             font-size: 14px;
             outline: none;
+            background: #374151; /* 다크모드 입력 필드 배경 */
+            color: #f9fafb; /* 다크모드 텍스트 */
         }
 
         .search-bar input:focus {
             border-color: #667eea;
+        }
+
+        .search-bar input::placeholder {
+            color: #9ca3af; /* 다크모드 placeholder */
         }
 
         .search-bar button {
@@ -140,7 +147,7 @@
         }
 
         thead {
-            background: #f8f9fa;
+            background: #374151; /* 다크모드 테이블 헤더 배경 */
         }
 
         th {
@@ -148,19 +155,19 @@
             text-align: left;
             font-size: 13px;
             font-weight: 700;
-            color: #666;
-            border-bottom: 2px solid #e0e0e0;
+            color: #d1d5db; /* 다크모드 보조 텍스트 */
+            border-bottom: 2px solid #4b5563; /* 다크모드 보더 */
         }
 
         td {
             padding: 16px 14px;
             font-size: 14px;
-            color: #333;
-            border-bottom: 1px solid #f0f0f0;
+            color: #f9fafb; /* 다크모드 텍스트 */
+            border-bottom: 1px solid #374151; /* 다크모드 보더 */
         }
 
         tr:hover {
-            background: #f9f9f9;
+            background: #374151; /* 다크모드 호버 배경 */
         }
 
         .badge {
@@ -173,23 +180,23 @@
         }
 
         .badge.free {
-            background: #e0e0e0;
-            color: #666;
+            background: #4b5563; /* 다크모드 배경 */
+            color: #d1d5db; /* 다크모드 텍스트 */
         }
 
         .badge.pro {
-            background: #e3f2fd;
-            color: #2196f3;
+            background: #1e3a5f; /* 다크모드 배경 */
+            color: #60a5fa; /* 다크모드 텍스트 */
         }
 
         .badge.premier {
-            background: #f3e5f5;
-            color: #9c27b0;
+            background: #4c1d4f; /* 다크모드 배경 */
+            color: #c084fc; /* 다크모드 텍스트 */
         }
 
         .badge.supervisor {
-            background: #fff3e0;
-            color: #ff9800;
+            background: #5c3413; /* 다크모드 배경 */
+            color: #fb923c; /* 다크모드 텍스트 */
         }
 
         .btn-action {
@@ -219,14 +226,14 @@
         .loading {
             text-align: center;
             padding: 40px;
-            color: #999;
+            color: #9ca3af; /* 다크모드 보조 텍스트 */
         }
 
         .tab-nav {
             display: flex;
             gap: 8px;
             margin-bottom: 24px;
-            border-bottom: 2px solid #e0e0e0;
+            border-bottom: 2px solid #4b5563; /* 다크모드 보더 */
         }
 
         .tab-btn {
@@ -236,18 +243,18 @@
             border-bottom: 3px solid transparent;
             font-size: 15px;
             font-weight: 600;
-            color: #666;
+            color: #d1d5db; /* 다크모드 보조 텍스트 */
             cursor: pointer;
             transition: all 0.3s;
         }
 
         .tab-btn.active {
-            color: #667eea;
-            border-bottom-color: #667eea;
+            color: #818cf8; /* 다크모드 활성 색상 */
+            border-bottom-color: #818cf8;
         }
 
         .tab-btn:hover {
-            color: #667eea;
+            color: #818cf8;
         }
 
         .tab-content {
@@ -480,7 +487,7 @@
                 }
             } catch (error) {
                 console.error('통계 로드 오류:', error);
-                document.getElementById('statsGrid').innerHTML = '<div class="loading" style="color: #e74c3c;">통계 로드 실패</div>';
+                document.getElementById('statsGrid').innerHTML = '<div class="loading" style="color: #ef4444;">통계 로드 실패</div>';
             }
         }
 
@@ -535,7 +542,7 @@
                         
                         <div style="display: flex; justify-content: center; margin-top: 20px; gap: 8px;">
                             ${page > 1 ? `<button onclick="loadUsers(${page - 1})" style="padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer;">◀ 이전</button>` : ''}
-                            <span style="padding: 8px 16px; background: #f0f0f0; border-radius: 6px; font-weight: 600;">${page} 페이지</span>
+                            <span style="padding: 8px 16px; background: #374151; border-radius: 6px; font-weight: 600; color: #f9fafb;">${page} 페이지</span>
                             ${data.users.length >= 50 ? `<button onclick="loadUsers(${page + 1})" style="padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer;">다음 ▶</button>` : ''}
                         </div>
                     `;
@@ -544,7 +551,7 @@
                 }
             } catch (error) {
                 console.error('회원 목록 로드 오류:', error);
-                document.getElementById('usersTable').innerHTML = '<div class="loading" style="color: #e74c3c;">회원 목록 로드 실패</div>';
+                document.getElementById('usersTable').innerHTML = '<div class="loading" style="color: #ef4444;">회원 목록 로드 실패</div>';
             }
         }
 
@@ -641,18 +648,18 @@
         // 매출 현황 로드
         function loadRevenue() {
             document.getElementById('revenueContent').innerHTML = `
-                <div style="background: #f8f9fa; padding: 24px; border-radius: 12px; margin-bottom: 20px;">
-                    <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">💰 월 구독 매출 (MRR)</h3>
-                    <p style="font-size: 14px; color: #666; margin-bottom: 12px;">플랜별 매출 현황은 통계 카드를 참고하세요</p>
-                    <p style="font-size: 13px; color: #888;">
+                <div style="background: #374151; padding: 24px; border-radius: 12px; margin-bottom: 20px;">
+                    <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #f9fafb;">💰 월 구독 매출 (MRR)</h3>
+                    <p style="font-size: 14px; color: #d1d5db; margin-bottom: 12px;">플랜별 매출 현황은 통계 카드를 참고하세요</p>
+                    <p style="font-size: 13px; color: #9ca3af;">
                         * Pro: $13.99/월<br>
                         * Premier: $29.99/월
                     </p>
                 </div>
                 
-                <div style="background: #fff3cd; padding: 20px; border-radius: 12px; border: 2px solid #ffc107;">
-                    <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px; color: #856404;">⚠️ 결제 시스템 준비 중</h3>
-                    <p style="font-size: 14px; color: #856404;">
+                <div style="background: #5c3413; padding: 20px; border-radius: 12px; border: 2px solid #fb923c;">
+                    <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px; color: #fb923c;">⚠️ 결제 시스템 준비 중</h3>
+                    <p style="font-size: 14px; color: #fdba74;">
                         Toss Payments 연동이 완료되면 실시간 결제 내역을 확인할 수 있습니다.
                     </p>
                 </div>
