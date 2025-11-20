@@ -1299,9 +1299,9 @@
             }
         }
         
-        // 페이지 로드 시 저장된 테마 적용
+        // 페이지 로드 시 저장된 테마 적용 (기본값: dark)
         document.addEventListener('DOMContentLoaded', function() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
+            const savedTheme = localStorage.getItem('theme') || 'dark';
             document.documentElement.setAttribute('data-theme', savedTheme);
             updateThemeIcon(savedTheme);
         });
