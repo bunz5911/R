@@ -300,7 +300,7 @@ const app = {
         });
     },
 
-    handleNavClick(activeLink, viewName) {
+    async handleNavClick(activeLink, viewName) {
         // Update Active State
         this.navLinks.forEach(l => l.classList.remove('active'));
         activeLink.classList.add('active');
@@ -309,7 +309,7 @@ const app = {
         this.state.currentPost = null;
 
         // Render View
-        this.renderView(viewName);
+        await this.renderView(viewName);
     },
 
     async handlePostClick(postId) {
@@ -1076,6 +1076,9 @@ const app = {
             
             // 모달 닫기
             document.getElementById('createPostModal').remove();
+            
+            // Supabase에서 최신 게시글 다시 로드
+            await this.loadPostsFromSupabase();
             
             // 현재 뷰 다시 렌더링
             this.renderView(this.state.currentView);
