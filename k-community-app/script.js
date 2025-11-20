@@ -665,6 +665,8 @@ const app = {
 
     renderPostDetail(post) {
         const isLiked = this.state.user.likedPosts.includes(post.id);
+        // post.id를 문자열로 변환 (UUID는 문자열)
+        const postId = String(post.id);
 
         const html = `
             <div class="section-content">
@@ -695,7 +697,7 @@ const app = {
                     </p>
                     
                     <div style="display: flex; gap: 20px; padding: 20px 0; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);">
-                        <button class="like-btn" data-post-id="${post.id}" aria-label="${isLiked ? '좋아요 취소' : '좋아요'}" style="background: none; border: none; color: ${isLiked ? '#ff3b30' : 'var(--text-secondary)'}; cursor: pointer; font-size: 16px; display: flex; align-items: center; gap: 8px; transition: color 0.2s;">
+                        <button class="like-btn" data-post-id="${postId}" aria-label="${isLiked ? '좋아요 취소' : '좋아요'}" style="background: none; border: none; color: ${isLiked ? '#ff3b30' : 'var(--text-secondary)'}; cursor: pointer; font-size: 16px; display: flex; align-items: center; gap: 8px; transition: color 0.2s;">
                             <i class="${isLiked ? 'ph-fill' : 'ph'} ph-heart" style="font-size: 24px;" aria-hidden="true"></i>
                             <span>${post.likes} likes</span>
                         </button>
@@ -736,6 +738,17 @@ const app = {
 
         this.container.innerHTML = html;
         this.bindPostEvents();
+        
+        // 댓글 작성 버튼 이벤트 바인딩
+        const commentSubmitBtn = document.getElementById('comment-submit-btn');
+        if (commentSubmitBtn) {
+            commentSubmitBtn.addEventListener('click', () => {
+                const commentInput = document.getElementById('comment-input');
+                if (commentInput) {
+                    this.handleCommentSubmit(postId, commentInput.value);
+                }
+            });
+        }
     },
 
     // Supabase에서 게시글 로드
