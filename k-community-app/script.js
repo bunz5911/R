@@ -9,9 +9,19 @@ let isAuthenticated = false;
 function initSupabase() {
     // 메인 앱의 config.js에서 Supabase 설정 가져오기
     if (typeof CONFIG !== 'undefined' && CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY) {
-        supabase = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
-        console.log('✅ Supabase 클라이언트 초기화 완료');
-        return true;
+        try {
+            supabase = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+            console.log('✅ Supabase 클라이언트 초기화 완료 (config.js)');
+            
+            // localStorage에도 저장 (다음 접속 시 빠른 로드)
+            localStorage.setItem('supabase_url', CONFIG.SUPABASE_URL);
+            localStorage.setItem('supabase_anon_key', CONFIG.SUPABASE_ANON_KEY);
+            
+            return true;
+        } catch (error) {
+            console.error('❌ Supabase 클라이언트 생성 실패:', error);
+            return false;
+        }
     }
     
     // config.js가 없으면 localStorage에서 가져오기 (메인 앱에서 설정된 경우)
@@ -19,12 +29,21 @@ function initSupabase() {
     const supabaseKey = localStorage.getItem('supabase_anon_key');
     
     if (supabaseUrl && supabaseKey) {
-        supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-        console.log('✅ Supabase 클라이언트 초기화 완료 (localStorage)');
-        return true;
+        try {
+            supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+            console.log('✅ Supabase 클라이언트 초기화 완료 (localStorage)');
+            return true;
+        } catch (error) {
+            console.error('❌ Supabase 클라이언트 생성 실패 (localStorage):', error);
+            return false;
+        }
     }
     
     console.warn('⚠️ Supabase 설정을 찾을 수 없습니다. 게시판 기능이 제한됩니다.');
+    console.warn('💡 해결 방법:');
+    console.warn('   1. 메인 앱에서 먼저 로그인하세요');
+    console.warn('   2. config.js 파일이 ../config.js 경로에 있는지 확인하세요');
+    console.warn('   3. 브라우저 콘솔에서 CONFIG 객체를 확인하세요:', typeof CONFIG);
     return false;
 }
 
