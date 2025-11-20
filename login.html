@@ -376,6 +376,20 @@
         async function handleOAuthCallback() {
             if (!supabase) return;
             
+            // 현재 URL 정보 로깅
+            console.log('📍 현재 URL:', window.location.href);
+            console.log('🌐 현재 origin:', window.location.origin);
+            console.log('📍 현재 pathname:', window.location.pathname);
+            
+            // localhost로 리다이렉트하려는 시도 감지 및 차단
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                // 로컬 환경에서는 정상 동작
+                console.log('✅ 로컬 환경에서 OAuth 콜백 처리');
+            } else {
+                // 프로덕션 환경에서 localhost로 리다이렉트 시도 감지
+                console.log('✅ 프로덕션 환경에서 OAuth 콜백 처리');
+            }
+            
             // URL 해시에서 토큰 추출
             const hashParams = new URLSearchParams(window.location.hash.substring(1));
             const accessToken = hashParams.get('access_token');
@@ -424,16 +438,40 @@
                         
                         setTimeout(() => {
                             // 절대 URL로 리다이렉트 (모바일/프로덕션 환경 대응)
-                            const baseUrl = window.location.origin;
-                            const basePath = window.location.pathname.includes('/k-community-app/')
-                                ? baseUrl + '/index.html'
-                                : baseUrl + '/index.html';
-                            console.log('🔗 리다이렉트 URL:', basePath);
-                            window.location.href = basePath;
+                            // localhost가 아닌 경우에만 리다이렉트
+                            const currentOrigin = window.location.origin;
+                            const isLocalhost = currentOrigin.includes('localhost') || currentOrigin.includes('127.0.0.1');
+                            
+                            if (isLocalhost) {
+                                // 로컬 환경
+                                const basePath = window.location.pathname.includes('/k-community-app/')
+                                    ? currentOrigin + '/index.html'
+                                    : currentOrigin + '/index.html';
+                                console.log('🔗 로컬 리다이렉트 URL:', basePath);
+                                window.location.href = basePath;
+                            } else {
+                                // 프로덕션 환경 - 현재 origin 사용
+                                const basePath = currentOrigin + '/index.html';
+                                console.log('🔗 프로덕션 리다이렉트 URL:', basePath);
+                                console.log('⚠️ localhost로 리다이렉트 시도 차단됨');
+                                window.location.href = basePath;
+                            }
                         }, 1000);
+                    } else {
+                        console.error('❌ 사용자 정보 조회 실패:', error);
+                        showError('로그인 처리 중 오류가 발생했습니다.');
                     }
                 } catch (error) {
-                    console.error('OAuth 콜백 처리 오류:', error);
+                    console.error('❌ OAuth 콜백 처리 오류:', error);
+                    showError('로그인 처리 중 오류가 발생했습니다: ' + error.message);
+                }
+            } else {
+                // URL에 에러 파라미터가 있는지 확인
+                const errorParam = hashParams.get('error');
+                const errorDescription = hashParams.get('error_description');
+                if (errorParam) {
+                    console.error('❌ OAuth 에러:', errorParam, errorDescription);
+                    showError('로그인에 실패했습니다: ' + (errorDescription || errorParam));
                 }
             }
         }
@@ -504,26 +542,41 @@
             
             try {
                 // 올바른 리다이렉트 URL 설정 (현재 페이지의 origin 사용)
-                const redirectUrl = window.location.origin + window.location.pathname;
+                const currentOrigin = window.location.origin;
+                const currentPath = window.location.pathname;
+                const redirectUrl = currentOrigin + currentPath;
                 
-                console.log('🔐 Google 로그인 리다이렉트 URL:', redirectUrl);
-                console.log('🌐 현재 origin:', window.location.origin);
+                console.log('🔐 Google 로그인 시작');
+                console.log('🌐 현재 origin:', currentOrigin);
+                console.log('📍 현재 pathname:', currentPath);
+                console.log('🔗 리다이렉트 URL:', redirectUrl);
+                
+                // localhost가 아닌 경우에만 진행
+                if (!currentOrigin.includes('localhost') && !currentOrigin.includes('127.0.0.1')) {
+                    console.log('✅ 프로덕션 환경에서 Google 로그인 시작');
+                }
                 
                 const { data, error } = await supabase.auth.signInWithOAuth({
                     provider: 'google',
                     options: {
-                        redirectTo: redirectUrl
+                        redirectTo: redirectUrl,
+                        queryParams: {
+                            // 추가 파라미터로 리다이렉트 URL 명시
+                            redirect_to: redirectUrl
+                        }
                     }
                 });
                 
                 if (error) {
-                    console.error('Google 로그인 오류:', error);
+                    console.error('❌ Google 로그인 오류:', error);
                     showError('Google 로그인에 실패했습니다: ' + error.message);
+                } else {
+                    console.log('✅ Google 로그인 페이지로 리다이렉트됨');
                 }
                 // 성공 시 Google 로그인 페이지로 자동 리다이렉트됨
             } catch (error) {
-                console.error('Google 로그인 오류:', error);
-                showError('Google 로그인에 실패했습니다');
+                console.error('❌ Google 로그인 예외:', error);
+                showError('Google 로그인에 실패했습니다: ' + error.message);
             }
         }
 
