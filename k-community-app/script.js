@@ -385,7 +385,15 @@ const app = {
             return;
         }
         
-        console.log('✅ 게시글 찾음:', post.title);
+        console.log('✅ 게시글 찾음:', {
+            title: post.title,
+            userId: post.user_id,
+            category: post.category,
+            time: post.time,
+            hasComments: !!post.comments,
+            commentsLength: post.comments?.length || 0,
+            postKeys: Object.keys(post)
+        });
         
         // 댓글 로드 (아직 로드되지 않은 경우)
         if (!post.comments || post.comments.length === 0) {
@@ -398,7 +406,14 @@ const app = {
         
         if (post) {
             this.state.currentPost = post;
+            console.log('📝 renderPostDetail 호출 전:', {
+                postUserId: post.user_id,
+                currentUserId: currentUserId,
+                isAuthenticated: isAuthenticated
+            });
             await this.renderPostDetail(post);
+        } else {
+            console.error('❌ 게시글을 찾을 수 없습니다 (댓글 로드 후)');
         }
     },
 
@@ -509,40 +524,9 @@ const app = {
                 
                 if (error) throw error;
                 
-                // 프로필 정보 별도 조회
-                let authorName = currentDisplayName || 'User';
-                if (data.user_id) {
-                    const { data: profile } = await supabase
-                        .from('profiles')
-                        .select('display_name, email')
-                        .eq('id', data.user_id)
-                        .single();
-                    
-                    if (profile) {
-                        authorName = profile.display_name || profile.email?.split('@')[0] || currentDisplayName || 'User';
-                    }
-                }
-                
-            // 댓글 추가 (state.posts와 data.posts 모두 업데이트)
-            const newComment = {
-                author: authorName,
-                content: data.content,
-                time: 'Just now'
-            };
-            
-            post.comments.push(newComment);
-            
-            // state.posts에서도 동일한 게시글 찾아서 댓글 추가
-            const statePost = this.state.posts.find(p => String(p.id) === postIdStr);
-            if (statePost) {
-                statePost.comments.push(newComment);
-            }
-            
-            // data.posts와 동기화
-            const dataPost = this.data.posts.find(p => String(p.id) === postIdStr);
-            if (dataPost) {
-                dataPost.comments.push(newComment);
-            }
+                // 댓글 작성 후 Supabase에서 댓글을 다시 로드하여 중복 방지
+                // 로컬 상태에 직접 추가하지 않고 서버에서 최신 댓글을 가져옴
+                await this.loadCommentsForPost(postIdStr);
             } else {
                 // Supabase가 없으면 로컬에만 추가
                 const localComment = {
@@ -567,8 +551,20 @@ const app = {
             const commentInput = document.getElementById('comment-input');
             if (commentInput) commentInput.value = '';
             
+            // Supabase에서 댓글을 다시 로드하여 최신 상태 유지 (중복 방지)
+            await this.loadCommentsForPost(postIdStr);
+            
+            // 업데이트된 게시글 찾기
+            let updatedPost = this.state.posts.find(p => String(p.id) === postIdStr);
+            if (!updatedPost) {
+                updatedPost = this.data.posts.find(p => String(p.id) === postIdStr);
+            }
+            if (!updatedPost) {
+                updatedPost = post; // fallback
+            }
+            
             // 게시글 상세 화면 다시 렌더링 (댓글 반영)
-            await this.renderPostDetail(post);
+            await this.renderPostDetail(updatedPost);
         } catch (error) {
             console.error('❌ 댓글 작성 실패:', error);
             alert('댓글 작성 중 오류가 발생했습니다.');
@@ -589,11 +585,10 @@ const app = {
                 await this.renderHome();
                 break;
             case 'study':
-            case 'meet-up':
             case 'grammar':
-            case 'tips':
             case 'culture':
-            case 'kcontent':
+            case 'meet-up':
+            case 'k-content':
                 await this.renderFeed(viewName); // 모든 카테고리에서 게시판 기능 사용
                 break;
             default:
@@ -611,14 +606,9 @@ const app = {
         }
         
         // 모든 카테고리에서 최신 게시글 가져오기 (최대 6개)
-        const trendingPosts = this.state.posts
-            .sort((a, b) => {
-                // 좋아요 수와 댓글 수를 합산하여 인기 순으로 정렬
-                const aScore = (a.likes || 0) + (Array.isArray(a.comments) ? a.comments.length : 0);
-                const bScore = (b.likes || 0) + (Array.isArray(b.comments) ? b.comments.length : 0);
-                return bScore - aScore;
-            })
-            .slice(0, 6);
+        // loadPostsFromSupabase에서 이미 created_at 기준 최신순으로 정렬되어 있으므로
+        // 단순히 앞에서 6개만 가져오면 됨
+        const trendingPosts = this.state.posts.slice(0, 6);
         
         const html = `
             <div class="section hero" style="background-image: url('img/header.png'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative; min-height: 500px;">
@@ -707,22 +697,22 @@ const app = {
 
         // Determine which posts to show
         let postsToShow;
-        if (category === 'kcontent') {
+        if (category === 'k-content') {
             // K-content 카테고리
             postsToShow = this.state.posts.filter(p => 
-                p.tag === 'K-pop' || p.tag === 'K-drama'
+                p.tag === 'K-content' || p.tag === 'K-pop' || p.tag === 'K-drama'
             );
             if (postsToShow.length === 0) {
                 postsToShow = this.data.kcontentPosts || []; // 하드코딩된 데이터 fallback
             }
         } else {
-            // 카테고리 매핑
+            // 카테고리 매핑 (UI 카테고리를 표시 태그로 변환)
             const categoryMapping = {
-                'culture': 'Culture',
-                'grammar': 'Grammar',
-                'tips': 'Tips',
                 'study': 'Study',
-                'meet-up': 'Meet-up'
+                'grammar': 'Grammar',
+                'culture': 'Culture',
+                'meet-up': 'Meet-up',
+                'k-content': 'K-content'
             };
             
             const targetTag = categoryMapping[category];
@@ -736,12 +726,16 @@ const app = {
 
         // 카테고리 표시 이름 설정
         let displayTitle;
-        if (category === 'kcontent') {
+        if (category === 'k-content') {
             displayTitle = 'K-content';
         } else if (category === 'meet-up') {
             displayTitle = 'Meet-up';
         } else if (category === 'study') {
             displayTitle = 'Study';
+        } else if (category === 'grammar') {
+            displayTitle = 'Grammar';
+        } else if (category === 'culture') {
+            displayTitle = 'Culture';
         } else {
             displayTitle = categoryTitle;
         }
@@ -794,13 +788,15 @@ const app = {
         
         // 카테고리를 뷰 이름으로 매핑
         const categoryToView = {
+            'Study': 'study',
             'Grammar': 'grammar',
             'Culture': 'culture',
-            'Tips': 'tips',
-            'K-pop': 'kcontent',
-            'K-drama': 'kcontent',
-            'Study': 'study',
-            'Meet-up': 'meet-up'
+            'Meet-up': 'meet-up',
+            'K-content': 'k-content',
+            // 기존 데이터 호환성
+            'K-pop': 'k-content',
+            'K-drama': 'k-content',
+            'Tips': 'study'
         };
         
         const viewName = categoryToView[post.tag] || 'grammar';
@@ -834,9 +830,28 @@ const app = {
     },
 
     async renderPostDetail(post) {
+        console.log('📄 renderPostDetail 호출됨:', {
+            postId: post.id,
+            postUserId: post.user_id,
+            postTitle: post.title,
+            postTime: post.time,
+            postKeys: Object.keys(post)
+        });
+        
         const isLiked = this.state.user.likedPosts.includes(post.id);
         // post.id를 문자열로 변환 (UUID는 문자열)
         const postId = String(post.id);
+        
+        // 작성자 확인 (수정 버튼 표시 여부 결정)
+        const isAuthor = isAuthenticated && currentUserId && post.user_id === currentUserId;
+        console.log('🔍 작성자 확인:', {
+            isAuthenticated,
+            currentUserId,
+            postUserId: post.user_id,
+            isAuthor,
+            postId: postId,
+            comparison: post.user_id === currentUserId
+        });
 
         const html = `
             <div class="section-content">
@@ -845,9 +860,16 @@ const app = {
                 </button>
                 
                 <div class="card" style="max-width: 800px; margin: 0 auto;">
-                    <div class="card-header">
-                        <span class="tag">${post.tag}</span>
-                        <span style="font-size: 12px; color: var(--text-secondary);">${post.time}</span>
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; gap: 12px; align-items: center;">
+                            <span class="tag">${post.tag}</span>
+                            <span style="font-size: 12px; color: var(--text-secondary);">${post.time}</span>
+                        </div>
+                        ${isAuthor ? `
+                            <button class="button secondary" onclick="app.showEditPostModal('${postId}')" style="padding: 6px 12px; font-size: 14px;" aria-label="게시글 수정">
+                                <i class="ph ph-pencil" aria-hidden="true"></i> 수정
+                            </button>
+                        ` : ''}
                     </div>
                     
                     <h1 class="typography-headline-reduced" style="margin: 20px 0;">${post.title}</h1>
@@ -880,20 +902,31 @@ const app = {
                     <div style="margin-top: 40px;">
                         <h3 class="typography-label" style="margin-bottom: 20px;">Comments</h3>
                         
-                        ${post.comments.map(comment => `
+                        ${post.comments.map(comment => {
+                            const commentId = String(comment.id || '');
+                            const isCommentAuthor = isAuthenticated && currentUserId && comment.user_id === currentUserId;
+                            return `
                             <div style="padding: 20px; background: rgba(255,255,255,0.03); border-radius: 12px; margin-bottom: 12px;">
-                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                                    <div style="width: 32px; height: 32px; background: #333; border-radius: 50%; overflow: hidden;">
-                                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${comment.author}" alt="${comment.author}의 프로필 이미지" style="width: 100%; height: 100%;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <div style="width: 32px; height: 32px; background: #333; border-radius: 50%; overflow: hidden;">
+                                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${comment.author}" alt="${comment.author}의 프로필 이미지" style="width: 100%; height: 100%;">
+                                        </div>
+                                        <div>
+                                            <div style="font-weight: 600; font-size: 14px;">${comment.author}</div>
+                                            <div style="font-size: 12px; color: var(--text-secondary);">${comment.time}</div>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <div style="font-weight: 600; font-size: 14px;">${comment.author}</div>
-                                        <div style="font-size: 12px; color: var(--text-secondary);">${comment.time}</div>
-                                    </div>
+                                    ${isCommentAuthor ? `
+                                        <button class="button secondary" onclick="app.showEditCommentModal('${postId}', '${commentId}')" style="padding: 4px 8px; font-size: 12px;" aria-label="댓글 수정">
+                                            <i class="ph ph-pencil" aria-hidden="true"></i> 수정
+                                        </button>
+                                    ` : ''}
                                 </div>
                                 <p style="color: var(--text-primary); line-height: 1.5;">${comment.content}</p>
                             </div>
-                        `).join('')}
+                        `;
+                        }).join('')}
                         
                         <div style="margin-top: 30px;">
                             <textarea id="comment-input" placeholder="Add a comment..." aria-label="댓글 입력" style="width: 100%; min-height: 100px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; color: var(--text-primary); font-size: 15px; font-family: inherit; resize: vertical;"></textarea>
@@ -965,9 +998,12 @@ const app = {
                             }
                         }
                         
+                        const mappedTag = this.mapCategoryToTag(post.category);
                         return {
                             id: post.id,
-                            tag: this.mapCategoryToTag(post.category),
+                            user_id: post.user_id, // 작성자 확인을 위해 user_id 추가
+                            category: post.category, // 수정 시 카테고리 필요
+                            tag: mappedTag,
                             title: post.title,
                             content: post.content.length > 100 ? post.content.substring(0, 100) + '...' : post.content,
                             fullContent: post.content,
@@ -1011,28 +1047,35 @@ const app = {
     // 카테고리를 태그로 매핑
     mapCategoryToTag(category) {
         const mapping = {
+            'study': 'Study',
             'grammar': 'Grammar',
             'culture': 'Culture',
-            'tips': 'Tips',
-            'kcontent': 'K-pop',
-            'study': 'Study',
-            'meet-up': 'Meet-up'
+            'meet-up': 'Meet-up',
+            'k-content': 'K-content',
+            // 기존 데이터 호환성 (마이그레이션 전 데이터)
+            'sentences': 'Study',
+            'speaking': 'Meet-up',
+            'kcontent': 'K-content',
+            'tips': 'Study'
         };
-        return mapping[category] || 'General';
+        const result = mapping[category] || 'General';
+        return result;
     },
     
-    // 태그를 카테고리로 매핑
+    // 태그를 카테고리로 매핑 (표시 태그를 UI 카테고리로 변환)
     mapTagToCategory(tag) {
         const mapping = {
+            'Study': 'study',
             'Grammar': 'grammar',
             'Culture': 'culture',
-            'Tips': 'tips',
-            'K-pop': 'kcontent',
-            'K-drama': 'kcontent',
-            'Study': 'study',
-            'Meet-up': 'meet-up'
+            'Meet-up': 'meet-up',
+            'K-content': 'k-content',
+            // 기존 데이터 호환성
+            'K-pop': 'k-content',
+            'K-drama': 'k-content',
+            'Tips': 'study'
         };
-        return mapping[tag] || 'grammar';
+        return mapping[tag] || 'study';
     },
     
     // 게시글의 댓글 로드
@@ -1073,6 +1116,8 @@ const app = {
                         }
                         
                         return {
+                            id: comment.id, // 댓글 ID 추가
+                            user_id: comment.user_id, // 작성자 확인을 위해 user_id 추가
                             author: authorName,
                             content: comment.content,
                             time: this.formatTimeAgo(comment.created_at)
@@ -1138,7 +1183,12 @@ const app = {
             return;
         }
         
-        const categoryTitle = category === 'kcontent' ? 'K-content' : category.charAt(0).toUpperCase() + category.slice(1);
+        const categoryTitle = category === 'k-content' ? 'K-content' : 
+                              category === 'meet-up' ? 'Meet-up' :
+                              category === 'study' ? 'Study' :
+                              category === 'grammar' ? 'Grammar' :
+                              category === 'culture' ? 'Culture' :
+                              category.charAt(0).toUpperCase() + category.slice(1);
         
         const modal = document.createElement('div');
         modal.id = 'createPostModal';
@@ -1244,17 +1294,20 @@ const app = {
             return;
         }
         
-        // 카테고리 매핑
-        const categoryMapping = {
-            'grammar': 'grammar',
-            'culture': 'culture',
-            'tips': 'tips',
-            'kcontent': 'kcontent',
-            'study': 'study',
-            'meet-up': 'meet-up'
-        };
+        // 카테고리 정규화 (소문자로 변환, 하이픈 유지)
+        let dbCategory = String(category).toLowerCase().trim();
         
-        const dbCategory = categoryMapping[category] || 'grammar';
+        // 허용된 카테고리 목록 (5개 게시판: study, grammar, culture, meet-up, k-content)
+        const allowedCategories = ['study', 'grammar', 'culture', 'meet-up', 'k-content'];
+        
+        // 카테고리가 허용 목록에 없으면 기본값 사용
+        if (!allowedCategories.includes(dbCategory)) {
+            console.warn('⚠️ 알 수 없는 카테고리:', category, '→ 기본값(study) 사용');
+            dbCategory = 'study';
+        }
+        
+        console.log('📝 게시글 작성 - UI 카테고리:', category);
+        console.log('📝 게시글 작성 - DB 카테고리:', dbCategory);
         
         try {
             if (!supabase) {
@@ -1263,6 +1316,13 @@ const app = {
             }
             
             // 게시글 작성
+            console.log('💾 DB에 저장할 데이터:', {
+                user_id: currentUserId,
+                category: dbCategory,
+                title: title.substring(0, 50) + '...',
+                content_length: content.length
+            });
+            
             const { data: newPost, error } = await supabase
                 .from('community_posts')
                 .insert({
@@ -1274,7 +1334,21 @@ const app = {
                 .select('*')
                 .single();
             
-            if (error) throw error;
+            if (error) {
+                console.error('❌ Supabase 오류 상세:', error);
+                console.error('❌ 오류 코드:', error.code);
+                console.error('❌ 오류 메시지:', error.message);
+                console.error('❌ 오류 상세:', error.details);
+                console.error('❌ 오류 힌트:', error.hint);
+                console.error('❌ 시도한 카테고리:', dbCategory);
+                console.error('❌ 전체 요청 데이터:', {
+                    user_id: currentUserId,
+                    category: dbCategory,
+                    title: title.substring(0, 50),
+                    content_length: content.length
+                });
+                throw error;
+            }
             
             // 프로필 정보 별도 조회
             let authorName = 'Anonymous';
@@ -1294,16 +1368,25 @@ const app = {
             }
             
             // 새 게시글을 데이터에 추가
+            const mappedTag = this.mapCategoryToTag(newPost.category);
+            const formattedTime = this.formatTimeAgo(newPost.created_at);
+            console.log('🏷️ 새 게시글 태그 매핑:', 'DB 카테고리:', newPost.category, '→ 표시 태그:', mappedTag);
+            console.log('⏰ 시간 포맷팅:', {
+                created_at: newPost.created_at,
+                formatted: formattedTime
+            });
             const post = {
                 id: newPost.id,
-                tag: this.mapCategoryToTag(newPost.category),
+                user_id: newPost.user_id, // 작성자 확인을 위해 user_id 추가
+                category: newPost.category, // 수정 시 카테고리 필요
+                tag: mappedTag,
                 title: newPost.title,
                 content: newPost.content.length > 100 ? newPost.content.substring(0, 100) + '...' : newPost.content,
                 fullContent: newPost.content,
                 author: authorName,
                 likes: newPost.likes_count || 0,
                 comments: [],
-                time: 'Just now'
+                time: formattedTime // 실제 작성 시간 사용
             };
             
             this.data.posts.unshift(post); // 맨 앞에 추가
@@ -1320,41 +1403,418 @@ const app = {
             alert('게시글이 작성되었습니다!');
         } catch (error) {
             console.error('❌ 게시글 작성 실패:', error);
-            alert('게시글 작성 중 오류가 발생했습니다: ' + error.message);
+            console.error('❌ 에러 전체 객체:', JSON.stringify(error, null, 2));
+            
+            // 사용자에게 더 명확한 오류 메시지 표시
+            let errorMessage = '게시글 작성 중 오류가 발생했습니다.';
+            if (error.message) {
+                errorMessage += '\n\n오류: ' + error.message;
+            }
+            if (error.details) {
+                errorMessage += '\n상세: ' + error.details;
+            }
+            if (error.hint) {
+                errorMessage += '\n힌트: ' + error.hint;
+            }
+            
+            alert(errorMessage);
+        }
+    },
+    
+    // 게시글 수정 모달 표시
+    showEditPostModal(postId) {
+        if (!isAuthenticated || !currentUserId) {
+            alert('로그인이 필요합니다.');
+            return;
+        }
+        
+        // 게시글 찾기
+        const postIdStr = String(postId);
+        let post = this.state.posts.find(p => String(p.id) === postIdStr);
+        if (!post) {
+            post = this.data.posts.find(p => String(p.id) === postIdStr);
+        }
+        
+        if (!post) {
+            alert('게시글을 찾을 수 없습니다.');
+            return;
+        }
+        
+        // 작성자 확인
+        if (post.user_id !== currentUserId) {
+            alert('본인이 작성한 게시글만 수정할 수 있습니다.');
+            return;
+        }
+        
+        const modal = document.createElement('div');
+        modal.id = 'editPostModal';
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        `;
+        
+        modal.innerHTML = `
+            <div style="background: var(--bg-card); border-radius: 18px; padding: 40px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                    <h2 class="typography-headline-reduced" style="margin: 0;">게시글 수정</h2>
+                    <button onclick="document.getElementById('editPostModal').remove()" style="background: none; border: none; color: var(--text-secondary); font-size: 24px; cursor: pointer; padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                        <i class="ph ph-x"></i>
+                    </button>
+                </div>
+                
+                <form id="editPostForm" onsubmit="app.handleUpdatePost(event, '${postIdStr}'); return false;">
+                    <div style="margin-bottom: 20px;">
+                        <label for="editPostTitle" style="display: block; margin-bottom: 8px; color: var(--text-secondary); font-size: 14px;">제목</label>
+                        <input 
+                            type="text" 
+                            id="editPostTitle" 
+                            required
+                            value="${post.title.replace(/"/g, '&quot;').replace(/'/g, '&#39;')}"
+                            style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text-primary); font-size: 16px; font-family: inherit;"
+                            placeholder="게시글 제목을 입력하세요"
+                        />
+                    </div>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <label for="editPostContent" style="display: block; margin-bottom: 8px; color: var(--text-secondary); font-size: 14px;">내용</label>
+                        <textarea 
+                            id="editPostContent" 
+                            required
+                            rows="10"
+                            style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text-primary); font-size: 15px; font-family: inherit; resize: vertical;"
+                            placeholder="게시글 내용을 입력하세요"
+                        >${post.fullContent.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')}</textarea>
+                    </div>
+                    
+                    <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                        <button 
+                            type="button" 
+                            onclick="document.getElementById('editPostModal').remove()"
+                            class="button secondary"
+                            style="padding: 12px 24px;"
+                        >
+                            취소
+                        </button>
+                        <button 
+                            type="submit" 
+                            class="button"
+                            style="padding: 12px 24px;"
+                        >
+                            수정하기
+                        </button>
+                    </div>
+                </form>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // 모달 외부 클릭 시 닫기
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
+    },
+    
+    // 게시글 수정 처리
+    async handleUpdatePost(event, postId) {
+        event.preventDefault();
+        
+        if (!isAuthenticated || !currentUserId) {
+            alert('로그인이 필요합니다.');
+            return;
+        }
+        
+        const postIdStr = String(postId);
+        const title = document.getElementById('editPostTitle').value.trim();
+        const content = document.getElementById('editPostContent').value.trim();
+        
+        if (!title || !content) {
+            alert('제목과 내용을 모두 입력해주세요.');
+            return;
+        }
+        
+        // 게시글 찾기
+        let post = this.state.posts.find(p => String(p.id) === postIdStr);
+        if (!post) {
+            post = this.data.posts.find(p => String(p.id) === postIdStr);
+        }
+        
+        if (!post) {
+            alert('게시글을 찾을 수 없습니다.');
+            return;
+        }
+        
+        // 작성자 확인
+        if (post.user_id !== currentUserId) {
+            alert('본인이 작성한 게시글만 수정할 수 있습니다.');
+            return;
+        }
+        
+        try {
+            if (!supabase) {
+                alert('Supabase가 초기화되지 않았습니다.');
+                return;
+            }
+            
+            // 게시글 수정
+            const { data: updatedPost, error } = await supabase
+                .from('community_posts')
+                .update({
+                    title: title,
+                    content: content,
+                    updated_at: new Date().toISOString()
+                })
+                .eq('id', postIdStr)
+                .eq('user_id', currentUserId) // 작성자만 수정 가능하도록 추가 확인
+                .select('*')
+                .single();
+            
+            if (error) {
+                console.error('❌ 게시글 수정 실패:', error);
+                throw error;
+            }
+            
+            // 모달 닫기
+            document.getElementById('editPostModal').remove();
+            
+            // Supabase에서 최신 게시글 다시 로드
+            await this.loadPostsFromSupabase();
+            
+            // 게시글 상세 화면 다시 렌더링
+            const updatedPostData = this.state.posts.find(p => String(p.id) === postIdStr) || 
+                                   this.data.posts.find(p => String(p.id) === postIdStr);
+            if (updatedPostData) {
+                await this.renderPostDetail(updatedPostData);
+            } else {
+                // 게시글을 찾을 수 없으면 현재 뷰로 돌아가기
+                await this.renderView(this.state.currentView);
+            }
+            
+            alert('게시글이 수정되었습니다!');
+        } catch (error) {
+            console.error('❌ 게시글 수정 실패:', error);
+            alert('게시글 수정 중 오류가 발생했습니다: ' + (error.message || '알 수 없는 오류'));
+        }
+    },
+    
+    // 댓글 수정 모달 표시
+    showEditCommentModal(postId, commentId) {
+        if (!isAuthenticated || !currentUserId) {
+            alert('로그인이 필요합니다.');
+            return;
+        }
+        
+        const postIdStr = String(postId);
+        const commentIdStr = String(commentId);
+        
+        // 게시글 찾기
+        let post = this.state.posts.find(p => String(p.id) === postIdStr);
+        if (!post) {
+            post = this.data.posts.find(p => String(p.id) === postIdStr);
+        }
+        
+        if (!post || !post.comments) {
+            alert('댓글을 찾을 수 없습니다.');
+            return;
+        }
+        
+        // 댓글 찾기
+        const comment = post.comments.find(c => String(c.id) === commentIdStr);
+        if (!comment) {
+            alert('댓글을 찾을 수 없습니다.');
+            return;
+        }
+        
+        // 작성자 확인
+        if (comment.user_id !== currentUserId) {
+            alert('본인이 작성한 댓글만 수정할 수 있습니다.');
+            return;
+        }
+        
+        const modal = document.createElement('div');
+        modal.id = 'editCommentModal';
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        `;
+        
+        modal.innerHTML = `
+            <div style="background: var(--bg-card); border-radius: 18px; padding: 40px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                    <h2 class="typography-headline-reduced" style="margin: 0;">댓글 수정</h2>
+                    <button onclick="document.getElementById('editCommentModal').remove()" style="background: none; border: none; color: var(--text-secondary); font-size: 24px; cursor: pointer; padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                        <i class="ph ph-x"></i>
+                    </button>
+                </div>
+                
+                <form id="editCommentForm" onsubmit="app.handleUpdateComment(event, '${postIdStr}', '${commentIdStr}'); return false;">
+                    <div style="margin-bottom: 30px;">
+                        <label for="editCommentContent" style="display: block; margin-bottom: 8px; color: var(--text-secondary); font-size: 14px;">댓글 내용</label>
+                        <textarea 
+                            id="editCommentContent" 
+                            required
+                            rows="6"
+                            style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text-primary); font-size: 15px; font-family: inherit; resize: vertical;"
+                            placeholder="댓글 내용을 입력하세요"
+                        >${comment.content.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')}</textarea>
+                    </div>
+                    
+                    <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                        <button 
+                            type="button" 
+                            onclick="document.getElementById('editCommentModal').remove()"
+                            class="button secondary"
+                            style="padding: 12px 24px;"
+                        >
+                            취소
+                        </button>
+                        <button 
+                            type="submit" 
+                            class="button"
+                            style="padding: 12px 24px;"
+                        >
+                            수정하기
+                        </button>
+                    </div>
+                </form>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // 모달 외부 클릭 시 닫기
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
+    },
+    
+    // 댓글 수정 처리
+    async handleUpdateComment(event, postId, commentId) {
+        event.preventDefault();
+        
+        if (!isAuthenticated || !currentUserId) {
+            alert('로그인이 필요합니다.');
+            return;
+        }
+        
+        const postIdStr = String(postId);
+        const commentIdStr = String(commentId);
+        const content = document.getElementById('editCommentContent').value.trim();
+        
+        if (!content) {
+            alert('댓글 내용을 입력해주세요.');
+            return;
+        }
+        
+        try {
+            if (!supabase) {
+                alert('Supabase가 초기화되지 않았습니다.');
+                return;
+            }
+            
+            // 댓글 수정
+            const { data: updatedComment, error } = await supabase
+                .from('community_comments')
+                .update({
+                    content: content,
+                    updated_at: new Date().toISOString()
+                })
+                .eq('id', commentIdStr)
+                .eq('user_id', currentUserId) // 작성자만 수정 가능하도록 추가 확인
+                .select('*')
+                .single();
+            
+            if (error) {
+                console.error('❌ 댓글 수정 실패:', error);
+                throw error;
+            }
+            
+            // 모달 닫기
+            document.getElementById('editCommentModal').remove();
+            
+            // Supabase에서 댓글을 다시 로드하여 최신 상태 유지
+            await this.loadCommentsForPost(postIdStr);
+            
+            // 게시글 상세 화면 다시 렌더링
+            let post = this.state.posts.find(p => String(p.id) === postIdStr);
+            if (!post) {
+                post = this.data.posts.find(p => String(p.id) === postIdStr);
+            }
+            if (post) {
+                await this.renderPostDetail(post);
+            }
+            
+            alert('댓글이 수정되었습니다!');
+        } catch (error) {
+            console.error('❌ 댓글 수정 실패:', error);
+            alert('댓글 수정 중 오류가 발생했습니다: ' + (error.message || '알 수 없는 오류'));
         }
     },
     
     bindPostEvents() {
-        // Bind post card clicks
-        document.querySelectorAll('.post-card').forEach(card => {
-            // 기존 이벤트 리스너 제거 (중복 방지)
-            const newCard = card.cloneNode(true);
-            card.parentNode.replaceChild(newCard, card);
-            
-            newCard.addEventListener('click', (e) => {
-                // Don't trigger if clicking on like button or menu button
-                if (e.target.closest('.like-btn')) return;
-                if (e.target.closest('.icon-btn-menu')) return;
-
-                const postId = newCard.dataset.postId; // UUID이므로 문자열로 처리
-                if (postId) {
-                    console.log('📝 게시글 클릭:', postId);
-                    this.handlePostClick(postId);
-                }
-            });
-        });
-
-        // Bind like button clicks
-        document.querySelectorAll('.like-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
+        // 이벤트 위임 사용 (더 안정적이고 확장 프로그램과 충돌 방지)
+        // 기존 이벤트 리스너가 있다면 제거 (중복 방지)
+        if (this._postClickHandler) {
+            this.container.removeEventListener('click', this._postClickHandler);
+        }
+        
+        // 새로운 이벤트 핸들러 생성
+        this._postClickHandler = (e) => {
+            // 좋아요 버튼 클릭 처리
+            const likeBtn = e.target.closest('.like-btn');
+            if (likeBtn) {
                 e.stopPropagation();
-                const postId = btn.dataset.postId; // UUID이므로 문자열로 처리
+                e.preventDefault();
+                const postId = likeBtn.dataset.postId;
                 if (postId) {
                     console.log('❤️ 좋아요 클릭:', postId);
                     this.handleLikeClick(postId);
                 }
-            });
-        });
+                return;
+            }
+            
+            // 메뉴 버튼 클릭은 무시
+            if (e.target.closest('.icon-btn-menu')) {
+                return;
+            }
+            
+            // 게시글 카드 클릭 처리
+            const postCard = e.target.closest('.post-card');
+            if (postCard) {
+                const postId = postCard.dataset.postId;
+                if (postId) {
+                    console.log('📝 게시글 클릭:', postId);
+                    this.handlePostClick(postId);
+                }
+            }
+        };
+        
+        // 이벤트 리스너 추가
+        this.container.addEventListener('click', this._postClickHandler);
     }
 };
 
