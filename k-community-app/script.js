@@ -588,8 +588,8 @@ const app = {
             case 'home':
                 await this.renderHome();
                 break;
-            case 'sentences':
-            case 'speaking':
+            case 'study':
+            case 'meet-up':
             case 'grammar':
             case 'tips':
             case 'culture':
@@ -721,8 +721,8 @@ const app = {
                 'culture': 'Culture',
                 'grammar': 'Grammar',
                 'tips': 'Tips',
-                'sentences': 'Sentences',
-                'speaking': 'Speaking'
+                'study': 'Study',
+                'meet-up': 'Meet-up'
             };
             
             const targetTag = categoryMapping[category];
@@ -738,8 +738,10 @@ const app = {
         let displayTitle;
         if (category === 'kcontent') {
             displayTitle = 'K-content';
-        } else if (category === 'speaking') {
-            displayTitle = 'Speaking';
+        } else if (category === 'meet-up') {
+            displayTitle = 'Meet-up';
+        } else if (category === 'study') {
+            displayTitle = 'Study';
         } else {
             displayTitle = categoryTitle;
         }
@@ -797,8 +799,8 @@ const app = {
             'Tips': 'tips',
             'K-pop': 'kcontent',
             'K-drama': 'kcontent',
-            'Sentences': 'sentences',
-            'Speaking': 'speaking'
+            'Study': 'study',
+            'Meet-up': 'meet-up'
         };
         
         const viewName = categoryToView[post.tag] || 'grammar';
@@ -1013,8 +1015,8 @@ const app = {
             'culture': 'Culture',
             'tips': 'Tips',
             'kcontent': 'K-pop',
-            'sentences': 'Sentences',
-            'speaking': 'Speaking'
+            'study': 'Study',
+            'meet-up': 'Meet-up'
         };
         return mapping[category] || 'General';
     },
@@ -1027,8 +1029,8 @@ const app = {
             'Tips': 'tips',
             'K-pop': 'kcontent',
             'K-drama': 'kcontent',
-            'Sentences': 'sentences',
-            'Speaking': 'speaking'
+            'Study': 'study',
+            'Meet-up': 'meet-up'
         };
         return mapping[tag] || 'grammar';
     },
@@ -1248,8 +1250,8 @@ const app = {
             'culture': 'culture',
             'tips': 'tips',
             'kcontent': 'kcontent',
-            'sentences': 'sentences',
-            'speaking': 'speaking'
+            'study': 'study',
+            'meet-up': 'meet-up'
         };
         
         const dbCategory = categoryMapping[category] || 'grammar';
