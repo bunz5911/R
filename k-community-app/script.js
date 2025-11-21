@@ -999,6 +999,12 @@ const app = {
                         }
                         
                         const mappedTag = this.mapCategoryToTag(post.category);
+                        const formattedTime = this.formatTimeAgo(post.created_at);
+                        console.log('⏰ 게시글 시간 포맷팅:', {
+                            postId: post.id,
+                            created_at: post.created_at,
+                            formatted: formattedTime
+                        });
                         return {
                             id: post.id,
                             user_id: post.user_id, // 작성자 확인을 위해 user_id 추가
@@ -1010,7 +1016,7 @@ const app = {
                             author: authorName,
                             likes: post.likes_count || 0,
                             comments: [], // 댓글은 별도로 로드
-                            time: this.formatTimeAgo(post.created_at)
+                            time: formattedTime // 실제 작성 시간 사용
                         };
                     })
                 );
@@ -1160,12 +1166,34 @@ const app = {
     
     // 시간 포맷팅
     formatTimeAgo(dateString) {
+        if (!dateString) {
+            console.warn('⚠️ formatTimeAgo: dateString이 없습니다');
+            return 'Just now';
+        }
+        
         const date = new Date(dateString);
         const now = new Date();
+        
+        // 날짜가 유효한지 확인
+        if (isNaN(date.getTime())) {
+            console.warn('⚠️ formatTimeAgo: 유효하지 않은 날짜:', dateString);
+            return 'Just now';
+        }
+        
         const diffMs = now - date;
         const diffMins = Math.floor(diffMs / 60000);
         const diffHours = Math.floor(diffMs / 3600000);
         const diffDays = Math.floor(diffMs / 86400000);
+        
+        console.log('⏰ formatTimeAgo 계산:', {
+            dateString,
+            date: date.toISOString(),
+            now: now.toISOString(),
+            diffMs,
+            diffMins,
+            diffHours,
+            diffDays
+        });
         
         if (diffMins < 1) return 'Just now';
         if (diffMins < 60) return `${diffMins}m ago`;
@@ -1367,38 +1395,14 @@ const app = {
                 }
             }
             
-            // 새 게시글을 데이터에 추가
-            const mappedTag = this.mapCategoryToTag(newPost.category);
-            const formattedTime = this.formatTimeAgo(newPost.created_at);
-            console.log('🏷️ 새 게시글 태그 매핑:', 'DB 카테고리:', newPost.category, '→ 표시 태그:', mappedTag);
-            console.log('⏰ 시간 포맷팅:', {
-                created_at: newPost.created_at,
-                formatted: formattedTime
-            });
-            const post = {
-                id: newPost.id,
-                user_id: newPost.user_id, // 작성자 확인을 위해 user_id 추가
-                category: newPost.category, // 수정 시 카테고리 필요
-                tag: mappedTag,
-                title: newPost.title,
-                content: newPost.content.length > 100 ? newPost.content.substring(0, 100) + '...' : newPost.content,
-                fullContent: newPost.content,
-                author: authorName,
-                likes: newPost.likes_count || 0,
-                comments: [],
-                time: formattedTime // 실제 작성 시간 사용
-            };
-            
-            this.data.posts.unshift(post); // 맨 앞에 추가
-            
             // 모달 닫기
             document.getElementById('createPostModal').remove();
             
-            // Supabase에서 최신 게시글 다시 로드
+            // Supabase에서 최신 게시글 다시 로드 (새로 작성한 게시글 포함)
             await this.loadPostsFromSupabase();
             
             // 현재 뷰 다시 렌더링
-            this.renderView(this.state.currentView);
+            await this.renderView(this.state.currentView);
             
             alert('게시글이 작성되었습니다!');
         } catch (error) {
