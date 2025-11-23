@@ -5851,7 +5851,7 @@ function updateAuthUI() {
         // 로그인 상태
         authBtn.textContent = '로그아웃';
         authBtn.className = 'auth-btn logout';
-        authBtn.onclick = logout;
+        authBtn.onclick = handleAuth; // handleAuth 함수 사용 (로그인/로그아웃 통합 처리)
         
         if (userInfo) {
             userInfo.textContent = `👤 ${currentDisplayName}님`;
