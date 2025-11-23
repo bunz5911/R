@@ -5077,6 +5077,14 @@ async function loadContextNotesPreview() {
             return;
         }
         
+        // HTML 이스케이프 함수
+        const escapeHtml = (text) => {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        };
+        
         previewEl.innerHTML = `
             <div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
                 <h3 style="font-size: 16px; font-weight: 700; color: #333;">
@@ -5087,16 +5095,20 @@ async function loadContextNotesPreview() {
                 </a>
             </div>
             <div style="display: flex; flex-direction: column; gap: 12px;">
-                ${notes.slice(0, 3).map(note => `
+                ${notes.slice(0, 3).map(note => {
+                    // 안전한 이스케이프 처리
+                    const escapedText = escapeHtml(note.context_text);
+                    const safeTextForJs = JSON.stringify(note.context_text).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    return `
                     <div style="background: #f8f9fa; padding: 15px; border-radius: 12px; border-left: 4px solid #667eea; position: relative;">
                         <div style="font-size: 13px; color: #666; margin-bottom: 8px;">
                             ${new Date(note.created_at).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })}
                         </div>
                         <div style="font-size: 14px; color: #333; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 10px;">
-                            ${note.context_text}
+                            ${escapedText}
                         </div>
                         <div style="display: flex; gap: 8px; margin-top: 10px;">
-                            <button onclick="showEditContextNotesModal('${note.id}', ${JSON.stringify(note.context_text).replace(/"/g, '&quot;').replace(/'/g, '&#39;')})" style="flex: 1; padding: 8px 12px; background: #667eea; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                            <button onclick="showEditContextNotesModal('${note.id}', '${safeTextForJs}')" style="flex: 1; padding: 8px 12px; background: #667eea; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
                                 ✏️ 수정
                             </button>
                             <button onclick="deleteContextNotes('${note.id}')" style="flex: 1; padding: 8px 12px; background: #e74c3c; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
@@ -5104,7 +5116,8 @@ async function loadContextNotesPreview() {
                             </button>
                         </div>
                     </div>
-                `).join('')}
+                `;
+                }).join('')}
             </div>
             ${notes.length > 3 ? `
                 <button onclick="location.href='my-k-content.html'" style="width: 100%; padding: 12px; background: white; border: 2px solid #667eea; color: #667eea; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 14px; margin-top: 8px;">
