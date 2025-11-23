@@ -505,18 +505,36 @@ function setupEventListeners() {
 // [1-1] 사용자 코인 로드
 // ============================================================================
 async function loadUserCoins() {
+    // 로컬스토리지에서 먼저 읽기 (즉시 표시)
+    const cachedCoins = localStorage.getItem('userCoins');
+    if (cachedCoins) {
+        userCoins = parseInt(cachedCoins, 10);
+        updateCoinDisplay();
+    }
+    
+    // 백그라운드에서 서버와 동기화 (비블로킹, 타임아웃 3초)
     try {
-        const response = await fetch(`${API_BASE}/user/${currentUserId}/coins`);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        
+        const response = await fetch(`${API_BASE}/user/${currentUserId}/coins`, {
+            signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        
         const data = await response.json();
-        userCoins = data.coins || 50;  // 서버에서 받은 코인 (기본 50)
-        localStorage.setItem('userCoins', userCoins);
-        updateCoinDisplay();
-        console.log('💰 코인 로드 완료:', userCoins);
+        const serverCoins = data.coins || 50;
+        
+        // 서버 값이 다르면 업데이트
+        if (serverCoins !== userCoins) {
+            userCoins = serverCoins;
+            localStorage.setItem('userCoins', userCoins.toString());
+            updateCoinDisplay();
+        }
+        console.log('💰 코인 서버 동기화 완료:', userCoins);
     } catch (error) {
-        console.log('⚠️ 코인 로드 실패:', error.message);
-        userCoins = 50;  // 실패 시 기본 50 코인
-        localStorage.setItem('userCoins', '50');
-        updateCoinDisplay();
+        // 타임아웃이나 네트워크 오류는 무시 (로컬 캐시 사용)
+        console.log('⚠️ 코인 서버 동기화 실패 (로컬 캐시 사용):', error.message);
     }
 }
 
@@ -2764,6 +2782,9 @@ function initializeTTS() {
 
 // 재생/정지 토글 함수
 async function togglePlay(id, text, buttonElement) {
+    // TTS 초기화 확인 (필요할 때만)
+    ensureTTSInitialized();
+    
     console.log(`🎯 togglePlay 호출 - ID: ${id}, 텍스트 길이: ${text.length}`);
     console.log(`🎤 현재 TTS 상태: useGoogleTTS=${useGoogleTTS}, voice=${selectedGoogleVoice}`);
     
