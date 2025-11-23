@@ -302,17 +302,11 @@ let recordedText = '';
 // ============================================================================
 async function loadPrecomputedAnalysis() {
     try {
-        console.log('📦 하드코딩된 분석 데이터 로드 시작...');
+        console.log('📦 하드코딩된 분석 데이터 백그라운드 로드 시작...');
         // ✅ 최종 파일: 모든 키 공백 제거 완료
-        // 캐시 무효화를 위해 타임스탬프 추가 (레벨별 데이터 재생성 후 강제 새로고침)
-        const cacheBuster = Date.now() + Math.random();
-        const response = await fetch(`stories_data_final.json?v=${cacheBuster}&nocache=${cacheBuster}&force=${Math.random()}&t=${Date.now()}`, {
-            cache: 'no-store',  // 브라우저 캐시 완전 무시
-            headers: {
-                'Cache-Control': 'no-cache, no-store, must-revalidate',
-                'Pragma': 'no-cache',
-                'Expires': '0'
-            }
+        // 브라우저 캐시 활용 (성능 최적화) - 재방문 시 빠른 로드
+        const response = await fetch(`stories_data_final.json?v=20250118`, {
+            cache: 'default'  // 브라우저 캐시 활용
         });
         if (!response.ok) {
             throw new Error(`stories_data_final.json 로드 실패: ${response.status}`);
@@ -364,16 +358,8 @@ async function loadPrecomputedAnalysis() {
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 앱 초기화 시작...');
     
-    // ✅ 하드코딩된 분석 데이터 먼저 로드 (실패해도 계속 진행)
-    try {
-        const analysisLoaded = await loadPrecomputedAnalysis();
-        if (!analysisLoaded) {
-            console.warn('⚠️ 분석 데이터 로드 실패, 서버 분석을 사용합니다.');
-        }
-    } catch (error) {
-        console.error('❌ 분석 데이터 로드 중 오류:', error);
-        PRECOMPUTED_ANALYSIS = {};
-    }
+    // ✅ 동화 목록 먼저 즉시 표시 (사용자 경험 최우선)
+    loadStories();
     
     // ✅ 온보딩 체크 (첫 방문자)
     checkOnboarding();
@@ -411,17 +397,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         voicesCount: googleTTSVoices.length
     });
     
-    // ✅ 동화 목록 로드 (반드시 실행되어야 함)
-    try {
-        loadStories();
-    } catch (error) {
-        console.error('❌ 동화 목록 로드 실패:', error);
-        // 에러 발생 시에도 로딩 상태 해제
-        const listEl = document.getElementById('storyList');
-        if (listEl) {
-            listEl.innerHTML = '<div class="loading"><p>동화 목록을 불러올 수 없습니다. 페이지를 새로고침해주세요.</p></div>';
-        }
-    }
+    // ✅ 분석 데이터 백그라운드 로드 (동화 목록 표시 후 비동기로 로드)
+    // 사용자가 동화를 선택하기 전에 로드되면 좋지만, 블로킹하지 않음
+    loadPrecomputedAnalysis().catch(error => {
+        console.warn('⚠️ 분석 데이터 백그라운드 로드 실패, 서버 분석을 사용합니다:', error);
+        PRECOMPUTED_ANALYSIS = {};
+    });
     
     setupEventListeners();
     // loadVoicePreference() 제거 - loadGoogleTTSVoices()에서 처리됨
