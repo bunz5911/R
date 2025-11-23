@@ -4867,7 +4867,7 @@ function showEditContextNotesModal(noteId, currentText) {
             <!-- 텍스트 입력 -->
             <div style="margin-bottom: 20px;">
                 <label style="display: block; font-size: 14px; color: #666; margin-bottom: 8px; font-weight: 600;">이야기의 맥락을 파악하고 기록해보세요</label>
-                <textarea id="editContextNotesText" placeholder="예: 이 이야기는 도깨비가 요리를 통해 사람들을 도와주는 내용입니다. 주인공은 요리 실력이 뛰어난 도깨비로, 어려운 사람들을 도와주며 행복을 나눕니다..." style="width: 100%; min-height: 200px; padding: 15px; border: 2px solid #E0E0E0; border-radius: 12px; font-size: 15px; resize: vertical; font-family: inherit; line-height: 1.6;">${currentText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
+                <textarea id="editContextNotesText" placeholder="예: 이 이야기는 도깨비가 요리를 통해 사람들을 도와주는 내용입니다. 주인공은 요리 실력이 뛰어난 도깨비로, 어려운 사람들을 도와주며 행복을 나눕니다..." style="width: 100%; min-height: 200px; padding: 15px; border: 2px solid #E0E0E0; border-radius: 12px; font-size: 15px; resize: vertical; font-family: inherit; line-height: 1.6;">${currentText.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')}</textarea>
             </div>
             
             <!-- 액션 버튼 -->
@@ -5096,7 +5096,7 @@ async function loadContextNotesPreview() {
                             ${note.context_text}
                         </div>
                         <div style="display: flex; gap: 8px; margin-top: 10px;">
-                            <button onclick="showEditContextNotesModal('${note.id}', ${JSON.stringify(note.context_text).replace(/"/g, '&quot;')})" style="flex: 1; padding: 8px 12px; background: #667eea; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                            <button onclick="showEditContextNotesModal('${note.id}', ${JSON.stringify(note.context_text).replace(/"/g, '&quot;').replace(/'/g, '&#39;')})" style="flex: 1; padding: 8px 12px; background: #667eea; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
                                 ✏️ 수정
                             </button>
                             <button onclick="deleteContextNotes('${note.id}')" style="flex: 1; padding: 8px 12px; background: #e74c3c; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
