@@ -86,3 +86,6 @@ Thumbs.db
 *.swp
 *.swo
 
+# Git LFS 관련 (Cloudflare Pages 배포를 위해 제외)
+.git/lfs/
+
