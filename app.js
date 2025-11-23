@@ -3131,6 +3131,15 @@ async function playFullStoryAudio(storyId, buttonElement) {
     const paragraphs = fullText.split(/\n+/).filter(p => p.trim().length > 0);
     const totalParagraphs = paragraphs.length;
     
+    // 각 문단의 텍스트 길이 계산 (한글 기준, 공백 제외)
+    const paragraphLengths = paragraphs.map(p => {
+        // 한글, 숫자, 기본 문장부호만 카운트 (공백 제외)
+        return p.replace(/\s/g, '').length;
+    });
+    
+    // 전체 텍스트 길이
+    const totalLength = paragraphLengths.reduce((sum, len) => sum + len, 0);
+    
     // TTS fallback 함수 (0번 동화 파일이 없을 때만 사용)
     const fallbackToTTS = async () => {
         if (storyId !== 0 && storyId !== '0') {
@@ -3172,9 +3181,11 @@ async function playFullStoryAudio(storyId, buttonElement) {
         // 오디오 길이 확인
         const audioDuration = fullStoryAudio.duration;
         console.log(`📊 오디오 길이: ${audioDuration.toFixed(2)}초, 문단 수: ${totalParagraphs}`);
+        console.log(`📊 문단별 길이:`, paragraphLengths);
+        console.log(`📊 전체 텍스트 길이: ${totalLength}자`);
         
-        // 하이라이트 및 스크롤 시작
-        startFullStoryHighlight(audioDuration, totalParagraphs);
+        // 하이라이트 및 스크롤 시작 (문단별 길이 비율 사용)
+        startFullStoryHighlight(audioDuration, paragraphLengths, totalLength);
     }, { once: true });
     
     // 재생 시작
@@ -3205,17 +3216,35 @@ async function playFullStoryAudio(storyId, buttonElement) {
 
 // 전체 이야기 하이라이트 및 스크롤 관리
 let fullStoryHighlightInterval = null;
+let paragraphTimings = []; // 문단별 시작 시간 저장
 
-function startFullStoryHighlight(audioDuration, totalParagraphs) {
+function startFullStoryHighlight(audioDuration, paragraphLengths, totalLength) {
     // 기존 인터벌 정리
     if (fullStoryHighlightInterval) {
         clearInterval(fullStoryHighlightInterval);
     }
     
-    // 문단당 예상 재생 시간 계산
-    const timePerParagraph = audioDuration / totalParagraphs;
+    // 문단별 시작 시간 계산 (텍스트 길이 비율 기반)
+    paragraphTimings = [];
+    let accumulatedTime = 0;
     
-    console.log(`🎯 하이라이트 시작: 총 ${totalParagraphs}개 문단, 문단당 ${timePerParagraph.toFixed(2)}초`);
+    paragraphLengths.forEach((length, index) => {
+        const paragraphRatio = length / totalLength;
+        const paragraphDuration = audioDuration * paragraphRatio;
+        
+        paragraphTimings.push({
+            startTime: accumulatedTime,
+            endTime: accumulatedTime + paragraphDuration,
+            index: index
+        });
+        
+        accumulatedTime += paragraphDuration;
+    });
+    
+    console.log(`🎯 하이라이트 시작: 총 ${paragraphLengths.length}개 문단`);
+    console.log(`📊 문단별 시간 구간:`, paragraphTimings.map(t => 
+        `문단${t.index}: ${t.startTime.toFixed(2)}초 ~ ${t.endTime.toFixed(2)}초`
+    ));
     
     // 0.1초마다 현재 재생 위치 확인 및 하이라이트 업데이트
     fullStoryHighlightInterval = setInterval(() => {
@@ -3224,11 +3253,29 @@ function startFullStoryHighlight(audioDuration, totalParagraphs) {
         }
         
         const currentTime = fullStoryAudio.currentTime;
-        const currentParagraphIndex = Math.floor(currentTime / timePerParagraph);
-        const safeIndex = Math.min(currentParagraphIndex, totalParagraphs - 1);
         
-        // 현재 문단 하이라이트
-        highlightFullStoryParagraph(safeIndex);
+        // 현재 시간에 해당하는 문단 찾기
+        let currentParagraphIndex = -1;
+        for (let i = 0; i < paragraphTimings.length; i++) {
+            const timing = paragraphTimings[i];
+            if (currentTime >= timing.startTime && currentTime < timing.endTime) {
+                currentParagraphIndex = timing.index;
+                break;
+            }
+        }
+        
+        // 마지막 문단 처리 (끝 시간 포함)
+        if (currentParagraphIndex === -1 && paragraphTimings.length > 0) {
+            const lastTiming = paragraphTimings[paragraphTimings.length - 1];
+            if (currentTime >= lastTiming.startTime) {
+                currentParagraphIndex = lastTiming.index;
+            }
+        }
+        
+        // 안전한 인덱스 보장
+        if (currentParagraphIndex >= 0 && currentParagraphIndex < paragraphLengths.length) {
+            highlightFullStoryParagraph(currentParagraphIndex);
+        }
     }, 100); // 0.1초마다 업데이트
 }
 
