@@ -1792,8 +1792,9 @@ function renderFullStory() {
         audioPath: `audio/full-stories/story-${storyId}.mp3`
     });
     
-    // 텍스트를 문단 단위로 분할 (줄바꿈 기준)
-    const paragraphs = fullText.split(/\n+/).filter(p => p.trim().length > 0);
+    // 텍스트를 문단 단위로 분할 (오디오 파일 생성 시 사용된 방식과 일치: \n\n로 분할)
+    // 오디오 파일은 generate_story_0_audio.py에서 '\n\n'로 문단을 구분하므로 동일하게 처리
+    const paragraphs = fullText.split('\n\n').filter(p => p.trim().length > 0);
     
     // 문단별 HTML 생성 (하이라이트용 ID 포함)
     const paragraphsHTML = paragraphs.map((para, index) => {
@@ -3126,15 +3127,19 @@ async function playFullStoryAudio(storyId, buttonElement) {
     buttonElement.innerHTML = '⏳';
     buttonElement.disabled = true;
     
-    // 텍스트 문단 정보 가져오기
+    // 텍스트 문단 정보 가져오기 (renderFullStory와 동일한 방식으로 처리)
+    // 오디오 파일 생성 시 사용된 방식과 일치: \n\n로 분할
     const fullText = currentStory?.full_text || '';
-    const paragraphs = fullText.split(/\n+/).filter(p => p.trim().length > 0);
+    const paragraphs = fullText.split('\n\n').filter(p => p.trim().length > 0);
     const totalParagraphs = paragraphs.length;
     
-    // 각 문단의 텍스트 길이 계산 (한글 기준, 공백 제외)
+    // 각 문단의 텍스트 길이 계산 (renderFullStory에서 표시되는 텍스트와 동일하게 처리)
+    // renderFullStory에서는 para.trim()을 사용하므로, 여기서도 trim() 후 길이 계산
     const paragraphLengths = paragraphs.map(p => {
+        // trim() 후 공백 제외한 길이 계산 (표시되는 텍스트와 일치)
+        const trimmedPara = p.trim();
         // 한글, 숫자, 기본 문장부호만 카운트 (공백 제외)
-        return p.replace(/\s/g, '').length;
+        return trimmedPara.replace(/\s/g, '').length;
     });
     
     // 전체 텍스트 길이
@@ -3217,6 +3222,7 @@ async function playFullStoryAudio(storyId, buttonElement) {
 // 전체 이야기 하이라이트 및 스크롤 관리
 let fullStoryHighlightInterval = null;
 let paragraphTimings = []; // 문단별 시작 시간 저장
+let currentHighlightedIndex = -1; // 현재 하이라이트된 문단 인덱스 추적
 
 function startFullStoryHighlight(audioDuration, paragraphLengths, totalLength) {
     // 기존 인터벌 정리
@@ -3246,6 +3252,9 @@ function startFullStoryHighlight(audioDuration, paragraphLengths, totalLength) {
         `문단${t.index}: ${t.startTime.toFixed(2)}초 ~ ${t.endTime.toFixed(2)}초`
     ));
     
+    // 현재 하이라이트된 문단 인덱스 초기화
+    currentHighlightedIndex = -1;
+    
     // 0.1초마다 현재 재생 위치 확인 및 하이라이트 업데이트
     fullStoryHighlightInterval = setInterval(() => {
         if (!fullStoryAudio || fullStoryAudio.paused) {
@@ -3258,6 +3267,7 @@ function startFullStoryHighlight(audioDuration, paragraphLengths, totalLength) {
         let currentParagraphIndex = -1;
         for (let i = 0; i < paragraphTimings.length; i++) {
             const timing = paragraphTimings[i];
+            // 시작 시간은 포함, 끝 시간은 제외 (마지막 문단 제외)
             if (currentTime >= timing.startTime && currentTime < timing.endTime) {
                 currentParagraphIndex = timing.index;
                 break;
@@ -3272,9 +3282,15 @@ function startFullStoryHighlight(audioDuration, paragraphLengths, totalLength) {
             }
         }
         
-        // 안전한 인덱스 보장
+        // 안전한 인덱스 보장 및 하이라이트 업데이트 (변경된 경우에만)
         if (currentParagraphIndex >= 0 && currentParagraphIndex < paragraphLengths.length) {
-            highlightFullStoryParagraph(currentParagraphIndex);
+            // 이전과 다른 문단이면 하이라이트 업데이트
+            if (currentHighlightedIndex !== currentParagraphIndex) {
+                currentHighlightedIndex = currentParagraphIndex;
+                highlightFullStoryParagraph(currentParagraphIndex);
+                // 디버깅 로그 (개발 중에만 활성화)
+                console.log(`🎯 하이라이트 업데이트: 문단 ${currentParagraphIndex} (시간: ${currentTime.toFixed(2)}초)`);
+            }
         }
     }, 100); // 0.1초마다 업데이트
 }
@@ -3310,6 +3326,10 @@ function clearFullStoryHighlight() {
         clearInterval(fullStoryHighlightInterval);
         fullStoryHighlightInterval = null;
     }
+    
+    // 상태 초기화
+    paragraphTimings = [];
+    currentHighlightedIndex = -1;
     
     // 모든 하이라이트 제거
     document.querySelectorAll('.full-story-paragraph').forEach(para => {
