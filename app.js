@@ -333,54 +333,48 @@ async function loadPrecomputedAnalysis() {
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 앱 초기화 시작...');
     
-    // ✅ 동화 목록 먼저 즉시 표시 (사용자 경험 최우선)
+    // ============================================================================
+    // 즉시 실행 (블로킹 없음) - 사용자가 즉시 볼 수 있는 것들
+    // ============================================================================
+    
+    // ✅ 1. 동화 목록 즉시 표시 (최우선)
     loadStories();
     
-    // ✅ 온보딩 체크 (첫 방문자)
+    // ✅ 2. 온보딩 체크 (첫 방문자)
     checkOnboarding();
     
-    // ✅ 코인 초기화 - 서버에서 코인 불러오기 (실패해도 계속 진행)
-    try {
-        await loadUserCoins();
-    } catch (error) {
+    // ✅ 3. 코인 로컬스토리지에서 즉시 표시 (캐시 우선)
+    const cachedCoins = localStorage.getItem('userCoins');
+    if (cachedCoins) {
+        userCoins = parseInt(cachedCoins, 10);
+        const coinAmount = document.getElementById('coinAmount');
+        if (coinAmount) {
+            coinAmount.textContent = userCoins;
+        }
+    }
+    
+    // ✅ 4. 이벤트 리스너 설정 (즉시 필요)
+    setupEventListeners();
+    
+    // ============================================================================
+    // 백그라운드 로드 (비블로킹) - 병렬 처리
+    // ============================================================================
+    
+    // ✅ 코인 서버 동기화 (백그라운드)
+    loadUserCoins().catch(error => {
         console.warn('⚠️ 코인 로드 실패:', error);
-    }
-    
-    // 즉시 헤더에 표시
-    const coinAmount = document.getElementById('coinAmount');
-    if (coinAmount) {
-        coinAmount.textContent = userCoins;
-        console.log('💰 코인 강제 초기화 & 표시:', userCoins);
-    } else {
-        console.error('❌ coinAmount 요소를 찾을 수 없음!');
-    }
-    
-    initializeTTS();
-    initializeSTT();
-    
-    // ✅ Anna 음성 로드 (실패해도 계속 진행)
-    try {
-        await loadGoogleTTSVoices();
-    } catch (error) {
-        console.warn('⚠️ 음성 로드 실패:', error);
-    }
-    
-    // ✅ 초기화 후 설정 확인
-    console.log('🎤 초기화 완료 - TTS 설정:', {
-        useGoogleTTS: useGoogleTTS,
-        selectedGoogleVoice: selectedGoogleVoice,
-        voicesCount: googleTTSVoices.length
     });
     
-    // ✅ 분석 데이터 백그라운드 로드 (동화 목록 표시 후 비동기로 로드)
-    // 사용자가 동화를 선택하기 전에 로드되면 좋지만, 블로킹하지 않음
+    // ✅ 분석 데이터 백그라운드 로드
     loadPrecomputedAnalysis().catch(error => {
         console.warn('⚠️ 분석 데이터 백그라운드 로드 실패, 서버 분석을 사용합니다:', error);
         PRECOMPUTED_ANALYSIS = {};
     });
     
-    setupEventListeners();
-    // loadVoicePreference() 제거 - loadGoogleTTSVoices()에서 처리됨
+    // ✅ TTS/STT 지연 초기화 (필요할 때만 초기화)
+    // 사용자가 동화를 선택하거나 음성 기능을 사용할 때 초기화됨
+    
+    console.log('✅ 초기 로딩 완료 - 사용자 인터랙션 대기 중');
 });
 
 // ============================================================================
@@ -2688,6 +2682,31 @@ async function loadGoogleTTSVoices() {
 // ============================================================================
 // [6] TTS (Text-to-Speech) 기능
 // ============================================================================
+
+// TTS 초기화 상태 추적
+let ttsInitialized = false;
+let sttInitialized = false;
+
+/**
+ * TTS 지연 초기화 (필요할 때만 초기화)
+ */
+function ensureTTSInitialized() {
+    if (!ttsInitialized) {
+        initializeTTS();
+        ttsInitialized = true;
+    }
+}
+
+/**
+ * STT 지연 초기화 (필요할 때만 초기화)
+ */
+function ensureSTTInitialized() {
+    if (!sttInitialized) {
+        initializeSTT();
+        sttInitialized = true;
+    }
+}
+
 function initializeTTS() {
     if ('speechSynthesis' in window) {
         // 음성 목록 로드
@@ -2823,6 +2842,8 @@ function filterKoreanOnly(text) {
 }
 
 async function speakText(text) {
+    // TTS 초기화 확인 (필요할 때만)
+    ensureTTSInitialized();
     // ✅ 한국어만 추출 (영어 제거)
     const koreanOnlyText = filterKoreanOnly(text);
     
@@ -3526,6 +3547,8 @@ function initializeSTT() {
 }
 
 function startRecording() {
+    // STT 초기화 확인 (필요할 때만)
+    ensureSTTInitialized();
     if (!recognition) {
         alert('이 브라우저는 음성 인식을 지원하지 않습니다.');
         return;
@@ -3595,6 +3618,8 @@ async function requestMicrophonePermission() {
 }
 
 async function startParagraphRecording(paraIndex, paraNum, practiceText) {
+    // STT 초기화 확인 (필요할 때만)
+    ensureSTTInitialized();
     console.log(`🎙️ 녹음 시작 요청: para=${paraIndex}, num=${paraNum}`);
     console.log(`📝 연습 문장: ${practiceText}`);
     
