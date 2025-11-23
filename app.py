@@ -1545,6 +1545,168 @@ def get_public_k_content():
 
 
 # ============================================================================
+# 맥락 파악 학습 시스템 API
+# ============================================================================
+
+@app.route('/api/context-notes', methods=['POST'])
+def save_context_notes():
+    """
+    맥락 파악 내용 저장
+    POST body: {
+        "user_id": "UUID",
+        "context_text": "이야기의 맥락을 파악하고 기록한 내용...",
+        "story_id": 1 (선택사항)
+    }
+    """
+    data = request.get_json() or {}
+    user_id = data.get('user_id')
+    context_text = data.get('context_text', '').strip()
+    story_id = data.get('story_id')
+    
+    if not context_text:
+        return jsonify({"error": "맥락 파악 내용이 필요합니다"}), 400
+    
+    if not user_id:
+        return jsonify({"error": "user_id가 필요합니다"}), 400
+    
+    if not supabase_client:
+        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    
+    try:
+        insert_data = {
+            "user_id": user_id,
+            "context_text": context_text
+        }
+        
+        if story_id is not None:
+            insert_data["story_id"] = story_id
+        
+        result = supabase_client.table('user_context_notes')\
+            .insert(insert_data)\
+            .execute()
+        
+        if result.data:
+            print(f"✅ 맥락 파악 저장 완료: id={result.data[0]['id']}", flush=True)
+            return jsonify({
+                "success": True,
+                "note": result.data[0]
+            })
+        else:
+            return jsonify({"error": "저장 실패"}), 500
+            
+    except Exception as e:
+        print(f"❌ 맥락 파악 저장 오류: {type(e).__name__}: {str(e)}", flush=True)
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/context-notes', methods=['GET'])
+def get_context_notes():
+    """
+    사용자의 맥락 파악 내용 조회
+    GET params: user_id, story_id (선택), limit (선택)
+    """
+    user_id = request.args.get('user_id')
+    story_id = request.args.get('story_id')
+    limit = request.args.get('limit', 20, type=int)
+    
+    if not user_id:
+        return jsonify({"error": "user_id가 필요합니다"}), 400
+    
+    if not supabase_client:
+        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    
+    try:
+        query = supabase_client.table('user_context_notes')\
+            .select('*')\
+            .eq('user_id', user_id)\
+            .order('created_at', desc=True)\
+            .limit(limit)
+        
+        if story_id:
+            query = query.eq('story_id', story_id)
+        
+        result = query.execute()
+        
+        return jsonify({
+            "success": True,
+            "total": len(result.data),
+            "notes": result.data
+        })
+    except Exception as e:
+        print(f"❌ 맥락 파악 조회 오류: {type(e).__name__}: {str(e)}", flush=True)
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/context-notes/<note_id>', methods=['PUT'])
+def update_context_note(note_id):
+    """
+    맥락 파악 내용 수정
+    PUT body: {
+        "context_text": "수정된 내용...",
+        "user_id": "UUID"
+    }
+    """
+    data = request.get_json() or {}
+    user_id = data.get('user_id')
+    context_text = data.get('context_text', '').strip()
+    
+    if not context_text:
+        return jsonify({"error": "맥락 파악 내용이 필요합니다"}), 400
+    
+    if not user_id:
+        return jsonify({"error": "user_id가 필요합니다"}), 400
+    
+    if not supabase_client:
+        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    
+    try:
+        result = supabase_client.table('user_context_notes')\
+            .update({"context_text": context_text})\
+            .eq('id', note_id)\
+            .eq('user_id', user_id)\
+            .execute()
+        
+        if result.data:
+            return jsonify({
+                "success": True,
+                "note": result.data[0]
+            })
+        else:
+            return jsonify({"error": "수정 실패"}), 500
+            
+    except Exception as e:
+        print(f"❌ 맥락 파악 수정 오류: {type(e).__name__}: {str(e)}", flush=True)
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/context-notes/<note_id>', methods=['DELETE'])
+def delete_context_note(note_id):
+    """
+    맥락 파악 내용 삭제
+    GET params: user_id
+    """
+    user_id = request.args.get('user_id')
+    
+    if not user_id:
+        return jsonify({"error": "user_id가 필요합니다"}), 400
+    
+    if not supabase_client:
+        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    
+    try:
+        supabase_client.table('user_context_notes')\
+            .delete()\
+            .eq('id', note_id)\
+            .eq('user_id', user_id)\
+            .execute()
+        
+        return jsonify({"success": True, "message": "삭제되었습니다"})
+    except Exception as e:
+        print(f"❌ 맥락 파악 삭제 오류: {type(e).__name__}: {str(e)}", flush=True)
+        return jsonify({"error": str(e)}), 500
+
+
+# ============================================================================
 # Auth API (회원가입/로그인)
 # ============================================================================
 

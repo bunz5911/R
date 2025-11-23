@@ -1653,13 +1653,13 @@ async function renderSummary() {
             ${summaryText}
         </div>
         
-        <!-- K-콘텐츠 추가 버튼 -->
+        <!-- 맥락 파악하기 버튼 -->
         <div style="margin-top: 20px;">
-            <button class="btn btn-primary" onclick="showKContentModal()" style="width: 100%; padding: 16px; font-size: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; border-radius: 12px; font-weight: 700; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); cursor: pointer;">
-                🎬 내 K-콘텐츠 추가하기
+            <button class="btn btn-primary" onclick="showContextNotesModal()" style="width: 100%; padding: 16px; font-size: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; border-radius: 12px; font-weight: 700; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); cursor: pointer;">
+                📝 맥락 파악하기
             </button>
             <p style="text-align: center; font-size: 13px; color: #888; margin-top: 8px;">
-                좋아하는 K-드라마/K-POP 대사로 배워보세요!
+                이야기의 맥락을 파악하고 기록해보세요!
             </p>
         </div>
         
@@ -1675,8 +1675,8 @@ async function renderSummary() {
     
     console.log('✅ 요약 렌더링 완료 (텍스트만, 음성 버튼 없음)');
     
-    // K-콘텐츠 미리보기 로드
-    await loadKContentPreview();
+    // 맥락 파악 미리보기 로드
+    await loadContextNotesPreview();
 }
 
 async function loadKContentPreview() {
@@ -4752,7 +4752,197 @@ function showToast(message) {
 }
 
 // ============================================================================
-// [10] K-콘텐츠 학습 시스템
+// [10] 맥락 파악 학습 시스템
+// ============================================================================
+
+/**
+ * 맥락 파악 모달 표시 (단순화된 버전: 텍스트 입력과 저장만)
+ */
+function showContextNotesModal() {
+    if (!isAuthenticated || !currentUserId) {
+        alert('로그인이 필요합니다.');
+        window.location.href = 'login.html';
+        return;
+    }
+    
+    const modal = document.createElement('div');
+    modal.id = 'contextNotesModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        backdrop-filter: blur(5px);
+    `;
+    
+    modal.innerHTML = `
+        <div style="background: white; border-radius: 20px; padding: 30px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="font-size: 22px; font-weight: 700; color: #333;">📝 맥락 파악하기</h2>
+                <button onclick="closeContextNotesModal()" style="background: none; border: none; font-size: 28px; cursor: pointer; color: #999;">&times;</button>
+            </div>
+            
+            <!-- 텍스트 입력 -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 14px; color: #666; margin-bottom: 8px; font-weight: 600;">이야기의 맥락을 파악하고 기록해보세요</label>
+                <textarea id="contextNotesText" placeholder="예: 이 이야기는 도깨비가 요리를 통해 사람들을 도와주는 내용입니다. 주인공은 요리 실력이 뛰어난 도깨비로, 어려운 사람들을 도와주며 행복을 나눕니다..." style="width: 100%; min-height: 200px; padding: 15px; border: 2px solid #E0E0E0; border-radius: 12px; font-size: 15px; resize: vertical; font-family: inherit; line-height: 1.6;"></textarea>
+            </div>
+            
+            <!-- 액션 버튼 -->
+            <div style="display: flex; gap: 12px; margin-top: 25px;">
+                <button onclick="closeContextNotesModal()" style="flex: 1; padding: 14px; background: #f0f0f0; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; color: #666;">
+                    취소
+                </button>
+                <button onclick="saveContextNotes()" style="flex: 2; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 10px; font-weight: 700; cursor: pointer; color: white; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
+                    💾 저장하기
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // 모달 배경 클릭 시 닫기
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeContextNotesModal();
+    });
+}
+
+/**
+ * 맥락 파악 모달 닫기
+ */
+function closeContextNotesModal() {
+    const modal = document.getElementById('contextNotesModal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+/**
+ * 맥락 파악 내용 저장
+ */
+async function saveContextNotes() {
+    const textInput = document.getElementById('contextNotesText');
+    const contextText = textInput?.value.trim();
+    
+    if (!contextText) {
+        alert('맥락 파악 내용을 입력해주세요.');
+        return;
+    }
+    
+    if (!isAuthenticated || !currentUserId) {
+        alert('로그인이 필요합니다.');
+        window.location.href = 'login.html';
+        return;
+    }
+    
+    // 로딩 표시
+    showLoadingMessage('맥락 파악 내용을 저장하는 중...');
+    closeContextNotesModal();
+    
+    try {
+        const response = await fetch(`${API_BASE}/context-notes`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_id: currentUserId,
+                context_text: contextText,
+                story_id: currentStory?.id || null
+            })
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || '저장 실패');
+        }
+        
+        const result = await response.json();
+        console.log('✅ 맥락 파악 내용 저장 완료:', result);
+        
+        // 저장된 맥락 파악 목록 새로고침
+        await loadContextNotesPreview();
+        
+        showToast('맥락 파악 내용이 저장되었습니다!');
+    } catch (error) {
+        console.error('❌ 맥락 파악 저장 오류:', error);
+        alert('저장 중 오류가 발생했습니다: ' + error.message);
+    }
+}
+
+/**
+ * 저장된 맥락 파악 내용 미리보기 로드
+ */
+async function loadContextNotesPreview() {
+    const previewEl = document.getElementById('kContentPreview');
+    if (!previewEl) return;
+    
+    if (!isAuthenticated || !currentUserId) {
+        previewEl.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">로그인이 필요합니다.</div>';
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE}/context-notes?user_id=${currentUserId}&limit=5`);
+        if (!response.ok) {
+            throw new Error('조회 실패');
+        }
+        
+        const data = await response.json();
+        const notes = data.notes || [];
+        
+        if (notes.length === 0) {
+            previewEl.innerHTML = `
+                <div style="text-align: center; color: #999; padding: 20px;">
+                    아직 저장된 맥락 파악 내용이 없어요.<br>
+                    "맥락 파악하기" 버튼을 눌러 기록해보세요!
+                </div>
+            `;
+            return;
+        }
+        
+        previewEl.innerHTML = `
+            <div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="font-size: 16px; font-weight: 700; color: #333;">
+                    저장된 맥락 파악 <span style="background: #667eea; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; margin-left: 6px;">${notes.length}개</span>
+                </h3>
+                <a href="my-k-content.html" style="font-size: 13px; color: #667eea; text-decoration: none; font-weight: 600;">
+                    전체 보기 →
+                </a>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                ${notes.slice(0, 3).map(note => `
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 12px; border-left: 4px solid #667eea;">
+                        <div style="font-size: 13px; color: #666; margin-bottom: 8px;">
+                            ${new Date(note.created_at).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })}
+                        </div>
+                        <div style="font-size: 14px; color: #333; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                            ${note.context_text}
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+            ${notes.length > 3 ? `
+                <button onclick="location.href='my-k-content.html'" style="width: 100%; padding: 12px; background: white; border: 2px solid #667eea; color: #667eea; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 14px; margin-top: 8px;">
+                    전체 ${notes.length}개 보기 →
+                </button>
+            ` : ''}
+        `;
+    } catch (error) {
+        console.error('맥락 파악 미리보기 로드 실패:', error);
+        previewEl.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">로드 실패</div>';
+    }
+}
+
+// ============================================================================
+// [10-1] K-콘텐츠 학습 시스템 (기존 코드 유지 - 호환성)
 // ============================================================================
 
 let kContentRecognition = null;
