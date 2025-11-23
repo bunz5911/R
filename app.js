@@ -2865,6 +2865,14 @@ function filterKoreanOnly(text) {
 async function speakText(text) {
     // TTS 초기화 확인 (필요할 때만)
     ensureTTSInitialized();
+    
+    // 음성 목록이 아직 로드되지 않았으면 백그라운드에서 로드 (비블로킹)
+    if (googleTTSVoices.length === 0 && useGoogleTTS) {
+        loadGoogleTTSVoices().catch(() => {
+            // 실패해도 계속 진행 (Web Speech API 사용)
+        });
+    }
+    
     // ✅ 한국어만 추출 (영어 제거)
     const koreanOnlyText = filterKoreanOnly(text);
     
