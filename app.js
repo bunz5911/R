@@ -168,8 +168,11 @@ function updateUI() {
 }
 
 // 페이지 로드 시 번역 로드
+// 번역 파일 백그라운드 로드 (비블로킹)
 document.addEventListener('DOMContentLoaded', () => {
-    loadTranslations(currentLanguage);
+    loadTranslations(currentLanguage).catch(() => {
+        // 실패해도 계속 진행 (기본 한국어 사용)
+    });
 });
 
 // ============================================================================
