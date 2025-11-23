@@ -359,6 +359,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ✅ 4. 이벤트 리스너 설정 (즉시 필요)
     setupEventListeners();
     
+    // ✅ 5. 인증 상태 체크 (백그라운드, 비블로킹)
+    checkAuthStatus().catch(error => {
+        console.warn('⚠️ 인증 상태 체크 실패:', error);
+        // 실패해도 계속 진행 (비로그인 상태로 처리)
+        isAuthenticated = false;
+        updateAuthUI();
+    });
+    
     // ============================================================================
     // 백그라운드 로드 (비블로킹) - 병렬 처리
     // ============================================================================
@@ -5913,14 +5921,20 @@ function handleAuth() {
     }
 }
 
-// 페이지 로드 시 인증 상태 체크
+// 페이지 로드 시 추가 초기화 (메인 초기화 후 실행)
 document.addEventListener('DOMContentLoaded', async () => {
-    await checkAuthStatus();
+    // 인증 상태 체크는 메인 초기화에서 처리됨 (중복 방지)
     
-    // 로그인 상태면 출석 체크 상태 확인
-    if (isAuthenticated) {
-        await checkTodayCheckin();
-    }
+    // 로그인 상태면 출석 체크 상태 확인 (백그라운드)
+    setTimeout(async () => {
+        if (isAuthenticated) {
+            try {
+                await checkTodayCheckin();
+            } catch (error) {
+                console.warn('⚠️ 출석 체크 상태 확인 실패:', error);
+            }
+        }
+    }, 1000); // 1초 후 백그라운드에서 실행
     
     // 네비게이션 바 스크롤 화살표 초기화
     initNavScrollArrows();
