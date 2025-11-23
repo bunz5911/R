@@ -1675,8 +1675,15 @@ async function renderSummary() {
     
     console.log('✅ 요약 렌더링 완료 (텍스트만, 음성 버튼 없음)');
     
-    // 맥락 파악 미리보기 로드
-    await loadContextNotesPreview();
+    // 맥락 파악 미리보기 백그라운드 로드 (블로킹하지 않음)
+    // 요약 텍스트는 즉시 표시되고, 미리보기는 나중에 로드됨
+    loadContextNotesPreview().catch(error => {
+        console.warn('⚠️ 맥락 파악 미리보기 로드 실패:', error);
+        const previewEl = document.getElementById('kContentPreview');
+        if (previewEl) {
+            previewEl.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">로드 실패</div>';
+        }
+    });
 }
 
 async function loadKContentPreview() {
