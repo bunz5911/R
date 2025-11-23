@@ -1792,6 +1792,17 @@ function renderFullStory() {
         audioPath: `audio/full-stories/story-${storyId}.mp3`
     });
     
+    // 텍스트를 문단 단위로 분할 (줄바꿈 기준)
+    const paragraphs = fullText.split(/\n+/).filter(p => p.trim().length > 0);
+    
+    // 문단별 HTML 생성 (하이라이트용 ID 포함)
+    const paragraphsHTML = paragraphs.map((para, index) => {
+        const paraId = `full-story-para-${index}`;
+        return `<div id="${paraId}" class="full-story-paragraph" style="font-size: 18px; font-weight: 700; line-height: 1.9; color: #1a1a1a; text-align: justify; padding: 12px; margin-bottom: 8px; border-radius: 8px; transition: all 0.3s ease;">
+            ${para.trim()}
+        </div>`;
+    }).join('');
+    
     contentEl.innerHTML = `
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
             <div class="section-title" style="margin-bottom: 0;">${t('tabs.fullStory')}</div>
@@ -1802,13 +1813,11 @@ function renderFullStory() {
         ${renderCharacterImage('full-story')}
         
         <!-- ✅ 사용자가 직접 읽어야 하는 부분 - 박스로 강조 (light green 배경) -->
-        <div style="border: 3px solid #4caf50; border-radius: 12px; padding: 24px; margin-bottom: 24px; background: #c8e6c9; box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);">
+        <div id="fullStoryTextContainer" style="border: 3px solid #4caf50; border-radius: 12px; padding: 24px; margin-bottom: 24px; background: #c8e6c9; box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);">
             <div style="font-size: 14px; color: #2e7d32; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;">
                 📖 직접 읽어보세요
             </div>
-            <div style="font-size: 18px; font-weight: 700; line-height: 1.9; color: #1a1a1a; text-align: justify;">
-                ${fullText.replace(/\n/g, '<br>')}
-            </div>
+            ${paragraphsHTML}
         </div>
         
         <!-- ✅ 학습 활동 섹션 -->
@@ -3080,6 +3089,7 @@ function stopTTS() {
  * 전체 이야기 듣기 전용
  * - 0번 동화: TTS로 실시간 생성
  * - 기타 동화: 로컬 MP3 파일 재생
+ * - 하이라이트 및 자동 스크롤 기능 포함
  */
 async function playFullStoryAudio(storyId, buttonElement) {
     console.log(`🎵 playFullStoryAudio 호출됨 - storyId: ${storyId}, type: ${typeof storyId}`);
@@ -3097,6 +3107,9 @@ async function playFullStoryAudio(storyId, buttonElement) {
         fullStoryAudio = null;
         buttonElement.textContent = '▶';
         buttonElement.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        
+        // 하이라이트 제거
+        clearFullStoryHighlight();
         return;
     }
     
@@ -3113,6 +3126,11 @@ async function playFullStoryAudio(storyId, buttonElement) {
     buttonElement.innerHTML = '⏳';
     buttonElement.disabled = true;
     
+    // 텍스트 문단 정보 가져오기
+    const fullText = currentStory?.full_text || '';
+    const paragraphs = fullText.split(/\n+/).filter(p => p.trim().length > 0);
+    const totalParagraphs = paragraphs.length;
+    
     // TTS fallback 함수 (0번 동화 파일이 없을 때만 사용)
     const fallbackToTTS = async () => {
         if (storyId !== 0 && storyId !== '0') {
@@ -3125,8 +3143,6 @@ async function playFullStoryAudio(storyId, buttonElement) {
         
         console.log('⚠️ story-0.mp3 파일이 없습니다. TTS로 fallback합니다.');
         
-        // 전체 텍스트 가져오기
-        const fullText = currentStory?.full_text || '';
         if (!fullText) {
             alert('동화 내용을 불러올 수 없습니다.');
             buttonElement.innerHTML = '▶';
@@ -3148,10 +3164,17 @@ async function playFullStoryAudio(storyId, buttonElement) {
     }, { once: true });
     
     // 재생 준비 완료
-    fullStoryAudio.addEventListener('canplaythrough', () => {
-        console.log('✅ 오디오 로드 완료, 재생 가능');
+    fullStoryAudio.addEventListener('loadedmetadata', () => {
+        console.log('✅ 오디오 메타데이터 로드 완료, 재생 가능');
         buttonElement.innerHTML = '⏸';
         buttonElement.disabled = false;
+        
+        // 오디오 길이 확인
+        const audioDuration = fullStoryAudio.duration;
+        console.log(`📊 오디오 길이: ${audioDuration.toFixed(2)}초, 문단 수: ${totalParagraphs}`);
+        
+        // 하이라이트 및 스크롤 시작
+        startFullStoryHighlight(audioDuration, totalParagraphs);
     }, { once: true });
     
     // 재생 시작
@@ -3170,8 +3193,84 @@ async function playFullStoryAudio(storyId, buttonElement) {
     fullStoryAudio.addEventListener('ended', () => {
         console.log('✅ 재생 완료');
         buttonElement.innerHTML = '▶';
+        clearFullStoryHighlight();
         fullStoryAudio = null;
     }, { once: true });
+    
+    // 일시정지 시 하이라이트 정지
+    fullStoryAudio.addEventListener('pause', () => {
+        console.log('⏸ 재생 일시정지');
+    });
+}
+
+// 전체 이야기 하이라이트 및 스크롤 관리
+let fullStoryHighlightInterval = null;
+
+function startFullStoryHighlight(audioDuration, totalParagraphs) {
+    // 기존 인터벌 정리
+    if (fullStoryHighlightInterval) {
+        clearInterval(fullStoryHighlightInterval);
+    }
+    
+    // 문단당 예상 재생 시간 계산
+    const timePerParagraph = audioDuration / totalParagraphs;
+    
+    console.log(`🎯 하이라이트 시작: 총 ${totalParagraphs}개 문단, 문단당 ${timePerParagraph.toFixed(2)}초`);
+    
+    // 0.1초마다 현재 재생 위치 확인 및 하이라이트 업데이트
+    fullStoryHighlightInterval = setInterval(() => {
+        if (!fullStoryAudio || fullStoryAudio.paused) {
+            return;
+        }
+        
+        const currentTime = fullStoryAudio.currentTime;
+        const currentParagraphIndex = Math.floor(currentTime / timePerParagraph);
+        const safeIndex = Math.min(currentParagraphIndex, totalParagraphs - 1);
+        
+        // 현재 문단 하이라이트
+        highlightFullStoryParagraph(safeIndex);
+    }, 100); // 0.1초마다 업데이트
+}
+
+function highlightFullStoryParagraph(index) {
+    // 모든 문단 하이라이트 제거
+    document.querySelectorAll('.full-story-paragraph').forEach((para, i) => {
+        if (i === index) {
+            // 현재 문단 하이라이트
+            para.style.background = '#fff3cd';
+            para.style.border = '2px solid #ffc107';
+            para.style.boxShadow = '0 4px 12px rgba(255, 193, 7, 0.3)';
+            para.style.transform = 'scale(1.02)';
+            
+            // 자동 스크롤
+            para.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        } else {
+            // 다른 문단은 기본 스타일
+            para.style.background = 'transparent';
+            para.style.border = 'none';
+            para.style.boxShadow = 'none';
+            para.style.transform = 'scale(1)';
+        }
+    });
+}
+
+function clearFullStoryHighlight() {
+    // 인터벌 정리
+    if (fullStoryHighlightInterval) {
+        clearInterval(fullStoryHighlightInterval);
+        fullStoryHighlightInterval = null;
+    }
+    
+    // 모든 하이라이트 제거
+    document.querySelectorAll('.full-story-paragraph').forEach(para => {
+        para.style.background = 'transparent';
+        para.style.border = 'none';
+        para.style.boxShadow = 'none';
+        para.style.transform = 'scale(1)';
+    });
 }
 
 // ============================================================================
