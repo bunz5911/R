@@ -312,35 +312,10 @@ async function loadPrecomputedAnalysis() {
             throw new Error(`stories_data_final.json 로드 실패: ${response.status}`);
         }
         const jsonData = await response.json();
-        console.log('📦 JSON 파싱 완료, 타입:', typeof jsonData, '키 개수:', Object.keys(jsonData).length);
         
         PRECOMPUTED_ANALYSIS = jsonData;
         
-        console.log(`✅ 하드코딩된 분석 데이터 로드 완료: ${Object.keys(PRECOMPUTED_ANALYSIS).length}개 동화`);
-        console.log('📋 로드된 동화 목록 (처음 5개):', Object.keys(PRECOMPUTED_ANALYSIS).slice(0, 5));
-        
-        // ✅ 0번 동화 확인
-        if ('도깨비키친' in PRECOMPUTED_ANALYSIS) {
-            const dokkaebi = PRECOMPUTED_ANALYSIS['도깨비키친'];
-            console.log('✅ 도깨비키친 데이터 확인:', {
-                초급문단수: dokkaebi['초급']?.paragraphs_analysis?.length || 0,
-                중급문단수: dokkaebi['중급']?.paragraphs_analysis?.length || 0,
-                고급문단수: dokkaebi['고급']?.paragraphs_analysis?.length || 0
-            });
-        }
-        
-        // ✅ 1번 동화 확인
-        if ('강아지닥스훈트의비밀' in PRECOMPUTED_ANALYSIS) {
-            const dachshund = PRECOMPUTED_ANALYSIS['강아지닥스훈트의비밀'];
-            console.log('✅ 강아지닥스훈트의비밀 데이터 확인:', {
-                초급문단수: dachshund['초급']?.paragraphs_analysis?.length || 0,
-                중급문단수: dachshund['중급']?.paragraphs_analysis?.length || 0,
-                고급문단수: dachshund['고급']?.paragraphs_analysis?.length || 0
-            });
-        }
-        
-        // ✅ 전역 변수 확인
-        console.log('🔍 PRECOMPUTED_ANALYSIS 전역 변수 확인:', typeof PRECOMPUTED_ANALYSIS, Object.keys(PRECOMPUTED_ANALYSIS).length);
+        console.log(`✅ 분석 데이터 백그라운드 로드 완료: ${Object.keys(PRECOMPUTED_ANALYSIS).length}개 동화`);
         
         return true;
     } catch (error) {
