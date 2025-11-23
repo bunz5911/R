@@ -4825,6 +4825,168 @@ function closeContextNotesModal() {
 }
 
 /**
+ * 맥락 파악 수정 모달 표시
+ */
+function showEditContextNotesModal(noteId, currentText) {
+    if (!isAuthenticated || !currentUserId) {
+        alert('로그인이 필요합니다.');
+        window.location.href = 'login.html';
+        return;
+    }
+    
+    const modal = document.createElement('div');
+    modal.id = 'editContextNotesModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        backdrop-filter: blur(5px);
+    `;
+    
+    modal.innerHTML = `
+        <div style="background: white; border-radius: 20px; padding: 30px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="font-size: 22px; font-weight: 700; color: #333;">✏️ 맥락 파악 수정</h2>
+                <button onclick="closeEditContextNotesModal()" style="background: none; border: none; font-size: 28px; cursor: pointer; color: #999;">&times;</button>
+            </div>
+            
+            <!-- 텍스트 입력 -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 14px; color: #666; margin-bottom: 8px; font-weight: 600;">이야기의 맥락을 파악하고 기록해보세요</label>
+                <textarea id="editContextNotesText" placeholder="예: 이 이야기는 도깨비가 요리를 통해 사람들을 도와주는 내용입니다. 주인공은 요리 실력이 뛰어난 도깨비로, 어려운 사람들을 도와주며 행복을 나눕니다..." style="width: 100%; min-height: 200px; padding: 15px; border: 2px solid #E0E0E0; border-radius: 12px; font-size: 15px; resize: vertical; font-family: inherit; line-height: 1.6;">${currentText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
+            </div>
+            
+            <!-- 액션 버튼 -->
+            <div style="display: flex; gap: 12px; margin-top: 25px;">
+                <button onclick="closeEditContextNotesModal()" style="flex: 1; padding: 14px; background: #f0f0f0; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; color: #666;">
+                    취소
+                </button>
+                <button onclick="updateContextNotes('${noteId}')" style="flex: 2; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 10px; font-weight: 700; cursor: pointer; color: white; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
+                    💾 수정 저장
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // 모달 배경 클릭 시 닫기
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeEditContextNotesModal();
+    });
+}
+
+/**
+ * 맥락 파악 수정 모달 닫기
+ */
+function closeEditContextNotesModal() {
+    const modal = document.getElementById('editContextNotesModal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+/**
+ * 맥락 파악 내용 수정
+ */
+async function updateContextNotes(noteId) {
+    const textInput = document.getElementById('editContextNotesText');
+    const contextText = textInput?.value.trim();
+    
+    if (!contextText) {
+        alert('맥락 파악 내용을 입력해주세요.');
+        return;
+    }
+    
+    if (!isAuthenticated || !currentUserId) {
+        alert('로그인이 필요합니다.');
+        window.location.href = 'login.html';
+        return;
+    }
+    
+    // 로딩 표시
+    showLoadingMessage('맥락 파악 내용을 수정하는 중...');
+    closeEditContextNotesModal();
+    
+    try {
+        const response = await fetch(`${API_BASE}/context-notes/${noteId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_id: currentUserId,
+                context_text: contextText
+            })
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || '수정 실패');
+        }
+        
+        const result = await response.json();
+        console.log('✅ 맥락 파악 내용 수정 완료:', result);
+        
+        // 저장된 맥락 파악 목록 새로고침
+        await loadContextNotesPreview();
+        
+        showToast('맥락 파악 내용이 수정되었습니다!');
+    } catch (error) {
+        console.error('❌ 맥락 파악 수정 오류:', error);
+        alert('수정 중 오류가 발생했습니다: ' + error.message);
+    }
+}
+
+/**
+ * 맥락 파악 내용 삭제
+ */
+async function deleteContextNotes(noteId) {
+    if (!isAuthenticated || !currentUserId) {
+        alert('로그인이 필요합니다.');
+        window.location.href = 'login.html';
+        return;
+    }
+    
+    // 삭제 확인
+    if (!confirm('정말로 이 맥락 파악 내용을 삭제하시겠습니까?')) {
+        return;
+    }
+    
+    // 로딩 표시
+    showLoadingMessage('맥락 파악 내용을 삭제하는 중...');
+    
+    try {
+        const response = await fetch(`${API_BASE}/context-notes/${noteId}?user_id=${currentUserId}`, {
+            method: 'DELETE'
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || '삭제 실패');
+        }
+        
+        const result = await response.json();
+        console.log('✅ 맥락 파악 내용 삭제 완료:', result);
+        
+        // 저장된 맥락 파악 목록 새로고침
+        await loadContextNotesPreview();
+        
+        showToast('맥락 파악 내용이 삭제되었습니다!');
+    } catch (error) {
+        console.error('❌ 맥락 파악 삭제 오류:', error);
+        alert('삭제 중 오류가 발생했습니다: ' + error.message);
+    }
+}
+
+/**
  * 맥락 파악 내용 저장
  */
 async function saveContextNotes() {
@@ -4919,12 +5081,20 @@ async function loadContextNotesPreview() {
             </div>
             <div style="display: flex; flex-direction: column; gap: 12px;">
                 ${notes.slice(0, 3).map(note => `
-                    <div style="background: #f8f9fa; padding: 15px; border-radius: 12px; border-left: 4px solid #667eea;">
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 12px; border-left: 4px solid #667eea; position: relative;">
                         <div style="font-size: 13px; color: #666; margin-bottom: 8px;">
                             ${new Date(note.created_at).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })}
                         </div>
-                        <div style="font-size: 14px; color: #333; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                        <div style="font-size: 14px; color: #333; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 10px;">
                             ${note.context_text}
+                        </div>
+                        <div style="display: flex; gap: 8px; margin-top: 10px;">
+                            <button onclick="showEditContextNotesModal('${note.id}', ${JSON.stringify(note.context_text).replace(/"/g, '&quot;')})" style="flex: 1; padding: 8px 12px; background: #667eea; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                ✏️ 수정
+                            </button>
+                            <button onclick="deleteContextNotes('${note.id}')" style="flex: 1; padding: 8px 12px; background: #e74c3c; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                🗑️ 삭제
+                            </button>
                         </div>
                     </div>
                 `).join('')}
