@@ -4918,9 +4918,11 @@ async function updateContextNotes(noteId) {
         return;
     }
     
-    // 로딩 표시
-    showLoadingMessage('맥락 파악 내용을 수정하는 중...');
+    // 모달 닫기
     closeEditContextNotesModal();
+    
+    // 로딩 표시 (간단한 토스트 메시지)
+    showToast('맥락 파악 내용을 수정하는 중...');
     
     try {
         const response = await fetch(`${API_BASE}/context-notes/${noteId}`, {
@@ -4967,8 +4969,8 @@ async function deleteContextNotes(noteId) {
         return;
     }
     
-    // 로딩 표시
-    showLoadingMessage('맥락 파악 내용을 삭제하는 중...');
+    // 로딩 표시 (간단한 토스트 메시지)
+    showToast('맥락 파악 내용을 삭제하는 중...');
     
     try {
         const response = await fetch(`${API_BASE}/context-notes/${noteId}?user_id=${currentUserId}`, {
@@ -5011,9 +5013,11 @@ async function saveContextNotes() {
         return;
     }
     
-    // 로딩 표시
-    showLoadingMessage('맥락 파악 내용을 저장하는 중...');
+    // 모달 닫기
     closeContextNotesModal();
+    
+    // 로딩 표시 (간단한 토스트 메시지)
+    showToast('맥락 파악 내용을 저장하는 중...');
     
     try {
         const response = await fetch(`${API_BASE}/context-notes`, {
