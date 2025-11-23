@@ -385,16 +385,6 @@ const app = {
             return;
         }
         
-        console.log('✅ 게시글 찾음:', {
-            title: post.title,
-            userId: post.user_id,
-            category: post.category,
-            time: post.time,
-            hasComments: !!post.comments,
-            commentsLength: post.comments?.length || 0,
-            postKeys: Object.keys(post)
-        });
-        
         // 댓글 로드 (아직 로드되지 않은 경우)
         if (!post.comments || post.comments.length === 0) {
             await this.loadCommentsForPost(postIdStr);
@@ -406,14 +396,7 @@ const app = {
         
         if (post) {
             this.state.currentPost = post;
-            console.log('📝 renderPostDetail 호출 전:', {
-                postUserId: post.user_id,
-                currentUserId: currentUserId,
-                isAuthenticated: isAuthenticated
-            });
             await this.renderPostDetail(post);
-        } else {
-            console.error('❌ 게시글을 찾을 수 없습니다 (댓글 로드 후)');
         }
     },
 
@@ -830,28 +813,12 @@ const app = {
     },
 
     async renderPostDetail(post) {
-        console.log('📄 renderPostDetail 호출됨:', {
-            postId: post.id,
-            postUserId: post.user_id,
-            postTitle: post.title,
-            postTime: post.time,
-            postKeys: Object.keys(post)
-        });
-        
         const isLiked = this.state.user.likedPosts.includes(post.id);
         // post.id를 문자열로 변환 (UUID는 문자열)
         const postId = String(post.id);
         
         // 작성자 확인 (수정 버튼 표시 여부 결정)
         const isAuthor = isAuthenticated && currentUserId && post.user_id === currentUserId;
-        console.log('🔍 작성자 확인:', {
-            isAuthenticated,
-            currentUserId,
-            postUserId: post.user_id,
-            isAuthor,
-            postId: postId,
-            comparison: post.user_id === currentUserId
-        });
 
         const html = `
             <div class="section-content">
@@ -982,56 +949,52 @@ const app = {
             
             // 데이터 변환
             if (posts && posts.length > 0) {
-                // 각 게시글의 작성자 프로필 정보 조회
-                const postsWithProfiles = await Promise.all(
-                    posts.map(async (post) => {
-                        let authorName = 'Anonymous';
-                        if (post.user_id) {
-                            const { data: profile } = await supabase
-                                .from('profiles')
-                                .select('display_name, email')
-                                .eq('id', post.user_id)
-                                .single();
-                            
-                            if (profile) {
-                                authorName = profile.display_name || profile.email?.split('@')[0] || 'Anonymous';
-                            }
-                        }
-                        
-                        const mappedTag = this.mapCategoryToTag(post.category);
-                        const formattedTime = this.formatTimeAgo(post.created_at);
-                        console.log('⏰ 게시글 시간 포맷팅:', {
-                            postId: post.id,
-                            created_at: post.created_at,
-                            formatted: formattedTime
+                // 모든 고유한 user_id 수집
+                const uniqueUserIds = [...new Set(posts.map(p => p.user_id).filter(Boolean))];
+                
+                // 프로필 정보 일괄 조회 (N+1 쿼리 문제 해결)
+                const profilesMap = new Map();
+                if (uniqueUserIds.length > 0) {
+                    const { data: profiles, error: profilesError } = await supabase
+                        .from('profiles')
+                        .select('id, display_name, email')
+                        .in('id', uniqueUserIds);
+                    
+                    if (!profilesError && profiles) {
+                        profiles.forEach(profile => {
+                            const authorName = profile.display_name || profile.email?.split('@')[0] || 'Anonymous';
+                            profilesMap.set(profile.id, authorName);
                         });
-                        return {
-                            id: post.id,
-                            user_id: post.user_id, // 작성자 확인을 위해 user_id 추가
-                            category: post.category, // 수정 시 카테고리 필요
-                            tag: mappedTag,
-                            title: post.title,
-                            content: post.content.length > 100 ? post.content.substring(0, 100) + '...' : post.content,
-                            fullContent: post.content,
-                            author: authorName,
-                            likes: post.likes_count || 0,
-                            comments: [], // 댓글은 별도로 로드
-                            time: formattedTime // 실제 작성 시간 사용
-                        };
-                    })
-                );
+                    }
+                }
+                
+                // 게시글 데이터 변환 (프로필 정보 매핑)
+                const postsWithProfiles = posts.map((post) => {
+                    const authorName = post.user_id ? (profilesMap.get(post.user_id) || 'Anonymous') : 'Anonymous';
+                    const mappedTag = this.mapCategoryToTag(post.category);
+                    const formattedTime = this.formatTimeAgo(post.created_at);
+                    
+                    return {
+                        id: post.id,
+                        user_id: post.user_id, // 작성자 확인을 위해 user_id 추가
+                        category: post.category, // 수정 시 카테고리 필요
+                        tag: mappedTag,
+                        title: post.title,
+                        content: post.content.length > 100 ? post.content.substring(0, 100) + '...' : post.content,
+                        fullContent: post.content,
+                        author: authorName,
+                        likes: post.likes_count || 0,
+                        comments: [], // 댓글은 필요할 때만 로드 (게시글 상세 화면에서)
+                        time: formattedTime // 실제 작성 시간 사용
+                    };
+                });
                 
                 this.state.posts = postsWithProfiles;
                 
                 // this.data.posts에도 동기화 (하위 호환성)
                 this.data.posts = this.state.posts;
                 
-                // 각 게시글의 댓글 로드
-                for (let post of this.state.posts) {
-                    await this.loadCommentsForPost(post.id);
-                }
-                
-                // 사용자가 좋아요한 게시글 로드
+                // 사용자가 좋아요한 게시글 로드 (병렬 처리)
                 if (isAuthenticated && currentUserId) {
                     await this.loadUserLikes();
                 }
@@ -1184,16 +1147,6 @@ const app = {
         const diffMins = Math.floor(diffMs / 60000);
         const diffHours = Math.floor(diffMs / 3600000);
         const diffDays = Math.floor(diffMs / 86400000);
-        
-        console.log('⏰ formatTimeAgo 계산:', {
-            dateString,
-            date: date.toISOString(),
-            now: now.toISOString(),
-            diffMs,
-            diffMins,
-            diffHours,
-            diffDays
-        });
         
         if (diffMins < 1) return 'Just now';
         if (diffMins < 60) return `${diffMins}m ago`;
@@ -1378,27 +1331,10 @@ const app = {
                 throw error;
             }
             
-            // 프로필 정보 별도 조회
-            let authorName = 'Anonymous';
-            if (newPost.user_id) {
-                const { data: profile } = await supabase
-                    .from('profiles')
-                    .select('display_name, email')
-                    .eq('id', newPost.user_id)
-                    .single();
-                
-                if (profile) {
-                    authorName = profile.display_name || profile.email?.split('@')[0] || 'Anonymous';
-                } else {
-                    // 프로필이 없으면 이메일에서 추출
-                    authorName = currentUserEmail?.split('@')[0] || currentDisplayName || 'Anonymous';
-                }
-            }
-            
             // 모달 닫기
             document.getElementById('createPostModal').remove();
             
-            // Supabase에서 최신 게시글 다시 로드 (새로 작성한 게시글 포함)
+            // Supabase에서 최신 게시글 다시 로드 (프로필 정보 포함, 일괄 조회로 최적화됨)
             await this.loadPostsFromSupabase();
             
             // 현재 뷰 다시 렌더링
