@@ -96,7 +96,7 @@ function updateUI() {
     if (checkinBtn) checkinBtn.innerHTML = `📅 ${t('nav.checkin')}`;
     
     const kContentBtn = document.getElementById('kContentBtn');
-    if (kContentBtn) kContentBtn.innerHTML = `🎬 ${t('nav.kContent')}`;
+    if (kContentBtn) kContentBtn.innerHTML = `📝 ${t('nav.kContent')}`;
     
     const communityBtnText = document.getElementById('communityBtnText');
     if (communityBtnText) communityBtnText.textContent = t('nav.community');
