@@ -27,31 +27,16 @@ export async function onRequest(context) {
       }
     }
     
-    // 요청 body 처리
-    let body = null;
-    if (request.method !== 'GET' && request.method !== 'HEAD') {
-      // POST, PUT, PATCH 등의 요청은 body를 읽어서 전달
-      try {
-        // request.body는 ReadableStream이므로 직접 전달 가능
-        body = request.body;
-      } catch (e) {
-        console.error('[API Proxy] Body 읽기 오류:', e);
-        body = null;
-      }
-    }
-    
-    // 백엔드로 요청 전달
-    const fetchOptions = {
+    // 새로운 Request 객체 생성 (URL과 헤더만 변경)
+    const newRequest = new Request(backendUrl, {
       method: request.method,
       headers: headers,
-    };
+      body: request.body, // ReadableStream을 직접 전달
+      redirect: 'follow',
+    });
     
-    // body가 있으면 추가
-    if (body) {
-      fetchOptions.body = body;
-    }
-    
-    const response = await fetch(backendUrl, fetchOptions);
+    // 백엔드로 요청 전달
+    const response = await fetch(newRequest);
     
     // 응답 헤더 복사
     const responseHeaders = new Headers();
