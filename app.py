@@ -1063,39 +1063,85 @@ JSON 형식으로 응답:
 @app.route('/api/user/<user_id>/coins', methods=['GET'])
 def get_user_coins(user_id):
     """사용자 코인 조회 (초기 50코인)"""
+    print(f"💰 코인 조회 요청 수신 - user_id: {user_id}", flush=True)
+    
+    # Supabase 클라이언트 확인
     if not supabase_client:
-        return jsonify({"coins": 50, "error": "Supabase가 설정되지 않았습니다"}), 503
+        error_msg = "Supabase가 설정되지 않았습니다"
+        print(f"❌ {error_msg}", flush=True)
+        return jsonify({
+            "coins": 50, 
+            "error": error_msg,
+            "details": {
+                "supabase_available": SUPABASE_AVAILABLE,
+                "supabase_url_set": bool(os.environ.get('SUPABASE_URL')),
+                "supabase_key_set": bool(os.environ.get('SUPABASE_KEY'))
+            }
+        }), 503
     
     try:
+        print(f"🔗 Supabase 쿼리 실행 중...", flush=True)
         result = supabase_client.table('user_coins')\
             .select('total_coins')\
             .eq('user_id', user_id)\
             .execute()
         
+        print(f"📡 Supabase 응답 수신 - data: {bool(result.data)}, length: {len(result.data) if result.data else 0}", flush=True)
+        
         if result.data and len(result.data) > 0:
             current_coins = result.data[0]['total_coins']
+            print(f"💰 현재 코인: {current_coins}", flush=True)
             
             # ✅ 코인이 0이면 50으로 리셋 (신규 사용자 또는 초기화)
             if current_coins == 0:
-                supabase_client.table('user_coins')\
-                    .update({'total_coins': 50})\
-                    .eq('user_id', user_id)\
-                    .execute()
-                print(f"💰 사용자 {user_id} 코인 초기화: 0 → 50", flush=True)
-                return jsonify({"coins": 50})
+                print(f"🔄 코인 초기화 시작: 0 → 50", flush=True)
+                try:
+                    supabase_client.table('user_coins')\
+                        .update({'total_coins': 50})\
+                        .eq('user_id', user_id)\
+                        .execute()
+                    print(f"✅ 사용자 {user_id} 코인 초기화 완료: 0 → 50", flush=True)
+                    return jsonify({"coins": 50})
+                except Exception as update_error:
+                    print(f"⚠️ 코인 초기화 실패: {update_error}", flush=True)
+                    # 초기화 실패해도 50 반환
+                    return jsonify({"coins": 50})
             
+            print(f"✅ 코인 조회 성공: {current_coins}", flush=True)
             return jsonify({"coins": current_coins})
         else:
             # 코인 데이터가 없으면 생성 (초기 50 코인)
-            supabase_client.table('user_coins').insert({
-                'user_id': user_id,
-                'total_coins': 50
-            }).execute()
-            print(f"💰 신규 사용자 {user_id} 코인 생성: 50개", flush=True)
-            return jsonify({"coins": 50})
+            print(f"🆕 신규 사용자 코인 데이터 생성 중...", flush=True)
+            try:
+                supabase_client.table('user_coins').insert({
+                    'user_id': user_id,
+                    'total_coins': 50
+                }).execute()
+                print(f"✅ 신규 사용자 {user_id} 코인 생성 완료: 50개", flush=True)
+                return jsonify({"coins": 50})
+            except Exception as insert_error:
+                error_msg = str(insert_error)
+                print(f"⚠️ 코인 데이터 생성 실패: {error_msg}", flush=True)
+                # 중복 키 오류는 정상 (이미 존재하는 경우)
+                if 'duplicate key' in error_msg.lower() or 'already exists' in error_msg.lower():
+                    print(f"ℹ️ 코인 데이터가 이미 존재함 - 50 반환", flush=True)
+                    return jsonify({"coins": 50})
+                else:
+                    # 다른 오류는 500 반환하지 않고 50 반환 (기본값)
+                    print(f"⚠️ 예상치 못한 오류지만 기본값 반환: {error_msg}", flush=True)
+                    return jsonify({"coins": 50, "warning": "코인 데이터 생성 실패, 기본값 사용"})
     except Exception as e:
-        print(f"❌ 코인 조회 오류: {e}", flush=True)
-        return jsonify({"error": str(e), "coins": 50}), 500
+        error_msg = str(e)
+        error_type = type(e).__name__
+        print(f"❌ 코인 조회 오류 [{error_type}]: {error_msg}", flush=True)
+        import traceback
+        print(f"   상세 스택:\n{traceback.format_exc()}", flush=True)
+        # 500 에러 대신 기본값 반환 (앱이 계속 작동하도록)
+        return jsonify({
+            "coins": 50, 
+            "error": error_msg,
+            "error_type": error_type
+        }), 200  # 200으로 반환하여 앱이 계속 작동하도록
 
 
 @app.route('/api/user/<user_id>/coins', methods=['POST'])

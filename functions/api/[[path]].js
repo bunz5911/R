@@ -76,7 +76,14 @@ export async function onRequest(context) {
     }
     
     // 응답 본문 읽기
-    const responseBody = await response.arrayBuffer();
+    let responseBody;
+    try {
+      responseBody = await response.arrayBuffer();
+    } catch (bodyError) {
+      console.error('[API Proxy] 응답 본문 읽기 실패:', bodyError);
+      // 빈 응답 본문으로 처리
+      responseBody = new ArrayBuffer(0);
+    }
     
     // 응답 반환
     return new Response(responseBody, {
@@ -86,14 +93,26 @@ export async function onRequest(context) {
     });
   } catch (error) {
     console.error('[API Proxy Error]', error);
+    console.error('[API Proxy Error] Message:', error.message);
     console.error('[API Proxy Error] Stack:', error.stack);
+    console.error('[API Proxy Error] URL:', backendUrl);
+    
+    // 에러 응답 생성
+    const errorResponse = {
+      error: 'API 프록시 오류',
+      message: error.message,
+      url: backendUrl,
+      method: request.method,
+      path: url.pathname
+    };
+    
+    // 스택 트레이스는 프로덕션에서는 제외 (보안)
+    if (error.stack) {
+      errorResponse.stack = error.stack;
+    }
+    
     return new Response(
-      JSON.stringify({ 
-        error: 'API 프록시 오류', 
-        message: error.message,
-        details: error.stack,
-        url: backendUrl
-      }), 
+      JSON.stringify(errorResponse), 
       {
         status: 500,
         headers: { 

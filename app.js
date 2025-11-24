@@ -558,13 +558,32 @@ async function loadUserCoins() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 3000);
         
-        const response = await fetch(`${API_BASE}/user/${currentUserId}/coins`, {
+        const coinsUrl = `${API_BASE}/user/${currentUserId}/coins`;
+        console.log('💰 코인 조회 요청:', coinsUrl);
+        
+        const response = await fetch(coinsUrl, {
             signal: controller.signal
         });
         clearTimeout(timeoutId);
         
-        const data = await response.json();
+        console.log('📡 코인 응답 상태:', response.status, response.statusText);
+        
+        let data;
+        try {
+            const responseText = await response.text();
+            console.log('📄 코인 응답 본문:', responseText);
+            data = JSON.parse(responseText);
+        } catch (parseError) {
+            console.error('❌ 코인 응답 JSON 파싱 실패:', parseError);
+            throw new Error('서버 응답을 파싱할 수 없습니다');
+        }
+        
         const serverCoins = data.coins || 50;
+        
+        // 에러가 있어도 coins 값이 있으면 사용
+        if (data.error) {
+            console.warn('⚠️ 코인 조회 경고:', data.error);
+        }
         
         // 서버 값이 다르면 업데이트
         if (serverCoins !== userCoins) {
@@ -572,10 +591,11 @@ async function loadUserCoins() {
             localStorage.setItem('userCoins', userCoins.toString());
             updateCoinDisplay();
         }
-        console.log('💰 코인 서버 동기화 완료:', userCoins);
+        console.log('✅ 코인 서버 동기화 완료:', userCoins);
     } catch (error) {
         // 타임아웃이나 네트워크 오류는 무시 (로컬 캐시 사용)
         console.log('⚠️ 코인 서버 동기화 실패 (로컬 캐시 사용):', error.message);
+        console.log('   에러 상세:', error);
     }
 }
 
