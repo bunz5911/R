@@ -27,16 +27,30 @@ export async function onRequest(context) {
       }
     }
     
-    // 새로운 Request 객체 생성 (URL과 헤더만 변경)
-    const newRequest = new Request(backendUrl, {
-      method: request.method,
-      headers: headers,
-      body: request.body, // ReadableStream을 직접 전달
-      redirect: 'follow',
-    });
+    // 요청 body 처리
+    let body = null;
+    const method = request.method.toUpperCase();
+    
+    // GET, HEAD, OPTIONS 요청은 body가 없어야 함
+    if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS') {
+      // request.body가 있으면 사용 (ReadableStream)
+      if (request.body) {
+        body = request.body;
+      }
+    }
     
     // 백엔드로 요청 전달
-    const response = await fetch(newRequest);
+    const fetchOptions = {
+      method: method,
+      headers: headers,
+    };
+    
+    // body가 있으면 추가
+    if (body) {
+      fetchOptions.body = body;
+    }
+    
+    const response = await fetch(backendUrl, fetchOptions);
     
     // 응답 헤더 복사
     const responseHeaders = new Headers();
