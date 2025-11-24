@@ -48,7 +48,7 @@ Root directory: (비워두기)
 
 1. **"Save and Deploy"** 클릭
 2. 배포 진행 상황 확인
-3. 배포 완료 후 URL 확인 (예: `rakorean.pages.dev`)
+3. 배포 완료 후 URL 확인 (예: `rakorean.site`)
 
 ---
 
@@ -105,7 +105,7 @@ RAKorean/
 ├── index.html          ✅ (필수)
 ├── app.js              ✅
 ├── _redirects          ✅ (API 프록시용)
-├── netlify.toml        (삭제됨 - Cloudflare Pages 사용)
+├── _redirects          ✅ (Cloudflare Pages API 프록시용)
 ├── cloudflare-pages.json  (참고용, 삭제 가능)
 └── functions/          (선택사항, 필요 없으면 삭제)
     └── api/
@@ -146,7 +146,7 @@ RAKorean/
 
 배포 후 확인:
 - [ ] 배포 성공 (초록색 체크)
-- [ ] Pages URL 접속 가능 (예: `rakorean.pages.dev`)
+- [ ] Pages URL 접속 가능 (예: `rakorean.site`)
 - [ ] 메인 페이지 로딩 확인
 - [ ] API 호출 정상 작동 (`/api/*` 경로)
 

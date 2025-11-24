@@ -1,14 +1,14 @@
-# Cloudflare Pages 마이그레이션 가이드
+# Cloudflare Pages 배포 가이드
 
 ## 📋 개요
 
-이 가이드는 Netlify에서 Cloudflare Pages로 안전하게 호스팅을 이동하는 단계별 가이드를 제공합니다.
+이 가이드는 Cloudflare Pages를 사용하여 정적 웹사이트를 배포하는 단계별 가이드를 제공합니다.
 
 ## ✅ 완료된 작업
 
 1. ✅ 모든 `<img>` 태그에 `loading="lazy"` 속성 추가 완료
-2. ✅ Cloudflare Pages 설정 파일 생성 (`_redirects`, `cloudflare-pages.json`)
-3. ✅ Netlify 설정 분석 및 Cloudflare 호환 설정 준비
+2. ✅ Cloudflare Pages 설정 파일 생성 (`_redirects`)
+3. ✅ Cloudflare Pages 설정 완료 및 배포 준비 완료
 
 ---
 
@@ -55,7 +55,7 @@
 - **Build output directory**: `.` (루트 디렉토리)
 
 #### 3.3 환경 변수 설정 (필요한 경우)
-현재 Netlify에서 사용 중인 환경 변수가 있다면:
+환경 변수가 필요한 경우:
 1. **"Environment variables"** 섹션으로 이동
 2. 필요한 변수 추가 (예: `NODE_VERSION=18`)
 
@@ -96,7 +96,7 @@ Cloudflare Pages Functions를 사용하여 리다이렉트를 설정할 수도 �
 #### 6.1 첫 배포
 1. **"Save and Deploy"** 클릭
 2. 배포 진행 상황 확인 (보통 1-2분 소요)
-3. 배포 완료 후 제공되는 URL 확인 (예: `rakorean.pages.dev`)
+3. 배포 완료 후 제공되는 URL 확인 (예: `rakorean.site`)
 
 #### 6.2 기능 테스트
 다음 항목들을 테스트하세요:
@@ -116,7 +116,7 @@ Cloudflare Pages Functions를 사용하여 리다이렉트를 설정할 수도 �
 3. Pages 프로젝트를 가리키는 CNAME 레코드 추가:
    - **Type**: CNAME
    - **Name**: `@` 또는 `www` (서브도메인)
-   - **Target**: `rakorean.pages.dev` (실제 Pages URL)
+   - **Target**: `rakorean.site` (실제 도메인)
    - **Proxy status**: Proxied (주황색 구름)
 
 #### 7.2 DNS 전파 대기
@@ -125,20 +125,18 @@ Cloudflare Pages Functions를 사용하여 리다이렉트를 설정할 수도 �
 
 ---
 
-### 8단계: Netlify에서 Cloudflare로 전환
+### 8단계: 최종 테스트 및 배포 확인
 
 #### 8.1 최종 테스트
 1. Cloudflare Pages URL에서 모든 기능이 정상 작동하는지 확인
 2. 도메인이 연결되어 있다면 도메인으로도 테스트
 3. 모바일 기기에서도 테스트
+4. API 프록시가 정상 작동하는지 확인 (`/api/*` 경로)
 
-#### 8.2 DNS 전환 (도메인 사용 시)
+#### 8.2 DNS 설정 (도메인 사용 시)
 1. 도메인 DNS를 Cloudflare로 변경
-2. 또는 Netlify에서 도메인을 제거하고 Cloudflare에 추가
-
-#### 8.3 Netlify 비활성화 (선택사항)
-- 모든 것이 정상 작동하는 것을 확인한 후
-- Netlify 대시보드에서 사이트 삭제 또는 비활성화
+2. Cloudflare Pages에 커스텀 도메인 추가
+3. SSL 인증서 자동 발급 확인
 
 ---
 
@@ -173,25 +171,26 @@ Cloudflare Pages는 자동으로 정적 파일을 캐싱합니다. 추가 설정
 
 ---
 
-## 📊 Netlify vs Cloudflare Pages 비교
+## 📊 Cloudflare Pages 주요 특징
 
-| 기능 | Netlify | Cloudflare Pages |
-|------|---------|------------------|
-| 무료 트래픽 | 제한적 | 무제한 |
-| 빌드 시간 | 제한적 | 무제한 |
-| 배포 속도 | 빠름 | 매우 빠름 |
-| CDN | 글로벌 | 글로벌 (더 빠름) |
-| SSL | 자동 | 자동 |
-| Functions | 지원 | Workers 지원 |
+| 기능 | 설명 |
+|------|------|
+| 무료 트래픽 | 무제한 |
+| 빌드 시간 | 무제한 |
+| 배포 속도 | 매우 빠름 (전 세계 CDN) |
+| CDN | 글로벌 네트워크 (200+ 도시) |
+| SSL | 자동 발급 및 갱신 |
+| Functions | Cloudflare Workers 지원 |
+| 가격 | 완전 무료 (개인 프로젝트) |
 
 ---
 
 ## ⚠️ 주의사항
 
 1. **API 프록시**: `/api/*` 경로가 Render.com 백엔드로 올바르게 프록시되는지 확인
-2. **환경 변수**: Netlify에서 사용하던 환경 변수가 있다면 Cloudflare에도 추가
-3. **도메인 전환**: DNS 전환 시 다운타임을 최소화하려면 Cloudflare에서 먼저 테스트
-4. **캐시**: 변경사항이 즉시 반영되지 않으면 브라우저 캐시 삭제
+2. **환경 변수**: 필요한 환경 변수가 있다면 Cloudflare Pages 설정에 추가
+3. **도메인 설정**: 커스텀 도메인 사용 시 DNS 설정이 올바른지 확인
+4. **캐시**: 변경사항이 즉시 반영되지 않으면 브라우저 캐시 삭제 또는 강력 새로고침 (Ctrl+Shift+R)
 
 ---
 
@@ -212,23 +211,23 @@ Cloudflare Pages는 자동으로 정적 파일을 캐싱합니다. 추가 설정
 
 ---
 
-## 📝 체크리스트
+## 📝 배포 체크리스트
 
-마이그레이션 전:
+배포 전:
 - [ ] Cloudflare 계정 생성
 - [ ] GitHub 저장소 확인
-- [ ] Netlify 설정 백업
+- [ ] `_redirects` 파일 확인
 
-마이그레이션 중:
+배포 중:
 - [ ] Cloudflare Pages 프로젝트 생성
-- [ ] 빌드 설정 완료
+- [ ] 빌드 설정 완료 (Build command 비워두기, Build output directory: `.`)
 - [ ] 첫 배포 성공
 - [ ] 기능 테스트 완료
 
-마이그레이션 후:
-- [ ] DNS 전환 완료 (도메인 사용 시)
+배포 후:
+- [ ] DNS 설정 완료 (도메인 사용 시)
 - [ ] 최종 테스트 완료
-- [ ] Netlify 비활성화 (선택사항)
+- [ ] API 프록시 정상 작동 확인
 - [ ] 모니터링 설정
 
 ---
@@ -240,5 +239,5 @@ Cloudflare Pages는 자동으로 정적 파일을 캐싱합니다. 추가 설정
 
 ---
 
-**마이그레이션 완료 후 이 파일을 삭제하거나 보관하세요.**
+**배포 완료 후 이 파일을 참고용으로 보관하세요.**
 

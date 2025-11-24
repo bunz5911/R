@@ -45,7 +45,7 @@ Settings 페이지에서:
 프로젝트 페이지에서 확인할 수 있는 것들:
 
 **Pages 프로젝트인 경우:**
-- URL이 `rakorean.pages.dev` 형식으로 보임
+- URL이 `rakorean.site` 형식으로 보임
 - "Deployments" 탭에 배포 목록이 보임
 - Settings에 "Build output directory" 필드가 있음
 

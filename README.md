@@ -120,7 +120,7 @@ http://localhost:8080
    - **Build output directory**: `.` (점 하나)
    - **Root directory**: (비워두기)
 6. **Save and Deploy** 클릭
-7. 배포 완료 후 제공되는 URL 확인 (예: `rakorean.pages.dev`)
+7. 배포 완료 후 제공되는 URL 확인 (예: `rakorean.site`)
 
 #### API 프록시 설정
 

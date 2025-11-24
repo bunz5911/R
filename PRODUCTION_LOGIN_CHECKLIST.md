@@ -27,11 +27,9 @@ Settings → Authentication → URL Configuration
 ```
 http://localhost:8080/login.html
 http://localhost:8080/signup.html
-https://your-cloudflare-pages-url.pages.dev/login.html
-https://your-cloudflare-pages-url.pages.dev/signup.html
+https://rakorean.site/login.html
+https://rakorean.site/signup.html
 ```
-
-**참고**: Cloudflare Pages URL은 프로젝트 설정에서 확인할 수 있습니다. (예: `rakorean.pages.dev`)
 
 **추가 방법:**
 1. "Redirect URLs" 섹션에서 "+ Add URL" 클릭
@@ -67,7 +65,7 @@ https://vofhdnrsrwwgwoxtqwba.supabase.co/auth/v1/callback
 
 1. **브라우저에서 Cloudflare Pages 사이트 접속**
    ```
-   https://your-cloudflare-pages-url.pages.dev/login.html
+   https://rakorean.site/login.html
    ```
 
 2. **개발자 도구 열기 (F12)**
@@ -75,9 +73,9 @@ https://vofhdnrsrwwgwoxtqwba.supabase.co/auth/v1/callback
    - 다음 로그가 보여야 함:
      ```
      ✅ Supabase 클라이언트 초기화 완료
-     🔐 Google 로그인 리다이렉트 URL: https://your-cloudflare-pages-url.pages.dev/login.html
+     🔐 Google 로그인 리다이렉트 URL: https://rakorean.site/login.html
      📍 현재 환경: 프로덕션
-     🌐 현재 origin: https://your-cloudflare-pages-url.pages.dev
+     🌐 현재 origin: https://rakorean.site
      ```
 
 3. **Google 로그인 버튼 클릭**
@@ -104,8 +102,8 @@ console.log('리다이렉트 URL:', redirectUrl);
 **예상 결과 (프로덕션):**
 ```
 현재 환경: 프로덕션
-현재 origin: https://your-cloudflare-pages-url.pages.dev
-리다이렉트 URL: https://your-cloudflare-pages-url.pages.dev/login.html
+현재 origin: https://rakorean.site
+리다이렉트 URL: https://rakorean.site/login.html
 ```
 
 ## 🐛 문제 해결
@@ -117,7 +115,7 @@ console.log('리다이렉트 URL:', redirectUrl);
 **해결:**
 1. `config.js` 파일이 Git에 포함되어 있는지 확인
 2. Cloudflare Pages에서 `config.js` 파일이 배포되었는지 확인
-3. 브라우저에서 직접 접속: `https://your-cloudflare-pages-url.pages.dev/config.js`
+3. 브라우저에서 직접 접속: `https://rakorean.site/config.js`
 4. 정상이면 JavaScript 코드가 보여야 함
 
 ### 문제 2: 로그인 후 이상한 URL로 리다이렉트됨
@@ -149,9 +147,9 @@ console.log('리다이렉트 URL:', redirectUrl);
 
 ### 프로덕션 환경 (Cloudflare Pages)
 ```javascript
-// window.location.hostname = 'your-cloudflare-pages-url.pages.dev'
+// window.location.hostname = 'rakorean.site'
 // isLocal = false
-// redirectUrl = 'https://your-cloudflare-pages-url.pages.dev/login.html'
+// redirectUrl = 'https://rakorean.site/login.html'
 ```
 
 **✅ 코드는 올바르게 작동합니다!**
@@ -160,11 +158,11 @@ console.log('리다이렉트 URL:', redirectUrl);
 
 - [ ] Supabase Dashboard에 프로덕션 URL 등록됨
 - [ ] Google Cloud Console에 Supabase 콜백 URL 등록됨
-- [ ] Netlify에서 `config.js` 접속 가능
-- [ ] Netlify에서 로그인 페이지 접속 가능
+- [ ] Cloudflare Pages에서 `config.js` 접속 가능
+- [ ] Cloudflare Pages에서 로그인 페이지 접속 가능
 - [ ] 브라우저 콘솔에서 환경 감지 로그 확인
 - [ ] Google 로그인 버튼 클릭 시 Google 로그인 페이지로 이동
-- [ ] 로그인 후 Netlify 사이트로 리다이렉트됨
+- [ ] 로그인 후 Cloudflare Pages 사이트로 리다이렉트됨
 
 ## 🎯 결론
 
@@ -172,7 +170,7 @@ console.log('리다이렉트 URL:', redirectUrl);
 
 일반 유저가 Cloudflare Pages에서 접속하면:
 1. 환경이 자동으로 감지됨 (프로덕션)
-2. 리다이렉트 URL이 자동으로 설정됨 (`https://your-cloudflare-pages-url.pages.dev/login.html`)
+2. 리다이렉트 URL이 자동으로 설정됨 (`https://rakorean.site/login.html`)
 3. Google 로그인 후 올바른 URL로 리다이렉트됨
 
 **중요:** Supabase Dashboard와 Google Cloud Console 설정만 확인하면 됩니다!
