@@ -333,7 +333,7 @@
         </div>
 
         <div class="social-login">
-            <button class="btn-social btn-google" onclick="loginWithGoogle()">
+            <button class="btn-social btn-google" type="button">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                     <path d="M19.6 10.227c0-.709-.064-1.39-.182-2.045H10v3.868h5.382a4.6 4.6 0 01-1.996 3.018v2.51h3.232c1.891-1.742 2.982-4.305 2.982-7.35z" fill="#4285F4"/>
                     <path d="M10 20c2.7 0 4.964-.895 6.618-2.423l-3.232-2.509c-.895.6-2.04.955-3.386.955-2.605 0-4.81-1.76-5.595-4.123H1.064v2.59A9.996 9.996 0 0010 20z" fill="#34A853"/>
@@ -343,7 +343,7 @@
                 Google로 로그인
             </button>
 
-            <button class="btn-social btn-kakao" onclick="loginWithKakao()">
+            <button class="btn-social btn-kakao" type="button">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M10 0C4.477 0 0 3.455 0 7.727c0 2.873 1.964 5.382 4.91 6.764-.205.736-.746 2.782-.862 3.227 0 0-.055.382.2.527.255.145.563.055.563.055.782-.1 3.6-2.345 4.173-2.764C9.327 15.59 9.655 15.6 10 15.6c5.523 0 10-3.455 10-7.727C20 3.455 15.523 0 10 0z"/>
                 </svg>
@@ -735,6 +735,52 @@
         } else {
             // DOM이 이미 로드된 경우 즉시 실행
             setupLoginForm();
+        }
+        
+        // 소셜 로그인 버튼 이벤트 리스너 설정
+        function setupSocialLoginButtons() {
+            const googleBtn = document.querySelector('.btn-google');
+            const kakaoBtn = document.querySelector('.btn-kakao');
+            
+            if (googleBtn) {
+                googleBtn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    console.log('🔐 Google 로그인 버튼 클릭됨');
+                    if (window.loginWithGoogle) {
+                        await window.loginWithGoogle();
+                    } else {
+                        console.error('❌ loginWithGoogle 함수가 정의되지 않았습니다');
+                        showError('Google 로그인 함수를 찾을 수 없습니다');
+                    }
+                });
+                console.log('✅ Google 로그인 버튼 이벤트 리스너 설정 완료');
+            } else {
+                console.warn('⚠️ Google 로그인 버튼을 찾을 수 없습니다');
+            }
+            
+            if (kakaoBtn) {
+                kakaoBtn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    console.log('🔐 카카오 로그인 버튼 클릭됨');
+                    if (window.loginWithKakao) {
+                        await window.loginWithKakao();
+                    } else {
+                        console.error('❌ loginWithKakao 함수가 정의되지 않았습니다');
+                        showError('카카오 로그인 함수를 찾을 수 없습니다');
+                    }
+                });
+                console.log('✅ 카카오 로그인 버튼 이벤트 리스너 설정 완료');
+            } else {
+                console.warn('⚠️ 카카오 로그인 버튼을 찾을 수 없습니다');
+            }
+        }
+        
+        // DOM 로드 완료 후 소셜 로그인 버튼 이벤트 리스너 설정
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupSocialLoginButtons);
+        } else {
+            // DOM이 이미 로드된 경우 즉시 실행
+            setupSocialLoginButtons();
         }
 
         // Google 로그인 (전역 함수로 정의 - 즉시 할당)
