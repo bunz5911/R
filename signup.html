@@ -4,6 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원가입 - Read Aloud Korean</title>
+    
+    <!-- Netlify에서 Cloudflare로 자동 리다이렉트 -->
+    <script>
+        (function() {
+            const currentHost = window.location.hostname;
+            const netlifyPattern = /netlify\.app$/i;
+            if (netlifyPattern.test(currentHost)) {
+                const currentPath = window.location.pathname + window.location.search + window.location.hash;
+                window.location.replace('https://rakorean.site' + currentPath);
+            }
+        })();
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity="sha384-TiCUE00h+xOxtgETOXyPT1Kgq9pZLqy7vKGT+JOhQNN1JIEe4LbpbxJPr/j5FYDx" crossorigin="anonymous"></script>
     <script src="config.js"></script>
