@@ -1991,13 +1991,24 @@ def auth_signup():
             }), 400
 
 
-@app.route('/api/auth/login', methods=['POST'])
+@app.route('/api/auth/login', methods=['POST', 'OPTIONS'])
 def auth_login():
     """
     로그인 (이메일 + 비밀번호)
     POST body: { "email": "user@example.com", "password": "password123" }
     """
+    # CORS preflight 처리
+    if request.method == 'OPTIONS':
+        response = jsonify({})
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        return response
+    
     print(f"🔐 로그인 요청 수신", flush=True)
+    print(f"📋 요청 Method: {request.method}", flush=True)
+    print(f"📋 요청 Headers: {dict(request.headers)}", flush=True)
+    print(f"📋 요청 Content-Type: {request.content_type}", flush=True)
     
     # Supabase 클라이언트 확인
     if not supabase_client:
@@ -2014,15 +2025,21 @@ def auth_login():
     
     # 요청 본문 파싱
     try:
+        raw_data = request.get_data(as_text=True)
+        print(f"📄 원본 요청 본문: {raw_data[:200]}", flush=True)  # 처음 200자만 로그
+        
         data = request.get_json() or {}
+        print(f"📦 파싱된 데이터: {data}", flush=True)
     except Exception as parse_error:
         print(f"❌ JSON 파싱 오류: {parse_error}", flush=True)
-        return jsonify({"error": "요청 본문을 파싱할 수 없습니다"}), 400
+        import traceback
+        print(f"   상세 오류:\n{traceback.format_exc()}", flush=True)
+        return jsonify({"error": "요청 본문을 파싱할 수 없습니다", "details": str(parse_error)}), 400
     
     email = data.get('email')
     password = data.get('password')
     
-    print(f"📧 로그인 시도 - 이메일: {email}", flush=True)
+    print(f"📧 로그인 시도 - 이메일: {email}, 비밀번호 제공됨: {bool(password)}", flush=True)
     
     if not email or not password:
         print(f"❌ 이메일 또는 비밀번호가 제공되지 않음", flush=True)
@@ -2058,7 +2075,7 @@ def auth_login():
             
             print(f"✅ 로그인 성공: {email}", flush=True)
             
-            return jsonify({
+            response_data = {
                 "success": True,
                 "user": {
                     "id": user.id,
@@ -2072,7 +2089,13 @@ def auth_login():
                     "access_token": auth_response.session.access_token,
                     "refresh_token": auth_response.session.refresh_token
                 }
-            })
+            }
+            
+            print(f"✅ 로그인 응답 준비 완료 - user_id: {user.id}", flush=True)
+            response = jsonify(response_data)
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            response.headers.add('Access-Control-Allow-Credentials', 'true')
+            return response
         else:
             print(f"❌ 로그인 실패 - user 또는 session이 없음", flush=True)
             return jsonify({"error": "로그인 실패"}), 401
@@ -2086,12 +2109,17 @@ def auth_login():
         
         # Supabase 관련 오류인지 확인
         if "Invalid login credentials" in error_msg or "Email not confirmed" in error_msg:
-            return jsonify({"error": "이메일 또는 비밀번호가 올바르지 않습니다"}), 401
+            response = jsonify({"error": "이메일 또는 비밀번호가 올바르지 않습니다"})
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            return response, 401
         else:
-            return jsonify({
+            response = jsonify({
                 "error": "로그인 중 오류가 발생했습니다",
-                "details": error_msg
-            }), 500
+                "details": error_msg,
+                "error_type": error_type
+            })
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            return response, 500
 
 
 @app.route('/api/auth/me', methods=['GET'])
