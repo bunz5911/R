@@ -275,7 +275,26 @@ let userDifficultyPreference = null;  // 사용자 난이도 선호도
 let PRECOMPUTED_ANALYSIS = {};  // 하드코딩된 분석 데이터 (즉시 로드용)
 
 // 사용자 정보
-let currentUserId = localStorage.getItem('userId') || '00000000-0000-0000-0000-000000000001';  // 테스트 사용자
+// 사용자 ID 초기화 (localStorage에서 읽기, 없으면 기본값)
+let currentUserId = null;
+function initializeUserId() {
+    const storedUserId = localStorage.getItem('userId');
+    if (storedUserId) {
+        currentUserId = storedUserId;
+        console.log('✅ 사용자 ID 초기화:', currentUserId);
+    } else {
+        // 로그인하지 않은 경우에만 기본값 사용
+        const hasAccessToken = localStorage.getItem('access_token');
+        if (!hasAccessToken) {
+            currentUserId = '00000000-0000-0000-0000-000000000001';  // 테스트 사용자
+            console.log('ℹ️ 로그인하지 않음 - 기본 사용자 ID 사용:', currentUserId);
+        } else {
+            console.warn('⚠️ access_token은 있지만 userId가 없습니다. 로그인 상태를 확인하세요.');
+        }
+    }
+}
+// 즉시 초기화
+initializeUserId();
 let currentUserEmail = localStorage.getItem('userEmail') || null;
 let currentDisplayName = localStorage.getItem('displayName') || null;
 let currentUserPlan = localStorage.getItem('userPlan') || 'free';  // 사용자 플랜
