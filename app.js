@@ -9,10 +9,10 @@ window.APP_VERSION_20251117_PARAGRAPH = true;
 console.log('🚀🚀🚀 app.js 로드됨 - 버전: 20251117-PARAGRAPH-FIX-' + Date.now());
 console.log('✅ 새 버전 확인: APP_VERSION_20251117_PARAGRAPH =', window.APP_VERSION_20251117_PARAGRAPH);
 
-// 배포 환경 감지: 프로덕션 환경에서는 Render 백엔드 사용, 로컬에서는 localhost 사용
+// 배포 환경 감지: 로컬에서는 localhost 사용, 프로덕션에서는 Cloudflare Pages API 프록시 사용
 const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:8080/api'
-    : 'https://r-6s57.onrender.com/api';
+    : window.location.origin + '/api';  // Cloudflare Pages API 프록시 사용
 
 // ============================================================================
 // 🌍 다국어 지원 시스템

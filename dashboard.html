@@ -168,7 +168,10 @@
     </div>
 
     <script>
-        const API_BASE = 'http://localhost:8080/api';
+        // 배포 환경 감지: 로컬에서는 localhost 사용, 프로덕션에서는 Cloudflare Pages API 프록시 사용
+        const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:8080/api'
+            : window.location.origin + '/api';  // Cloudflare Pages API 프록시 사용
         const USER_ID = '00000000-0000-0000-0000-000000000001'; // 테스트 사용자
 
         async function loadDashboard() {
