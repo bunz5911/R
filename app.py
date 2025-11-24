@@ -1716,19 +1716,41 @@ def auth_signup():
     회원가입 (이메일 + 비밀번호)
     POST body: { "email": "user@example.com", "password": "password123", "display_name": "홍길동" }
     """
-    if not supabase_client:
-        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    print(f"📝 회원가입 요청 수신", flush=True)
     
-    data = request.get_json() or {}
+    # Supabase 클라이언트 확인
+    if not supabase_client:
+        error_msg = "Supabase가 설정되지 않았습니다. SUPABASE_URL과 SUPABASE_KEY 환경변수를 확인하세요."
+        print(f"❌ {error_msg}", flush=True)
+        return jsonify({
+            "error": error_msg,
+            "details": {
+                "supabase_available": SUPABASE_AVAILABLE,
+                "supabase_url_set": bool(os.environ.get('SUPABASE_URL')),
+                "supabase_key_set": bool(os.environ.get('SUPABASE_KEY'))
+            }
+        }), 503
+    
+    # 요청 본문 파싱
+    try:
+        data = request.get_json() or {}
+    except Exception as parse_error:
+        print(f"❌ JSON 파싱 오류: {parse_error}", flush=True)
+        return jsonify({"error": "요청 본문을 파싱할 수 없습니다"}), 400
+    
     email = data.get('email')
     password = data.get('password')
     display_name = data.get('display_name')
     
+    print(f"📧 회원가입 시도 - 이메일: {email}, 이름: {display_name}", flush=True)
+    
     if not email or not password:
+        print(f"❌ 이메일 또는 비밀번호가 제공되지 않음", flush=True)
         return jsonify({"error": "이메일과 비밀번호가 필요합니다"}), 400
     
     try:
         # Supabase Auth 회원가입
+        print(f"🔗 Supabase 회원가입 시도 중...", flush=True)
         auth_response = supabase_client.auth.sign_up({
             "email": email,
             "password": password,
@@ -1738,6 +1760,8 @@ def auth_signup():
                 }
             }
         })
+        
+        print(f"📡 Supabase 응답 수신 - user: {bool(auth_response.user)}, session: {bool(auth_response.session)}", flush=True)
         
         if auth_response.user:
             user = auth_response.user
@@ -1896,14 +1920,29 @@ def auth_signup():
                 response_data["requires_approval"] = False
                 response_data["message"] = "회원가입이 완료되었습니다."
             
+            print(f"✅ 회원가입 성공: {email}", flush=True)
             return jsonify(response_data)
         else:
+            print(f"❌ 회원가입 실패 - user가 없음", flush=True)
             return jsonify({"error": "회원가입 실패"}), 400
             
     except Exception as e:
         error_msg = str(e)
-        print(f"❌ 회원가입 오류: {error_msg}", flush=True)
-        return jsonify({"error": error_msg}), 400
+        error_type = type(e).__name__
+        print(f"❌ 회원가입 오류 [{error_type}]: {error_msg}", flush=True)
+        import traceback
+        print(f"   상세 스택:\n{traceback.format_exc()}", flush=True)
+        
+        # Supabase 관련 오류인지 확인
+        if "User already registered" in error_msg or "already registered" in error_msg.lower():
+            return jsonify({"error": "이미 등록된 이메일입니다"}), 400
+        elif "Password should be at least" in error_msg:
+            return jsonify({"error": "비밀번호는 최소 6자 이상이어야 합니다"}), 400
+        else:
+            return jsonify({
+                "error": "회원가입 중 오류가 발생했습니다",
+                "details": error_msg
+            }), 400
 
 
 @app.route('/api/auth/login', methods=['POST'])
@@ -1912,33 +1951,64 @@ def auth_login():
     로그인 (이메일 + 비밀번호)
     POST body: { "email": "user@example.com", "password": "password123" }
     """
-    if not supabase_client:
-        return jsonify({"error": "Supabase가 설정되지 않았습니다"}), 503
+    print(f"🔐 로그인 요청 수신", flush=True)
     
-    data = request.get_json() or {}
+    # Supabase 클라이언트 확인
+    if not supabase_client:
+        error_msg = "Supabase가 설정되지 않았습니다. SUPABASE_URL과 SUPABASE_KEY 환경변수를 확인하세요."
+        print(f"❌ {error_msg}", flush=True)
+        return jsonify({
+            "error": error_msg,
+            "details": {
+                "supabase_available": SUPABASE_AVAILABLE,
+                "supabase_url_set": bool(os.environ.get('SUPABASE_URL')),
+                "supabase_key_set": bool(os.environ.get('SUPABASE_KEY'))
+            }
+        }), 503
+    
+    # 요청 본문 파싱
+    try:
+        data = request.get_json() or {}
+    except Exception as parse_error:
+        print(f"❌ JSON 파싱 오류: {parse_error}", flush=True)
+        return jsonify({"error": "요청 본문을 파싱할 수 없습니다"}), 400
+    
     email = data.get('email')
     password = data.get('password')
     
+    print(f"📧 로그인 시도 - 이메일: {email}", flush=True)
+    
     if not email or not password:
+        print(f"❌ 이메일 또는 비밀번호가 제공되지 않음", flush=True)
         return jsonify({"error": "이메일과 비밀번호가 필요합니다"}), 400
     
     try:
         # Supabase Auth 로그인
+        print(f"🔗 Supabase 로그인 시도 중...", flush=True)
         auth_response = supabase_client.auth.sign_in_with_password({
             "email": email,
             "password": password
         })
         
+        print(f"📡 Supabase 응답 수신 - user: {bool(auth_response.user)}, session: {bool(auth_response.session)}", flush=True)
+        
         if auth_response.user and auth_response.session:
             user = auth_response.user
             
-            # 프로필 정보 조회
-            profile_result = supabase_client.table('profiles')\
-                .select('*')\
-                .eq('id', user.id)\
-                .execute()
+            print(f"✅ 사용자 인증 성공 - ID: {user.id}, 이메일: {user.email}", flush=True)
             
-            profile = profile_result.data[0] if profile_result.data else None
+            # 프로필 정보 조회
+            try:
+                profile_result = supabase_client.table('profiles')\
+                    .select('*')\
+                    .eq('id', user.id)\
+                    .execute()
+                
+                profile = profile_result.data[0] if profile_result.data else None
+                print(f"📊 프로필 조회 완료 - 프로필 존재: {bool(profile)}", flush=True)
+            except Exception as profile_error:
+                print(f"⚠️ 프로필 조회 실패 (기본값 사용): {profile_error}", flush=True)
+                profile = None
             
             print(f"✅ 로그인 성공: {email}", flush=True)
             
@@ -1958,12 +2028,24 @@ def auth_login():
                 }
             })
         else:
+            print(f"❌ 로그인 실패 - user 또는 session이 없음", flush=True)
             return jsonify({"error": "로그인 실패"}), 401
             
     except Exception as e:
         error_msg = str(e)
-        print(f"❌ 로그인 오류: {error_msg}", flush=True)
-        return jsonify({"error": "이메일 또는 비밀번호가 올바르지 않습니다"}), 401
+        error_type = type(e).__name__
+        print(f"❌ 로그인 오류 [{error_type}]: {error_msg}", flush=True)
+        import traceback
+        print(f"   상세 스택:\n{traceback.format_exc()}", flush=True)
+        
+        # Supabase 관련 오류인지 확인
+        if "Invalid login credentials" in error_msg or "Email not confirmed" in error_msg:
+            return jsonify({"error": "이메일 또는 비밀번호가 올바르지 않습니다"}), 401
+        else:
+            return jsonify({
+                "error": "로그인 중 오류가 발생했습니다",
+                "details": error_msg
+            }), 500
 
 
 @app.route('/api/auth/me', methods=['GET'])
