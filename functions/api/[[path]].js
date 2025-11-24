@@ -33,9 +33,13 @@ export async function onRequest(context) {
     
     // GET, HEAD, OPTIONS 요청은 body가 없어야 함
     if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS') {
-      // request.body가 있으면 사용 (ReadableStream)
+      // request.body가 있으면 사용
       if (request.body) {
+        // ReadableStream을 직접 전달
         body = request.body;
+        console.log(`[API Proxy] Body 전달 - Method: ${method}, Body 존재: true`);
+      } else {
+        console.log(`[API Proxy] Body 없음 - Method: ${method}`);
       }
     }
     
@@ -50,7 +54,11 @@ export async function onRequest(context) {
       fetchOptions.body = body;
     }
     
+    console.log(`[API Proxy] 백엔드 요청 시작 - URL: ${backendUrl}, Method: ${method}, Body: ${body ? '있음' : '없음'}`);
+    
     const response = await fetch(backendUrl, fetchOptions);
+    
+    console.log(`[API Proxy] 백엔드 응답 수신 - Status: ${response.status}, StatusText: ${response.statusText}`);
     
     // 응답 헤더 복사
     const responseHeaders = new Headers();
