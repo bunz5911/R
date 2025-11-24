@@ -420,39 +420,68 @@
             });
             console.log('✅ Supabase 클라이언트 초기화 완료');
             
+            // 콘솔 로그를 localStorage에 저장하는 함수
+            function saveLog(message, data = null) {
+                const timestamp = new Date().toISOString();
+                const logEntry = {
+                    timestamp: timestamp,
+                    message: message,
+                    data: data
+                };
+                
+                // 기존 로그 가져오기
+                const existingLogs = JSON.parse(localStorage.getItem('oauth_debug_logs') || '[]');
+                existingLogs.push(logEntry);
+                
+                // 최대 50개까지만 저장
+                if (existingLogs.length > 50) {
+                    existingLogs.shift();
+                }
+                
+                localStorage.setItem('oauth_debug_logs', JSON.stringify(existingLogs));
+                
+                // 콘솔에도 출력
+                if (data) {
+                    console.log(message, data);
+                } else {
+                    console.log(message);
+                }
+            }
+            
             // OAuth 콜백 처리 (URL 해시에 토큰이 있을 때만 실행)
             // 페이지 로드 직후와 약간의 지연 후 두 번 확인
             function checkOAuthCallback() {
                 const hash = window.location.hash;
                 const fullUrl = window.location.href;
                 
-                console.log('🔍 OAuth 콜백 체크 시작');
-                console.log('🔍 전체 URL:', fullUrl);
-                console.log('🔍 URL 해시:', hash ? hash.substring(0, 100) + '...' : '없음');
-                console.log('🔍 해시 길이:', hash ? hash.length : 0);
+                saveLog('🔍 OAuth 콜백 체크 시작');
+                saveLog('🔍 전체 URL:', fullUrl);
+                saveLog('🔍 URL 해시:', hash ? hash.substring(0, 100) + '...' : '없음');
+                saveLog('🔍 해시 길이:', hash ? hash.length : 0);
                 
                 const hashParams = new URLSearchParams(hash.substring(1));
                 const hasAccessToken = hashParams.get('access_token');
                 const hasError = hashParams.get('error');
                 const errorDescription = hashParams.get('error_description');
                 
-                console.log('🔑 토큰 확인:', {
+                const tokenInfo = {
                     hasHash: !!hash,
                     hashLength: hash ? hash.length : 0,
                     hasAccessToken: !!hasAccessToken,
                     hasError: !!hasError,
                     error: hasError,
                     errorDescription: errorDescription
-                });
+                };
+                saveLog('🔑 토큰 확인:', tokenInfo);
                 
                 if (hasAccessToken) {
-                    console.log('🔑 OAuth 콜백 감지 - 토큰 처리 시작');
+                    saveLog('🔑 OAuth 콜백 감지 - 토큰 처리 시작');
                     handleOAuthCallback();
                 } else if (hasError) {
-                    console.error('❌ OAuth 에러 파라미터 발견:', hasError);
+                    saveLog('❌ OAuth 에러 파라미터 발견:', hasError);
                     showError('로그인에 실패했습니다: ' + (errorDescription || hasError));
                 } else {
-                    console.log('ℹ️ 일반 로그인 페이지 - OAuth 콜백 아님');
+                    saveLog('ℹ️ 일반 로그인 페이지 - OAuth 콜백 아님');
                 }
             }
             
@@ -530,7 +559,7 @@
             
             if (accessToken) {
                 try {
-                    console.log('🔐 사용자 정보 조회 시작...');
+                    saveLog('🔐 사용자 정보 조회 시작...');
                     
                     // 사용자 정보 조회
                     const { data: { user }, error: userError } = await supabase.auth.getUser(accessToken);
@@ -585,7 +614,7 @@
                                 console.warn('⚠️ 프로필 생성 실패:', insertError);
                                 // 프로필 생성 실패해도 계속 진행
                             } else {
-                                console.log('✅ 프로필 생성 완료');
+                                saveLog('✅ 프로필 생성 완료');
                             }
                             
                             // user_coins 초기화
@@ -594,13 +623,13 @@
                                     user_id: user.id,
                                     total_coins: 10
                                 });
-                                console.log('✅ 코인 데이터 생성 완료');
+                                saveLog('✅ 코인 데이터 생성 완료');
                             } catch (coinError) {
-                                console.warn('⚠️ 코인 데이터 생성 실패:', coinError);
+                                saveLog('⚠️ 코인 데이터 생성 실패:', coinError);
                                 // 코인 데이터 생성 실패해도 계속 진행
                             }
                         } catch (insertError) {
-                            console.warn('⚠️ 프로필 생성 중 오류:', insertError);
+                            saveLog('⚠️ 프로필 생성 중 오류:', insertError);
                             // 프로필 생성 실패해도 계속 진행
                         }
                     }
@@ -635,8 +664,8 @@
                             displayName: user.user_metadata?.full_name || user.email.split('@')[0]
                         });
                     } catch (storageError) {
-                        console.error('❌ localStorage 저장 오류:', storageError);
-                        console.error('❌ 저장 시도한 값:', {
+                        saveLog('❌ localStorage 저장 오류:', storageError);
+                        saveLog('❌ 저장 시도한 값:', {
                             accessToken: accessToken ? accessToken.substring(0, 20) + '...' : '없음',
                             userId: user.id,
                             email: user.email
@@ -657,36 +686,36 @@
                         
                         if (checkToken && checkUserId) {
                             clearInterval(finalCheck);
-                            console.log('✅ 리다이렉트 전 최종 확인 완료:', {
+                            saveLog('✅ 리다이렉트 전 최종 확인 완료:', {
                                 hasToken: !!checkToken,
                                 hasUserId: !!checkUserId
                             });
                             
-                            // 리다이렉트 (모든 작업 완료 후)
+                            // 리다이렉트 (모든 작업 완료 후) - 로그 확인을 위해 3초 대기
                             setTimeout(() => {
                                 const urlParams = new URLSearchParams(window.location.search);
                                 const returnUrl = urlParams.get('returnUrl');
                                 
                                 if (returnUrl) {
-                                    console.log('🔗 커뮤니티로 리다이렉트:', returnUrl);
+                                    saveLog('🔗 커뮤니티로 리다이렉트:', returnUrl);
                                     window.location.href = decodeURIComponent(returnUrl);
                                 } else {
                                     const basePath = window.location.origin + '/index.html';
-                                    console.log('🔗 홈으로 리다이렉트:', basePath);
+                                    saveLog('🔗 홈으로 리다이렉트:', basePath);
                                     window.location.href = basePath;
                                 }
-                            }, 500); // 저장 확인 후 짧은 대기
+                            }, 3000); // 로그 확인을 위해 3초 대기
                         }
                     }, 100); // 100ms마다 확인
                     
-                    // 최대 3초 대기 후 리다이렉트 (타임아웃 방지)
+                    // 최대 5초 대기 후 리다이렉트 (타임아웃 방지)
                     setTimeout(() => {
                         clearInterval(finalCheck);
                         const timeoutToken = localStorage.getItem('access_token');
                         const timeoutUserId = localStorage.getItem('userId');
                         
                         if (timeoutToken && timeoutUserId) {
-                            console.log('⏰ 타임아웃 후 리다이렉트 (저장 확인됨)');
+                            saveLog('⏰ 타임아웃 후 리다이렉트 (저장 확인됨)');
                             const urlParams = new URLSearchParams(window.location.search);
                             const returnUrl = urlParams.get('returnUrl');
                             
@@ -696,10 +725,10 @@
                                 window.location.href = window.location.origin + '/index.html';
                             }
                         } else {
-                            console.error('❌ 타임아웃: localStorage 저장 실패 - 리다이렉트하지 않음');
+                            saveLog('❌ 타임아웃: localStorage 저장 실패 - 리다이렉트하지 않음');
                             showError('로그인 정보 저장에 실패했습니다. 페이지를 새로고침해주세요.');
                         }
-                    }, 3000);
+                    }, 5000);
                     
                 } catch (error) {
                     console.error('❌ OAuth 콜백 처리 오류:', error);
