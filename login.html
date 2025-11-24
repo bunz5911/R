@@ -737,12 +737,17 @@
             setupLoginForm();
         }
 
-        // Google 로그인 (전역 함수로 정의)
+        // Google 로그인 (전역 함수로 정의 - 즉시 할당)
         window.loginWithGoogle = async function() {
+            console.log('🔐 Google 로그인 함수 호출됨');
+            
             if (!supabase) {
+                console.error('❌ Supabase 클라이언트가 없습니다');
                 showError('Google 로그인 설정이 필요합니다. config.js 파일을 확인하세요.');
                 return;
             }
+            
+            console.log('✅ Supabase 클라이언트 확인됨');
             
             // 현재 URL 검증
             const currentOrigin = window.location.origin;
@@ -795,12 +800,17 @@
                 // 성공 시 Google 로그인 페이지로 자동 리다이렉트됨
             } catch (error) {
                 console.error('❌ Google 로그인 예외:', error);
+                console.error('❌ 오류 상세:', error.message);
+                console.error('❌ 오류 스택:', error.stack);
                 showError('Google 로그인에 실패했습니다: ' + error.message);
             }
         };
+        
+        console.log('✅ loginWithGoogle 함수 전역 스코프에 할당 완료');
 
-        // 카카오 로그인 (전역 함수로 정의)
+        // 카카오 로그인 (전역 함수로 정의 - 즉시 할당)
         window.loginWithKakao = async function() {
+            console.log('🔐 카카오 로그인 함수 호출됨');
             if (!window.Kakao || !window.Kakao.isInitialized()) {
                 console.error('❌ 카카오 SDK가 초기화되지 않았습니다');
                 showError('카카오 로그인 설정이 필요합니다. config.js 파일을 확인하세요.');
