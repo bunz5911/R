@@ -279,17 +279,26 @@ let PRECOMPUTED_ANALYSIS = {};  // 하드코딩된 분석 데이터 (즉시 로�
 let currentUserId = null;
 function initializeUserId() {
     const storedUserId = localStorage.getItem('userId');
+    const hasAccessToken = localStorage.getItem('access_token');
+    
     if (storedUserId) {
         currentUserId = storedUserId;
-        console.log('✅ 사용자 ID 초기화:', currentUserId);
+        console.log('✅ 사용자 ID 초기화:', currentUserId, '(access_token:', hasAccessToken ? '있음' : '없음', ')');
     } else {
         // 로그인하지 않은 경우에만 기본값 사용
-        const hasAccessToken = localStorage.getItem('access_token');
         if (!hasAccessToken) {
             currentUserId = '00000000-0000-0000-0000-000000000001';  // 테스트 사용자
             console.log('ℹ️ 로그인하지 않음 - 기본 사용자 ID 사용:', currentUserId);
         } else {
             console.warn('⚠️ access_token은 있지만 userId가 없습니다. 로그인 상태를 확인하세요.');
+            // access_token이 있으면 잠시 대기 후 다시 시도 (Google 로그인 후 리다이렉트 타이밍 문제)
+            setTimeout(() => {
+                const retryUserId = localStorage.getItem('userId');
+                if (retryUserId) {
+                    currentUserId = retryUserId;
+                    console.log('✅ 사용자 ID 재초기화 성공:', currentUserId);
+                }
+            }, 100);
         }
     }
 }
@@ -391,6 +400,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupEventListeners();
     
     // ✅ 5. 인증 상태 즉시 설정 (localStorage 캐시 우선)
+    // Google 로그인 후 리다이렉트 시 localStorage 값이 이미 저장되어 있을 수 있으므로 재초기화
+    initializeUserId();
+    
     const cachedToken = localStorage.getItem('access_token');
     const cachedUserId = localStorage.getItem('userId');
     const cachedDisplayName = localStorage.getItem('displayName');
@@ -403,7 +415,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         currentDisplayName = cachedDisplayName;
         currentUserPlan = localStorage.getItem('userPlan') || 'free';
         updateAuthUI();
-        console.log('✅ 로그인 상태 즉시 설정 (캐시):', currentDisplayName);
+        console.log('✅ 로그인 상태 즉시 설정 (캐시):', {
+            userId: currentUserId,
+            email: currentUserEmail,
+            displayName: currentDisplayName,
+            plan: currentUserPlan
+        });
+    } else {
+        // 로그인하지 않은 경우
+        console.log('ℹ️ 로그인하지 않음 - 인증 상태:', {
+            hasToken: !!cachedToken,
+            hasUserId: !!cachedUserId,
+            hasDisplayName: !!cachedDisplayName
+        });
     }
     
     // ✅ 6. 인증 상태 서버 검증 (백그라운드, 비블로킹)
