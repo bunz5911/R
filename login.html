@@ -584,7 +584,11 @@
             hideMessages();
             
             try {
-                const response = await fetch(`${API_BASE}/auth/login`, {
+                const loginUrl = `${API_BASE}/auth/login`;
+                console.log('🔐 로그인 요청 시작:', loginUrl);
+                console.log('📧 이메일:', email);
+                
+                const response = await fetch(loginUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -592,7 +596,23 @@
                     body: JSON.stringify({ email, password })
                 });
                 
-                const data = await response.json();
+                console.log('📡 응답 상태:', response.status, response.statusText);
+                console.log('📡 응답 헤더:', Object.fromEntries(response.headers.entries()));
+                
+                let data;
+                try {
+                    const responseText = await response.text();
+                    console.log('📄 응답 본문:', responseText);
+                    data = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('❌ JSON 파싱 오류:', parseError);
+                    showError('서버 응답을 처리할 수 없습니다');
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = '로그인';
+                    return;
+                }
+                
+                console.log('📦 파싱된 데이터:', data);
                 
                 if (response.ok && data.success) {
                     // 로그인 성공
@@ -632,13 +652,16 @@
                         }
                     }, 1000);
                 } else {
+                    console.error('❌ 로그인 실패:', data);
                     showError(data.error || '로그인에 실패했습니다');
                     loginBtn.disabled = false;
                     loginBtn.textContent = '로그인';
                 }
             } catch (error) {
-                console.error('로그인 오류:', error);
-                showError('서버 연결에 실패했습니다');
+                console.error('❌ 로그인 오류:', error);
+                console.error('❌ 오류 상세:', error.message);
+                console.error('❌ 오류 스택:', error.stack);
+                showError('서버 연결에 실패했습니다: ' + error.message);
                 loginBtn.disabled = false;
                 loginBtn.textContent = '로그인';
             }

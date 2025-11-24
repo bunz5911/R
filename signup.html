@@ -601,7 +601,12 @@
             hideMessages();
             
             try {
-                const response = await fetch(`${API_BASE}/auth/signup`, {
+                const signupUrl = `${API_BASE}/auth/signup`;
+                console.log('📝 회원가입 요청 시작:', signupUrl);
+                console.log('📧 이메일:', email);
+                console.log('👤 표시 이름:', displayName);
+                
+                const response = await fetch(signupUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -613,19 +618,38 @@
                     })
                 });
                 
-                const data = await response.json();
+                console.log('📡 응답 상태:', response.status, response.statusText);
+                console.log('📡 응답 헤더:', Object.fromEntries(response.headers.entries()));
+                
+                let data;
+                try {
+                    const responseText = await response.text();
+                    console.log('📄 응답 본문:', responseText);
+                    data = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('❌ JSON 파싱 오류:', parseError);
+                    showError('서버 응답을 처리할 수 없습니다');
+                    signupBtn.disabled = false;
+                    signupBtn.textContent = '회원가입';
+                    return;
+                }
+                
+                console.log('📦 파싱된 데이터:', data);
                 
                 if (response.ok && data.success) {
                     // 회원가입 성공 - 플랜 선택 화면 표시
                     showPlanSelection(data.user);
                 } else {
+                    console.error('❌ 회원가입 실패:', data);
                     showError(data.error || '회원가입에 실패했습니다');
                     signupBtn.disabled = false;
                     signupBtn.textContent = '회원가입';
                 }
             } catch (error) {
-                console.error('회원가입 오류:', error);
-                showError('서버 연결에 실패했습니다');
+                console.error('❌ 회원가입 오류:', error);
+                console.error('❌ 오류 상세:', error.message);
+                console.error('❌ 오류 스택:', error.stack);
+                showError('서버 연결에 실패했습니다: ' + error.message);
                 signupBtn.disabled = false;
                 signupBtn.textContent = '회원가입';
             }
