@@ -726,7 +726,16 @@
                 loginBtn.disabled = false;
                 loginBtn.textContent = '로그인';
             }
-        });
+            });
+        }
+        
+        // DOM 로드 완료 후 이벤트 리스너 설정
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupLoginForm);
+        } else {
+            // DOM이 이미 로드된 경우 즉시 실행
+            setupLoginForm();
+        }
 
         // Google 로그인
         async function loginWithGoogle() {
