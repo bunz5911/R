@@ -601,6 +601,14 @@
                     localStorage.setItem('userId', data.user.id);
                     localStorage.setItem('userEmail', data.user.email);
                     localStorage.setItem('displayName', data.user.display_name);
+                    localStorage.setItem('userPlan', data.user.plan || 'free');
+                    
+                    console.log('✅ 로그인 성공 - 사용자 정보 저장:', {
+                        id: data.user.id,
+                        email: data.user.email,
+                        displayName: data.user.display_name,
+                        plan: data.user.plan || 'free'
+                    });
                     
                     showSuccess('로그인 성공! 이동합니다...');
                     

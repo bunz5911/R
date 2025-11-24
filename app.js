@@ -371,12 +371,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ✅ 4. 이벤트 리스너 설정 (즉시 필요)
     setupEventListeners();
     
-    // ✅ 5. 인증 상태 체크 (백그라운드, 비블로킹)
+    // ✅ 5. 인증 상태 즉시 설정 (localStorage 캐시 우선)
+    const cachedToken = localStorage.getItem('access_token');
+    const cachedUserId = localStorage.getItem('userId');
+    const cachedDisplayName = localStorage.getItem('displayName');
+    
+    if (cachedToken && cachedUserId && cachedDisplayName) {
+        // 로그인 직후: localStorage의 정보를 즉시 사용하여 인증 상태 설정
+        isAuthenticated = true;
+        currentUserId = cachedUserId;
+        currentUserEmail = localStorage.getItem('userEmail');
+        currentDisplayName = cachedDisplayName;
+        currentUserPlan = localStorage.getItem('userPlan') || 'free';
+        updateAuthUI();
+        console.log('✅ 로그인 상태 즉시 설정 (캐시):', currentDisplayName);
+    }
+    
+    // ✅ 6. 인증 상태 서버 검증 (백그라운드, 비블로킹)
     checkAuthStatus().catch(error => {
         console.warn('⚠️ 인증 상태 체크 실패:', error);
-        // 실패해도 계속 진행 (비로그인 상태로 처리)
-        isAuthenticated = false;
-        updateAuthUI();
+        // 실패해도 캐시된 인증 상태 유지
     });
     
     // ============================================================================
@@ -6043,8 +6057,25 @@ async function checkAuthStatus() {
         return false;
     }
     
+    // ✅ 로그인 직후: localStorage의 정보를 먼저 사용하여 인증 상태 설정
+    const cachedUserId = localStorage.getItem('userId');
+    const cachedUserEmail = localStorage.getItem('userEmail');
+    const cachedDisplayName = localStorage.getItem('displayName');
+    const cachedUserPlan = localStorage.getItem('userPlan') || 'free';
+    
+    if (cachedUserId && cachedDisplayName) {
+        // localStorage에 사용자 정보가 있으면 일단 인증 상태로 설정
+        isAuthenticated = true;
+        currentUserId = cachedUserId;
+        currentUserEmail = cachedUserEmail;
+        currentDisplayName = cachedDisplayName;
+        currentUserPlan = cachedUserPlan;
+        updateAuthUI();
+        console.log('✅ 로그인 상태 확인 (캐시):', currentDisplayName, `(${currentUserPlan})`);
+    }
+    
     try {
-        // 토큰으로 사용자 정보 확인
+        // 토큰으로 사용자 정보 확인 (백그라운드 검증)
         const response = await fetch(`${API_BASE}/auth/me`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
@@ -6054,7 +6085,7 @@ async function checkAuthStatus() {
         if (response.ok) {
             const data = await response.json();
             if (data.success && data.user) {
-                // 로그인 상태
+                // 로그인 상태 확인 성공
                 isAuthenticated = true;
                 currentUserId = data.user.id;
                 currentUserEmail = data.user.email;
@@ -6068,18 +6099,31 @@ async function checkAuthStatus() {
                 localStorage.setItem('userPlan', currentUserPlan);
                 
                 updateAuthUI();
-                console.log('✅ 로그인 상태 확인:', currentDisplayName, `(${currentUserPlan})`);
+                console.log('✅ 로그인 상태 확인 (서버):', currentDisplayName, `(${currentUserPlan})`);
                 return true;
             }
         }
         
-        // 토큰이 유효하지 않음 - 로그아웃 처리
-        logout();
-        return false;
+        // 토큰이 유효하지 않음 (401, 403 등)
+        if (response.status === 401 || response.status === 403) {
+            console.warn('⚠️ 토큰이 유효하지 않습니다. 로그아웃 처리합니다.');
+            logout();
+            return false;
+        }
+        
+        // 기타 오류 (500 등) - 네트워크 오류로 간주하고 캐시된 정보 사용
+        console.warn('⚠️ 서버 응답 오류:', response.status, '- 캐시된 인증 정보 사용');
+        return isAuthenticated; // 캐시된 인증 상태 유지
         
     } catch (error) {
         console.error('인증 확인 오류:', error);
-        // 에러 발생 시에도 계속 사용 가능하도록 (비로그인)
+        // 네트워크 오류 등 - 캐시된 정보 사용 (로그인 직후에는 토큰이 있으므로 인증 상태 유지)
+        if (cachedUserId && cachedDisplayName) {
+            console.log('⚠️ 네트워크 오류로 인해 캐시된 인증 정보를 사용합니다.');
+            return isAuthenticated; // 캐시된 인증 상태 유지
+        }
+        
+        // 캐시도 없으면 비로그인 상태
         isAuthenticated = false;
         updateAuthUI();
         return false;
