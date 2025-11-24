@@ -1,8 +1,12 @@
 # Cloudflare Pages Redirects
 # API 프록시 설정
+# 
+# 주의: POST 요청의 body를 전달하려면 Functions를 사용해야 합니다.
+# _redirects 파일은 GET 요청에는 잘 작동하지만 POST body 전달에 문제가 있을 수 있습니다.
+# 따라서 functions/api/[[path]].js를 사용합니다.
 
-# API 프록시: /api/* 요청을 Render.com 백엔드로 전달
-/api/*  https://r-6s57.onrender.com/api/:splat  200
+# API 프록시는 Functions로 처리 (functions/api/[[path]].js)
+# /api/*  https://r-6s57.onrender.com/api/:splat  200
 
 # SPA 라우팅: 모든 요청을 index.html로 전달 (필요한 경우)
 # /*    /index.html   200
