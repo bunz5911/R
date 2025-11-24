@@ -496,13 +496,17 @@
             }
             
             // URL 해시에서 토큰 추출
-            const hashParams = new URLSearchParams(window.location.hash.substring(1));
+            const hash = window.location.hash;
+            console.log('🔍 handleOAuthCallback - URL 해시:', hash ? hash.substring(0, 100) + '...' : '없음');
+            
+            const hashParams = new URLSearchParams(hash.substring(1));
             const accessToken = hashParams.get('access_token');
             const refreshToken = hashParams.get('refresh_token');
             
-            console.log('🔑 토큰 확인:', {
-                accessToken: accessToken ? '있음' : '없음',
-                refreshToken: refreshToken ? '있음' : '없음'
+            console.log('🔑 토큰 추출 결과:', {
+                accessToken: accessToken ? '있음 (' + accessToken.substring(0, 20) + '...)' : '없음',
+                refreshToken: refreshToken ? '있음 (' + refreshToken.substring(0, 20) + '...)' : '없음',
+                hashLength: hash ? hash.length : 0
             });
             
             if (accessToken) {
