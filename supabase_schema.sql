@@ -93,7 +93,17 @@ CREATE TABLE IF NOT EXISTS public.wordbook (
 );
 
 -- ============================================================================
--- 5. coin_transactions 테이블 (코인 거래 내역)
+-- 5. user_coins 테이블 (사용자 코인 잔액)
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS public.user_coins (
+    user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    total_coins INT NOT NULL DEFAULT 50,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- ============================================================================
+-- 6. coin_transactions 테이블 (코인 거래 내역)
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS public.coin_transactions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -106,7 +116,7 @@ CREATE TABLE IF NOT EXISTS public.coin_transactions (
 );
 
 -- ============================================================================
--- 6. analysis_cache 테이블 (분석 캐시 - 이미 존재하는 경우 스킵)
+-- 7. analysis_cache 테이블 (분석 캐시 - 이미 존재하는 경우 스킵)
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS public.analysis_cache (
     story_title TEXT NOT NULL,
@@ -119,7 +129,7 @@ CREATE TABLE IF NOT EXISTS public.analysis_cache (
 );
 
 -- ============================================================================
--- 7. RLS (Row Level Security) 정책 설정
+-- 8. RLS (Row Level Security) 정책 설정
 -- ============================================================================
 
 -- profiles 테이블 RLS
@@ -172,6 +182,31 @@ CREATE POLICY "Users can manage own wordbook"
     ON public.wordbook
     USING (auth.uid() = user_id);
 
+-- user_coins 테이블 RLS
+ALTER TABLE public.user_coins ENABLE ROW LEVEL SECURITY;
+
+-- 사용자는 자신의 코인 조회 가능
+DROP POLICY IF EXISTS "Users can view own coins" ON public.user_coins;
+CREATE POLICY "Users can view own coins"
+    ON public.user_coins FOR SELECT
+    USING (auth.uid() = user_id);
+
+-- 사용자는 자신의 코인 업데이트 가능
+DROP POLICY IF EXISTS "Users can update own coins" ON public.user_coins;
+CREATE POLICY "Users can update own coins"
+    ON public.user_coins FOR UPDATE
+    USING (auth.uid() = user_id);
+
+-- 사용자는 자신의 코인 데이터 삽입 가능
+DROP POLICY IF EXISTS "Users can insert own coins" ON public.user_coins;
+CREATE POLICY "Users can insert own coins"
+    ON public.user_coins FOR INSERT
+    WITH CHECK (auth.uid() = user_id);
+
+-- Service role은 모든 작업 가능 (백엔드에서 사용)
+-- 주의: service_role 키는 RLS를 우회하므로 별도 정책 불필요
+-- 하지만 명시적으로 정책을 추가하면 더 안전함
+
 -- coin_transactions 테이블 RLS
 ALTER TABLE public.coin_transactions ENABLE ROW LEVEL SECURITY;
 
@@ -190,15 +225,23 @@ CREATE POLICY "Anyone can read analysis cache"
     USING (true);
 
 -- ============================================================================
--- 8. 인덱스 생성 (성능 최적화)
+-- 9. 인덱스 생성 (성능 최적화)
 -- ============================================================================
 CREATE INDEX IF NOT EXISTS idx_user_progress_user_id ON public.user_progress(user_id);
 CREATE INDEX IF NOT EXISTS idx_streak_history_user_id ON public.streak_history(user_id);
 CREATE INDEX IF NOT EXISTS idx_wordbook_user_id ON public.wordbook(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_coins_user_id ON public.user_coins(user_id);
 CREATE INDEX IF NOT EXISTS idx_coin_transactions_user_id ON public.coin_transactions(user_id);
 
+-- user_coins 테이블 updated_at 자동 업데이트 트리거
+DROP TRIGGER IF EXISTS update_user_coins_updated_at ON public.user_coins;
+CREATE TRIGGER update_user_coins_updated_at
+    BEFORE UPDATE ON public.user_coins
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
 -- ============================================================================
--- 9. 트리거 (자동 업데이트)
+-- 10. 트리거 (자동 업데이트)
 -- ============================================================================
 
 -- profiles 테이블 updated_at 자동 업데이트
@@ -217,7 +260,7 @@ CREATE TRIGGER update_profiles_updated_at
     EXECUTE FUNCTION update_updated_at_column();
 
 -- ============================================================================
--- 10. user_approvals 테이블 (승인 관리 시스템)
+-- 11. user_approvals 테이블 (승인 관리 시스템)
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS public.user_approvals (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -264,7 +307,7 @@ CREATE TRIGGER update_user_approvals_updated_at
     EXECUTE FUNCTION update_updated_at_column();
 
 -- ============================================================================
--- 11. 초기 데이터 (슈퍼바이저 계정은 수동 설정)
+-- 12. 초기 데이터 (슈퍼바이저 계정은 수동 설정)
 -- ============================================================================
 
 -- bunz5911@gmail.com 계정을 슈퍼바이저로 설정하려면:
