@@ -737,8 +737,8 @@
             setupLoginForm();
         }
 
-        // Google 로그인
-        async function loginWithGoogle() {
+        // Google 로그인 (전역 함수로 정의)
+        window.loginWithGoogle = async function() {
             if (!supabase) {
                 showError('Google 로그인 설정이 필요합니다. config.js 파일을 확인하세요.');
                 return;
@@ -797,10 +797,10 @@
                 console.error('❌ Google 로그인 예외:', error);
                 showError('Google 로그인에 실패했습니다: ' + error.message);
             }
-        }
+        };
 
-        // 카카오 로그인
-        async function loginWithKakao() {
+        // 카카오 로그인 (전역 함수로 정의)
+        window.loginWithKakao = async function() {
             if (!window.Kakao || !window.Kakao.isInitialized()) {
                 console.error('❌ 카카오 SDK가 초기화되지 않았습니다');
                 showError('카카오 로그인 설정이 필요합니다. config.js 파일을 확인하세요.');
