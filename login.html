@@ -512,32 +512,42 @@
                         localStorage.setItem('displayName', user.user_metadata?.full_name || user.email.split('@')[0]);
                         localStorage.setItem('userPlan', profiles && profiles.length > 0 ? profiles[0].plan : 'free');
                         
-                        showSuccess('Google 로그인 성공! 홈으로 이동합니다...');
+                        showSuccess('Google 로그인 성공! 이동합니다...');
                         
                         setTimeout(() => {
-                            // 절대 URL로 리다이렉트 (모바일/프로덕션 환경 대응)
-                            const currentOrigin = window.location.origin;
-                            const currentHostname = window.location.hostname;
-                            const isLocalhost = currentHostname === 'localhost' || currentHostname === '127.0.0.1';
+                            // returnUrl 파라미터 확인 (커뮤니티에서 온 경우)
+                            const urlParams = new URLSearchParams(window.location.search);
+                            const returnUrl = urlParams.get('returnUrl');
                             
-                            // localhost:3000인 경우 차단
-                            if (currentHostname === 'localhost' && window.location.port === '3000') {
-                                console.error('❌ localhost:3000 감지 - 잘못된 포트입니다');
-                                alert('잘못된 포트입니다. 로컬 개발 시에는 포트 8080을 사용하세요.');
-                                return;
-                            }
-                            
-                            if (isLocalhost && (window.location.port === '8080' || !window.location.port)) {
-                                // 로컬 환경 (포트 8080만 허용)
-                                const basePath = currentOrigin + '/index.html';
-                                console.log('🔗 로컬 리다이렉트 URL:', basePath);
-                                window.location.href = basePath;
+                            if (returnUrl) {
+                                // 커뮤니티에서 온 경우 원래 페이지로 돌아가기
+                                console.log('🔗 커뮤니티로 리다이렉트:', returnUrl);
+                                window.location.href = decodeURIComponent(returnUrl);
                             } else {
-                                // 프로덕션 환경 - 현재 origin 사용
-                                const basePath = currentOrigin + '/index.html';
-                                console.log('🔗 프로덕션 리다이렉트 URL:', basePath);
-                                console.log('⚠️ localhost로 리다이렉트 시도 차단됨');
-                                window.location.href = basePath;
+                                // 기본: 홈으로 이동
+                                const currentOrigin = window.location.origin;
+                                const currentHostname = window.location.hostname;
+                                const isLocalhost = currentHostname === 'localhost' || currentHostname === '127.0.0.1';
+                                
+                                // localhost:3000인 경우 차단
+                                if (currentHostname === 'localhost' && window.location.port === '3000') {
+                                    console.error('❌ localhost:3000 감지 - 잘못된 포트입니다');
+                                    alert('잘못된 포트입니다. 로컬 개발 시에는 포트 8080을 사용하세요.');
+                                    return;
+                                }
+                                
+                                if (isLocalhost && (window.location.port === '8080' || !window.location.port)) {
+                                    // 로컬 환경 (포트 8080만 허용)
+                                    const basePath = currentOrigin + '/index.html';
+                                    console.log('🔗 로컬 리다이렉트 URL:', basePath);
+                                    window.location.href = basePath;
+                                } else {
+                                    // 프로덕션 환경 - 현재 origin 사용
+                                    const basePath = currentOrigin + '/index.html';
+                                    console.log('🔗 프로덕션 리다이렉트 URL:', basePath);
+                                    console.log('⚠️ localhost로 리다이렉트 시도 차단됨');
+                                    window.location.href = basePath;
+                                }
                             }
                         }, 1000);
                     } else {
@@ -592,16 +602,26 @@
                     localStorage.setItem('userEmail', data.user.email);
                     localStorage.setItem('displayName', data.user.display_name);
                     
-                    showSuccess('로그인 성공! 홈으로 이동합니다...');
+                    showSuccess('로그인 성공! 이동합니다...');
                     
                     setTimeout(() => {
-                        // 절대 URL로 리다이렉트 (모바일/프로덕션 환경 대응)
-                        const baseUrl = window.location.origin;
-                        const basePath = window.location.pathname.includes('/k-community-app/')
-                            ? baseUrl + '/index.html'
-                            : baseUrl + '/index.html';
-                        console.log('🔗 리다이렉트 URL:', basePath);
-                        window.location.href = basePath;
+                        // returnUrl 파라미터 확인 (커뮤니티에서 온 경우)
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const returnUrl = urlParams.get('returnUrl');
+                        
+                        if (returnUrl) {
+                            // 커뮤니티에서 온 경우 원래 페이지로 돌아가기
+                            console.log('🔗 커뮤니티로 리다이렉트:', returnUrl);
+                            window.location.href = decodeURIComponent(returnUrl);
+                        } else {
+                            // 기본: 홈으로 이동
+                            const baseUrl = window.location.origin;
+                            const basePath = window.location.pathname.includes('/k-community-app/')
+                                ? baseUrl + '/index.html'
+                                : baseUrl + '/index.html';
+                            console.log('🔗 홈으로 리다이렉트:', basePath);
+                            window.location.href = basePath;
+                        }
                     }, 1000);
                 } else {
                     showError(data.error || '로그인에 실패했습니다');
@@ -636,13 +656,23 @@
             }
             
             try {
+                // returnUrl 파라미터 확인 (커뮤니티에서 온 경우)
+                const urlParams = new URLSearchParams(window.location.search);
+                const returnUrl = urlParams.get('returnUrl');
+                
                 // 현재 origin을 사용하여 동적으로 리다이렉트 URL 생성
                 let redirectUrl = currentOrigin + window.location.pathname;
+                
+                // returnUrl이 있으면 쿼리 파라미터로 전달
+                if (returnUrl) {
+                    redirectUrl += '?returnUrl=' + encodeURIComponent(returnUrl);
+                }
                 
                 console.log('🔐 Google 로그인 시작');
                 console.log('🌐 현재 origin:', currentOrigin);
                 console.log('📍 현재 hostname:', currentHostname);
                 console.log('🔗 리다이렉트 URL:', redirectUrl);
+                console.log('🔗 returnUrl:', returnUrl);
                 
                 const { data, error } = await supabase.auth.signInWithOAuth({
                     provider: 'google',
@@ -715,16 +745,26 @@
                                     localStorage.setItem('displayName', loginData.user.display_name);
                                     localStorage.setItem('userPlan', loginData.user.plan || 'free');
                                     
-                                    showSuccess('카카오 로그인 성공! 홈으로 이동합니다...');
+                                    showSuccess('카카오 로그인 성공! 이동합니다...');
                                     
                                     setTimeout(() => {
-                                        // 절대 URL로 리다이렉트 (모바일/프로덕션 환경 대응)
-                                        const baseUrl = window.location.origin;
-                                        const basePath = window.location.pathname.includes('/k-community-app/')
-                                            ? baseUrl + '/index.html'
-                                            : baseUrl + '/index.html';
-                                        console.log('🔗 리다이렉트 URL:', basePath);
-                                        window.location.href = basePath;
+                                        // returnUrl 파라미터 확인 (커뮤니티에서 온 경우)
+                                        const urlParams = new URLSearchParams(window.location.search);
+                                        const returnUrl = urlParams.get('returnUrl');
+                                        
+                                        if (returnUrl) {
+                                            // 커뮤니티에서 온 경우 원래 페이지로 돌아가기
+                                            console.log('🔗 커뮤니티로 리다이렉트:', returnUrl);
+                                            window.location.href = decodeURIComponent(returnUrl);
+                                        } else {
+                                            // 기본: 홈으로 이동
+                                            const baseUrl = window.location.origin;
+                                            const basePath = window.location.pathname.includes('/k-community-app/')
+                                                ? baseUrl + '/index.html'
+                                                : baseUrl + '/index.html';
+                                            console.log('🔗 홈으로 리다이렉트:', basePath);
+                                            window.location.href = basePath;
+                                        }
                                     }, 1000);
                                 } else {
                                     showError(loginData.error || '카카오 로그인에 실패했습니다');

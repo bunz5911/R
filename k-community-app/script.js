@@ -306,7 +306,10 @@ const app = {
         // 로그인하지 않은 사용자는 로그인 페이지로 리다이렉트
         if (!isLoggedIn) {
             console.log('⚠️ 로그인이 필요합니다. 로그인 페이지로 이동합니다.');
-            window.location.href = '../login.html';
+            // 현재 URL을 returnUrl로 전달하여 로그인 후 돌아올 수 있도록 함
+            const currentUrl = window.location.href;
+            const returnUrl = encodeURIComponent(currentUrl);
+            window.location.href = `../login.html?returnUrl=${returnUrl}`;
             return;
         }
         
