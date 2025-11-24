@@ -29,27 +29,37 @@ export async function onRequest(context) {
     
     // 요청 body 처리
     let body = null;
-    if (request.method !== 'GET' && request.method !== 'HEAD' && request.body) {
-      // body를 읽어서 전달 (POST 요청의 경우)
+    if (request.method !== 'GET' && request.method !== 'HEAD') {
+      // POST, PUT, PATCH 등의 요청은 body를 읽어서 전달
       try {
-        body = await request.clone().arrayBuffer();
+        // request.body는 ReadableStream이므로 직접 전달 가능
+        body = request.body;
       } catch (e) {
-        // body가 없거나 읽을 수 없는 경우 null
+        console.error('[API Proxy] Body 읽기 오류:', e);
         body = null;
       }
     }
     
     // 백엔드로 요청 전달
-    const response = await fetch(backendUrl, {
+    const fetchOptions = {
       method: request.method,
       headers: headers,
-      body: body,
-    });
+    };
+    
+    // body가 있으면 추가
+    if (body) {
+      fetchOptions.body = body;
+    }
+    
+    const response = await fetch(backendUrl, fetchOptions);
     
     // 응답 헤더 복사
     const responseHeaders = new Headers();
     for (const [key, value] of response.headers.entries()) {
-      responseHeaders.set(key, value);
+      // CORS 관련 헤더는 제외하고 나중에 추가
+      if (!key.toLowerCase().startsWith('access-control-')) {
+        responseHeaders.set(key, value);
+      }
     }
     
     // CORS 헤더 추가
@@ -66,19 +76,24 @@ export async function onRequest(context) {
       });
     }
     
+    // 응답 본문 읽기
+    const responseBody = await response.arrayBuffer();
+    
     // 응답 반환
-    return new Response(response.body, {
+    return new Response(responseBody, {
       status: response.status,
       statusText: response.statusText,
       headers: responseHeaders,
     });
   } catch (error) {
     console.error('[API Proxy Error]', error);
+    console.error('[API Proxy Error] Stack:', error.stack);
     return new Response(
       JSON.stringify({ 
         error: 'API 프록시 오류', 
         message: error.message,
-        details: error.stack
+        details: error.stack,
+        url: backendUrl
       }), 
       {
         status: 500,
