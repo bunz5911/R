@@ -6,17 +6,17 @@
 - 리다이렉트 URL: `http://localhost:8080/login.html`
 - 사용자: 개발자
 
-### 프로덕션 환경 (Netlify)
-- 리다이렉트 URL: `https://marvelous-cat-d90804.netlify.app/login.html` (자동 감지)
+### 프로덕션 환경 (Cloudflare Pages)
+- 리다이렉트 URL: `https://your-cloudflare-pages-url.pages.dev/login.html` (자동 감지)
 - 사용자: 일반 유저
 
 ## ✅ 일반 유저가 사용할 때
 
-일반 유저가 Netlify에서 접속하면:
-1. 브라우저 주소창: `https://marvelous-cat-d90804.netlify.app/login.html`
-2. `window.location.hostname` = `marvelous-cat-d90804.netlify.app` (localhost가 아님)
-3. `window.location.origin` = `https://marvelous-cat-d90804.netlify.app`
-4. 리다이렉트 URL = `https://marvelous-cat-d90804.netlify.app/login.html` ✅
+일반 유저가 Cloudflare Pages에서 접속하면:
+1. 브라우저 주소창: `https://your-cloudflare-pages-url.pages.dev/login.html`
+2. `window.location.hostname` = `your-cloudflare-pages-url.pages.dev` (localhost가 아님)
+3. `window.location.origin` = `https://your-cloudflare-pages-url.pages.dev`
+4. 리다이렉트 URL = `https://your-cloudflare-pages-url.pages.dev/login.html` ✅
 
 **결론: 일반 유저는 프로덕션 URL로 올바르게 리다이렉트됩니다.**
 
@@ -32,11 +32,13 @@ http://localhost:8080/login.html
 http://localhost:8080/signup.html
 ```
 
-**프로덕션용:**
+**프로덕션용 (Cloudflare Pages):**
 ```
-https://marvelous-cat-d90804.netlify.app/login.html
-https://marvelous-cat-d90804.netlify.app/signup.html
+https://your-cloudflare-pages-url.pages.dev/login.html
+https://your-cloudflare-pages-url.pages.dev/signup.html
 ```
+
+**참고**: Cloudflare Pages URL은 프로젝트 설정에서 확인할 수 있습니다.
 
 ## 🔧 Google Cloud Console 설정 확인
 

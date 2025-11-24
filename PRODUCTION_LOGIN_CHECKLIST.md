@@ -27,9 +27,11 @@ Settings → Authentication → URL Configuration
 ```
 http://localhost:8080/login.html
 http://localhost:8080/signup.html
-https://marvelous-cat-d90804.netlify.app/login.html
-https://marvelous-cat-d90804.netlify.app/signup.html
+https://your-cloudflare-pages-url.pages.dev/login.html
+https://your-cloudflare-pages-url.pages.dev/signup.html
 ```
+
+**참고**: Cloudflare Pages URL은 프로젝트 설정에서 확인할 수 있습니다. (예: `rakorean.pages.dev`)
 
 **추가 방법:**
 1. "Redirect URLs" 섹션에서 "+ Add URL" 클릭
@@ -61,11 +63,11 @@ https://vofhdnrsrwwgwoxtqwba.supabase.co/auth/v1/callback
 
 ## 🧪 실제 테스트 방법
 
-### 방법 1: Netlify 사이트에서 직접 테스트
+### 방법 1: Cloudflare Pages 사이트에서 직접 테스트
 
-1. **브라우저에서 Netlify 사이트 접속**
+1. **브라우저에서 Cloudflare Pages 사이트 접속**
    ```
-   https://marvelous-cat-d90804.netlify.app/login.html
+   https://your-cloudflare-pages-url.pages.dev/login.html
    ```
 
 2. **개발자 도구 열기 (F12)**
@@ -73,18 +75,18 @@ https://vofhdnrsrwwgwoxtqwba.supabase.co/auth/v1/callback
    - 다음 로그가 보여야 함:
      ```
      ✅ Supabase 클라이언트 초기화 완료
-     🔐 Google 로그인 리다이렉트 URL: https://marvelous-cat-d90804.netlify.app/login.html
+     🔐 Google 로그인 리다이렉트 URL: https://your-cloudflare-pages-url.pages.dev/login.html
      📍 현재 환경: 프로덕션
-     🌐 현재 origin: https://marvelous-cat-d90804.netlify.app
+     🌐 현재 origin: https://your-cloudflare-pages-url.pages.dev
      ```
 
 3. **Google 로그인 버튼 클릭**
    - Google 로그인 페이지로 이동해야 함
-   - 로그인 후 Netlify 사이트로 리다이렉트되어야 함
+   - 로그인 후 Cloudflare Pages 사이트로 리다이렉트되어야 함
 
 ### 방법 2: 브라우저 콘솔에서 확인
 
-Netlify 사이트에서 브라우저 콘솔(F12)을 열고 다음 코드 실행:
+Cloudflare Pages 사이트에서 브라우저 콘솔(F12)을 열고 다음 코드 실행:
 
 ```javascript
 // 환경 감지 확인
@@ -102,8 +104,8 @@ console.log('리다이렉트 URL:', redirectUrl);
 **예상 결과 (프로덕션):**
 ```
 현재 환경: 프로덕션
-현재 origin: https://marvelous-cat-d90804.netlify.app
-리다이렉트 URL: https://marvelous-cat-d90804.netlify.app/login.html
+현재 origin: https://your-cloudflare-pages-url.pages.dev
+리다이렉트 URL: https://your-cloudflare-pages-url.pages.dev/login.html
 ```
 
 ## 🐛 문제 해결
@@ -114,8 +116,8 @@ console.log('리다이렉트 URL:', redirectUrl);
 
 **해결:**
 1. `config.js` 파일이 Git에 포함되어 있는지 확인
-2. Netlify에서 `config.js` 파일이 배포되었는지 확인
-3. 브라우저에서 직접 접속: `https://marvelous-cat-d90804.netlify.app/config.js`
+2. Cloudflare Pages에서 `config.js` 파일이 배포되었는지 확인
+3. 브라우저에서 직접 접속: `https://your-cloudflare-pages-url.pages.dev/config.js`
 4. 정상이면 JavaScript 코드가 보여야 함
 
 ### 문제 2: 로그인 후 이상한 URL로 리다이렉트됨
@@ -145,11 +147,11 @@ console.log('리다이렉트 URL:', redirectUrl);
 // redirectUrl = 'http://localhost:8080/login.html'
 ```
 
-### 프로덕션 환경 (Netlify)
+### 프로덕션 환경 (Cloudflare Pages)
 ```javascript
-// window.location.hostname = 'marvelous-cat-d90804.netlify.app'
+// window.location.hostname = 'your-cloudflare-pages-url.pages.dev'
 // isLocal = false
-// redirectUrl = 'https://marvelous-cat-d90804.netlify.app/login.html'
+// redirectUrl = 'https://your-cloudflare-pages-url.pages.dev/login.html'
 ```
 
 **✅ 코드는 올바르게 작동합니다!**
@@ -168,9 +170,9 @@ console.log('리다이렉트 URL:', redirectUrl);
 
 **코드는 올바르게 작성되어 있습니다.** 
 
-일반 유저가 Netlify에서 접속하면:
+일반 유저가 Cloudflare Pages에서 접속하면:
 1. 환경이 자동으로 감지됨 (프로덕션)
-2. 리다이렉트 URL이 자동으로 설정됨 (`https://marvelous-cat-d90804.netlify.app/login.html`)
+2. 리다이렉트 URL이 자동으로 설정됨 (`https://your-cloudflare-pages-url.pages.dev/login.html`)
 3. Google 로그인 후 올바른 URL로 리다이렉트됨
 
 **중요:** Supabase Dashboard와 Google Cloud Console 설정만 확인하면 됩니다!

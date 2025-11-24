@@ -9,7 +9,7 @@ window.APP_VERSION_20251117_PARAGRAPH = true;
 console.log('🚀🚀🚀 app.js 로드됨 - 버전: 20251117-PARAGRAPH-FIX-' + Date.now());
 console.log('✅ 새 버전 확인: APP_VERSION_20251117_PARAGRAPH =', window.APP_VERSION_20251117_PARAGRAPH);
 
-// 배포 환경 감지: Netlify에서는 Render 백엔드 사용, 로컬에서는 localhost 사용
+// 배포 환경 감지: 프로덕션 환경에서는 Render 백엔드 사용, 로컬에서는 localhost 사용
 const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:8080/api'
     : 'https://r-6s57.onrender.com/api';
@@ -305,12 +305,20 @@ let recordedText = '';
 // ============================================================================
 async function loadPrecomputedAnalysis() {
     try {
-        console.log('📦 하드코딩된 분석 데이터 백그라운드 로드 시작...');
+        console.log('📦 하드코딩된 분석 데이터 우선 로드 시작...');
         // ✅ 최종 파일: 모든 키 공백 제거 완료
         // 브라우저 캐시 활용 (성능 최적화) - 재방문 시 빠른 로드
+        // 타임아웃 설정 (5초) - 빠른 실패
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        
         const response = await fetch(`stories_data_final.json?v=20250118`, {
-            cache: 'default'  // 브라우저 캐시 활용
+            cache: 'default',  // 브라우저 캐시 활용
+            signal: controller.signal
         });
+        
+        clearTimeout(timeoutId);
+        
         if (!response.ok) {
             throw new Error(`stories_data_final.json 로드 실패: ${response.status}`);
         }
@@ -318,11 +326,15 @@ async function loadPrecomputedAnalysis() {
         
         PRECOMPUTED_ANALYSIS = jsonData;
         
-        console.log(`✅ 분석 데이터 백그라운드 로드 완료: ${Object.keys(PRECOMPUTED_ANALYSIS).length}개 동화`);
+        console.log(`✅ 분석 데이터 우선 로드 완료: ${Object.keys(PRECOMPUTED_ANALYSIS).length}개 동화`);
         
         return true;
     } catch (error) {
-        console.error('❌ 하드코딩 데이터 로드 실패:', error);
+        if (error.name === 'AbortError') {
+            console.warn('⚠️ 분석 데이터 로드 타임아웃 (5초), 백그라운드에서 계속 시도합니다.');
+        } else {
+            console.error('❌ 하드코딩 데이터 로드 실패:', error);
+        }
         console.warn('⚠️ 분석 데이터 없이 계속 진행합니다. 서버에서 실시간 분석을 사용합니다.');
         // ✅ 실패해도 빈 객체로 초기화하여 앱이 계속 작동하도록 함
         PRECOMPUTED_ANALYSIS = {};
@@ -376,11 +388,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.warn('⚠️ 코인 로드 실패:', error);
     });
     
-    // ✅ 분석 데이터 백그라운드 로드
-    loadPrecomputedAnalysis().catch(error => {
+    // ✅ 분석 데이터 우선 로드 (동화 선택 전에 로드 완료되어야 함)
+    // Promise로 즉시 시작하되, 완료를 기다리지 않음 (비블로킹)
+    const analysisLoadPromise = loadPrecomputedAnalysis().catch(error => {
         console.warn('⚠️ 분석 데이터 백그라운드 로드 실패, 서버 분석을 사용합니다:', error);
         PRECOMPUTED_ANALYSIS = {};
     });
+    
+    // 분석 데이터 로드 완료를 기다리지 않고 계속 진행
+    // 하지만 동화 선택 시에는 이미 로드되었을 가능성이 높음
     
     // ✅ TTS/STT 지연 초기화 (필요할 때만 초기화)
     // 사용자가 동화를 선택하거나 음성 기능을 사용할 때 초기화됨
@@ -1161,15 +1177,18 @@ async function selectStory(storyId) {
         console.log(`📡 동화 내용 로드 시작: /story/${storyId}`);
         console.log(`🌐 API_BASE: ${API_BASE}`);
         
-        // ✅ 타임아웃 설정 (60초로 증가)
+        // ✅ 타임아웃 설정 (15초로 최적화 - 빠른 실패)
         const controller = new AbortController();
         const timeoutId = setTimeout(() => {
-            console.error('⏱️ 동화 로드 타임아웃 (60초 초과)');
+            console.error('⏱️ 동화 로드 타임아웃 (15초 초과)');
             controller.abort();
-        }, 60000);
+        }, 15000); // 60초 → 15초로 단축
         
         const storyResponse = await fetch(`${API_BASE}/story/${storyId}`, {
-            signal: controller.signal
+            signal: controller.signal,
+            headers: {
+                'Cache-Control': 'no-cache'
+            }
         });
         
         clearTimeout(timeoutId);
@@ -1188,13 +1207,60 @@ async function selectStory(storyId) {
             paragraphsCount: currentStory.paragraphs?.length || 0
         });
 
-        // ✅ 개인화된 로드맵: 난이도 체크 먼저
-        // TODO: Git push 후 활성화
-        // await showDifficultyCheck(storyId);
+        // ✅ 성능 최적화: 하드코딩 데이터나 캐시가 있으면 즉시 표시
+        console.log(`🔍 분석 시작 (최적화 모드)...`);
         
-        // 임시: 바로 분석 시작
-        console.log(`🔍 분석 시작...`);
-        await analyzeStory(storyId);
+        // 분석 데이터가 아직 로드 중일 수 있으므로 잠시 대기 (최대 1초)
+        let analysisDataReady = Object.keys(PRECOMPUTED_ANALYSIS).length > 0;
+        if (!analysisDataReady) {
+            // 분석 데이터 로드 대기 (최대 1초)
+            const waitStart = Date.now();
+            while (!analysisDataReady && (Date.now() - waitStart) < 1000) {
+                await new Promise(resolve => setTimeout(resolve, 50));
+                analysisDataReady = Object.keys(PRECOMPUTED_ANALYSIS).length > 0;
+            }
+        }
+        
+        // 하드코딩 데이터 또는 캐시 확인 (동기적으로 빠르게)
+        const originalTitle = currentStory.title;
+        let internalKey = originalTitle.replace(/\s+/g, '');
+        if (storyId === 0 && internalKey.endsWith('의비밀')) {
+            internalKey = internalKey.replace('의비밀', '');
+        }
+        
+        const matchedData = PRECOMPUTED_ANALYSIS[internalKey];
+        const cacheKey = `analysis_${storyId}_${currentLevel}`;
+        const cachedAnalysis = localStorage.getItem(cacheKey);
+        
+        // 즉시 사용 가능한 데이터가 있으면 바로 표시
+        if (matchedData && matchedData[currentLevel]) {
+            console.log(`⚡ 하드코딩 데이터 즉시 사용: ${internalKey} - ${currentLevel}`);
+            currentAnalysis = JSON.parse(JSON.stringify(matchedData[currentLevel]));
+            currentAnalysis.story_id = storyId;
+            currentAnalysis.title = currentStory.title;
+            currentAnalysis.level = currentLevel;
+            
+            // 즉시 요약 탭 표시
+            const tabToRender = currentTab || 'summary';
+            await switchTab(tabToRender);
+            return;
+        } else if (cachedAnalysis) {
+            try {
+                console.log(`⚡ 캐시 데이터 즉시 사용`);
+                currentAnalysis = JSON.parse(cachedAnalysis);
+                const tabToRender = currentTab || 'summary';
+                await switchTab(tabToRender);
+                return;
+            } catch (e) {
+                console.log('⚠️ 캐시 파싱 오류, 새로 분석합니다.');
+                localStorage.removeItem(cacheKey);
+            }
+        }
+        
+        // 캐시가 없으면 분석 시작 (백그라운드, 사용자는 로딩 화면 보지 않음)
+        analyzeStory(storyId).catch(error => {
+            console.error('❌ 분석 오류:', error);
+        });
 
     } catch (error) {
         console.error('❌ 동화 로드 오류:', error);
@@ -1204,7 +1270,7 @@ async function selectStory(storyId) {
         let detailMsg = '';
         
         if (error.name === 'AbortError') {
-            errorMsg = '⏱️ 동화 로드 시간이 초과되었습니다 (60초).';
+            errorMsg = '⏱️ 동화 로드 시간이 초과되었습니다 (15초).';
             detailMsg = `
                 <strong>가능한 원인:</strong><br>
                 1. 서버가 응답이 느립니다<br>
@@ -1413,27 +1479,39 @@ async function analyzeStory(storyId, skipRender = false) {
         }
     }
     
-    // ✅ 캐시가 없으면 로딩 표시 후 AI 분석 시작
-    console.log('📊 AI 분석 시작 (캐시 없음)');
-    contentEl.innerHTML = `
-        <div class="loading">
-            <img src="img/loading.png" alt="Loading" class="loading-image">
-            <p>AI가 동화를 분석하는 중...</p>
-            <p style="font-size: 14px; color: #999; margin-top: 8px;">처음 로드 시에만 시간이 걸립니다</p>
-        </div>
-    `;
+    // ✅ 캐시가 없으면 요약 탭을 먼저 표시하고 백그라운드에서 분석 진행
+    console.log('📊 AI 분석 시작 (캐시 없음, 백그라운드 처리)');
+    
+    // 요약 탭을 먼저 표시 (임시 데이터로)
+    if (!skipRender) {
+        const tabToRender = currentTab || 'summary';
+        // 임시 분석 데이터로 요약 탭 표시 (사용자는 즉시 화면을 볼 수 있음)
+        currentAnalysis = {
+            story_id: storyId,
+            title: currentStory.title,
+            level: currentLevel,
+            summary: 'AI가 동화를 분석하는 중입니다. 잠시만 기다려주세요...',
+            paragraphs_analysis: [],
+            real_life_usage: [],
+            vocabulary: []
+        };
+        await switchTab(tabToRender);
+    }
 
     try {
         console.log(`📡 백엔드 API 호출 시작: /story/${storyId}/analyze`);
         console.log(`🌐 API_BASE: ${API_BASE}`);
         
-        // ✅ 타임아웃 설정 (120초 - Gemini API 응답 대기)
+        // ✅ 타임아웃 설정 (30초로 최적화 - 빠른 실패 및 재시도)
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 120000);
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 120초 → 30초로 단축
         
         const response = await fetch(`${API_BASE}/story/${storyId}/analyze`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache'
+            },
             body: JSON.stringify({ level: currentLevel }),
             signal: controller.signal
         });
@@ -1465,8 +1543,10 @@ async function analyzeStory(storyId, skipRender = false) {
         });
         
         // ✅ skipRender가 false일 때만 렌더링 (레벨 변경 시에는 호출부에서 렌더링)
+        // 분석이 완료되면 현재 탭을 자동으로 업데이트 (사용자는 즉시 업데이트된 내용을 볼 수 있음)
         if (!skipRender) {
             const tabToRender = currentTab || 'summary';
+            console.log(`🔄 분석 완료, 탭 자동 업데이트: ${tabToRender}`);
             await switchTab(tabToRender);
         }
         
@@ -1479,7 +1559,7 @@ async function analyzeStory(storyId, skipRender = false) {
         
         // 에러 타입별 상세 안내
         if (error.name === 'AbortError') {
-            errorMessage = '⏱️ 요청 시간이 초과되었습니다 (60초).';
+            errorMessage = '⏱️ 요청 시간이 초과되었습니다 (30초).';
             suggestion = `
                 <strong>가능한 원인:</strong><br>
                 1. 서버가 응답하지 않음<br>
@@ -1488,7 +1568,8 @@ async function analyzeStory(storyId, skipRender = false) {
                 <br>
                 <strong>해결 방법:</strong><br>
                 • 잠시 후 다시 시도<br>
-                • 서버 상태 확인
+                • 서버 상태 확인<br>
+                • 하드코딩 데이터가 있으면 즉시 표시됩니다
             `;
         } else if (error.message.includes('Failed to fetch') || error.message.includes('load failed') || error.message.includes('NetworkError')) {
             errorMessage = '🔌 백엔드 서버에 연결할 수 없습니다.';
@@ -4920,7 +5001,7 @@ async function adjustParagraphDifficulty(paraIndex, direction) {
     const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     
     if (!isLocalhost) {
-        // Netlify에서는 아직 API 미배포
+        // 프로덕션 환경에서는 아직 API 미배포
         showToast('⚠️ 이 기능은 곧 배포될 예정입니다! (로컬에서만 작동)');
         return;
     }

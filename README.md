@@ -20,7 +20,7 @@ AI 기반 한국어 동화 학습 플랫폼
 - **AI**: Gemini 2.0 Flash (RAG)
 - **음성**: Google Cloud TTS (Neural2)
 - **데이터베이스**: Supabase (PostgreSQL)
-- **배포**: Netlify (프론트) + Render (백엔드)
+- **배포**: Cloudflare Pages (프론트) + Render (백엔드)
 
 ---
 
@@ -106,32 +106,36 @@ http://localhost:8080
    ```
 6. Deploy 클릭
 
-### Step 3: Netlify 프론트엔드 배포
+### Step 3: Cloudflare Pages 프론트엔드 배포
 
-1. [Netlify](https://netlify.com) 가입
-2. New site from Git
-3. GitHub 저장소 연결
-4. 설정:
-   - Build command: (비워두기)
-   - Publish directory: `.`
-5. `netlify.toml` 수정:
-   ```toml
-   [[redirects]]
-     from = "/api/*"
-     to = "https://your-app.onrender.com/api/:splat"
-   ```
-6. Deploy 클릭
+1. [Cloudflare](https://dash.cloudflare.com) 가입
+2. **Workers & Pages** → **Pages** 탭 선택
+3. **Create a project** → **Connect to Git** 선택
+4. GitHub 저장소 연결
+5. 프로젝트 설정:
+   - **Project name**: 원하는 이름 (예: `rakorean`)
+   - **Production branch**: `main`
+   - **Framework preset**: `None` 또는 `Plain HTML`
+   - **Build command**: (비워두기)
+   - **Build output directory**: `.` (점 하나)
+   - **Root directory**: (비워두기)
+6. **Save and Deploy** 클릭
+7. 배포 완료 후 제공되는 URL 확인 (예: `rakorean.pages.dev`)
 
-### Step 4: app.js API 주소 변경
+#### API 프록시 설정
 
-`app.js` 파일 수정:
-```javascript
-// 로컬 개발
-const API_BASE = 'http://localhost:8080/api';
-
-// 프로덕션
-const API_BASE = 'https://your-app.onrender.com/api';
+프로젝트 루트에 `_redirects` 파일이 자동으로 생성되어 있습니다:
 ```
+/api/*  https://r-6s57.onrender.com/api/:splat  200
+```
+
+이 파일이 없으면 생성하세요.
+
+### Step 4: 커스텀 도메인 설정 (선택사항)
+
+1. Cloudflare Pages 프로젝트 → **Custom domains** 탭
+2. **Set up a custom domain** 클릭
+3. 도메인 입력 및 DNS 설정 안내 따르기
 
 ---
 
@@ -139,7 +143,7 @@ const API_BASE = 'https://your-app.onrender.com/api';
 
 | 서비스 | 무료 한도 | 가격 |
 |--------|-----------|------|
-| Netlify | 무제한 | 무료 |
+| Cloudflare Pages | 무제한 | 무료 |
 | Render | 750시간/월 | 무료 → $7/월 |
 | Supabase | 500MB DB | 무료 → $25/월 |
 | Gemini API | 1,500회/일 | 무료 |
