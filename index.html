@@ -424,7 +424,7 @@
             }
         }
         
-        /* 모바일 (481px - 768px): 2개 표시 */
+        /* 모바일 (481px - 768px): 2개 표시, 최대 5개 렌더링 */
         @media (min-width: 481px) and (max-width: 768px) {
             .carousel-slide {
                 flex: 0 0 calc(50% - var(--space-md)); /* 2개 표시 */
@@ -436,6 +436,14 @@
             
             .carousel-title {
                 font-size: var(--font-size-xl);
+            }
+            
+            /* 성능 최적화: GPU 가속 강제 */
+            .carousel-slide {
+                will-change: transform, opacity;
+                transform: translateZ(0);
+                backface-visibility: hidden;
+                -webkit-backface-visibility: hidden;
             }
         }
         

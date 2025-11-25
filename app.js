@@ -285,12 +285,20 @@ let PRECOMPUTED_ANALYSIS = {};  // 하드코딩된 분석 데이터 (즉시 로�
 let completedStoryIds = [];  // 사용자가 학습한 동화 ID 목록
 let recommendedLevel = null;  // AI 추천 레벨
 let hasTakenLevelTest = false;  // 레벨 테스트 완료 여부
+let renderedCardRange = { start: 0, end: 0 };  // 현재 렌더링된 카드 범위
 
 // 플랜별 최대 표시 개수
 const MAX_VISIBLE_STORIES = {
     free: 2,
     pro: 10,
     premier: 30
+};
+
+// 모바일 카드 렌더링 제한
+const MOBILE_CARD_LIMITS = {
+    small: 3,    // 480px 이하: 최대 3개 (보이는 1개 + 양옆 각 1개)
+    medium: 5,   // 481-768px: 최대 5개 (보이는 2개 + 양옆 각 1-2개)
+    tablet: 7    // 769-1024px: 최대 7개
 };
 
 // 사용자 정보
@@ -839,8 +847,40 @@ async function loadStories() {
     }
 }
 
+// 모바일에서 렌더링할 최대 카드 수 계산
+function getMaxRenderedCards() {
+    const width = window.innerWidth;
+    
+    if (width <= 480) {
+        return MOBILE_CARD_LIMITS.small; // 3개
+    } else if (width <= 768) {
+        return MOBILE_CARD_LIMITS.medium; // 5개
+    } else if (width <= 1024) {
+        return MOBILE_CARD_LIMITS.tablet; // 7개
+    }
+    
+    return Infinity; // PC는 제한 없음
+}
+
+// 렌더링할 카드 범위 계산
+function getRenderRange(activeIndex, totalCards) {
+    const maxRendered = getMaxRenderedCards();
+    
+    // PC나 태블릿에서는 모든 카드 렌더링
+    if (maxRendered === Infinity) {
+        return { start: 0, end: totalCards };
+    }
+    
+    // 모바일: 활성 카드 주변만 렌더링
+    const buffer = Math.floor(maxRendered / 2);
+    const start = Math.max(0, activeIndex - buffer);
+    const end = Math.min(totalCards, activeIndex + buffer + 1);
+    
+    return { start, end };
+}
+
 // 캐러셀 렌더링 함수
-function renderStoryCarousel() {
+function renderStoryCarousel(activeIndex = 0) {
     const listEl = document.getElementById('storyList');
     if (!listEl) return;
     
@@ -848,6 +888,13 @@ function renderStoryCarousel() {
     const maxVisible = MAX_VISIBLE_STORIES[userPlan] || MAX_VISIBLE_STORIES.free;
     const totalInLevel = PRELOADED_STORIES.filter(s => s.level === currentLevel).length;
     const lockedCount = totalInLevel - currentStories.length;
+    
+    // 렌더링할 카드 범위 계산
+    const renderRange = getRenderRange(activeIndex, currentStories.length);
+    renderedCardRange = renderRange;
+    
+    // 렌더링할 카드만 추출
+    const cardsToRender = currentStories.slice(renderRange.start, renderRange.end);
     
     // 캐러셀 컨테이너 HTML
     let carouselHTML = `
@@ -864,13 +911,15 @@ function renderStoryCarousel() {
                 <div class="carousel-track" id="carouselTrack">
     `;
     
-    // 동화 카드들
-    currentStories.forEach((story, index) => {
+    // 동화 카드들 (렌더링 범위 내만)
+    cardsToRender.forEach((story, localIndex) => {
+        const actualIndex = renderRange.start + localIndex;
+        const isActive = actualIndex === activeIndex;
         const isCompleted = completedStoryIds.includes(story.id);
         const completedBadge = isCompleted ? '<div class="completed-badge">✓ 학습함</div>' : '';
         
         carouselHTML += `
-            <div class="carousel-slide ${index === 0 ? 'active' : ''}" data-story-id="${story.id}">
+            <div class="carousel-slide ${isActive ? 'active' : ''}" data-story-id="${story.id}" data-index="${actualIndex}">
                 <div class="story-card-carousel" onclick="checkStoryAccess(${story.id})">
                     ${completedBadge}
                     <div class="story-card-image">
@@ -910,10 +959,66 @@ function renderStoryCarousel() {
         </div>
     `;
     
+    carouselHTML += `
+                </div>
+                <button class="carousel-btn carousel-btn-next" onclick="scrollCarousel(1)">›</button>
+            </div>
+            <div class="carousel-indicators" id="carouselIndicators"></div>
+        </div>
+    `;
+    
     listEl.innerHTML = carouselHTML;
     
     // 인디케이터 생성
     updateCarouselIndicators();
+    
+    // 스크롤 이벤트 리스너 추가 (동적 로딩용)
+    setupCarouselScrollListener();
+}
+
+// 캐러셀 스크롤 리스너 설정 (동적 카드 로딩)
+function setupCarouselScrollListener() {
+    const track = document.getElementById('carouselTrack');
+    if (!track) return;
+    
+    let scrollTimeout;
+    
+    track.addEventListener('scroll', () => {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            checkAndLoadMoreCards();
+        }, 100);
+    }, { passive: true });
+}
+
+// 스크롤 시 추가 카드 로드 확인
+function checkAndLoadMoreCards() {
+    const track = document.getElementById('carouselTrack');
+    if (!track) return;
+    
+    const maxRendered = getMaxRenderedCards();
+    if (maxRendered === Infinity) return; // PC는 불필요
+    
+    const activeSlide = track.querySelector('.carousel-slide.active');
+    if (!activeSlide) return;
+    
+    const activeIndex = parseInt(activeSlide.dataset.index) || 0;
+    const currentRange = renderedCardRange;
+    
+    // 활성 카드가 범위 끝에 가까우면 확장
+    const threshold = 1; // 범위 끝에서 1개 남았을 때
+    const needsExpandRight = activeIndex >= currentRange.end - threshold && 
+                             currentRange.end < currentStories.length;
+    const needsExpandLeft = activeIndex <= currentRange.start + threshold && 
+                            currentRange.start > 0;
+    
+    if (needsExpandRight || needsExpandLeft) {
+        // 범위 재계산 및 재렌더링
+        const newRange = getRenderRange(activeIndex, currentStories.length);
+        if (newRange.start !== currentRange.start || newRange.end !== currentRange.end) {
+            renderStoryCarousel(activeIndex);
+        }
+    }
 }
 
 // 다음 플랜 가져오기
@@ -927,25 +1032,54 @@ function scrollCarousel(direction) {
     const track = document.getElementById('carouselTrack');
     if (!track) return;
     
-    const slides = track.querySelectorAll('.carousel-slide');
     const activeSlide = track.querySelector('.carousel-slide.active');
     if (!activeSlide) return;
     
-    const currentIndex = Array.from(slides).indexOf(activeSlide);
+    const currentIndex = parseInt(activeSlide.dataset.index) || 0;
     const nextIndex = currentIndex + direction;
     
-    if (nextIndex >= 0 && nextIndex < slides.length) {
-        activeSlide.classList.remove('active');
-        slides[nextIndex].classList.add('active');
+    if (nextIndex >= 0 && nextIndex < currentStories.length) {
+        // 렌더링 범위 확인
+        const maxRendered = getMaxRenderedCards();
+        const needsRerender = maxRendered !== Infinity && 
+            (nextIndex < renderedCardRange.start || nextIndex >= renderedCardRange.end);
         
-        // 스크롤 애니메이션
-        const slideWidth = slides[0].offsetWidth + 16; // gap 포함
-        track.scrollTo({
-            left: nextIndex * slideWidth,
-            behavior: 'smooth'
-        });
-        
-        updateCarouselIndicators();
+        if (needsRerender) {
+            // 범위를 벗어나면 다시 렌더링
+            renderStoryCarousel(nextIndex);
+            // 스크롤 위치 조정
+            setTimeout(() => {
+                const newSlides = track.querySelectorAll('.carousel-slide');
+                const newActiveSlide = track.querySelector(`[data-index="${nextIndex}"]`);
+                if (newActiveSlide) {
+                    const slideWidth = newActiveSlide.offsetWidth + 16;
+                    const slideIndex = Array.from(newSlides).indexOf(newActiveSlide);
+                    track.scrollTo({
+                        left: slideIndex * slideWidth,
+                        behavior: 'smooth'
+                    });
+                }
+                updateCarouselIndicators();
+            }, 50);
+        } else {
+            // 범위 내면 기존 카드만 업데이트
+            activeSlide.classList.remove('active');
+            const nextSlide = track.querySelector(`[data-index="${nextIndex}"]`);
+            if (nextSlide) {
+                nextSlide.classList.add('active');
+                
+                // 스크롤 애니메이션
+                const slides = track.querySelectorAll('.carousel-slide');
+                const slideIndex = Array.from(slides).indexOf(nextSlide);
+                const slideWidth = nextSlide.offsetWidth + 16;
+                track.scrollTo({
+                    left: slideIndex * slideWidth,
+                    behavior: 'smooth'
+                });
+                
+                updateCarouselIndicators();
+            }
+        }
     }
 }
 
