@@ -975,9 +975,8 @@ function renderStoryCarousel(activeIndex = 0) {
     let carouselHTML = `
         <div class="story-carousel-container">
             <div class="carousel-header">
-                <h2 class="carousel-title">${currentLevel} 레벨 동화</h2>
+                <h2 class="carousel-title">${currentLevel} 레벨 스토리</h2>
                 <div class="carousel-info">
-                    <span class="story-count">${storiesToRender.length}개 표시</span>
                 </div>
             </div>
             <div id="${carouselId}" class="carousel-wrapper" data-bs-ride="false">
@@ -1055,7 +1054,7 @@ function renderStoryCarousel(activeIndex = 0) {
                     <div class="lock-content">
                         <div class="lock-icon">🔒</div>
                         <h3>다른 스토리 더 보기</h3>
-                        <p>PRO 또는 PREMIER 구독으로 더 많은 동화를 보세요!</p>
+                        <p>pro 또는 premire 구독으로 더 많은 스토리를 보세요</p>
                         <button class="upgrade-btn-carousel" onclick="showUpgradeModal('pro')">구독하기</button>
                     </div>
                 </div>

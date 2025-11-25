@@ -1055,7 +1055,7 @@
         /* 작은 모바일에서 추가 최적화 */
         @media (max-width: 480px) {
             .locked-card {
-                min-height: 180px; /* 더 작은 화면에서는 더 축소 */
+                /* 일반 카드와 동일한 크기로 맞추기 위해 min-height 제거 */
             }
             
             .lock-icon {
@@ -1251,7 +1251,7 @@
         }
 
         .story-card-title-overlay {
-            font-size: var(--font-size-lg);
+            font-size: var(--font-size-md); /* 18px → 16px (2포인트 작게) */
             font-weight: 700;
             color: var(--text-inverse);
             margin: 0;
