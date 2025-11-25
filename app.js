@@ -1259,15 +1259,48 @@ function showLevelTestModal() {
     
     document.body.appendChild(modal);
     
-    // 간단한 테스트 문제 생성 (실제로는 더 복잡한 문제 사용 가능)
-    const questions = [
-        { id: 1, question: '"안녕하세요"의 의미는?', options: ["Hello", "Goodbye", "Thank you", "Sorry"], correct: 0 },
-        { id: 2, question: '"감사합니다"의 의미는?', options: ["Hello", "Thank you", "Sorry", "Please"], correct: 1 },
-        { id: 3, question: "한국어를 얼마나 공부하셨나요?", options: ["1개월 미만", "1-6개월", "6개월-1년", "1년 이상"], correct: null }
+    // 수준 높은 레벨 테스트 문제 풀 (15개)
+    const questionPool = [
+        // 초급 수준 문제
+        { id: 1, question: '"안녕하세요"의 의미는?', options: ["Hello", "Goodbye", "Thank you", "Sorry"], correct: 0, level: 'beginner' },
+        { id: 2, question: '"감사합니다"의 의미는?', options: ["Hello", "Thank you", "Sorry", "Please"], correct: 1, level: 'beginner' },
+        { id: 3, question: '"미안합니다"의 의미는?', options: ["Hello", "Thank you", "Sorry", "Please"], correct: 2, level: 'beginner' },
+        { id: 4, question: '"물'의 의미는?', options: ["Water", "Fire", "Earth", "Air"], correct: 0, level: 'beginner' },
+        { id: 5, question: '"사과'의 의미는?', options: ["Apple", "Orange", "Banana", "Grape"], correct: 0, level: 'beginner' },
+        
+        // 중급 수준 문제
+        { id: 6, question: '"오늘 날씨가 좋네요'의 적절한 응답은?', options: ["네, 정말 좋아요", "안녕하세요", "감사합니다", "미안합니다"], correct: 0, level: 'intermediate' },
+        { id: 7, question: '"어제 뭐 했어요?'의 의미는?', options: ["What did you do yesterday?", "What will you do tomorrow?", "What are you doing now?", "What do you like?"], correct: 0, level: 'intermediate' },
+        { id: 8, question: '"시간이 없어서 서두르고 있어요'의 의미는?', options: ["I'm in a hurry because I don't have time", "I have plenty of time", "Time is slow", "I'm waiting"], correct: 0, level: 'intermediate' },
+        { id: 9, question: '"이 음식은 정말 맛있어요'의 의미는?', options: ["This food is really delicious", "This food is terrible", "I don't like this food", "This food is expensive"], correct: 0, level: 'intermediate' },
+        { id: 10, question: '"제가 도와드릴까요?'의 의미는?', options: ["Can I help you?", "Do you need help?", "I need help", "Help me please"], correct: 0, level: 'intermediate' },
+        { id: 11, question: '"내일 만날 수 있을까요?'의 의미는?', options: ["Can we meet tomorrow?", "Can we meet today?", "Can we meet next week?", "Can we meet yesterday?"], correct: 0, level: 'intermediate' },
+        
+        // 고급 수준 문제
+        { id: 12, question: '"그 일은 제가 처리하겠습니다'의 의미는?', options: ["I'll handle that matter", "I don't know about that", "That's not my problem", "I'll think about it"], correct: 0, level: 'advanced' },
+        { id: 13, question: '"이 문제를 해결하기 위해서는 신중한 접근이 필요합니다'의 의미는?', options: ["We need a careful approach to solve this problem", "This problem is easy to solve", "We don't need to solve this", "This problem is impossible"], correct: 0, level: 'advanced' },
+        { id: 14, question: '"그의 제안은 타당하지만 실행하기 어려울 것 같습니다'의 의미는?', options: ["His suggestion is valid but seems difficult to implement", "His suggestion is invalid", "His suggestion is easy to implement", "I don't understand his suggestion"], correct: 0, level: 'advanced' },
+        { id: 15, question: '"이 프로젝트는 여러 분야의 전문가들의 협력이 필수적입니다'의 의미는?', options: ["This project requires cooperation from experts in various fields", "This project doesn't need experts", "This project is simple", "This project is impossible"], correct: 0, level: 'advanced' },
+        { id: 16, question: '"그 회의에서 중요한 결정사항들이 논의되었습니다'의 의미는?', options: ["Important decisions were discussed at that meeting", "No decisions were made", "The meeting was cancelled", "The meeting was boring"], correct: 0, level: 'advanced' },
+        { id: 17, question: '"이 계획은 장기적인 관점에서 검토해야 합니다'의 의미는?', options: ["This plan needs to be reviewed from a long-term perspective", "This plan is short-term", "This plan is not important", "This plan is already perfect"], correct: 0, level: 'advanced' },
+        { id: 18, question: '"그들의 의견 차이를 좁히기 위해 중재가 필요합니다'의 의미는?', options: ["Mediation is needed to narrow their differences of opinion", "They agree completely", "No mediation is needed", "They don't have opinions"], correct: 0, level: 'advanced' },
+        { id: 19, question: '"이 문제의 근본 원인을 파악하는 것이 중요합니다'의 의미는?', options: ["It's important to identify the root cause of this problem", "The cause is not important", "We already know the cause", "This problem has no cause"], correct: 0, level: 'advanced' },
+        { id: 20, question: '"그 제안은 현실적으로 실행 가능성이 낮아 보입니다'의 의미는?', options: ["That proposal seems to have low feasibility in reality", "That proposal is very feasible", "That proposal is perfect", "That proposal doesn't exist"], correct: 0, level: 'advanced' }
     ];
     
+    // 랜덤하게 12개 문제 선택 (초급 3개, 중급 4개, 고급 5개)
+    const shuffledPool = [...questionPool].sort(() => Math.random() - 0.5);
+    const beginnerQuestions = shuffledPool.filter(q => q.level === 'beginner').slice(0, 3);
+    const intermediateQuestions = shuffledPool.filter(q => q.level === 'intermediate').slice(0, 4);
+    const advancedQuestions = shuffledPool.filter(q => q.level === 'advanced').slice(0, 5);
+    
+    // 선택된 문제들을 다시 랜덤하게 섞기
+    const selectedQuestions = [...beginnerQuestions, ...intermediateQuestions, ...advancedQuestions]
+        .sort(() => Math.random() - 0.5)
+        .map((q, idx) => ({ ...q, id: idx + 1 })); // ID 재할당
+    
     const questionsEl = document.getElementById('testQuestions');
-    questionsEl.innerHTML = questions.map((q, idx) => `
+    questionsEl.innerHTML = selectedQuestions.map((q, idx) => `
         <div class="test-question">
             <p class="question-text">${q.question}</p>
             <div class="question-options">
