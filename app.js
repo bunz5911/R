@@ -4331,7 +4331,14 @@ async function playFullStoryAudio(storyId, buttonElement) {
                     fullStoryAudio.load();
                     fullStoryAudio.play().catch(async (error) => {
                         console.error('❌ 재시도 실패:', error);
-                        await showErrorAndFallback();
+                        // 재시도 실패 시 에러 표시
+                        if (storyId !== 0 && storyId !== '0') {
+                            const fullPath = `${window.location.origin}/audio/full-stories/story-${storyId}.mp3`;
+                            alert(`오디오 파일을 재생할 수 없습니다.\n\n파일명: story-${storyId}.mp3\n경로: ${fullPath}\n\n브라우저 콘솔을 확인해 주세요.`);
+                            buttonElement.innerHTML = '▶';
+                            buttonElement.disabled = false;
+                            fullStoryAudio = null;
+                        }
                     });
                 }, 500);
                 return;
