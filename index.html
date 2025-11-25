@@ -491,6 +491,28 @@
                 z-index: 10;
                 transform: scale(1.05);
                 opacity: 1;
+                /* 중앙 선택 프레임 */
+                position: relative;
+            }
+            
+            /* 중앙 선택 프레임 표시 */
+            .carousel-slide.active::before {
+                content: '';
+                position: absolute;
+                top: -4px;
+                left: -4px;
+                right: -4px;
+                bottom: -4px;
+                border: 3px solid var(--color-primary);
+                border-radius: var(--border-radius-lg);
+                z-index: 11;
+                pointer-events: none;
+                box-shadow: 0 0 20px rgba(var(--color-primary-rgb), 0.5);
+            }
+            
+            .carousel-slide.active .story-card-carousel {
+                border: 2px solid var(--color-primary);
+                box-shadow: 0 0 30px rgba(var(--color-primary-rgb), 0.6);
             }
             
             .carousel-slide:not(.active) {

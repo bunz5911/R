@@ -1435,16 +1435,31 @@ function scrollCarousel(direction) {
     if (nextIndex >= 0 && nextIndex < totalStories) {
         // PC에서는 화살표로 이동
         if (isPC) {
+            // 먼저 활성 카드 업데이트
             activeSlide.classList.remove('active');
-            const nextSlide = track.querySelector(`[data-index="${nextIndex}"]`);
-            if (nextSlide) {
-                nextSlide.classList.add('active');
-                centerActiveCard();
-                updateCarouselIndicators();
-            } else {
-                // 카드가 렌더링되지 않았으면 다시 렌더링
+            
+            // 다음 카드 찾기
+            let nextSlide = track.querySelector(`[data-index="${nextIndex}"]`);
+            
+            // 카드가 렌더링되지 않았으면 다시 렌더링
+            if (!nextSlide) {
                 renderStoryCarousel(nextIndex);
+                // 렌더링 후 다시 찾기
+                setTimeout(() => {
+                    nextSlide = track.querySelector(`[data-index="${nextIndex}"]`);
+                    if (nextSlide) {
+                        nextSlide.classList.add('active');
+                        centerActiveCard();
+                        updateCarouselIndicators();
+                    }
+                }, 50);
+                return;
             }
+            
+            // 카드가 있으면 바로 업데이트
+            nextSlide.classList.add('active');
+            centerActiveCard();
+            updateCarouselIndicators();
             return;
         }
         
