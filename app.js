@@ -825,7 +825,7 @@ async function loadStories() {
         console.error('❌ 동화 목록 렌더링 실패:', error);
         const listEl = document.getElementById('storyList');
         if (listEl) {
-            listEl.innerHTML = '<div class="loading"><p>동화 목록을 불러올 수 없습니다. 페이지를 새로고침해주세요.</p></div>';
+            listEl.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-secondary);"><p>동화 목록을 불러올 수 없습니다. 페이지를 새로고침해주세요.</p></div>';
         }
     }
     
