@@ -1218,7 +1218,7 @@ function getNextPlan(currentPlan) {
     return planOrder[currentPlan] || null;
 }
 
-// 캐러셀 스크롤 함수
+// 캐러셀 스크롤 함수 (무한 루프 및 랜덤 연결 지원)
 function scrollCarousel(direction) {
     const track = document.getElementById('carouselTrack');
     if (!track) return;
@@ -1226,11 +1226,65 @@ function scrollCarousel(direction) {
     const activeSlide = track.querySelector('.carousel-slide.active');
     if (!activeSlide) return;
     
+    const userPlan = currentUserPlan || 'free';
     const currentIndex = parseInt(activeSlide.dataset.index) || 0;
-    const nextIndex = currentIndex + direction;
     const isPC = window.innerWidth > 1024;
     
-    if (nextIndex >= 0 && nextIndex < currentStories.length) {
+    // 전체 스토리 목록 가져오기
+    let totalStories;
+    if (userPlan === 'free') {
+        totalStories = currentStories.length;
+    } else {
+        totalStories = allCarouselStories.length;
+    }
+    
+    let nextIndex;
+    
+    // 유료 사용자: 무한 루프 및 랜덤 연결
+    if (userPlan !== 'free' && totalStories > 0) {
+        if (direction > 0) {
+            // 다음 버튼: 마지막이면 랜덤, 아니면 다음
+            if (currentIndex >= totalStories - 1) {
+                // 한 바퀴를 돌았는지 확인
+                if (carouselVisitedIndices.size >= totalStories) {
+                    // 모든 카드를 방문했으면 랜덤 선택
+                    carouselVisitedIndices.clear(); // 리셋
+                    nextIndex = Math.floor(Math.random() * totalStories);
+                } else {
+                    // 아직 모든 카드를 방문하지 않았으면 첫 번째로
+                    nextIndex = 0;
+                }
+            } else {
+                nextIndex = currentIndex + 1;
+            }
+        } else {
+            // 이전 버튼: 첫 번째면 랜덤, 아니면 이전
+            if (currentIndex <= 0) {
+                // 한 바퀴를 돌았는지 확인
+                if (carouselVisitedIndices.size >= totalStories) {
+                    // 모든 카드를 방문했으면 랜덤 선택
+                    carouselVisitedIndices.clear(); // 리셋
+                    nextIndex = Math.floor(Math.random() * totalStories);
+                } else {
+                    // 아직 모든 카드를 방문하지 않았으면 마지막으로
+                    nextIndex = totalStories - 1;
+                }
+            } else {
+                nextIndex = currentIndex - 1;
+            }
+        }
+        
+        // 방문한 인덱스 추적
+        carouselVisitedIndices.add(nextIndex);
+    } else {
+        // 무료 사용자: 기존 로직
+        nextIndex = currentIndex + direction;
+        if (nextIndex < 0) nextIndex = 0;
+        if (nextIndex >= totalStories) nextIndex = totalStories - 1;
+    }
+    
+    // 인덱스 범위 체크
+    if (nextIndex >= 0 && nextIndex < totalStories) {
         // PC에서는 화살표로 이동
         if (isPC) {
             activeSlide.classList.remove('active');
@@ -1239,6 +1293,9 @@ function scrollCarousel(direction) {
                 nextSlide.classList.add('active');
                 centerActiveCard();
                 updateCarouselIndicators();
+            } else {
+                // 카드가 렌더링되지 않았으면 다시 렌더링
+                renderStoryCarousel(nextIndex);
             }
             return;
         }
