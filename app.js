@@ -1013,7 +1013,7 @@ window.addEventListener('resize', () => {
     }, 250);
 });
 
-// PC용 3D 효과 업데이트 함수
+// PC용 강화된 3D 효과 업데이트 함수
 function updateCarousel3D() {
     const track = document.getElementById('carouselTrack');
     if (!track || window.innerWidth <= 1024) return; // PC만
@@ -1029,29 +1029,38 @@ function updateCarousel3D() {
         const offset = slideIndex - activeIndex;
         const absOffset = Math.abs(offset);
         
-        // 활성 카드
+        // 활성 카드 - 중앙에 강조
         if (offset === 0) {
-            slide.style.transform = 'rotateY(0deg) translateZ(0px) scale(1.1)';
+            slide.style.transform = 'rotateY(0deg) translateZ(0px) scale(1.15)';
             slide.style.opacity = '1';
-            slide.style.zIndex = '10';
+            slide.style.filter = 'blur(0px) brightness(1)';
+            slide.style.zIndex = '20';
         }
-        // 왼쪽 카드들
+        // 왼쪽 카드들 - 더 강한 3D 효과
         else if (offset < 0) {
-            const rotation = offset * 25; // 각 카드마다 25도씩 회전
-            const translateZ = absOffset * -100; // 거리에 따라 뒤로 이동
-            const scale = Math.max(0.7, 1 - (absOffset * 0.1)); // 거리에 따라 축소
+            const rotation = offset * 60; // 각 카드마다 60도씩 회전 (더 강하게)
+            const translateZ = absOffset * -250; // 거리에 따라 더 뒤로 이동
+            const scale = Math.max(0.6, 1 - (absOffset * 0.15)); // 더 많이 축소
+            const blur = Math.min(3, absOffset * 1); // 거리에 따라 흐림
+            const brightness = Math.max(0.5, 1 - (absOffset * 0.2)); // 밝기 감소
+            
             slide.style.transform = `rotateY(${rotation}deg) translateZ(${translateZ}px) scale(${scale})`;
-            slide.style.opacity = Math.max(0.3, 1 - (absOffset * 0.3));
-            slide.style.zIndex = String(10 - absOffset);
+            slide.style.opacity = Math.max(0.3, 1 - (absOffset * 0.25));
+            slide.style.filter = `blur(${blur}px) brightness(${brightness})`;
+            slide.style.zIndex = String(20 - absOffset);
         }
-        // 오른쪽 카드들
+        // 오른쪽 카드들 - 더 강한 3D 효과
         else {
-            const rotation = offset * 25;
-            const translateZ = absOffset * -100;
-            const scale = Math.max(0.7, 1 - (absOffset * 0.1));
+            const rotation = offset * 60;
+            const translateZ = absOffset * -250;
+            const scale = Math.max(0.6, 1 - (absOffset * 0.15));
+            const blur = Math.min(3, absOffset * 1);
+            const brightness = Math.max(0.5, 1 - (absOffset * 0.2));
+            
             slide.style.transform = `rotateY(${rotation}deg) translateZ(${translateZ}px) scale(${scale})`;
-            slide.style.opacity = Math.max(0.3, 1 - (absOffset * 0.3));
-            slide.style.zIndex = String(10 - absOffset);
+            slide.style.opacity = Math.max(0.3, 1 - (absOffset * 0.25));
+            slide.style.filter = `blur(${blur}px) brightness(${brightness})`;
+            slide.style.zIndex = String(20 - absOffset);
         }
     });
 }
