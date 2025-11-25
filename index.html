@@ -536,6 +536,24 @@
             .carousel-slide.active {
                 transform: scale(1.05);
                 z-index: 5;
+                position: relative;
+            }
+            
+            /* 태블릿에서도 중앙 선택 프레임 표시 */
+            @media (min-width: 769px) and (max-width: 1024px) {
+                .carousel-slide.active::before {
+                    content: '';
+                    position: absolute;
+                    top: -3px;
+                    left: -3px;
+                    right: -3px;
+                    bottom: -3px;
+                    border: 2px solid var(--color-primary);
+                    border-radius: var(--border-radius-md);
+                    z-index: 6;
+                    pointer-events: none;
+                    box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+                }
             }
         }
         
