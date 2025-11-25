@@ -74,6 +74,26 @@ function translateLevel(level) {
 }
 
 /**
+ * 스토리 제목 번역 함수 (현재 언어에 따라 반환)
+ * @param {object} story - 스토리 객체
+ * @returns {string} 번역된 제목
+ */
+function getStoryTitle(story) {
+    if (!story) return '';
+    
+    // 영어일 경우 영어 제목 사용, 아니면 한국어 제목 사용
+    if (currentLanguage === 'en' && story.title_en) {
+        return story.title_en;
+    }
+    
+    // 한국어 제목을 공백으로 분리하여 읽기 쉽게 변환
+    return story.title.replace(/([가-힣])([A-Za-z])/g, '$1 $2')
+                      .replace(/([A-Za-z])([가-힣])/g, '$1 $2')
+                      .replace(/([가-힣])([0-9])/g, '$1 $2')
+                      .replace(/([0-9])([가-힣])/g, '$1 $2');
+}
+
+/**
  * 언어 변경 함수
  * @param {string} lang - 언어 코드
  */
