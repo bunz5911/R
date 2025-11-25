@@ -1,15 +1,17 @@
 /**
  * K-Context Master - 한국어 동화 학습 앱
  * 순수 JavaScript (No Framework)
- * 버전: 20251117-CAROUSEL-FIX
+ * 버전: 20251117-SYNTAX-FIX
  */
 
 // ✅ 버전 체크: 이 파일이 새로 로드되었는지 확인
 window.APP_VERSION_20251117_PARAGRAPH = true;
 window.APP_VERSION_20251117_CAROUSEL = true;
-console.log('🚀🚀🚀 app.js 로드됨 - 버전: 20251117-CAROUSEL-FIX-' + Date.now());
+window.APP_VERSION_20251117_SYNTAX_FIX = true;
+console.log('🚀🚀🚀 app.js 로드됨 - 버전: 20251117-SYNTAX-FIX-' + Date.now());
 console.log('✅ 새 버전 확인: APP_VERSION_20251117_PARAGRAPH =', window.APP_VERSION_20251117_PARAGRAPH);
 console.log('✅ 캐러셀 버전 확인: APP_VERSION_20251117_CAROUSEL =', window.APP_VERSION_20251117_CAROUSEL);
+console.log('✅ 문법 수정 버전 확인: APP_VERSION_20251117_SYNTAX_FIX =', window.APP_VERSION_20251117_SYNTAX_FIX);
 
 // 배포 환경 감지: 로컬에서는 localhost 사용, 프로덕션에서는 Cloudflare Pages API 프록시 사용
 const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
@@ -1293,11 +1295,11 @@ function showLevelTestModal() {
         { id: 1, question: '"안녕하세요"의 의미는?', options: ["Hello", "Goodbye", "Thank you", "Sorry"], correct: 0, level: 'beginner' },
         { id: 2, question: '"감사합니다"의 의미는?', options: ["Hello", "Thank you", "Sorry", "Please"], correct: 1, level: 'beginner' },
         { id: 3, question: '"미안합니다"의 의미는?', options: ["Hello", "Thank you", "Sorry", "Please"], correct: 2, level: 'beginner' },
-        { id: 4, question: '"물'의 의미는?', options: ["Water", "Fire", "Earth", "Air"], correct: 0, level: 'beginner' },
-        { id: 5, question: '"사과'의 의미는?', options: ["Apple", "Orange", "Banana", "Grape"], correct: 0, level: 'beginner' },
+        { id: 4, question: '"물"의 의미는?', options: ["Water", "Fire", "Earth", "Air"], correct: 0, level: 'beginner' },
+        { id: 5, question: '"사과"의 의미는?', options: ["Apple", "Orange", "Banana", "Grape"], correct: 0, level: 'beginner' },
         
         // 중급 수준 문제
-        { id: 6, question: '"오늘 날씨가 좋네요'의 적절한 응답은?', options: ["네, 정말 좋아요", "안녕하세요", "감사합니다", "미안합니다"], correct: 0, level: 'intermediate' },
+        { id: 6, question: '"오늘 날씨가 좋네요"의 적절한 응답은?', options: ["네, 정말 좋아요", "안녕하세요", "감사합니다", "미안합니다"], correct: 0, level: 'intermediate' },
         { id: 7, question: '"어제 뭐 했어요?'의 의미는?', options: ["What did you do yesterday?", "What will you do tomorrow?", "What are you doing now?", "What do you like?"], correct: 0, level: 'intermediate' },
         { id: 8, question: '"시간이 없어서 서두르고 있어요'의 의미는?', options: ["I'm in a hurry because I don't have time", "I have plenty of time", "Time is slow", "I'm waiting"], correct: 0, level: 'intermediate' },
         { id: 9, question: '"이 음식은 정말 맛있어요'의 의미는?', options: ["This food is really delicious", "This food is terrible", "I don't like this food", "This food is expensive"], correct: 0, level: 'intermediate' },
