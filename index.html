@@ -1205,7 +1205,13 @@
         /* PC/태블릿에서 "다른 스토리 더 보기" 카드가 항상 보이도록 */
         @media (min-width: 769px) {
             .carousel-slide.locked-slide {
-                z-index: 20 !important;
+                z-index: 30 !important; /* 더 높은 z-index로 보이도록 */
+                position: relative;
+                display: block !important; /* 강제로 표시 */
+            }
+            
+            .carousel-slide.locked-slide.upgrade-card {
+                z-index: 35 !important; /* upgrade-card 클래스가 있으면 더 높게 */
             }
             
             /* 다른 카드들이 "다른 스토리 더 보기" 카드를 가리지 않도록 */
@@ -1219,6 +1225,19 @@
             
             .carousel-slide:not(.locked-slide):hover {
                 z-index: 15;
+            }
+        }
+        
+        /* PC에서 특히 더보기 카드가 보이도록 */
+        @media (min-width: 1025px) {
+            .carousel-slide.locked-slide {
+                z-index: 40 !important; /* PC에서 더 높은 z-index */
+                opacity: 1 !important; /* 강제로 불투명도 1 */
+                visibility: visible !important; /* 강제로 보이기 */
+            }
+            
+            .carousel-slide.locked-slide.upgrade-card {
+                z-index: 45 !important; /* PC에서 upgrade-card는 더 높게 */
             }
         }
         
