@@ -994,8 +994,8 @@ function showLevelTestModal() {
     
     // 간단한 테스트 문제 생성 (실제로는 더 복잡한 문제 사용 가능)
     const questions = [
-        { id: 1, question: "안녕하세요"의 의미는?", options: ["Hello", "Goodbye", "Thank you", "Sorry"], correct: 0 },
-        { id: 2, question: "감사합니다"의 의미는?", options: ["Hello", "Thank you", "Sorry", "Please"], correct: 1 },
+        { id: 1, question: '"안녕하세요"의 의미는?', options: ["Hello", "Goodbye", "Thank you", "Sorry"], correct: 0 },
+        { id: 2, question: '"감사합니다"의 의미는?', options: ["Hello", "Thank you", "Sorry", "Please"], correct: 1 },
         { id: 3, question: "한국어를 얼마나 공부하셨나요?", options: ["1개월 미만", "1-6개월", "6개월-1년", "1년 이상"], correct: null }
     ];
     
