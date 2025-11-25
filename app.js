@@ -442,23 +442,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         learningView.style.display = 'none';
     }
     
-    // ✅ 3. 동화 목록 즉시 표시 (온보딩 완료 후)
-    loadStories();
-    
-    // ✅ 3. 코인 로컬스토리지에서 즉시 표시 (캐시 우선)
-    const cachedCoins = localStorage.getItem('userCoins');
-    if (cachedCoins) {
-        userCoins = parseInt(cachedCoins, 10);
-        const coinAmount = document.getElementById('coinAmount');
-        if (coinAmount) {
-            coinAmount.textContent = userCoins;
-        }
-    }
-    
-    // ✅ 4. 이벤트 리스너 설정 (즉시 필요)
-    setupEventListeners();
-    
-    // ✅ 5. 인증 상태 즉시 설정 (localStorage 캐시 우선)
+    // ✅ 3. 인증 상태 즉시 설정 (localStorage 캐시 우선) - loadStories() 이전에 실행
     // Google 로그인 후 리다이렉트 시 localStorage 값이 이미 저장되어 있을 수 있으므로 재초기화
     initializeUserId();
     
@@ -473,7 +457,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         currentUserEmail = localStorage.getItem('userEmail');
         currentDisplayName = cachedDisplayName;
         currentUserPlan = localStorage.getItem('userPlan') || 'free';
-        updateAuthUI();
         console.log('✅ 로그인 상태 즉시 설정 (캐시):', {
             userId: currentUserId,
             email: currentUserEmail,
@@ -482,6 +465,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     } else {
         // 로그인하지 않은 경우
+        isAuthenticated = false;
         console.log('ℹ️ 로그인하지 않음 - 인증 상태:', {
             hasToken: !!cachedToken,
             hasUserId: !!cachedUserId,
@@ -489,7 +473,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
     
-    // ✅ 6. 인증 상태 서버 검증 (백그라운드, 비블로킹)
+    // ✅ 4. 코인 로컬스토리지에서 즉시 표시 (캐시 우선)
+    const cachedCoins = localStorage.getItem('userCoins');
+    if (cachedCoins) {
+        userCoins = parseInt(cachedCoins, 10);
+        const coinAmount = document.getElementById('coinAmount');
+        if (coinAmount) {
+            coinAmount.textContent = userCoins;
+        }
+    }
+    
+    // ✅ 5. 이벤트 리스너 설정 (즉시 필요)
+    setupEventListeners();
+    
+    // ✅ 6. 동화 목록 즉시 표시 (인증 상태 설정 후)
+    loadStories();
+    
+    // ✅ 7. 인증 상태 서버 검증 (백그라운드, 비블로킹)
     checkAuthStatus().catch(error => {
         console.warn('⚠️ 인증 상태 체크 실패:', error);
         // 실패해도 캐시된 인증 상태 유지
