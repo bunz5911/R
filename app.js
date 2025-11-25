@@ -841,10 +841,13 @@ async function loadStories() {
         const userPlan = currentUserPlan || 'free';
         currentStories = getFilteredAndSortedStories(currentLevel, userPlan);
         
-        // 유료 사용자의 경우 전체 스토리 목록 저장 (무한 루프용)
-        if (userPlan !== 'free') {
+        // 🔑 슈퍼바이저 또는 유료 사용자의 경우 전체 스토리 목록 저장 (무한 루프용)
+        if (currentUserEmail === 'bunz5911@gmail.com' || userPlan !== 'free') {
             allCarouselStories = PRELOADED_STORIES;
             carouselVisitedIndices.clear(); // 방문 기록 초기화
+            if (currentUserEmail === 'bunz5911@gmail.com') {
+                console.log('🔑 슈퍼바이저: 전체 루핑 캐러셀 활성화');
+            }
         } else {
             allCarouselStories = [];
         }
@@ -1354,7 +1357,10 @@ function scrollCarousel(direction) {
     
     // 전체 스토리 목록 가져오기
     let totalStories;
-    if (userPlan === 'free') {
+    // 🔑 슈퍼바이저는 항상 전체 51개 사용
+    if (currentUserEmail === 'bunz5911@gmail.com') {
+        totalStories = allCarouselStories.length;
+    } else if (userPlan === 'free') {
         totalStories = currentStories.length;
     } else {
         totalStories = allCarouselStories.length;
@@ -1362,8 +1368,8 @@ function scrollCarousel(direction) {
     
     let nextIndex;
     
-    // 유료 사용자: 무한 루프 및 랜덤 연결
-    if (userPlan !== 'free' && totalStories > 0) {
+    // 🔑 슈퍼바이저 또는 유료 사용자: 무한 루프 및 랜덤 연결
+    if ((currentUserEmail === 'bunz5911@gmail.com' || userPlan !== 'free') && totalStories > 0) {
         if (direction > 0) {
             // 다음 버튼: 마지막이면 랜덤, 아니면 다음
             if (currentIndex >= totalStories - 1) {
@@ -1499,8 +1505,10 @@ function updateCarouselIndicators() {
     const carouselId = 'storyCarousel';
     const userPlan = currentUserPlan || 'free';
     
-    // 유료 사용자는 전체 스토리 수, 무료는 currentStories 수
-    const totalStories = userPlan !== 'free' ? allCarouselStories.length : currentStories.length;
+    // 🔑 슈퍼바이저는 항상 전체 51개, 유료 사용자는 전체 스토리 수, 무료는 currentStories 수
+    const totalStories = currentUserEmail === 'bunz5911@gmail.com' 
+        ? allCarouselStories.length 
+        : (userPlan !== 'free' ? allCarouselStories.length : currentStories.length);
     
     indicators.innerHTML = '';
     
