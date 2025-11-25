@@ -996,10 +996,22 @@ function centerActiveCard() {
     const scrollLeft = activeSlide.offsetLeft - (trackRect.width / 2) + (slideWidth / 2);
     
     track.scrollTo({
-        left: scrollLeft,
+        left: Math.max(0, scrollLeft), // 음수 방지
         behavior: 'smooth'
     });
 }
+
+// 화면 크기 변경 시 중앙 정렬 유지
+let resizeTimeout;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        if (window.innerWidth > 1024) {
+            centerActiveCard();
+            updateCarousel3D();
+        }
+    }, 250);
+});
 
 // PC용 3D 효과 업데이트 함수
 function updateCarousel3D() {
