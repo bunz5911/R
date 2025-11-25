@@ -1134,29 +1134,62 @@ function centerActiveCard() {
 // 모바일에서 캐러셀 초기 위치 조정 (더 보기 카드가 잘 보이도록)
 function adjustMobileCarouselPosition() {
     const track = document.getElementById('carouselTrack');
-    if (!track || window.innerWidth > 1024) return;
+    if (!track) {
+        console.log('⚠️ adjustMobileCarouselPosition: carouselTrack을 찾을 수 없습니다');
+        return;
+    }
+    
+    if (window.innerWidth > 1024) {
+        console.log('⚠️ adjustMobileCarouselPosition: PC 화면이므로 스킵');
+        return;
+    }
     
     const slides = track.querySelectorAll('.carousel-slide');
-    if (slides.length === 0) return;
+    if (slides.length === 0) {
+        console.log('⚠️ adjustMobileCarouselPosition: 슬라이드가 없습니다');
+        return;
+    }
     
     const activeSlide = track.querySelector('.carousel-slide.active');
-    if (!activeSlide) return;
+    if (!activeSlide) {
+        console.log('⚠️ adjustMobileCarouselPosition: 활성 슬라이드를 찾을 수 없습니다');
+        return;
+    }
     
-    const activeIndex = Array.from(slides).indexOf(activeSlide);
-    const totalSlides = slides.length;
+    console.log('📱 모바일 캐러셀 위치 조정 시작:', {
+        화면너비: window.innerWidth,
+        슬라이드수: slides.length,
+        활성인덱스: Array.from(slides).indexOf(activeSlide)
+    });
     
     // 마지막 카드(더 보기 카드)가 잘 보이도록 약간 왼쪽으로 스크롤
     // 활성 카드가 약간 왼쪽에 위치하도록 조정
     const slideWidth = activeSlide.offsetWidth;
     const viewportWidth = track.clientWidth;
+    const currentScrollLeft = track.scrollLeft;
     
     // 활성 카드가 화면 왼쪽에서 약 10% 위치에 오도록 조정
     const targetScrollLeft = activeSlide.offsetLeft - (viewportWidth * 0.1);
+    
+    console.log('📱 스크롤 위치 조정:', {
+        현재스크롤: currentScrollLeft,
+        목표스크롤: Math.max(0, targetScrollLeft),
+        카드너비: slideWidth,
+        뷰포트너비: viewportWidth
+    });
     
     track.scrollTo({
         left: Math.max(0, targetScrollLeft),
         behavior: 'smooth'
     });
+    
+    // 스크롤 완료 확인
+    setTimeout(() => {
+        console.log('✅ 모바일 캐러셀 위치 조정 완료:', {
+            최종스크롤: track.scrollLeft,
+            목표달성: Math.abs(track.scrollLeft - Math.max(0, targetScrollLeft)) < 10
+        });
+    }, 300);
 }
 
 // 화면 크기 변경 시 중앙 정렬 유지
