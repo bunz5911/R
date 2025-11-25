@@ -783,6 +783,15 @@ async function loadCompletedStories() {
 
 // 레벨별 동화 필터링 및 정렬
 function getFilteredAndSortedStories(level, userPlan) {
+    // 🔑 슈퍼바이저 (bunz5911@gmail.com): 전체 51개 모두 활성화된 상태로 반환
+    if (currentUserEmail === 'bunz5911@gmail.com') {
+        const allStories = [...PRELOADED_STORIES];
+        const completed = allStories.filter(story => completedStoryIds.includes(story.id));
+        const notCompleted = allStories.filter(story => !completedStoryIds.includes(story.id));
+        const shuffledNotCompleted = shuffleArray([...notCompleted]);
+        return [...completed, ...shuffledNotCompleted];
+    }
+    
     // 무료 사용자: 0, 1번만 반환
     if (userPlan === 'free') {
         const freeStories = PRELOADED_STORIES.filter(story => story.id === 0 || story.id === 1);
@@ -931,11 +940,16 @@ function renderStoryCarousel(activeIndex = 0) {
     
     const userPlan = currentUserPlan || 'free';
     
-    // 유료 사용자의 경우 lock된 카드도 포함하여 전체 렌더링
+    // 🔑 슈퍼바이저 (bunz5911@gmail.com): 전체 51개 모두 활성화된 상태로 표시
     let storiesToRender = [];
     let lockedStories = [];
     
-    if (userPlan === 'free') {
+    if (currentUserEmail === 'bunz5911@gmail.com') {
+        // 슈퍼바이저: 전체 51개 모두 활성화된 상태로 표시
+        const allStories = PRELOADED_STORIES;
+        storiesToRender = allStories.map(story => ({ ...story, isLocked: false }));
+        console.log('🔑 슈퍼바이저 모드: 전체 51개 스토리 활성화');
+    } else if (userPlan === 'free') {
         // 무료: 0, 1번만 표시
         storiesToRender = currentStories;
     } else {
