@@ -1086,7 +1086,7 @@ function renderStoryCarousel(activeIndex = 0) {
     if (userPlan === 'free' && currentStories.length < PRELOADED_STORIES.length) {
         const remainingCount = PRELOADED_STORIES.length - currentStories.length;
         carouselHTML += `
-            <div class="carousel-slide locked-slide" data-bs-interval="false">
+            <div class="carousel-slide locked-slide upgrade-card" data-bs-interval="false" style="z-index: 20;">
                 <div class="story-card-carousel locked-card">
                     <div class="lock-content">
                         <div class="lock-icon">🔒</div>
