@@ -392,17 +392,18 @@
             flex-wrap: wrap; /* 작은 화면에서 줄바꿈 */
         }
         
+        /* Bootstrap 스타일 캐러셀 구조 */
         .carousel-wrapper {
             position: relative;
             width: 100%;
             max-width: 100%;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         
+        /* Bootstrap .carousel-inner 스타일 */
         .carousel-track {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
             display: flex;
             gap: 0; /* 카드가 겹치도록 gap 제거 */
             overflow-x: auto;
@@ -411,10 +412,7 @@
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
             padding: var(--space-md) 0;
-            width: 100%;
-            max-width: 100%;
             box-sizing: border-box;
-            position: relative;
         }
         
         /* PC에서 트랙 스타일 */
@@ -429,16 +427,38 @@
             display: none;
         }
         
-        /* PC (1025px 이상): 카드 겹침 디자인 */
+        /* Bootstrap .carousel-item 스타일 */
         .carousel-slide {
             flex: 0 0 auto;
             scroll-snap-align: center;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                        opacity 0.3s ease,
+            transition: transform 0.6s ease-in-out,
+                        opacity 0.6s ease-in-out,
                         z-index 0.3s ease;
             min-width: 0;
             will-change: transform;
             position: relative;
+            display: block;
+            float: left;
+            width: 100%;
+            margin-right: -100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        
+        /* Bootstrap .carousel-item.active 스타일 */
+        .carousel-slide.active {
+            opacity: 1;
+        }
+        
+        .carousel-slide:not(.active) {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+        
+        /* 현재 구현: 겹침 디자인을 위해 transform 대신 다른 방식 사용 */
+        .carousel-slide:not(.active) {
+            opacity: 0.7;
+            transform: none;
         }
         
         /* PC에서 카드 크기 및 겹침 효과 */
@@ -503,7 +523,122 @@
             }
         }
         
+        /* Bootstrap .carousel-control-prev/next 스타일 */
+        .carousel-control-prev,
+        .carousel-control-next {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 15%;
+            padding: 0;
+            color: var(--text-primary);
+            text-align: center;
+            background: none;
+            border: 0;
+            opacity: 0.5;
+            transition: opacity 0.15s ease;
+            cursor: pointer;
+        }
         
+        .carousel-control-prev:hover,
+        .carousel-control-prev:focus,
+        .carousel-control-next:hover,
+        .carousel-control-next:focus {
+            color: var(--text-primary);
+            text-decoration: none;
+            outline: 0;
+            opacity: 0.9;
+        }
+        
+        .carousel-control-prev {
+            left: 0;
+        }
+        
+        .carousel-control-next {
+            right: 0;
+        }
+        
+        /* Bootstrap .carousel-control-prev-icon/next-icon 스타일 */
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            display: inline-block;
+            width: 2rem;
+            height: 2rem;
+            background-repeat: no-repeat;
+            background-position: 50%;
+            background-size: 100% 100%;
+        }
+        
+        /* 이전 버튼 아이콘 (SVG 또는 텍스트) */
+        .carousel-control-prev-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z'/%3e%3c/svg%3e");
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius-full);
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(10px);
+            transition: all var(--transition-base);
+        }
+        
+        .carousel-control-prev:hover .carousel-control-prev-icon,
+        .carousel-control-prev:focus .carousel-control-prev-icon {
+            background-color: var(--color-primary);
+            transform: scale(1.1);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        /* 다음 버튼 아이콘 */
+        .carousel-control-next-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius-full);
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(10px);
+            transition: all var(--transition-base);
+        }
+        
+        .carousel-control-next:hover .carousel-control-next-icon,
+        .carousel-control-next:focus .carousel-control-next-icon {
+            background-color: var(--color-primary);
+            transform: scale(1.1);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        /* 접근성을 위한 숨김 텍스트 */
+        .visually-hidden {
+            position: absolute !important;
+            width: 1px !important;
+            height: 1px !important;
+            padding: 0 !important;
+            margin: -1px !important;
+            overflow: hidden !important;
+            clip: rect(0, 0, 0, 0) !important;
+            white-space: nowrap !important;
+            border: 0 !important;
+        }
+        
+        /* 모바일에서 화살표 버튼 숨기기 (터치 스와이프 사용) */
+        @media (max-width: 1024px) {
+            .carousel-control-prev,
+            .carousel-control-next {
+                display: none;
+            }
+        }
+        
+        /* 기존 .carousel-btn 클래스 호환성 유지 */
         .carousel-btn {
             position: absolute;
             top: 50%;
@@ -532,10 +667,6 @@
             box-shadow: var(--shadow-lg);
         }
         
-        .carousel-btn:active {
-            transform: translateY(-50%) scale(0.95);
-        }
-        
         .carousel-btn-prev {
             left: var(--space-md);
         }
@@ -544,32 +675,71 @@
             right: var(--space-md);
         }
         
-        /* 모바일에서 화살표 버튼 숨기기 (터치 스와이프 사용) */
         @media (max-width: 1024px) {
             .carousel-btn {
                 display: none;
             }
         }
         
+        /* Bootstrap .carousel-indicators 스타일 */
         .carousel-indicators {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 2;
             display: flex;
             justify-content: center;
+            padding: 0;
+            margin-right: 15%;
+            margin-bottom: 1rem;
+            margin-left: 15%;
+            list-style: none;
             gap: var(--space-sm);
-            margin-top: var(--space-lg);
         }
         
+        /* Bootstrap .carousel-indicator 스타일 */
+        .carousel-indicators [data-bs-target],
         .carousel-dot {
+            box-sizing: content-box;
+            flex: 0 1 auto;
             width: 8px;
             height: 8px;
-            border-radius: var(--border-radius-full);
-            background: var(--border-color);
+            padding: 0;
+            margin-right: 3px;
+            margin-left: 3px;
+            text-indent: -999px;
             cursor: pointer;
-            transition: all var(--transition-base);
+            background-color: var(--border-color);
+            background-clip: padding-box;
+            border: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            opacity: 0.5;
+            transition: opacity 0.6s ease;
+            border-radius: var(--border-radius-full);
         }
         
+        .carousel-indicators [data-bs-target]:hover,
+        .carousel-dot:hover {
+            opacity: 0.75;
+        }
+        
+        .carousel-indicators [data-bs-target].active,
+        .carousel-indicators .active,
         .carousel-dot.active {
-            background: var(--color-primary);
+            opacity: 1;
+            background-color: var(--color-primary);
             width: 24px;
+        }
+        
+        /* 인디케이터를 하단이 아닌 캐러셀 외부에 배치 (현재 구조에 맞춤) */
+        .story-carousel-container .carousel-indicators {
+            position: relative;
+            margin-top: var(--space-lg);
+            margin-right: 0;
+            margin-bottom: 0;
+            margin-left: 0;
         }
         
         /* ============================================

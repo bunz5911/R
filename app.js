@@ -910,7 +910,8 @@ function renderStoryCarousel(activeIndex = 0) {
         console.log('✨ CSS 캐러셀 기능 사용 중 (Chrome 135+ / Safari)');
     }
     
-    // 캐러셀 컨테이너 HTML
+    // Bootstrap 스타일 캐러셀 컨테이너 HTML
+    const carouselId = 'storyCarousel';
     let carouselHTML = `
         <div class="story-carousel-container">
             <div class="carousel-header">
@@ -920,8 +921,13 @@ function renderStoryCarousel(activeIndex = 0) {
                     ${lockedCount > 0 ? `<span class="locked-count">🔒 ${lockedCount}개 더 보기</span>` : ''}
                 </div>
             </div>
-            <div class="carousel-wrapper">
-                ${!supportsCSS ? '<button class="carousel-btn carousel-btn-prev" onclick="scrollCarousel(-1)">‹</button>' : ''}
+            <div id="${carouselId}" class="carousel-wrapper" data-bs-ride="false">
+                ${!supportsCSS ? `
+                    <button class="carousel-control-prev" type="button" data-bs-target="#${carouselId}" onclick="scrollCarousel(-1)">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">이전</span>
+                    </button>
+                ` : ''}
                 <div class="carousel-track" id="carouselTrack">
     `;
     
@@ -971,9 +977,14 @@ function renderStoryCarousel(activeIndex = 0) {
     
     carouselHTML += `
                 </div>
-                ${!supportsCSS ? '<button class="carousel-btn carousel-btn-next" onclick="scrollCarousel(1)">›</button>' : ''}
+                ${!supportsCSS ? `
+                    <button class="carousel-control-next" type="button" data-bs-target="#${carouselId}" onclick="scrollCarousel(1)">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">다음</span>
+                    </button>
+                ` : ''}
             </div>
-            ${!supportsCSS ? '<div class="carousel-indicators" id="carouselIndicators"></div>' : ''}
+            ${!supportsCSS ? `<ol class="carousel-indicators" id="carouselIndicators"></ol>` : ''}
         </div>
     `;
     
