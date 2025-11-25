@@ -526,8 +526,28 @@
                 z-index: 25 !important; /* 활성 카드(10), 호버 카드(15)보다 높음 */
             }
             
-            /* 중앙 선택 프레임 표시 - 네 모서리 십자선 */
+            /* 중앙 선택 프레임 표시 - 네 모서리 십자선 (기본적으로 숨김) */
             .carousel-slide.active::before {
+                display: none; /* 기본적으로 숨김 */
+            }
+            
+            .carousel-slide.active .story-card-carousel {
+                box-shadow: 0 0 30px rgba(99, 102, 241, 0.6);
+            }
+            
+            .carousel-slide:not(.active) {
+                opacity: 0.7;
+                transform: scale(0.95);
+            }
+            
+            .carousel-slide:hover {
+                z-index: 15;
+                transform: scale(1.08);
+                position: relative;
+            }
+            
+            /* 호버 시 활성 카드의 십자선 표시 */
+            .carousel-slide.active:hover::before {
                 content: '';
                 position: absolute;
                 top: -4px;
@@ -536,6 +556,7 @@
                 bottom: -4px;
                 z-index: 11;
                 pointer-events: none;
+                display: block; /* 호버 시 표시 */
                 /* 네 모서리 십자선 */
                 background-image: 
                     /* 좌상단 십자선 */
@@ -562,26 +583,6 @@
                     bottom right, bottom right; /* 우하단 */
                 background-repeat: no-repeat;
                 box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
-            }
-            
-            .carousel-slide.active .story-card-carousel {
-                box-shadow: 0 0 30px rgba(99, 102, 241, 0.6);
-            }
-            
-            .carousel-slide:not(.active) {
-                opacity: 0.7;
-                transform: scale(0.95);
-            }
-            
-            .carousel-slide:hover {
-                z-index: 15;
-                transform: scale(1.08);
-                position: relative;
-            }
-            
-            /* 호버 시 활성 카드의 십자선 숨기기 */
-            .carousel-slide.active:hover::before {
-                display: none;
             }
             
             /* 호버 시에도 십자선 표시 (활성 카드가 아닌 경우) */
@@ -637,9 +638,14 @@
                 position: relative;
             }
             
-            /* 태블릿에서도 중앙 선택 프레임 표시 - 네 모서리 십자선 */
+            /* 태블릿에서도 중앙 선택 프레임 표시 - 네 모서리 십자선 (기본적으로 숨김) */
             @media (min-width: 769px) and (max-width: 1024px) {
                 .carousel-slide.active::before {
+                    display: none; /* 기본적으로 숨김 */
+                }
+                
+                /* 태블릿 호버 시 활성 카드의 십자선 표시 */
+                .carousel-slide.active:hover::before {
                     content: '';
                     position: absolute;
                     top: -3px;
@@ -648,6 +654,7 @@
                     bottom: -3px;
                     z-index: 6;
                     pointer-events: none;
+                    display: block; /* 호버 시 표시 */
                     /* 네 모서리 십자선 */
                     background-image: 
                         /* 좌상단 십자선 */
@@ -674,11 +681,6 @@
                         bottom right, bottom right; /* 우하단 */
                     background-repeat: no-repeat;
                     box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
-                }
-                
-                /* 태블릿 호버 시 활성 카드의 십자선 숨기기 */
-                .carousel-slide.active:hover::before {
-                    display: none;
                 }
                 
                 /* 태블릿 호버 시에도 십자선 표시 (활성 카드가 아닌 경우) */
