@@ -377,6 +377,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 앱 초기화 시작...');
     
     // ============================================================================
+    // OAuth 콜백 체크 (최우선 - URL 해시에 access_token이 있으면 login.html로 리다이렉트)
+    // ============================================================================
+    const hash = window.location.hash;
+    if (hash) {
+        const hashParams = new URLSearchParams(hash.substring(1));
+        const accessToken = hashParams.get('access_token');
+        const errorParam = hashParams.get('error');
+        
+        if (accessToken) {
+            console.log('🔑 OAuth 콜백 감지 - login.html로 리다이렉트하여 처리');
+            // login.html의 handleOAuthCallback이 처리하도록 리다이렉트
+            window.location.href = window.location.origin + '/login.html' + window.location.hash + window.location.search;
+            return; // 리다이렉트 후 초기화 중단
+        } else if (errorParam) {
+            console.error('❌ OAuth 에러 파라미터 발견:', errorParam);
+            // 에러가 있어도 login.html로 리다이렉트하여 에러 메시지 표시
+            window.location.href = window.location.origin + '/login.html' + window.location.hash + window.location.search;
+            return;
+        }
+    }
+    
+    // ============================================================================
     // 즉시 실행 (블로킹 없음) - 사용자가 즉시 볼 수 있는 것들
     // ============================================================================
     
