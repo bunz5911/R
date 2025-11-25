@@ -460,6 +460,9 @@
                 padding: var(--space-md) 0;
                 padding-right: 0; /* 세로 스크롤에서는 오른쪽 패딩 불필요 */
                 max-height: 70vh; /* 최대 높이 제한 (스크롤 가능하도록) */
+                /* 모바일 세로 레이아웃에서는 fade out 효과 제거 */
+                mask-image: none;
+                -webkit-mask-image: none;
             }
         }
         
