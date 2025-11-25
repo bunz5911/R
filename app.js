@@ -2977,7 +2977,7 @@ function renderFullStory() {
     }).join('');
     
     contentEl.innerHTML = `
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
             <div class="section-title" style="margin-bottom: 0;">${t('tabs.fullStory')}</div>
             <button class="play-btn-circle" id="fullStoryPlayBtn" onclick="playFullStoryAudio(${storyId}, this)">
                 ▶
