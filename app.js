@@ -866,8 +866,13 @@ function getMaxRenderedCards() {
 function getRenderRange(activeIndex, totalCards) {
     const maxRendered = getMaxRenderedCards();
     
-    // PC나 태블릿에서는 모든 카드 렌더링 (가상 스크롤링 비활성화)
-    if (maxRendered === Infinity || window.innerWidth > 1024) {
+    // PC에서는 모든 카드 렌더링 (여러 카드가 겹쳐서 보이도록)
+    if (window.innerWidth > 1024) {
+        return { start: 0, end: totalCards };
+    }
+    
+    // 태블릿/모바일: 활성 카드 주변만 렌더링
+    if (maxRendered === Infinity) {
         return { start: 0, end: totalCards };
     }
     
