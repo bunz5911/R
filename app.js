@@ -1033,7 +1033,7 @@ function renderStoryCarousel(activeIndex = 0) {
                         <div class="story-card-image">
                             <img src="${story.image}" alt="${story.title}" onerror="this.style.display='none'" style="opacity: 0.5;">
                             <div class="story-card-overlay">
-                                <h3 class="story-card-title-overlay">${story.title}</h3>
+                                <h3 class="story-card-title-overlay">${getStoryTitle(story)}</h3>
                                 <div class="lock-badge">🔒 Season 2</div>
                             </div>
                         </div>
@@ -1053,7 +1053,7 @@ function renderStoryCarousel(activeIndex = 0) {
                         <div class="story-card-image">
                             <img src="${story.image}" alt="${story.title}" onerror="this.style.display='none'">
                             <div class="story-card-overlay">
-                                <h3 class="story-card-title-overlay">${story.title}</h3>
+                                <h3 class="story-card-title-overlay">${getStoryTitle(story)}</h3>
                             </div>
                         </div>
                     </div>

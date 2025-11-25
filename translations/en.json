@@ -29,6 +29,9 @@
     "intermediate": "Intermediate",
     "advanced": "Advanced"
   },
+  "carousel": {
+    "levelStory": "Level Stories"
+  },
   "buttons": {
     "play": "Play",
     "back": "Back",

@@ -29,6 +29,9 @@
     "intermediate": "중급",
     "advanced": "고급"
   },
+  "carousel": {
+    "levelStory": "레벨 스토리"
+  },
   "buttons": {
     "play": "재생",
     "back": "뒤로",

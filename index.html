@@ -484,7 +484,7 @@
             .carousel-slide {
                 width: auto; /* 이미지 크기에 맞춤 */
                 max-width: 280px; /* 최대 너비 제한 */
-                margin-right: -80px; /* 카드가 겹치도록 음수 마진 */
+                margin-right: -28px; /* 카드 너비의 10% 겹침 (280px * 0.1 = 28px) */
             }
             
             .carousel-slide.active {
@@ -508,7 +508,7 @@
         @media (min-width: 769px) and (max-width: 1024px) {
             .carousel-slide {
                 flex: 0 0 calc(33.333% - var(--space-md));
-                margin-right: -40px; /* 약간 겹침 */
+                margin-right: -24px; /* 카드 너비의 10% 겹침 (240px * 0.1 = 24px) */
             }
             
             .carousel-slide.active {
@@ -547,23 +547,23 @@
             }
         }
         
-        /* Bootstrap .carousel-control-prev/next 스타일 */
+        /* Bootstrap .carousel-control-prev/next 스타일 - 카드 밑에 위치 */
         .carousel-control-prev,
         .carousel-control-next {
             position: absolute;
-            top: 0;
-            bottom: 0;
+            top: auto;
+            bottom: -60px; /* 카드 밑에 위치 */
             z-index: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 15%;
+            width: auto;
             padding: 0;
             color: var(--text-primary);
             text-align: center;
             background: none;
             border: 0;
-            opacity: 0.5;
+            opacity: 0.7;
             transition: opacity 0.15s ease;
             cursor: pointer;
         }
@@ -575,15 +575,15 @@
             color: var(--text-primary);
             text-decoration: none;
             outline: 0;
-            opacity: 0.9;
+            opacity: 1;
         }
         
         .carousel-control-prev {
-            left: 0;
+            left: calc(50% - 80px); /* 중앙에서 좌측으로 */
         }
         
         .carousel-control-next {
-            right: 0;
+            right: calc(50% - 80px); /* 중앙에서 우측으로 */
         }
         
         /* Bootstrap .carousel-control-prev-icon/next-icon 스타일 */
