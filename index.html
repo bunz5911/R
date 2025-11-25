@@ -354,6 +354,15 @@
             max-width: 1400px; /* PC 최대 너비 제한 */
             margin: 0 auto; /* 중앙 정렬 */
             padding: var(--space-lg);
+            overflow: visible; /* PC에서 3D 효과를 위해 */
+        }
+        
+        /* PC에서 컨테이너 높이 확보 */
+        @media (min-width: 1025px) {
+            .story-carousel-container {
+                padding: var(--space-xl);
+                min-height: 500px; /* 3D 효과를 위한 최소 높이 */
+            }
         }
         
         .carousel-header {
@@ -384,6 +393,17 @@
             position: relative;
             width: 100%;
             overflow: hidden;
+            /* 3D 효과를 위한 perspective 설정 (PC만) */
+        }
+        
+        /* PC에서만 3D 효과 적용 */
+        @media (min-width: 1025px) {
+            .carousel-wrapper {
+                perspective: 1200px;
+                perspective-origin: center center;
+                overflow: visible; /* 3D 효과를 위해 visible */
+                height: 450px; /* 고정 높이 필요 */
+            }
         }
         
         .carousel-track {
@@ -395,22 +415,54 @@
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
             padding: var(--space-md) 0;
+            /* PC에서만 3D 효과 */
+        }
+        
+        /* PC에서 3D 트랙 스타일 */
+        @media (min-width: 1025px) {
+            .carousel-track {
+                transform-style: preserve-3d;
+                align-items: center;
+                justify-content: center;
+                overflow-x: visible; /* 3D 효과를 위해 */
+            }
         }
         
         .carousel-track::-webkit-scrollbar {
             display: none;
         }
         
-        /* PC (1025px 이상): 4-5개 표시 */
+        /* PC (1025px 이상): 4-5개 표시 + 3D 효과 */
         .carousel-slide {
             flex: 0 0 calc(20% - var(--space-md)); /* 5개 표시 */
             scroll-snap-align: start;
-            transition: transform 0.3s ease;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                        opacity 0.6s ease;
             min-width: 0; /* flex 아이템 축소 허용 */
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
         
-        .carousel-slide.active {
-            transform: scale(1.05);
+        /* PC에서 3D 효과 적용 */
+        @media (min-width: 1025px) {
+            .carousel-slide {
+                opacity: 0.6;
+                transform: rotateY(45deg) translateZ(-150px) scale(0.8);
+            }
+            
+            .carousel-slide.active {
+                opacity: 1;
+                transform: rotateY(0deg) translateZ(0px) scale(1.1);
+                z-index: 10;
+            }
+        }
+        
+        /* 모바일/태블릿에서는 기존 스타일 유지 */
+        @media (max-width: 1024px) {
+            .carousel-slide.active {
+                transform: scale(1.05);
+            }
         }
         
         /* 태블릿 (769px - 1024px): 3개 표시 */

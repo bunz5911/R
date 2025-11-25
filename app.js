@@ -866,8 +866,8 @@ function getMaxRenderedCards() {
 function getRenderRange(activeIndex, totalCards) {
     const maxRendered = getMaxRenderedCards();
     
-    // PC나 태블릿에서는 모든 카드 렌더링
-    if (maxRendered === Infinity) {
+    // PC나 태블릿에서는 모든 카드 렌더링 (가상 스크롤링 비활성화)
+    if (maxRendered === Infinity || window.innerWidth > 1024) {
         return { start: 0, end: totalCards };
     }
     
@@ -966,8 +966,60 @@ function renderStoryCarousel(activeIndex = 0) {
     // 인디케이터 생성
     updateCarouselIndicators();
     
-    // 스크롤 이벤트 리스너 추가 (동적 로딩용)
-    setupCarouselScrollListener();
+    // 스크롤 이벤트 리스너 추가 (동적 로딩용 - 모바일만)
+    if (window.innerWidth <= 1024) {
+        setupCarouselScrollListener();
+    }
+    
+    // PC에서 3D 효과 업데이트
+    if (window.innerWidth > 1024) {
+        setTimeout(() => {
+            updateCarousel3D();
+        }, 100);
+    }
+}
+
+// PC용 3D 효과 업데이트 함수
+function updateCarousel3D() {
+    const track = document.getElementById('carouselTrack');
+    if (!track || window.innerWidth <= 1024) return; // PC만
+    
+    const slides = track.querySelectorAll('.carousel-slide');
+    const activeSlide = track.querySelector('.carousel-slide.active');
+    if (!activeSlide) return;
+    
+    const activeIndex = parseInt(activeSlide.dataset.index) || 0;
+    
+    slides.forEach((slide, index) => {
+        const slideIndex = parseInt(slide.dataset.index) || index;
+        const offset = slideIndex - activeIndex;
+        const absOffset = Math.abs(offset);
+        
+        // 활성 카드
+        if (offset === 0) {
+            slide.style.transform = 'rotateY(0deg) translateZ(0px) scale(1.1)';
+            slide.style.opacity = '1';
+            slide.style.zIndex = '10';
+        }
+        // 왼쪽 카드들
+        else if (offset < 0) {
+            const rotation = offset * 25; // 각 카드마다 25도씩 회전
+            const translateZ = absOffset * -100; // 거리에 따라 뒤로 이동
+            const scale = Math.max(0.7, 1 - (absOffset * 0.1)); // 거리에 따라 축소
+            slide.style.transform = `rotateY(${rotation}deg) translateZ(${translateZ}px) scale(${scale})`;
+            slide.style.opacity = Math.max(0.3, 1 - (absOffset * 0.3));
+            slide.style.zIndex = String(10 - absOffset);
+        }
+        // 오른쪽 카드들
+        else {
+            const rotation = offset * 25;
+            const translateZ = absOffset * -100;
+            const scale = Math.max(0.7, 1 - (absOffset * 0.1));
+            slide.style.transform = `rotateY(${rotation}deg) translateZ(${translateZ}px) scale(${scale})`;
+            slide.style.opacity = Math.max(0.3, 1 - (absOffset * 0.3));
+            slide.style.zIndex = String(10 - absOffset);
+        }
+    });
 }
 
 // 캐러셀 스크롤 리스너 설정 (동적 카드 로딩)
@@ -1031,9 +1083,22 @@ function scrollCarousel(direction) {
     
     const currentIndex = parseInt(activeSlide.dataset.index) || 0;
     const nextIndex = currentIndex + direction;
+    const isPC = window.innerWidth > 1024;
     
     if (nextIndex >= 0 && nextIndex < currentStories.length) {
-        // 렌더링 범위 확인
+        // PC에서는 3D 효과만 업데이트
+        if (isPC) {
+            activeSlide.classList.remove('active');
+            const nextSlide = track.querySelector(`[data-index="${nextIndex}"]`);
+            if (nextSlide) {
+                nextSlide.classList.add('active');
+                updateCarousel3D();
+                updateCarouselIndicators();
+            }
+            return;
+        }
+        
+        // 모바일: 렌더링 범위 확인
         const maxRendered = getMaxRenderedCards();
         const needsRerender = maxRendered !== Infinity && 
             (nextIndex < renderedCardRange.start || nextIndex >= renderedCardRange.end);
