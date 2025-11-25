@@ -348,10 +348,10 @@
             letter-spacing: var(--letter-spacing-normal);
         }
 
-        /* 캐러셀 스타일 - 완전 반응형 */
+        /* 캐러셀 스타일 - 깔끔한 2D 디자인 */
         .story-carousel-container {
             width: 100%;
-            max-width: 100%; /* 화면 크기에 맞춰 확장 */
+            max-width: 1400px;
             margin: 0 auto;
             padding: var(--space-lg);
             display: flex;
@@ -361,25 +361,10 @@
             box-sizing: border-box;
         }
         
-        /* PC에서 컨테이너 높이 확보 및 패딩 조정 */
+        /* PC에서 컨테이너 최적화 */
         @media (min-width: 1025px) {
             .story-carousel-container {
-                padding: var(--space-xl) var(--space-2xl); /* 좌우 패딩 증가 */
-                min-height: 600px; /* 3D 효과를 위한 높이 증가 */
-            }
-        }
-        
-        /* 큰 화면에서도 전체 너비 사용 */
-        @media (min-width: 1401px) {
-            .story-carousel-container {
-                padding: var(--space-xl) var(--space-3xl); /* 더 큰 패딩 */
-            }
-        }
-        
-        /* 초대형 화면 대응 */
-        @media (min-width: 1920px) {
-            .story-carousel-container {
-                padding: var(--space-xl) 5%; /* 화면 크기의 5% 패딩 */
+                padding: var(--space-xl);
             }
         }
         
@@ -411,76 +396,32 @@
             position: relative;
             width: 100%;
             max-width: 100%;
-            overflow: visible; /* 3D 효과를 위해 visible */
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            /* 3D 효과를 위한 perspective 설정 (PC만) */
-        }
-        
-        /* PC에서만 3D 효과 적용 - 강화된 공간감 */
-        @media (min-width: 1025px) {
-            .carousel-wrapper {
-                perspective: 2000px; /* 더 강한 원근감 */
-                perspective-origin: center center;
-                overflow: visible; /* 3D 카드가 보이도록 */
-                height: 550px; /* 높이 증가 */
-                min-height: 550px;
-                padding: var(--space-xl) 0; /* 상하 패딩 */
-            }
-        }
-        
-        /* 큰 화면에서 더 큰 perspective */
-        @media (min-width: 1600px) {
-            .carousel-wrapper {
-                perspective: 2500px;
-                height: 600px;
-                min-height: 600px;
-            }
         }
         
         .carousel-track {
             display: flex;
-            gap: var(--space-lg); /* 카드 간격 증가 */
+            gap: 0; /* 카드가 겹치도록 gap 제거 */
             overflow-x: auto;
             scroll-behavior: smooth;
-            scroll-snap-type: x proximity; /* 부드러운 스냅 */
+            scroll-snap-type: x mandatory;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
-            padding: var(--space-xl) var(--space-2xl); /* 좌우 패딩 증가 */
+            padding: var(--space-md) 0;
             width: 100%;
             max-width: 100%;
             box-sizing: border-box;
-            /* PC에서만 3D 효과 */
+            position: relative;
         }
         
-        /* PC에서 3D 트랙 스타일 - 강화된 공간감 */
+        /* PC에서 트랙 스타일 */
         @media (min-width: 1025px) {
             .carousel-track {
-                transform-style: preserve-3d;
-                align-items: center;
-                justify-content: center;
-                overflow-x: auto;
-                overflow-y: visible; /* 3D 효과를 위해 */
-                position: relative;
-                margin: 0 auto;
-                gap: var(--space-2xl); /* PC에서 카드 간격 더 증가 */
-                padding: var(--space-xl) 10%; /* 좌우 패딩 10% */
-            }
-        }
-        
-        /* 큰 화면에서 더 큰 간격 */
-        @media (min-width: 1600px) {
-            .carousel-track {
-                gap: var(--space-3xl);
-                padding: var(--space-xl) 12%;
-            }
-        }
-        
-        /* 모바일/태블릿에서도 중앙 정렬 */
-        @media (max-width: 1024px) {
-            .carousel-track {
-                justify-content: flex-start; /* 모바일은 왼쪽 정렬 */
+                justify-content: flex-start;
+                padding: var(--space-lg) 0;
             }
         }
         
@@ -488,103 +429,80 @@
             display: none;
         }
         
-        /* PC (1025px 이상): 4-5개 표시 + 강화된 3D 효과 */
+        /* PC (1025px 이상): 카드 겹침 디자인 */
         .carousel-slide {
-            flex: 0 0 calc(20% - var(--space-md)); /* 5개 표시 */
-            scroll-snap-align: center; /* 중앙 정렬 */
-            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                        opacity 0.8s ease,
-                        filter 0.8s ease;
+            flex: 0 0 auto;
+            scroll-snap-align: center;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                        opacity 0.3s ease,
+                        z-index 0.3s ease;
             min-width: 0;
-            transform-style: preserve-3d;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-            will-change: transform, opacity;
+            will-change: transform;
+            position: relative;
         }
         
-        /* PC에서 강화된 3D 효과 적용 */
+        /* PC에서 카드 크기 및 겹침 효과 */
         @media (min-width: 1025px) {
             .carousel-slide {
-                opacity: 0.4; /* 더 어둡게 */
-                filter: blur(2px) brightness(0.7); /* 흐림 효과와 밝기 감소 */
-                transform: rotateY(60deg) translateZ(-250px) scale(0.7); /* 더 강한 3D 효과 */
+                width: 280px; /* 고정 너비 */
+                margin-right: -80px; /* 카드가 겹치도록 음수 마진 */
             }
             
             .carousel-slide.active {
-                opacity: 1;
-                filter: blur(0px) brightness(1); /* 선명하고 밝게 */
-                transform: rotateY(0deg) translateZ(0px) scale(1.15); /* 더 크게 */
-                z-index: 20; /* 더 높은 z-index */
-            }
-            
-            /* 활성 카드 근처 카드들 */
-            .carousel-slide.active ~ .carousel-slide:nth-child(2),
-            .carousel-slide.active ~ .carousel-slide:nth-child(3) {
-                opacity: 0.6;
-                filter: blur(1px) brightness(0.85);
-            }
-        }
-        
-        /* 모바일/태블릿에서는 기존 스타일 유지 */
-        @media (max-width: 1024px) {
-            .carousel-slide.active {
+                z-index: 10;
                 transform: scale(1.05);
+            }
+            
+            .carousel-slide:not(.active) {
+                opacity: 0.7;
+                transform: scale(0.95);
+            }
+            
+            .carousel-slide:hover {
+                z-index: 15;
+                transform: scale(1.08);
             }
         }
         
         /* 태블릿 (769px - 1024px): 3개 표시 */
         @media (min-width: 769px) and (max-width: 1024px) {
             .carousel-slide {
-                flex: 0 0 calc(33.333% - var(--space-md)); /* 3개 표시 */
+                flex: 0 0 calc(33.333% - var(--space-md));
+                margin-right: -40px; /* 약간 겹침 */
             }
             
-            .story-carousel-container {
-                padding: var(--space-md);
+            .carousel-slide.active {
+                transform: scale(1.05);
+                z-index: 5;
             }
         }
         
-        /* 모바일 (481px - 768px): 2개 표시, 최대 5개 렌더링 */
+        /* 모바일 (481px - 768px): 2개 표시 */
         @media (min-width: 481px) and (max-width: 768px) {
             .carousel-slide {
-                flex: 0 0 calc(50% - var(--space-md)); /* 2개 표시 */
+                flex: 0 0 calc(50% - var(--space-md));
+                margin-right: -30px; /* 약간 겹침 */
             }
             
-            .story-carousel-container {
-                padding: var(--space-md);
-            }
-            
-            .carousel-title {
-                font-size: var(--font-size-xl);
-            }
-            
-            /* 성능 최적화: GPU 가속 강제 */
-            .carousel-slide {
-                will-change: transform, opacity;
-                transform: translateZ(0);
-                backface-visibility: hidden;
-                -webkit-backface-visibility: hidden;
+            .carousel-slide.active {
+                transform: scale(1.05);
+                z-index: 5;
             }
         }
         
         /* 작은 모바일 (480px 이하): 1개 표시 */
         @media (max-width: 480px) {
             .carousel-slide {
-                flex: 0 0 85%; /* 1개 표시 (약간의 다음 카드 보임) */
+                flex: 0 0 85%;
+                margin-right: -20px; /* 약간 겹침 */
             }
             
-            .story-carousel-container {
-                padding: var(--space-sm);
-            }
-            
-            .carousel-title {
-                font-size: var(--font-size-lg);
-            }
-            
-            .carousel-header {
-                flex-direction: column;
-                align-items: flex-start;
+            .carousel-slide.active {
+                transform: scale(1.02);
+                z-index: 5;
             }
         }
+        
         
         .carousel-btn {
             position: absolute;
@@ -599,17 +517,23 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 10;
+            z-index: 20;
             font-size: 24px;
             color: var(--text-primary);
             transition: all var(--transition-base);
             box-shadow: var(--shadow-md);
+            backdrop-filter: blur(10px);
         }
         
         .carousel-btn:hover {
             background: var(--color-primary);
             color: var(--text-inverse);
             transform: translateY(-50%) scale(1.1);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .carousel-btn:active {
+            transform: translateY(-50%) scale(0.95);
         }
         
         .carousel-btn-prev {
@@ -621,7 +545,7 @@
         }
         
         /* 모바일에서 화살표 버튼 숨기기 (터치 스와이프 사용) */
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .carousel-btn {
                 display: none;
             }
@@ -651,42 +575,37 @@
         .story-card-carousel {
             position: relative;
             background: var(--bg-secondary);
-            border-radius: var(--border-radius-xl); /* 더 둥근 모서리 */
+            border-radius: var(--border-radius-lg);
             overflow: hidden;
             cursor: pointer;
-            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                        box-shadow 0.3s ease;
             aspect-ratio: 3 / 4;
-            transform-style: preserve-3d;
-            backface-visibility: hidden;
             box-shadow: var(--shadow-md);
-            /* 3D 카드 디자인 강화 */
+            width: 100%;
+            height: 100%;
         }
         
-        /* PC에서 강화된 카드 디자인 */
+        /* PC에서 카드 호버 효과 */
         @media (min-width: 1025px) {
             .story-card-carousel {
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3),
-                            0 0 0 1px rgba(255, 255, 255, 0.1) inset; /* 깊은 그림자와 테두리 */
-                border: 1px solid rgba(255, 255, 255, 0.1);
+                box-shadow: var(--shadow-md);
             }
             
             .story-card-carousel:hover {
-                transform: translateY(-8px) rotateX(5deg); /* 3D 호버 효과 */
-                box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4),
-                            0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+                transform: translateY(-4px);
+                box-shadow: var(--shadow-lg);
             }
             
             /* 활성 카드 강조 */
             .carousel-slide.active .story-card-carousel {
-                box-shadow: 0 25px 70px rgba(99, 102, 241, 0.4),
-                            0 0 40px rgba(99, 102, 241, 0.2),
-                            0 0 0 2px rgba(99, 102, 241, 0.3) inset; /* 글로우 효과 */
-                border-color: rgba(99, 102, 241, 0.5);
+                box-shadow: var(--shadow-xl);
+                border: 2px solid var(--color-primary);
             }
         }
         
         /* 모바일에서 호버 효과 제거 */
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .story-card-carousel:hover {
                 transform: none;
             }
