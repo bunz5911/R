@@ -495,7 +495,7 @@
                 position: relative;
             }
             
-            /* 중앙 선택 프레임 표시 */
+            /* 중앙 선택 프레임 표시 - 네 모서리 십자선 */
             .carousel-slide.active::before {
                 content: '';
                 position: absolute;
@@ -503,15 +503,37 @@
                 left: -4px;
                 right: -4px;
                 bottom: -4px;
-                border: 3px solid var(--color-primary);
-                border-radius: var(--border-radius-lg);
                 z-index: 11;
                 pointer-events: none;
+                /* 네 모서리 십자선 */
+                background-image: 
+                    /* 좌상단 십자선 */
+                    linear-gradient(to right, var(--color-primary) 0%, var(--color-primary) 20px, transparent 20px),
+                    linear-gradient(to bottom, var(--color-primary) 0%, var(--color-primary) 20px, transparent 20px),
+                    /* 우상단 십자선 */
+                    linear-gradient(to left, var(--color-primary) 0%, var(--color-primary) 20px, transparent 20px),
+                    linear-gradient(to bottom, var(--color-primary) 0%, var(--color-primary) 20px, transparent 20px),
+                    /* 좌하단 십자선 */
+                    linear-gradient(to right, var(--color-primary) 0%, var(--color-primary) 20px, transparent 20px),
+                    linear-gradient(to top, var(--color-primary) 0%, var(--color-primary) 20px, transparent 20px),
+                    /* 우하단 십자선 */
+                    linear-gradient(to left, var(--color-primary) 0%, var(--color-primary) 20px, transparent 20px),
+                    linear-gradient(to top, var(--color-primary) 0%, var(--color-primary) 20px, transparent 20px);
+                background-size: 
+                    20px 3px, 3px 20px, /* 좌상단 */
+                    20px 3px, 3px 20px, /* 우상단 */
+                    20px 3px, 3px 20px, /* 좌하단 */
+                    20px 3px, 3px 20px; /* 우하단 */
+                background-position: 
+                    top left, top left, /* 좌상단 */
+                    top right, top right, /* 우상단 */
+                    bottom left, bottom left, /* 좌하단 */
+                    bottom right, bottom right; /* 우하단 */
+                background-repeat: no-repeat;
                 box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
             }
             
             .carousel-slide.active .story-card-carousel {
-                border: 2px solid var(--color-primary);
                 box-shadow: 0 0 30px rgba(99, 102, 241, 0.6);
             }
             
@@ -539,7 +561,7 @@
                 position: relative;
             }
             
-            /* 태블릿에서도 중앙 선택 프레임 표시 */
+            /* 태블릿에서도 중앙 선택 프레임 표시 - 네 모서리 십자선 */
             @media (min-width: 769px) and (max-width: 1024px) {
                 .carousel-slide.active::before {
                     content: '';
@@ -548,10 +570,33 @@
                     left: -3px;
                     right: -3px;
                     bottom: -3px;
-                    border: 2px solid var(--color-primary);
-                    border-radius: var(--border-radius-md);
                     z-index: 6;
                     pointer-events: none;
+                    /* 네 모서리 십자선 */
+                    background-image: 
+                        /* 좌상단 십자선 */
+                        linear-gradient(to right, var(--color-primary) 0%, var(--color-primary) 15px, transparent 15px),
+                        linear-gradient(to bottom, var(--color-primary) 0%, var(--color-primary) 15px, transparent 15px),
+                        /* 우상단 십자선 */
+                        linear-gradient(to left, var(--color-primary) 0%, var(--color-primary) 15px, transparent 15px),
+                        linear-gradient(to bottom, var(--color-primary) 0%, var(--color-primary) 15px, transparent 15px),
+                        /* 좌하단 십자선 */
+                        linear-gradient(to right, var(--color-primary) 0%, var(--color-primary) 15px, transparent 15px),
+                        linear-gradient(to top, var(--color-primary) 0%, var(--color-primary) 15px, transparent 15px),
+                        /* 우하단 십자선 */
+                        linear-gradient(to left, var(--color-primary) 0%, var(--color-primary) 15px, transparent 15px),
+                        linear-gradient(to top, var(--color-primary) 0%, var(--color-primary) 15px, transparent 15px);
+                    background-size: 
+                        15px 2px, 2px 15px, /* 좌상단 */
+                        15px 2px, 2px 15px, /* 우상단 */
+                        15px 2px, 2px 15px, /* 좌하단 */
+                        15px 2px, 2px 15px; /* 우하단 */
+                    background-position: 
+                        top left, top left, /* 좌상단 */
+                        top right, top right, /* 우상단 */
+                        bottom left, bottom left, /* 좌하단 */
+                        bottom right, bottom right; /* 우하단 */
+                    background-repeat: no-repeat;
                     box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
                 }
             }
