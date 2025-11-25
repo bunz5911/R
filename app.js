@@ -962,11 +962,11 @@ function renderStoryCarousel(activeIndex = 0) {
         `;
     });
     
-    // 잠금 카드 추가 (플랜별)
+    // 잠금 카드 추가 (플랜별) - 지연 시간 없음 (자동 순환 안 함)
     if (lockedCount > 0) {
         const nextPlan = getNextPlan(userPlan);
         carouselHTML += `
-            <div class="carousel-slide locked-slide">
+            <div class="carousel-slide locked-slide" data-bs-interval="false">
                 <div class="story-card-carousel locked-card">
                     <div class="lock-content">
                         <div class="lock-icon">🔒</div>
