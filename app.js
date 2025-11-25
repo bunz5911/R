@@ -822,10 +822,11 @@ async function loadStories() {
         // 1. 학습 기록 로드 (로그인한 경우)
         await loadCompletedStories();
         
-        // 2. 레벨 테스트 확인 (첫 방문 시)
+        // 2. 레벨 테스트 확인 (첫 방문 시) - 로그인한 경우에만
         const storedLevelTest = localStorage.getItem('level_test_completed');
-        if (!storedLevelTest && isAuthenticated) {
+        if (!storedLevelTest && isAuthenticated && currentUserId && currentUserId !== '00000000-0000-0000-0000-000000000001') {
             // 레벨 테스트 모달 표시
+            console.log('📝 레벨 테스트 모달 표시');
             showLevelTestModal();
             return; // 테스트 완료 후 다시 로드
         }
@@ -834,9 +835,17 @@ async function loadStories() {
         const userPlan = currentUserPlan || 'free';
         currentStories = getFilteredAndSortedStories(currentLevel, userPlan);
         
-        // 4. 캐러셀 렌더링
-        renderStoryCarousel();
-        console.log('✅ 동화 목록 렌더링 완료:', currentStories.length, '개 (레벨:', currentLevel + ')');
+        // 4. 캐러셀 렌더링 (레벨 테스트가 없거나 완료된 경우)
+        if (currentStories.length > 0) {
+            renderStoryCarousel();
+            console.log('✅ 동화 목록 렌더링 완료:', currentStories.length, '개 (레벨:', currentLevel + ')');
+        } else {
+            console.warn('⚠️ 표시할 동화가 없습니다.');
+            const listEl = document.getElementById('storyList');
+            if (listEl) {
+                listEl.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-secondary);"><p>표시할 동화가 없습니다.</p></div>';
+            }
+        }
     } catch (error) {
         console.error('❌ 동화 목록 렌더링 실패:', error);
         const listEl = document.getElementById('storyList');
