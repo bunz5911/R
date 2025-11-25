@@ -956,11 +956,11 @@
         
         .locked-card {
             background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-quaternary) 100%);
-            min-height: 300px;
             display: flex;
             align-items: center;
             justify-content: center;
-            aspect-ratio: 3 / 4; /* 카드 비율 고정 */
+            width: 100%;
+            /* 일반 카드와 동일한 크기로 맞추기 위해 aspect-ratio와 min-height 제거 */
         }
         
         .lock-content {
