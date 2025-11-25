@@ -553,8 +553,13 @@
                 position: relative;
             }
             
-            /* 호버 시에도 십자선 표시 */
-            .carousel-slide:hover::before {
+            /* 호버 시 활성 카드의 십자선 숨기기 */
+            .carousel-slide.active:hover::before {
+                display: none;
+            }
+            
+            /* 호버 시에도 십자선 표시 (활성 카드가 아닌 경우) */
+            .carousel-slide:not(.active):hover::before {
                 content: '';
                 position: absolute;
                 top: -4px;
@@ -589,10 +594,6 @@
                     bottom right, bottom right; /* 우하단 */
                 background-repeat: no-repeat;
                 box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
-            }
-            
-            /* 활성 카드가 아닌 경우 호버 시에만 십자선 표시 */
-            .carousel-slide:not(.active):hover::before {
                 opacity: 0.8;
             }
         }
@@ -649,8 +650,13 @@
                     box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
                 }
                 
-                /* 태블릿 호버 시에도 십자선 표시 */
-                .carousel-slide:hover::before {
+                /* 태블릿 호버 시 활성 카드의 십자선 숨기기 */
+                .carousel-slide.active:hover::before {
+                    display: none;
+                }
+                
+                /* 태블릿 호버 시에도 십자선 표시 (활성 카드가 아닌 경우) */
+                .carousel-slide:not(.active):hover::before {
                     content: '';
                     position: absolute;
                     top: -3px;
@@ -685,10 +691,6 @@
                         bottom right, bottom right; /* 우하단 */
                     background-repeat: no-repeat;
                     box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
-                }
-                
-                /* 활성 카드가 아닌 경우 호버 시에만 십자선 표시 */
-                .carousel-slide:not(.active):hover::before {
                     opacity: 0.8;
                 }
             }
