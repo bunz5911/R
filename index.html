@@ -1126,6 +1126,30 @@
             justify-content: flex-start;
         }
         
+        /* story-list-view 내부 모든 요소 중앙 정렬 */
+        .story-list-view > * {
+            width: 100%;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* 레벨 선택 버튼 중앙 정렬 강화 */
+        .story-list-view .level-selector {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 100%;
+        }
+        
+        /* 캐러셀 컨테이너 중앙 정렬 강화 */
+        .story-list-view .story-carousel-container {
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
         /* PC에서 레이아웃 최적화 */
         @media (min-width: 1025px) {
             .story-list-view {
