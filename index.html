@@ -438,6 +438,20 @@
             box-sizing: border-box;
         }
         
+        /* 모바일에서 세로 그리드 레이아웃으로 전환 */
+        @media (max-width: 768px) {
+            .carousel-track {
+                flex-direction: column; /* 세로 배치 */
+                overflow-x: hidden;
+                overflow-y: auto;
+                scroll-snap-type: y mandatory; /* 세로 스냅 */
+                gap: var(--space-lg); /* 카드 간격 추가 */
+                padding: var(--space-md) 0;
+                padding-right: 0; /* 세로 스크롤에서는 오른쪽 패딩 불필요 */
+                max-height: 70vh; /* 최대 높이 제한 (스크롤 가능하도록) */
+            }
+        }
+        
         /* PC에서 트랙 스타일 - 중앙 정렬 */
         @media (min-width: 1025px) {
             .carousel-track {
@@ -503,29 +517,33 @@
             }
         }
         
-        /* 모바일 (481px - 768px): 2개 표시 - 최적화 */
+        /* 모바일 (481px - 768px): 세로 그리드 레이아웃 */
         @media (min-width: 481px) and (max-width: 768px) {
             .carousel-slide {
-                flex: 0 0 calc(55% - var(--space-md)); /* 50% → 55%로 증가 */
-                margin-right: -25px; /* 겹침 감소 */
+                flex: 0 0 auto; /* 세로 배치에서는 auto */
+                width: 100%; /* 전체 너비 사용 */
+                margin-right: 0; /* 겹침 제거 */
+                margin-bottom: 0; /* gap으로 간격 처리 */
             }
             
             .carousel-slide.active {
-                transform: scale(1.05);
-                z-index: 5;
+                transform: none; /* 세로 배치에서는 스케일 효과 제거 */
+                z-index: 1;
             }
         }
         
-        /* 작은 모바일 (480px 이하): 1개 표시 - 최적화 */
+        /* 작은 모바일 (480px 이하): 세로 그리드 레이아웃 */
         @media (max-width: 480px) {
             .carousel-slide {
-                flex: 0 0 90%; /* 85% → 90%로 증가 */
-                margin-right: -15px; /* 겹침 감소 */
+                flex: 0 0 auto; /* 세로 배치에서는 auto */
+                width: 100%; /* 전체 너비 사용 */
+                margin-right: 0; /* 겹침 제거 */
+                margin-bottom: 0; /* gap으로 간격 처리 */
             }
             
             .carousel-slide.active {
-                transform: scale(1.02);
-                z-index: 5;
+                transform: none; /* 세로 배치에서는 스케일 효과 제거 */
+                z-index: 1;
             }
         }
         
@@ -1134,6 +1152,11 @@
             
             .footer-address {
                 font-size: 8px; /* 8포인트 유지 */
+            }
+            
+            /* 모바일에서 인디케이터 숨기기 (세로 스크롤에서는 불필요) */
+            .carousel-indicators {
+                display: none !important;
             }
         }
         

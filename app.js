@@ -1098,7 +1098,7 @@ function renderStoryCarousel(activeIndex = 0) {
             }, 100);
         }
     } else {
-        // CSS 캐러셀 지원 시에도 모바일 터치 스와이프는 유지
+        // CSS 캐러셀 지원 시에도 모바일 스크롤 리스너는 유지
         if (window.innerWidth <= 1024) {
             setupCarouselScrollListener();
             // 모바일에서 초기 스크롤 위치 조정
@@ -1130,7 +1130,7 @@ function centerActiveCard() {
     });
 }
 
-// 모바일에서 캐러셀 초기 위치 조정 (더 보기 카드가 잘 보이도록)
+// 모바일에서 캐러셀 초기 위치 조정 (세로 그리드 레이아웃)
 function adjustMobileCarouselPosition() {
     const track = document.getElementById('carouselTrack');
     if (!track) {
@@ -1155,40 +1155,34 @@ function adjustMobileCarouselPosition() {
         return;
     }
     
-    console.log('📱 모바일 캐러셀 위치 조정 시작:', {
-        화면너비: window.innerWidth,
-        슬라이드수: slides.length,
-        활성인덱스: Array.from(slides).indexOf(activeSlide)
-    });
+    // 모바일은 세로 스크롤이므로 scrollTop 사용
+    const isMobile = window.innerWidth <= 768;
     
-    // 마지막 카드(더 보기 카드)가 잘 보이도록 약간 왼쪽으로 스크롤
-    // 활성 카드가 약간 왼쪽에 위치하도록 조정
-    const slideWidth = activeSlide.offsetWidth;
-    const viewportWidth = track.clientWidth;
-    const currentScrollLeft = track.scrollLeft;
-    
-    // 활성 카드가 화면 왼쪽에서 약 10% 위치에 오도록 조정
-    const targetScrollLeft = activeSlide.offsetLeft - (viewportWidth * 0.1);
-    
-    console.log('📱 스크롤 위치 조정:', {
-        현재스크롤: currentScrollLeft,
-        목표스크롤: Math.max(0, targetScrollLeft),
-        카드너비: slideWidth,
-        뷰포트너비: viewportWidth
-    });
-    
-    track.scrollTo({
-        left: Math.max(0, targetScrollLeft),
-        behavior: 'smooth'
-    });
-    
-    // 스크롤 완료 확인
-    setTimeout(() => {
-        console.log('✅ 모바일 캐러셀 위치 조정 완료:', {
-            최종스크롤: track.scrollLeft,
-            목표달성: Math.abs(track.scrollLeft - Math.max(0, targetScrollLeft)) < 10
+    if (isMobile) {
+        // 세로 그리드 레이아웃: 활성 카드를 상단에 배치
+        const targetScrollTop = activeSlide.offsetTop;
+        
+        console.log('📱 모바일 세로 캐러셀 위치 조정:', {
+            화면너비: window.innerWidth,
+            활성인덱스: Array.from(slides).indexOf(activeSlide),
+            목표스크롤: targetScrollTop
         });
-    }, 300);
+        
+        track.scrollTo({
+            top: targetScrollTop,
+            behavior: 'smooth'
+        });
+    } else {
+        // 태블릿은 기존 가로 스크롤 유지
+        const slideWidth = activeSlide.offsetWidth;
+        const viewportWidth = track.clientWidth;
+        const targetScrollLeft = activeSlide.offsetLeft - (viewportWidth * 0.1);
+        
+        track.scrollTo({
+            left: Math.max(0, targetScrollLeft),
+            behavior: 'smooth'
+        });
+    }
 }
 
 // 화면 크기 변경 시 중앙 정렬 유지
@@ -1208,41 +1202,88 @@ function setupCarouselScrollListener() {
     if (!track) return;
     
     let scrollTimeout;
-    let touchStartX = 0;
-    let touchEndX = 0;
+    const isMobile = window.innerWidth <= 768;
     
-    // 모바일 터치 이벤트
-    track.addEventListener('touchstart', (e) => {
-        touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
-    
-    track.addEventListener('touchend', (e) => {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-    }, { passive: true });
-    
-    function handleSwipe() {
-        const swipeThreshold = 50;
-        const diff = touchStartX - touchEndX;
+    if (isMobile) {
+        // 모바일: 세로 스크롤 - 네이티브 스크롤 사용, 터치 스와이프 제거
+        // 스크롤 이벤트로 활성 카드 업데이트만 수행
+        track.addEventListener('scroll', () => {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                updateActiveSlideOnScroll();
+            }, 100);
+        }, { passive: true });
+    } else {
+        // 태블릿: 가로 스크롤 - 기존 터치 스와이프 유지
+        let touchStartX = 0;
+        let touchEndX = 0;
         
-        if (Math.abs(diff) > swipeThreshold) {
-            if (diff > 0) {
-                // 왼쪽으로 스와이프 (다음 카드)
-                scrollCarousel(1);
-            } else {
-                // 오른쪽으로 스와이프 (이전 카드)
-                scrollCarousel(-1);
+        track.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+        
+        track.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+        
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    // 왼쪽으로 스와이프 (다음 카드)
+                    scrollCarousel(1);
+                } else {
+                    // 오른쪽으로 스와이프 (이전 카드)
+                    scrollCarousel(-1);
+                }
             }
         }
+        
+        // 스크롤 이벤트 (동적 카드 로딩)
+        track.addEventListener('scroll', () => {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                checkAndLoadMoreCards();
+            }, 100);
+        }, { passive: true });
     }
+}
+
+// 세로 스크롤 시 활성 슬라이드 업데이트 (모바일용)
+function updateActiveSlideOnScroll() {
+    const track = document.getElementById('carouselTrack');
+    if (!track || window.innerWidth > 768) return;
     
-    // 스크롤 이벤트 (동적 카드 로딩)
-    track.addEventListener('scroll', () => {
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => {
-            checkAndLoadMoreCards();
-        }, 100);
-    }, { passive: true });
+    const slides = track.querySelectorAll('.carousel-slide');
+    if (slides.length === 0) return;
+    
+    const trackRect = track.getBoundingClientRect();
+    const trackTop = trackRect.top;
+    const trackCenter = trackTop + (trackRect.height / 2);
+    
+    let closestSlide = null;
+    let closestDistance = Infinity;
+    
+    slides.forEach(slide => {
+        const slideRect = slide.getBoundingClientRect();
+        const slideCenter = slideRect.top + (slideRect.height / 2);
+        const distance = Math.abs(slideCenter - trackCenter);
+        
+        if (distance < closestDistance) {
+            closestDistance = distance;
+            closestSlide = slide;
+        }
+    });
+    
+    if (closestSlide) {
+        // 활성 슬라이드 업데이트
+        slides.forEach(slide => slide.classList.remove('active'));
+        closestSlide.classList.add('active');
+        updateCarouselIndicators();
+    }
 }
 
 // 스크롤 시 추가 카드 로드 확인
@@ -1367,45 +1408,65 @@ function scrollCarousel(direction) {
             return;
         }
         
-        // 모바일: 렌더링 범위 확인
-        const maxRendered = getMaxRenderedCards();
-        const needsRerender = maxRendered !== Infinity && 
-            (nextIndex < renderedCardRange.start || nextIndex >= renderedCardRange.end);
+        // 모바일/태블릿 처리
+        const isMobile = window.innerWidth <= 768;
         
-        if (needsRerender) {
-            // 범위를 벗어나면 다시 렌더링
-            renderStoryCarousel(nextIndex);
-            // 스크롤 위치 조정
-            setTimeout(() => {
-                const newSlides = track.querySelectorAll('.carousel-slide');
-                const newActiveSlide = track.querySelector(`[data-index="${nextIndex}"]`);
-                if (newActiveSlide) {
-                    const slideWidth = newActiveSlide.offsetWidth + 16;
-                    const slideIndex = Array.from(newSlides).indexOf(newActiveSlide);
-                    track.scrollTo({
-                        left: slideIndex * slideWidth,
-                        behavior: 'smooth'
-                    });
-                }
-                updateCarouselIndicators();
-            }, 50);
-        } else {
-            // 범위 내면 기존 카드만 업데이트
+        if (isMobile) {
+            // 모바일: 세로 그리드 레이아웃 - 세로 스크롤 사용
             activeSlide.classList.remove('active');
             const nextSlide = track.querySelector(`[data-index="${nextIndex}"]`);
             if (nextSlide) {
                 nextSlide.classList.add('active');
                 
-                // 스크롤 애니메이션
-                const slides = track.querySelectorAll('.carousel-slide');
-                const slideIndex = Array.from(slides).indexOf(nextSlide);
-                const slideWidth = nextSlide.offsetWidth + 16;
+                // 세로 스크롤로 해당 카드로 이동
                 track.scrollTo({
-                    left: slideIndex * slideWidth,
+                    top: nextSlide.offsetTop,
                     behavior: 'smooth'
                 });
                 
                 updateCarouselIndicators();
+            }
+        } else {
+            // 태블릿: 가로 스크롤 유지
+            const maxRendered = getMaxRenderedCards();
+            const needsRerender = maxRendered !== Infinity && 
+                (nextIndex < renderedCardRange.start || nextIndex >= renderedCardRange.end);
+            
+            if (needsRerender) {
+                // 범위를 벗어나면 다시 렌더링
+                renderStoryCarousel(nextIndex);
+                // 스크롤 위치 조정
+                setTimeout(() => {
+                    const newSlides = track.querySelectorAll('.carousel-slide');
+                    const newActiveSlide = track.querySelector(`[data-index="${nextIndex}"]`);
+                    if (newActiveSlide) {
+                        const slideWidth = newActiveSlide.offsetWidth + 16;
+                        const slideIndex = Array.from(newSlides).indexOf(newActiveSlide);
+                        track.scrollTo({
+                            left: slideIndex * slideWidth,
+                            behavior: 'smooth'
+                        });
+                    }
+                    updateCarouselIndicators();
+                }, 50);
+            } else {
+                // 범위 내면 기존 카드만 업데이트
+                activeSlide.classList.remove('active');
+                const nextSlide = track.querySelector(`[data-index="${nextIndex}"]`);
+                if (nextSlide) {
+                    nextSlide.classList.add('active');
+                    
+                    // 스크롤 애니메이션
+                    const slides = track.querySelectorAll('.carousel-slide');
+                    const slideIndex = Array.from(slides).indexOf(nextSlide);
+                    const slideWidth = nextSlide.offsetWidth + 16;
+                    track.scrollTo({
+                        left: slideIndex * slideWidth,
+                        behavior: 'smooth'
+                    });
+                    
+                    updateCarouselIndicators();
+                }
             }
         }
     }
