@@ -536,20 +536,20 @@
                 bottom: -4px;
                 z-index: 11;
                 pointer-events: none;
-                /* 네 모서리 십자선 - 밝고 빛나는 효과 */
+                /* 네 모서리 십자선 */
                 background-image: 
                     /* 좌상단 십자선 */
-                    linear-gradient(to right, #ffffff 0%, #60a5fa 20px, transparent 20px),
-                    linear-gradient(to bottom, #ffffff 0%, #60a5fa 20px, transparent 20px),
+                    linear-gradient(to right, var(--color-primary) 0%, var(--color-primary) 20px, transparent 20px),
+                    linear-gradient(to bottom, var(--color-primary) 0%, var(--color-primary) 20px, transparent 20px),
                     /* 우상단 십자선 */
-                    linear-gradient(to left, #ffffff 0%, #60a5fa 20px, transparent 20px),
-                    linear-gradient(to bottom, #ffffff 0%, #60a5fa 20px, transparent 20px),
+                    linear-gradient(to left, var(--color-primary) 0%, var(--color-primary) 20px, transparent 20px),
+                    linear-gradient(to bottom, var(--color-primary) 0%, var(--color-primary) 20px, transparent 20px),
                     /* 좌하단 십자선 */
-                    linear-gradient(to right, #ffffff 0%, #60a5fa 20px, transparent 20px),
-                    linear-gradient(to top, #ffffff 0%, #60a5fa 20px, transparent 20px),
+                    linear-gradient(to right, var(--color-primary) 0%, var(--color-primary) 20px, transparent 20px),
+                    linear-gradient(to top, var(--color-primary) 0%, var(--color-primary) 20px, transparent 20px),
                     /* 우하단 십자선 */
-                    linear-gradient(to left, #ffffff 0%, #60a5fa 20px, transparent 20px),
-                    linear-gradient(to top, #ffffff 0%, #60a5fa 20px, transparent 20px);
+                    linear-gradient(to left, var(--color-primary) 0%, var(--color-primary) 20px, transparent 20px),
+                    linear-gradient(to top, var(--color-primary) 0%, var(--color-primary) 20px, transparent 20px);
                 background-size: 
                     20px 3px, 3px 20px, /* 좌상단 */
                     20px 3px, 3px 20px, /* 우상단 */
@@ -561,13 +561,7 @@
                     bottom left, bottom left, /* 좌하단 */
                     bottom right, bottom right; /* 우하단 */
                 background-repeat: no-repeat;
-                /* 빛나는 효과 - 강한 글로우 */
-                box-shadow: 
-                    0 0 15px rgba(255, 255, 255, 0.9),
-                    0 0 30px rgba(96, 165, 250, 0.8),
-                    0 0 45px rgba(99, 102, 241, 0.6);
-                filter: drop-shadow(0 0 8px rgba(255, 255, 255, 1)) 
-                        drop-shadow(0 0 15px rgba(96, 165, 250, 0.9));
+                box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
             }
             
             .carousel-slide.active .story-card-carousel {
@@ -600,20 +594,20 @@
                 bottom: -4px;
                 z-index: 16;
                 pointer-events: none;
-                /* 네 모서리 십자선 - 밝고 빛나는 효과 */
+                /* 네 모서리 십자선 */
                 background-image: 
                     /* 좌상단 십자선 */
-                    linear-gradient(to right, #ffffff 0%, #60a5fa 20px, transparent 20px),
-                    linear-gradient(to bottom, #ffffff 0%, #60a5fa 20px, transparent 20px),
+                    linear-gradient(to right, var(--color-primary) 0%, var(--color-primary) 20px, transparent 20px),
+                    linear-gradient(to bottom, var(--color-primary) 0%, var(--color-primary) 20px, transparent 20px),
                     /* 우상단 십자선 */
-                    linear-gradient(to left, #ffffff 0%, #60a5fa 20px, transparent 20px),
-                    linear-gradient(to bottom, #ffffff 0%, #60a5fa 20px, transparent 20px),
+                    linear-gradient(to left, var(--color-primary) 0%, var(--color-primary) 20px, transparent 20px),
+                    linear-gradient(to bottom, var(--color-primary) 0%, var(--color-primary) 20px, transparent 20px),
                     /* 좌하단 십자선 */
-                    linear-gradient(to right, #ffffff 0%, #60a5fa 20px, transparent 20px),
-                    linear-gradient(to top, #ffffff 0%, #60a5fa 20px, transparent 20px),
+                    linear-gradient(to right, var(--color-primary) 0%, var(--color-primary) 20px, transparent 20px),
+                    linear-gradient(to top, var(--color-primary) 0%, var(--color-primary) 20px, transparent 20px),
                     /* 우하단 십자선 */
-                    linear-gradient(to left, #ffffff 0%, #60a5fa 20px, transparent 20px),
-                    linear-gradient(to top, #ffffff 0%, #60a5fa 20px, transparent 20px);
+                    linear-gradient(to left, var(--color-primary) 0%, var(--color-primary) 20px, transparent 20px),
+                    linear-gradient(to top, var(--color-primary) 0%, var(--color-primary) 20px, transparent 20px);
                 background-size: 
                     20px 3px, 3px 20px, /* 좌상단 */
                     20px 3px, 3px 20px, /* 우상단 */
@@ -625,14 +619,8 @@
                     bottom left, bottom left, /* 좌하단 */
                     bottom right, bottom right; /* 우하단 */
                 background-repeat: no-repeat;
-                /* 빛나는 효과 - 강한 글로우 */
-                box-shadow: 
-                    0 0 15px rgba(255, 255, 255, 0.9),
-                    0 0 30px rgba(96, 165, 250, 0.8),
-                    0 0 45px rgba(99, 102, 241, 0.6);
-                filter: drop-shadow(0 0 8px rgba(255, 255, 255, 1)) 
-                        drop-shadow(0 0 15px rgba(96, 165, 250, 0.9));
-                opacity: 0.8;
+                box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+                transition: opacity var(--transition-base);
             }
         }
         
