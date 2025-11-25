@@ -352,6 +352,8 @@
         /* 캐러셀 스타일 */
         .story-carousel-container {
             width: 100%;
+            max-width: 1400px; /* PC 최대 너비 제한 */
+            margin: 0 auto; /* 중앙 정렬 */
             padding: var(--space-lg);
         }
         
@@ -360,6 +362,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: var(--space-lg);
+            flex-wrap: wrap; /* 작은 화면에서 줄바꿈 */
+            gap: var(--space-sm);
         }
         
         .carousel-title {
@@ -374,6 +378,7 @@
             gap: var(--space-md);
             font-size: var(--font-size-sm);
             color: var(--text-secondary);
+            flex-wrap: wrap; /* 작은 화면에서 줄바꿈 */
         }
         
         .carousel-wrapper {
@@ -397,25 +402,61 @@
             display: none;
         }
         
+        /* PC (1025px 이상): 4-5개 표시 */
         .carousel-slide {
-            flex: 0 0 calc(33.333% - var(--space-md));
+            flex: 0 0 calc(20% - var(--space-md)); /* 5개 표시 */
             scroll-snap-align: start;
             transition: transform 0.3s ease;
+            min-width: 0; /* flex 아이템 축소 허용 */
         }
         
         .carousel-slide.active {
             transform: scale(1.05);
         }
         
-        @media (max-width: 768px) {
+        /* 태블릿 (769px - 1024px): 3개 표시 */
+        @media (min-width: 769px) and (max-width: 1024px) {
             .carousel-slide {
-                flex: 0 0 calc(50% - var(--space-md));
+                flex: 0 0 calc(33.333% - var(--space-md)); /* 3개 표시 */
+            }
+            
+            .story-carousel-container {
+                padding: var(--space-md);
             }
         }
         
+        /* 모바일 (481px - 768px): 2개 표시 */
+        @media (min-width: 481px) and (max-width: 768px) {
+            .carousel-slide {
+                flex: 0 0 calc(50% - var(--space-md)); /* 2개 표시 */
+            }
+            
+            .story-carousel-container {
+                padding: var(--space-md);
+            }
+            
+            .carousel-title {
+                font-size: var(--font-size-xl);
+            }
+        }
+        
+        /* 작은 모바일 (480px 이하): 1개 표시 */
         @media (max-width: 480px) {
             .carousel-slide {
-                flex: 0 0 85%;
+                flex: 0 0 85%; /* 1개 표시 (약간의 다음 카드 보임) */
+            }
+            
+            .story-carousel-container {
+                padding: var(--space-sm);
+            }
+            
+            .carousel-title {
+                font-size: var(--font-size-lg);
+            }
+            
+            .carousel-header {
+                flex-direction: column;
+                align-items: flex-start;
             }
         }
         
@@ -453,6 +494,13 @@
             right: var(--space-md);
         }
         
+        /* 모바일에서 화살표 버튼 숨기기 (터치 스와이프 사용) */
+        @media (max-width: 768px) {
+            .carousel-btn {
+                display: none;
+            }
+        }
+        
         .carousel-indicators {
             display: flex;
             justify-content: center;
@@ -482,11 +530,19 @@
             box-shadow: var(--shadow-md);
             cursor: pointer;
             transition: all var(--transition-base);
+            aspect-ratio: 3 / 4; /* 카드 비율 고정 */
         }
         
         .story-card-carousel:hover {
             transform: translateY(-4px);
             box-shadow: var(--shadow-lg);
+        }
+        
+        /* 모바일에서 호버 효과 제거 */
+        @media (max-width: 768px) {
+            .story-card-carousel:hover {
+                transform: none;
+            }
         }
         
         .completed-badge {
@@ -635,6 +691,8 @@
             padding-bottom: var(--space-3xl);
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+            max-width: 1400px; /* PC 최대 너비 제한 */
+            margin: 0 auto; /* 중앙 정렬 */
         }
         
         #storyList {
@@ -644,19 +702,34 @@
             padding-top: var(--space-md);
         }
         
-        /* Tablet: 2열 */
-        @media (min-width: 769px) {
+        /* 태블릿: 2열 */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .story-list-view {
+                padding: var(--space-md);
+            }
+            
             #storyList {
                 grid-template-columns: repeat(2, 1fr);
-                gap: var(--space-lg);
+                gap: var(--space-md);
             }
         }
         
-        /* Desktop: 3열 */
+        /* PC: 3-4열 (화면 크기에 따라) */
         @media (min-width: 1025px) {
+            .story-list-view {
+                padding: var(--space-xl);
+            }
+            
             #storyList {
                 grid-template-columns: repeat(3, 1fr);
                 gap: var(--space-xl);
+            }
+        }
+        
+        /* 큰 PC 화면: 4열 */
+        @media (min-width: 1400px) {
+            #storyList {
+                grid-template-columns: repeat(4, 1fr);
             }
         }
 
