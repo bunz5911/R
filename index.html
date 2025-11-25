@@ -1259,6 +1259,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: var(--space-lg); /* 기본 패딩 추가 */
+            box-sizing: border-box;
         }
         
         /* lock-content는 위에서 absolute로 재정의됨 */
@@ -1285,12 +1287,15 @@
             font-size: var(--font-size-xl);
             margin-bottom: var(--space-sm);
             color: var(--text-primary);
+            text-align: center;
         }
         
         .lock-content p {
             font-size: var(--font-size-sm);
             color: var(--text-secondary);
             margin-bottom: var(--space-lg);
+            text-align: center;
+            line-height: 1.5;
         }
         
         .upgrade-btn-carousel {
@@ -1305,11 +1310,68 @@
             transition: all var(--transition-base);
             width: 100%;
             max-width: 200px;
+            white-space: nowrap;
         }
         
         .upgrade-btn-carousel:hover {
             background: var(--color-primary-dark);
             transform: scale(1.05);
+        }
+        
+        /* 태블릿에서 잠금 카드 스타일 */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .lock-content {
+                padding: var(--space-lg) var(--space-xl); /* 태블릿 패딩 추가 */
+            }
+            
+            .lock-icon {
+                font-size: 40px;
+                margin-bottom: var(--space-md);
+            }
+            
+            .lock-content h3 {
+                font-size: var(--font-size-lg);
+                margin-bottom: var(--space-sm);
+            }
+            
+            .lock-content p {
+                font-size: var(--font-size-sm);
+                margin-bottom: var(--space-lg);
+            }
+            
+            .upgrade-btn-carousel {
+                padding: var(--space-sm) var(--space-md);
+                font-size: var(--font-size-sm);
+                max-width: 180px;
+            }
+        }
+        
+        /* PC에서 잠금 카드 스타일 */
+        @media (min-width: 1025px) {
+            .lock-content {
+                padding: var(--space-xl); /* PC 패딩 추가 */
+            }
+            
+            .lock-icon {
+                font-size: 48px;
+                margin-bottom: var(--space-md);
+            }
+            
+            .lock-content h3 {
+                font-size: var(--font-size-xl);
+                margin-bottom: var(--space-sm);
+            }
+            
+            .lock-content p {
+                font-size: var(--font-size-base);
+                margin-bottom: var(--space-lg);
+            }
+            
+            .upgrade-btn-carousel {
+                padding: var(--space-md) var(--space-lg);
+                font-size: var(--font-size-base);
+                max-width: 200px;
+            }
         }
         
         /* 모바일에서 잠금 카드 크기 조정 */
