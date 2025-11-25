@@ -148,12 +148,6 @@ function updateUI() {
         backButton.textContent = `← ${t('buttons.backToStoryList')}`;
     }
     
-    // 동화 목록 로딩 메시지 업데이트
-    const storyListLoading = document.querySelector('#storyList.loading p');
-    if (storyListLoading) {
-        storyListLoading.textContent = t('messages.loadingStoryList');
-    }
-    
     // currentLevel은 원래 값 유지 (초급/중급/고급), 표시할 때만 번역
     // currentLevel 변수는 그대로 두고, 렌더링할 때만 번역된 값 사용
     
