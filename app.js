@@ -282,6 +282,8 @@ let completedStoryIds = [];  // 사용자가 학습한 동화 ID 목록
 let recommendedLevel = null;  // AI 추천 레벨
 let hasTakenLevelTest = false;  // 레벨 테스트 완료 여부
 let renderedCardRange = { start: 0, end: 0 };  // 현재 렌더링된 카드 범위
+let carouselVisitedIndices = new Set();  // 캐러셀에서 방문한 인덱스 추적 (무한 루프용)
+let allCarouselStories = [];  // 전체 캐러셀 스토리 목록 (유료 사용자용)
 
 // 플랜별 최대 표시 개수
 const MAX_VISIBLE_STORIES = {
@@ -782,31 +784,25 @@ async function loadCompletedStories() {
 
 // 레벨별 동화 필터링 및 정렬
 function getFilteredAndSortedStories(level, userPlan) {
-    // 1. 레벨 필터링
-    const levelFiltered = PRELOADED_STORIES.filter(story => story.level === level);
+    // 무료 사용자: 0, 1번만 반환
+    if (userPlan === 'free') {
+        const freeStories = PRELOADED_STORIES.filter(story => story.id === 0 || story.id === 1);
+        return freeStories;
+    }
     
-    // 2. 학습한 동화와 안 한 동화 분리
-    const completed = levelFiltered.filter(story => completedStoryIds.includes(story.id));
-    const notCompleted = levelFiltered.filter(story => !completedStoryIds.includes(story.id));
+    // 유료 사용자 (pro/premier): 전체 51개 반환
+    // 학습한 동화와 안 한 동화 분리
+    const allStories = [...PRELOADED_STORIES];
+    const completed = allStories.filter(story => completedStoryIds.includes(story.id));
+    const notCompleted = allStories.filter(story => !completedStoryIds.includes(story.id));
     
-    // 3. 학습한 동화는 최근 학습 순으로 정렬 (나중에 구현 가능)
-    // const sortedCompleted = completed.sort((a, b) => {
-    //     const aIndex = completedStoryIds.indexOf(a.id);
-    //     const bIndex = completedStoryIds.indexOf(b.id);
-    //     return aIndex - bIndex;
-    // });
-    
-    // 4. 안 한 동화는 랜덤 셔플
+    // 안 한 동화는 랜덤 셔플
     const shuffledNotCompleted = shuffleArray([...notCompleted]);
     
-    // 5. 학습한 동화 상단 + 안 한 동화
+    // 학습한 동화 상단 + 안 한 동화
     const combined = [...completed, ...shuffledNotCompleted];
     
-    // 6. 플랜별 개수 제한
-    const maxVisible = MAX_VISIBLE_STORIES[userPlan] || MAX_VISIBLE_STORIES.free;
-    const visible = combined.slice(0, maxVisible);
-    
-    return visible;
+    return combined;
 }
 
 // 배열 셔플 함수
@@ -837,12 +833,21 @@ async function loadStories() {
         const userPlan = currentUserPlan || 'free';
         currentStories = getFilteredAndSortedStories(currentLevel, userPlan);
         
+        // 유료 사용자의 경우 전체 스토리 목록 저장 (무한 루프용)
+        if (userPlan !== 'free') {
+            allCarouselStories = PRELOADED_STORIES;
+            carouselVisitedIndices.clear(); // 방문 기록 초기화
+        } else {
+            allCarouselStories = [];
+        }
+        
         console.log('📚 동화 필터링 결과:', {
             레벨: currentLevel,
             플랜: userPlan,
             필터링된_동화수: currentStories.length,
             전체_동화수: PRELOADED_STORIES.length,
-            레벨별_동화수: PRELOADED_STORIES.filter(s => s.level === currentLevel).length
+            레벨별_동화수: PRELOADED_STORIES.filter(s => s.level === currentLevel).length,
+            전체_캐러셀_스토리수: allCarouselStories.length
         });
         
         // 4. 캐러셀 렌더링 (레벨 테스트가 없거나 완료된 경우)
@@ -926,19 +931,40 @@ function renderStoryCarousel(activeIndex = 0) {
     if (!listEl) return;
     
     const userPlan = currentUserPlan || 'free';
-    const maxVisible = MAX_VISIBLE_STORIES[userPlan] || MAX_VISIBLE_STORIES.free;
-    const totalInLevel = PRELOADED_STORIES.filter(s => s.level === currentLevel).length;
-    const lockedCount = totalInLevel - currentStories.length;
+    
+    // 유료 사용자의 경우 lock된 카드도 포함하여 전체 렌더링
+    let storiesToRender = [];
+    let lockedStories = [];
+    
+    if (userPlan === 'free') {
+        // 무료: 0, 1번만 표시
+        storiesToRender = currentStories;
+    } else {
+        // 유료: 전체 51개 표시하되 lock 상태 표시
+        const allStories = PRELOADED_STORIES;
+        const proLimit = userPlan === 'pro' ? 15 : 30;
+        
+        allStories.forEach(story => {
+            if (story.id <= proLimit) {
+                storiesToRender.push({ ...story, isLocked: false });
+            } else {
+                lockedStories.push({ ...story, isLocked: true });
+            }
+        });
+        
+        // lock된 카드도 캐러셀에 포함
+        storiesToRender = [...storiesToRender, ...lockedStories];
+    }
     
     // CSS 캐러셀 지원 여부 확인
     const supportsCSS = supportsCSSScrollButtons();
     
-    // 렌더링할 카드 범위 계산
-    const renderRange = getRenderRange(activeIndex, currentStories.length);
+    // 렌더링할 카드 범위 계산 (유료 사용자는 전체 렌더링)
+    const renderRange = getRenderRange(activeIndex, storiesToRender.length);
     renderedCardRange = renderRange;
     
     // 렌더링할 카드만 추출
-    const cardsToRender = currentStories.slice(renderRange.start, renderRange.end);
+    const cardsToRender = storiesToRender.slice(renderRange.start, renderRange.end);
     
     console.log(`📱 렌더링 범위: ${renderRange.start}-${renderRange.end} (총 ${cardsToRender.length}개, 활성: ${activeIndex})`);
     if (supportsCSS) {
@@ -952,8 +978,7 @@ function renderStoryCarousel(activeIndex = 0) {
             <div class="carousel-header">
                 <h2 class="carousel-title">${currentLevel} 레벨 동화</h2>
                 <div class="carousel-info">
-                    <span class="story-count">${currentStories.length}개 표시</span>
-                    ${lockedCount > 0 ? `<span class="locked-count">🔒 ${lockedCount}개 더 보기</span>` : ''}
+                    <span class="story-count">${storiesToRender.length}개 표시</span>
                 </div>
             </div>
             <div id="${carouselId}" class="carousel-wrapper" data-bs-ride="false">
@@ -972,42 +997,67 @@ function renderStoryCarousel(activeIndex = 0) {
         const isActive = actualIndex === activeIndex;
         const isCompleted = completedStoryIds.includes(story.id);
         const completedBadge = isCompleted ? '<div class="completed-badge">✓ 학습함</div>' : '';
+        const isLocked = story.isLocked || false;
         
         // Bootstrap 독립 지연 시간: 첫 번째 카드는 10초, 나머지는 2초
         const interval = actualIndex === 0 ? '10000' : '2000';
         
+        // lock된 카드 클릭 처리
+        const onClickHandler = isLocked ? 'showSeason2Modal()' : `checkStoryAccess(${story.id})`;
+        
         // CSS 캐러셀을 위해 id 추가, Bootstrap data-bs-interval 추가
-        carouselHTML += `
-            <div class="carousel-slide ${isActive ? 'active' : ''}" 
-                 data-story-id="${story.id}" 
-                 data-index="${actualIndex}"
-                 data-bs-interval="${interval}"
-                 id="story-${story.id}">
-                <div class="story-card-carousel" onclick="checkStoryAccess(${story.id})">
-                    ${completedBadge}
-                    <div class="story-card-image">
-                        <img src="${story.image}" alt="${story.title}" onerror="this.style.display='none'">
-                        <div class="story-card-overlay">
-                            <div class="story-card-number">${story.id}</div>
-                            <h3 class="story-card-title-overlay">${story.title}</h3>
+        if (isLocked) {
+            // Lock 카드 (Season 2)
+            carouselHTML += `
+                <div class="carousel-slide ${isActive ? 'active' : ''} locked-slide" 
+                     data-story-id="${story.id}" 
+                     data-index="${actualIndex}"
+                     data-bs-interval="${interval}"
+                     id="story-${story.id}">
+                    <div class="story-card-carousel locked-card" onclick="${onClickHandler}">
+                        <div class="story-card-image">
+                            <img src="${story.image}" alt="${story.title}" onerror="this.style.display='none'" style="opacity: 0.5;">
+                            <div class="story-card-overlay">
+                                <h3 class="story-card-title-overlay">${story.title}</h3>
+                                <div class="lock-badge">🔒 Season 2</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        `;
+            `;
+        } else {
+            // 일반 카드 (숫자 제거)
+            carouselHTML += `
+                <div class="carousel-slide ${isActive ? 'active' : ''}" 
+                     data-story-id="${story.id}" 
+                     data-index="${actualIndex}"
+                     data-bs-interval="${interval}"
+                     id="story-${story.id}">
+                    <div class="story-card-carousel" onclick="${onClickHandler}">
+                        ${completedBadge}
+                        <div class="story-card-image">
+                            <img src="${story.image}" alt="${story.title}" onerror="this.style.display='none'">
+                            <div class="story-card-overlay">
+                                <h3 class="story-card-title-overlay">${story.title}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
     });
     
-    // 잠금 카드 추가 (플랜별) - 지연 시간 없음 (자동 순환 안 함)
-    if (lockedCount > 0) {
-        const nextPlan = getNextPlan(userPlan);
+    // 무료 사용자: "다른 스토리 더 보기" 카드 추가
+    if (userPlan === 'free' && currentStories.length < PRELOADED_STORIES.length) {
+        const remainingCount = PRELOADED_STORIES.length - currentStories.length;
         carouselHTML += `
             <div class="carousel-slide locked-slide" data-bs-interval="false">
                 <div class="story-card-carousel locked-card">
                     <div class="lock-content">
                         <div class="lock-icon">🔒</div>
-                        <h3>${lockedCount}개 더 보기</h3>
-                        <p>${nextPlan ? `${nextPlan.toUpperCase()} 구독으로 더 많은 동화를 보세요!` : '시즌 2에서 더 많은 동화를 만나보세요!'}</p>
-                        ${nextPlan ? `<button class="upgrade-btn-carousel" onclick="showUpgradeModal('${nextPlan}')">구독하기</button>` : ''}
+                        <h3>다른 스토리 더 보기</h3>
+                        <p>PRO 또는 PREMIER 구독으로 더 많은 동화를 보세요!</p>
+                        <button class="upgrade-btn-carousel" onclick="showUpgradeModal('pro')">구독하기</button>
                     </div>
                 </div>
             </div>
@@ -1142,16 +1192,20 @@ function checkAndLoadMoreCards() {
     const activeIndex = parseInt(activeSlide.dataset.index) || 0;
     const currentRange = renderedCardRange;
     
+    // 전체 스토리 수 가져오기
+    const userPlan = currentUserPlan || 'free';
+    const totalStories = userPlan !== 'free' ? allCarouselStories.length : currentStories.length;
+    
     // 활성 카드가 범위 끝에 가까우면 확장
     const threshold = 1; // 범위 끝에서 1개 남았을 때
     const needsExpandRight = activeIndex >= currentRange.end - threshold && 
-                             currentRange.end < currentStories.length;
+                             currentRange.end < totalStories;
     const needsExpandLeft = activeIndex <= currentRange.start + threshold && 
                             currentRange.start > 0;
     
     if (needsExpandRight || needsExpandLeft) {
         // 범위 재계산 및 재렌더링
-        const newRange = getRenderRange(activeIndex, currentStories.length);
+        const newRange = getRenderRange(activeIndex, totalStories);
         if (newRange.start !== currentRange.start || newRange.end !== currentRange.end) {
             renderStoryCarousel(activeIndex);
         }
