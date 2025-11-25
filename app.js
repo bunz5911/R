@@ -1087,6 +1087,10 @@ function renderStoryCarousel(activeIndex = 0) {
         // 스크롤 이벤트 리스너 추가 (동적 로딩용 - 모바일만)
         if (window.innerWidth <= 1024) {
             setupCarouselScrollListener();
+            // 모바일에서 초기 스크롤 위치 조정 (더 보기 카드가 잘 보이도록)
+            setTimeout(() => {
+                adjustMobileCarouselPosition();
+            }, 150);
         }
         
         // PC에서 중앙 정렬
@@ -1099,6 +1103,10 @@ function renderStoryCarousel(activeIndex = 0) {
         // CSS 캐러셀 지원 시에도 모바일 터치 스와이프는 유지
         if (window.innerWidth <= 1024) {
             setupCarouselScrollListener();
+            // 모바일에서 초기 스크롤 위치 조정
+            setTimeout(() => {
+                adjustMobileCarouselPosition();
+            }, 150);
         }
     }
 }
@@ -1120,6 +1128,34 @@ function centerActiveCard() {
     
     track.scrollTo({
         left: Math.max(0, scrollLeft), // 음수 방지
+        behavior: 'smooth'
+    });
+}
+
+// 모바일에서 캐러셀 초기 위치 조정 (더 보기 카드가 잘 보이도록)
+function adjustMobileCarouselPosition() {
+    const track = document.getElementById('carouselTrack');
+    if (!track || window.innerWidth > 1024) return;
+    
+    const slides = track.querySelectorAll('.carousel-slide');
+    if (slides.length === 0) return;
+    
+    const activeSlide = track.querySelector('.carousel-slide.active');
+    if (!activeSlide) return;
+    
+    const activeIndex = Array.from(slides).indexOf(activeSlide);
+    const totalSlides = slides.length;
+    
+    // 마지막 카드(더 보기 카드)가 잘 보이도록 약간 왼쪽으로 스크롤
+    // 활성 카드가 약간 왼쪽에 위치하도록 조정
+    const slideWidth = activeSlide.offsetWidth;
+    const viewportWidth = track.clientWidth;
+    
+    // 활성 카드가 화면 왼쪽에서 약 10% 위치에 오도록 조정
+    const targetScrollLeft = activeSlide.offsetLeft - (viewportWidth * 0.1);
+    
+    track.scrollTo({
+        left: Math.max(0, targetScrollLeft),
         behavior: 'smooth'
     });
 }

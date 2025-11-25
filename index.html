@@ -433,6 +433,7 @@
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
             padding: var(--space-md) 0;
+            padding-right: var(--space-xl); /* 마지막 카드가 잘 보이도록 오른쪽 여백 추가 */
             box-sizing: border-box;
         }
         
@@ -501,11 +502,11 @@
             }
         }
         
-        /* 모바일 (481px - 768px): 2개 표시 */
+        /* 모바일 (481px - 768px): 2개 표시 - 최적화 */
         @media (min-width: 481px) and (max-width: 768px) {
             .carousel-slide {
-                flex: 0 0 calc(50% - var(--space-md));
-                margin-right: -30px; /* 약간 겹침 */
+                flex: 0 0 calc(55% - var(--space-md)); /* 50% → 55%로 증가 */
+                margin-right: -25px; /* 겹침 감소 */
             }
             
             .carousel-slide.active {
@@ -514,11 +515,11 @@
             }
         }
         
-        /* 작은 모바일 (480px 이하): 1개 표시 */
+        /* 작은 모바일 (480px 이하): 1개 표시 - 최적화 */
         @media (max-width: 480px) {
             .carousel-slide {
-                flex: 0 0 85%;
-                margin-right: -20px; /* 약간 겹침 */
+                flex: 0 0 90%; /* 85% → 90%로 증가 */
+                margin-right: -15px; /* 겹침 감소 */
             }
             
             .carousel-slide.active {
