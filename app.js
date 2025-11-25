@@ -4398,7 +4398,7 @@ async function playFullStoryAudio(storyId, buttonElement) {
         console.log(`📊 전체 텍스트 길이: ${totalLength}자`);
         
         // 하이라이트 및 스크롤 시작 (문단별 길이 비율 사용)
-        startFullStoryHighlight(audioDuration, paragraphLengths, totalLength);
+        startFullStoryHighlight(audioDuration, paragraphLengths, totalLength, paragraphs);
     }, { once: true });
     
     // 재생 시작
@@ -4429,63 +4429,107 @@ async function playFullStoryAudio(storyId, buttonElement) {
 
 // 전체 이야기 하이라이트 및 스크롤 관리
 let fullStoryHighlightInterval = null;
+let fullStoryTimeUpdateHandler = null;
 let paragraphTimings = []; // 문단별 시작 시간 저장
 let currentHighlightedIndex = -1; // 현재 하이라이트된 문단 인덱스 추적
 
-function startFullStoryHighlight(audioDuration, paragraphLengths, totalLength) {
-    // 기존 인터벌 정리
+function startFullStoryHighlight(audioDuration, paragraphLengths, totalLength, paragraphs) {
+    // 기존 인터벌 및 이벤트 리스너 정리
     if (fullStoryHighlightInterval) {
         clearInterval(fullStoryHighlightInterval);
+        fullStoryHighlightInterval = null;
+    }
+    if (fullStoryTimeUpdateHandler) {
+        fullStoryAudio.removeEventListener('timeupdate', fullStoryTimeUpdateHandler);
+        fullStoryTimeUpdateHandler = null;
     }
     
-    // 문단별 시작 시간 계산 (텍스트 길이 비율 기반)
+    // 문단별 시작 시간 계산 (텍스트 길이 비율 기반, 더 정확한 계산)
     paragraphTimings = [];
     let accumulatedTime = 0;
     
+    // 문단별로 실제 텍스트 길이와 단어 수를 고려하여 더 정확한 시간 계산
     paragraphLengths.forEach((length, index) => {
+        // 텍스트 길이 비율
         const paragraphRatio = length / totalLength;
-        const paragraphDuration = audioDuration * paragraphRatio;
+        
+        // 문단의 실제 단어 수도 고려 (한글은 보통 더 천천히 읽힘)
+        const paragraphText = paragraphs[index].trim();
+        const wordCount = paragraphText.split(/\s+/).length;
+        const charCount = paragraphText.replace(/\s/g, '').length;
+        
+        // 단어 수와 문자 수를 모두 고려한 가중치 계산
+        // 한글은 보통 초당 3-4자 정도 읽히지만, 문장부호와 공백을 고려
+        const avgReadingSpeed = 3.5; // 초당 평균 읽기 속도 (자/초)
+        const estimatedDuration = charCount / avgReadingSpeed;
+        
+        // 텍스트 길이 비율과 실제 읽기 시간 추정을 결합
+        const ratioBasedDuration = audioDuration * paragraphRatio;
+        const estimatedBasedDuration = estimatedDuration;
+        
+        // 두 방법의 평균을 사용하되, 비율 기반에 더 가중치를 둠 (실제 오디오 길이에 맞춤)
+        const paragraphDuration = (ratioBasedDuration * 0.7) + (estimatedBasedDuration * 0.3);
         
         paragraphTimings.push({
             startTime: accumulatedTime,
             endTime: accumulatedTime + paragraphDuration,
-            index: index
+            index: index,
+            duration: paragraphDuration
         });
         
         accumulatedTime += paragraphDuration;
     });
     
+    // 마지막 문단의 끝 시간을 오디오 전체 길이에 맞춤 (누적 오차 보정)
+    if (paragraphTimings.length > 0) {
+        const lastTiming = paragraphTimings[paragraphTimings.length - 1];
+        const timeDifference = audioDuration - lastTiming.endTime;
+        // 마지막 문단의 시간을 조정하여 전체 오디오 길이에 맞춤
+        lastTiming.endTime = audioDuration;
+        lastTiming.duration += timeDifference;
+    }
+    
     console.log(`🎯 하이라이트 시작: 총 ${paragraphLengths.length}개 문단`);
     console.log(`📊 문단별 시간 구간:`, paragraphTimings.map(t => 
-        `문단${t.index}: ${t.startTime.toFixed(2)}초 ~ ${t.endTime.toFixed(2)}초`
+        `문단${t.index}: ${t.startTime.toFixed(2)}초 ~ ${t.endTime.toFixed(2)}초 (${t.duration.toFixed(2)}초)`
     ));
     
     // 현재 하이라이트된 문단 인덱스 초기화
     currentHighlightedIndex = -1;
     
-    // 0.1초마다 현재 재생 위치 확인 및 하이라이트 업데이트
-    fullStoryHighlightInterval = setInterval(() => {
+    // 오디오의 timeupdate 이벤트를 사용하여 더 정확한 타이밍으로 업데이트
+    fullStoryTimeUpdateHandler = () => {
         if (!fullStoryAudio || fullStoryAudio.paused) {
             return;
         }
         
         const currentTime = fullStoryAudio.currentTime;
         
-        // 현재 시간에 해당하는 문단 찾기
+        // 현재 시간에 해당하는 문단 찾기 (이진 검색으로 최적화)
         let currentParagraphIndex = -1;
-        for (let i = 0; i < paragraphTimings.length; i++) {
-            const timing = paragraphTimings[i];
-            // 시작 시간은 포함, 끝 시간은 제외 (마지막 문단 제외)
+        
+        // 이진 검색으로 현재 시간에 해당하는 문단 찾기
+        let left = 0;
+        let right = paragraphTimings.length - 1;
+        
+        while (left <= right) {
+            const mid = Math.floor((left + right) / 2);
+            const timing = paragraphTimings[mid];
+            
             if (currentTime >= timing.startTime && currentTime < timing.endTime) {
                 currentParagraphIndex = timing.index;
                 break;
+            } else if (currentTime < timing.startTime) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
             }
         }
         
         // 마지막 문단 처리 (끝 시간 포함)
         if (currentParagraphIndex === -1 && paragraphTimings.length > 0) {
             const lastTiming = paragraphTimings[paragraphTimings.length - 1];
-            if (currentTime >= lastTiming.startTime) {
+            if (currentTime >= lastTiming.startTime && currentTime <= lastTiming.endTime) {
                 currentParagraphIndex = lastTiming.index;
             }
         }
@@ -4496,11 +4540,12 @@ function startFullStoryHighlight(audioDuration, paragraphLengths, totalLength) {
             if (currentHighlightedIndex !== currentParagraphIndex) {
                 currentHighlightedIndex = currentParagraphIndex;
                 highlightFullStoryParagraph(currentParagraphIndex);
-                // 디버깅 로그 (개발 중에만 활성화)
-                console.log(`🎯 하이라이트 업데이트: 문단 ${currentParagraphIndex} (시간: ${currentTime.toFixed(2)}초)`);
             }
         }
-    }, 100); // 0.1초마다 업데이트
+    };
+    
+    // timeupdate 이벤트 리스너 등록 (오디오 재생 중 계속 발생)
+    fullStoryAudio.addEventListener('timeupdate', fullStoryTimeUpdateHandler);
 }
 
 function highlightFullStoryParagraph(index) {
@@ -4533,6 +4578,12 @@ function clearFullStoryHighlight() {
     if (fullStoryHighlightInterval) {
         clearInterval(fullStoryHighlightInterval);
         fullStoryHighlightInterval = null;
+    }
+    
+    // timeupdate 이벤트 리스너 제거
+    if (fullStoryTimeUpdateHandler && fullStoryAudio) {
+        fullStoryAudio.removeEventListener('timeupdate', fullStoryTimeUpdateHandler);
+        fullStoryTimeUpdateHandler = null;
     }
     
     // 상태 초기화
