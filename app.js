@@ -4357,8 +4357,6 @@ async function playFullStoryAudio(storyId, buttonElement) {
             return;
         }
         
-        const showErrorAndFallback = async () => {
-        
         console.log('⚠️ story-0.mp3 파일이 없습니다. TTS로 fallback합니다.');
         
         if (!fullText) {
