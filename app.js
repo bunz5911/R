@@ -6821,6 +6821,21 @@ async function checkAuthStatus() {
     }
 }
 
+// 커뮤니티 접근 체크 및 이동
+function checkAuthAndGoToCommunity() {
+    const accessToken = localStorage.getItem('access_token');
+    const userId = localStorage.getItem('userId');
+    
+    if (!accessToken || !userId || userId === '00000000-0000-0000-0000-000000000001') {
+        alert('커뮤니티 이용을 위해 로그인이 필요합니다.');
+        window.location.href = 'login.html';
+        return;
+    }
+    
+    // 로그인 상태 확인 후 커뮤니티로 이동
+    window.location.href = 'k-community-app/index.html';
+}
+
 // 로그인/로그아웃 UI 업데이트
 function updateAuthUI() {
     const authBtn = document.getElementById('authBtn');
