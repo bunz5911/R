@@ -1298,28 +1298,42 @@ function updateCarouselIndicators() {
     
     const activeIndex = parseInt(activeSlide.dataset.index) || 0;
     const carouselId = 'storyCarousel';
+    const userPlan = currentUserPlan || 'free';
+    
+    // 유료 사용자는 전체 스토리 수, 무료는 currentStories 수
+    const totalStories = userPlan !== 'free' ? allCarouselStories.length : currentStories.length;
     
     indicators.innerHTML = '';
     
     // Bootstrap 스타일: <li> 요소로 인디케이터 생성
-    currentStories.forEach((story, index) => {
+    // 인디케이터는 최대 20개만 표시 (너무 많으면 UI가 복잡해짐)
+    const maxIndicators = Math.min(totalStories, 20);
+    for (let i = 0; i < maxIndicators; i++) {
         const li = document.createElement('li');
         li.setAttribute('data-bs-target', `#${carouselId}`);
-        li.setAttribute('data-bs-slide-to', index);
-        li.setAttribute('aria-label', `슬라이드 ${index + 1}`);
-        if (index === activeIndex) {
+        li.setAttribute('data-bs-slide-to', i);
+        li.setAttribute('aria-label', `슬라이드 ${i + 1}`);
+        if (i === activeIndex) {
             li.classList.add('active');
             li.setAttribute('aria-current', 'true');
         }
         li.onclick = (e) => {
             e.preventDefault();
             // 클릭한 인디케이터로 이동
-            if (index !== activeIndex) {
-                renderStoryCarousel(index);
+            if (i !== activeIndex) {
+                renderStoryCarousel(i);
             }
         };
         indicators.appendChild(li);
-    });
+    }
+    
+    // 전체 스토리가 20개보다 많으면 "..." 표시
+    if (totalStories > maxIndicators) {
+        const li = document.createElement('li');
+        li.textContent = '...';
+        li.style.cursor = 'default';
+        indicators.appendChild(li);
+    }
 }
 
 // 레벨 테스트 모달 표시
