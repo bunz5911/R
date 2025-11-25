@@ -1151,6 +1151,27 @@ function renderStoryCarousel(activeIndex = 0) {
     }
 }
 
+// PC에서 마우스 호버 시 활성 카드 업데이트 (십자선 이동)
+function setupCarouselHoverListeners() {
+    const track = document.getElementById('carouselTrack');
+    if (!track || window.innerWidth <= 1024) return;
+    
+    // 모든 카드에 마우스 호버 이벤트 리스너 추가
+    const slides = track.querySelectorAll('.carousel-slide');
+    slides.forEach(slide => {
+        // 기존 이벤트 리스너가 있을 수 있으므로 새로 추가
+        slide.addEventListener('mouseenter', function() {
+            // 모든 활성 카드의 active 클래스 제거 (십자선 제거)
+            const allActiveSlides = track.querySelectorAll('.carousel-slide.active');
+            allActiveSlides.forEach(activeSlide => activeSlide.classList.remove('active'));
+            
+            // 호버된 카드에 active 클래스 추가 (십자선 표시)
+            this.classList.add('active');
+            updateCarouselIndicators();
+        });
+    });
+}
+
 // 활성 카드를 중앙에 배치하는 함수 (PC용)
 function centerActiveCard() {
     const track = document.getElementById('carouselTrack');
