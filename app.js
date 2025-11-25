@@ -1012,7 +1012,7 @@ function renderStoryCarousel(activeIndex = 0) {
     let carouselHTML = `
         <div class="story-carousel-container">
             <div class="carousel-header">
-                <h2 class="carousel-title">${translateLevel(currentLevel)} ${t('carousel.levelStory')}</h2>
+                <h2 class="carousel-title">${currentLevel} 스토리</h2>
                 <div class="carousel-info">
                 </div>
             </div>
