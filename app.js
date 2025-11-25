@@ -1194,27 +1194,38 @@ function scrollCarousel(direction) {
     }
 }
 
-// 캐러셀 인디케이터 업데이트
+// Bootstrap 스타일 캐러셀 인디케이터 업데이트
 function updateCarouselIndicators() {
     const track = document.getElementById('carouselTrack');
     const indicators = document.getElementById('carouselIndicators');
     if (!track || !indicators) return;
     
-    const slides = track.querySelectorAll('.carousel-slide');
-    const activeIndex = Array.from(slides).findIndex(s => s.classList.contains('active'));
+    const activeSlide = track.querySelector('.carousel-slide.active');
+    if (!activeSlide) return;
+    
+    const activeIndex = parseInt(activeSlide.dataset.index) || 0;
+    const carouselId = 'storyCarousel';
     
     indicators.innerHTML = '';
-    slides.forEach((slide, index) => {
-        const dot = document.createElement('div');
-        dot.className = `carousel-dot ${index === activeIndex ? 'active' : ''}`;
-        dot.onclick = () => {
-            slides.forEach(s => s.classList.remove('active'));
-            slide.classList.add('active');
-            const slideWidth = slide.offsetWidth + 16;
-            track.scrollTo({ left: index * slideWidth, behavior: 'smooth' });
-            updateCarouselIndicators();
+    
+    // Bootstrap 스타일: <li> 요소로 인디케이터 생성
+    currentStories.forEach((story, index) => {
+        const li = document.createElement('li');
+        li.setAttribute('data-bs-target', `#${carouselId}`);
+        li.setAttribute('data-bs-slide-to', index);
+        li.setAttribute('aria-label', `슬라이드 ${index + 1}`);
+        if (index === activeIndex) {
+            li.classList.add('active');
+            li.setAttribute('aria-current', 'true');
+        }
+        li.onclick = (e) => {
+            e.preventDefault();
+            // 클릭한 인디케이터로 이동
+            if (index !== activeIndex) {
+                renderStoryCarousel(index);
+            }
         };
-        indicators.appendChild(dot);
+        indicators.appendChild(li);
     });
 }
 
