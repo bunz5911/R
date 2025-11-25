@@ -1,13 +1,15 @@
 /**
  * K-Context Master - 한국어 동화 학습 앱
  * 순수 JavaScript (No Framework)
- * 버전: 20251117-PARAGRAPH-FIX
+ * 버전: 20251117-CAROUSEL-FIX
  */
 
 // ✅ 버전 체크: 이 파일이 새로 로드되었는지 확인
 window.APP_VERSION_20251117_PARAGRAPH = true;
-console.log('🚀🚀🚀 app.js 로드됨 - 버전: 20251117-PARAGRAPH-FIX-' + Date.now());
+window.APP_VERSION_20251117_CAROUSEL = true;
+console.log('🚀🚀🚀 app.js 로드됨 - 버전: 20251117-CAROUSEL-FIX-' + Date.now());
 console.log('✅ 새 버전 확인: APP_VERSION_20251117_PARAGRAPH =', window.APP_VERSION_20251117_PARAGRAPH);
+console.log('✅ 캐러셀 버전 확인: APP_VERSION_20251117_CAROUSEL =', window.APP_VERSION_20251117_CAROUSEL);
 
 // 배포 환경 감지: 로컬에서는 localhost 사용, 프로덕션에서는 Cloudflare Pages API 프록시 사용
 const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
