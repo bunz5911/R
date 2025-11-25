@@ -896,6 +896,8 @@ function renderStoryCarousel(activeIndex = 0) {
     // 렌더링할 카드만 추출
     const cardsToRender = currentStories.slice(renderRange.start, renderRange.end);
     
+    console.log(`📱 렌더링 범위: ${renderRange.start}-${renderRange.end} (총 ${cardsToRender.length}개, 활성: ${activeIndex})`);
+    
     // 캐러셀 컨테이너 HTML
     let carouselHTML = `
         <div class="story-carousel-container">
@@ -950,14 +952,6 @@ function renderStoryCarousel(activeIndex = 0) {
             </div>
         `;
     }
-    
-    carouselHTML += `
-                </div>
-                <button class="carousel-btn carousel-btn-next" onclick="scrollCarousel(1)">›</button>
-            </div>
-            <div class="carousel-indicators" id="carouselIndicators"></div>
-        </div>
-    `;
     
     carouselHTML += `
                 </div>
