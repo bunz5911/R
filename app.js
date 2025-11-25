@@ -1114,6 +1114,11 @@ function renderStoryCarousel(activeIndex = 0) {
     
     listEl.innerHTML = carouselHTML;
     
+    // PC에서 마우스 호버 시 활성 카드 업데이트 (십자선 이동)
+    if (window.innerWidth > 1024) {
+        setupCarouselHoverListeners();
+    }
+    
     // CSS 캐러셀 미지원 시에만 JavaScript 기능 활성화
     if (!supportsCSS) {
         // 인디케이터 생성
@@ -1436,8 +1441,9 @@ window.scrollCarousel = function(direction) {
     if (nextIndex >= 0 && nextIndex < totalStories) {
         // PC에서는 화살표로 이동
         if (isPC) {
-            // 먼저 활성 카드 업데이트
-            activeSlide.classList.remove('active');
+            // 모든 활성 카드의 active 클래스 제거 (십자선 제거)
+            const allActiveSlides = track.querySelectorAll('.carousel-slide.active');
+            allActiveSlides.forEach(slide => slide.classList.remove('active'));
             
             // 다음 카드 찾기
             let nextSlide = track.querySelector(`[data-index="${nextIndex}"]`);
@@ -1449,6 +1455,9 @@ window.scrollCarousel = function(direction) {
                 setTimeout(() => {
                     nextSlide = track.querySelector(`[data-index="${nextIndex}"]`);
                     if (nextSlide) {
+                        // 모든 활성 카드 제거 후 새로운 활성 카드 추가
+                        const allActiveSlides2 = track.querySelectorAll('.carousel-slide.active');
+                        allActiveSlides2.forEach(slide => slide.classList.remove('active'));
                         nextSlide.classList.add('active');
                         centerActiveCard();
                         updateCarouselIndicators();
@@ -1507,7 +1516,10 @@ window.scrollCarousel = function(direction) {
                 }, 50);
             } else {
                 // 범위 내면 기존 카드만 업데이트
-                activeSlide.classList.remove('active');
+                // 모든 활성 카드의 active 클래스 제거 (십자선 제거)
+                const allActiveSlides = track.querySelectorAll('.carousel-slide.active');
+                allActiveSlides.forEach(slide => slide.classList.remove('active'));
+                
                 const nextSlide = track.querySelector(`[data-index="${nextIndex}"]`);
                 if (nextSlide) {
                     nextSlide.classList.add('active');
