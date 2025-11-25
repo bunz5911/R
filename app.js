@@ -803,18 +803,28 @@ async function loadCompletedStories() {
 
 // 레벨별 동화 필터링 및 정렬
 function getFilteredAndSortedStories(level, userPlan) {
+    console.log('🔍 getFilteredAndSortedStories 호출:', { level, userPlan, PRELOADED_STORIES_length: PRELOADED_STORIES ? PRELOADED_STORIES.length : 'undefined' });
+    
+    if (!PRELOADED_STORIES || PRELOADED_STORIES.length === 0) {
+        console.error('❌ PRELOADED_STORIES가 비어있거나 정의되지 않았습니다!');
+        return [];
+    }
+    
     // 🔑 슈퍼바이저 (bunz5911@gmail.com): 전체 51개 모두 활성화된 상태로 반환
     if (currentUserEmail === 'bunz5911@gmail.com') {
         const allStories = [...PRELOADED_STORIES];
         const completed = allStories.filter(story => completedStoryIds.includes(story.id));
         const notCompleted = allStories.filter(story => !completedStoryIds.includes(story.id));
         const shuffledNotCompleted = shuffleArray([...notCompleted]);
-        return [...completed, ...shuffledNotCompleted];
+        const result = [...completed, ...shuffledNotCompleted];
+        console.log('🔑 슈퍼바이저 모드 결과:', result.length, '개');
+        return result;
     }
     
     // 무료 사용자: 0, 1번만 반환
     if (userPlan === 'free') {
         const freeStories = PRELOADED_STORIES.filter(story => story.id === 0 || story.id === 1);
+        console.log('🆓 무료 사용자 결과:', freeStories.length, '개');
         return freeStories;
     }
     
@@ -829,6 +839,7 @@ function getFilteredAndSortedStories(level, userPlan) {
     
     // 학습한 동화 상단 + 안 한 동화
     const combined = [...completed, ...shuffledNotCompleted];
+    console.log('💎 유료 사용자 결과:', combined.length, '개 (완료:', completed.length, ', 미완료:', shuffledNotCompleted.length, ')');
     
     return combined;
 }
@@ -845,8 +856,16 @@ function shuffleArray(array) {
 
 async function loadStories() {
     try {
+        console.log('📚 loadStories() 시작');
+        console.log('📚 PRELOADED_STORIES 개수:', PRELOADED_STORIES ? PRELOADED_STORIES.length : 'undefined');
+        console.log('📚 currentLevel:', currentLevel);
+        console.log('📚 currentUserPlan:', currentUserPlan);
+        console.log('📚 isAuthenticated:', isAuthenticated);
+        console.log('📚 currentUserId:', currentUserId);
+        
         // 1. 학습 기록 로드 (로그인한 경우)
         await loadCompletedStories();
+        console.log('📚 학습 기록 로드 완료, completedStoryIds:', completedStoryIds.length, '개');
         
         // 2. 레벨 테스트 확인 (첫 방문 시) - 로그인한 경우에만
         const storedLevelTest = localStorage.getItem('level_test_completed');
@@ -859,7 +878,9 @@ async function loadStories() {
         
         // 3. 현재 레벨의 동화 필터링 및 정렬
         const userPlan = currentUserPlan || 'free';
+        console.log('📚 getFilteredAndSortedStories 호출 전:', { level: currentLevel, userPlan });
         currentStories = getFilteredAndSortedStories(currentLevel, userPlan);
+        console.log('📚 getFilteredAndSortedStories 결과:', currentStories.length, '개');
         
         // 🔑 슈퍼바이저 또는 유료 사용자의 경우 전체 스토리 목록 저장 (무한 루프용)
         if (currentUserEmail === 'bunz5911@gmail.com' || userPlan !== 'free') {
