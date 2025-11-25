@@ -4268,9 +4268,11 @@ async function playFullStoryAudio(storyId, buttonElement) {
     console.log(`🎵 playFullStoryAudio 호출됨 - storyId: ${storyId}, type: ${typeof storyId}`);
     
     // 모든 동화: 로컬 MP3 파일 재생 (0번 포함, 파일이 없으면 TTS로 fallback)
-    const audioPath = `audio/full-stories/story-${storyId}.mp3`;
+    // 절대 경로 사용 (프로덕션 환경에서도 정상 작동)
+    const audioPath = `${window.location.origin}/audio/full-stories/story-${storyId}.mp3`;
     
     console.log(`🎵 전체 듣기 MP3 재생 시작: ${audioPath}`);
+    console.log(`🌐 현재 origin: ${window.location.origin}`);
     
     // 이미 재생 중이면 정지
     if (fullStoryAudio && !fullStoryAudio.paused) {
