@@ -1115,8 +1115,11 @@ function renderStoryCarousel(activeIndex = 0) {
     listEl.innerHTML = carouselHTML;
     
     // PC에서 마우스 호버 시 활성 카드 업데이트 (십자선 이동)
+    // DOM 렌더링 완료 후 이벤트 리스너 추가
     if (window.innerWidth > 1024) {
-        setupCarouselHoverListeners();
+        setTimeout(() => {
+            setupCarouselHoverListeners();
+        }, 100);
     }
     
     // CSS 캐러셀 미지원 시에만 JavaScript 기능 활성화
@@ -1159,7 +1162,14 @@ function setupCarouselHoverListeners() {
     // 모든 카드에 마우스 호버 이벤트 리스너 추가
     const slides = track.querySelectorAll('.carousel-slide');
     slides.forEach(slide => {
-        // 기존 이벤트 리스너가 있을 수 있으므로 새로 추가
+        // 기존 이벤트 리스너 제거를 위해 클론 후 교체 (중복 방지)
+        const newSlide = slide.cloneNode(true);
+        slide.parentNode.replaceChild(newSlide, slide);
+    });
+    
+    // 새로운 이벤트 리스너 추가
+    const newSlides = track.querySelectorAll('.carousel-slide');
+    newSlides.forEach(slide => {
         slide.addEventListener('mouseenter', function() {
             // 모든 활성 카드의 active 클래스 제거 (십자선 제거)
             const allActiveSlides = track.querySelectorAll('.carousel-slide.active');
