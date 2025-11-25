@@ -1364,7 +1364,8 @@ function getNextPlan(currentPlan) {
 }
 
 // 캐러셀 스크롤 함수 (무한 루프 및 랜덤 연결 지원)
-function scrollCarousel(direction) {
+// 전역 스코프에 등록하여 onclick에서 접근 가능하도록
+window.scrollCarousel = function(direction) {
     const track = document.getElementById('carouselTrack');
     if (!track) return;
     
