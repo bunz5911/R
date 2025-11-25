@@ -3137,7 +3137,7 @@ function renderParagraphs() {
             
             return `
             <div class="paragraph-item" id="paragraph${idx}">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
                     <span class="paragraph-num">${t('descriptions.paragraph')} ${p.paragraph_num || idx + 1}</span>
                     <button class="play-btn-circle" id="paraPlayBtn${idx}" onclick="togglePlay('para${idx}', '${escapeQuotes(practiceText)}', this)">
                         ▶
