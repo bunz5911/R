@@ -674,57 +674,75 @@
                     }
                     
                     // 성공 메시지 표시
-                    showSuccess('Google 로그인 성공! 이동합니다...');
+                    showSuccess('Google 로그인 성공! 3초 후 이동합니다...');
                     
                     // URL 해시 제거 (토큰이 URL에 남아있지 않도록)
                     window.history.replaceState(null, '', window.location.pathname + window.location.search);
                     
-                    // 리다이렉트 전 최종 확인
-                    const finalCheck = setInterval(() => {
+                    // 리다이렉트 플래그 (중복 리다이렉트 방지)
+                    let redirectExecuted = false;
+                    
+                    // 리다이렉트 함수
+                    function executeRedirect() {
+                        if (redirectExecuted) {
+                            saveLog('⚠️ 리다이렉트 이미 실행됨 - 중복 방지');
+                            return;
+                        }
+                        redirectExecuted = true;
+                        
+                        const checkToken = localStorage.getItem('access_token');
+                        const checkUserId = localStorage.getItem('userId');
+                        
+                        saveLog('✅ 리다이렉트 실행:', {
+                            hasToken: !!checkToken,
+                            hasUserId: !!checkUserId,
+                            timestamp: new Date().toISOString()
+                        });
+                        
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const returnUrl = urlParams.get('returnUrl');
+                        
+                        if (returnUrl) {
+                            saveLog('🔗 커뮤니티로 리다이렉트:', returnUrl);
+                            window.location.href = decodeURIComponent(returnUrl);
+                        } else {
+                            const basePath = window.location.origin + '/index.html';
+                            saveLog('🔗 홈으로 리다이렉트:', basePath);
+                            window.location.href = basePath;
+                        }
+                    }
+                    
+                    // 저장 확인 후 3초 대기 후 리다이렉트
+                    const checkAndRedirect = setInterval(() => {
                         const checkToken = localStorage.getItem('access_token');
                         const checkUserId = localStorage.getItem('userId');
                         
                         if (checkToken && checkUserId) {
-                            clearInterval(finalCheck);
-                            saveLog('✅ 리다이렉트 전 최종 확인 완료:', {
+                            clearInterval(checkAndRedirect);
+                            saveLog('✅ localStorage 저장 확인 완료:', {
                                 hasToken: !!checkToken,
                                 hasUserId: !!checkUserId
                             });
                             
-                            // 리다이렉트 (모든 작업 완료 후) - 로그 확인을 위해 3초 대기
+                            // 3초 대기 후 리다이렉트
+                            saveLog('⏳ 3초 대기 시작...');
                             setTimeout(() => {
-                                const urlParams = new URLSearchParams(window.location.search);
-                                const returnUrl = urlParams.get('returnUrl');
-                                
-                                if (returnUrl) {
-                                    saveLog('🔗 커뮤니티로 리다이렉트:', returnUrl);
-                                    window.location.href = decodeURIComponent(returnUrl);
-                                } else {
-                                    const basePath = window.location.origin + '/index.html';
-                                    saveLog('🔗 홈으로 리다이렉트:', basePath);
-                                    window.location.href = basePath;
-                                }
-                            }, 3000); // 로그 확인을 위해 3초 대기
+                                saveLog('⏰ 3초 대기 완료 - 리다이렉트 실행');
+                                executeRedirect();
+                            }, 3000); // 정확히 3초 대기
                         }
                     }, 100); // 100ms마다 확인
                     
-                    // 최대 5초 대기 후 리다이렉트 (타임아웃 방지)
+                    // 최대 5초 후 타임아웃 (저장 실패 시)
                     setTimeout(() => {
-                        clearInterval(finalCheck);
+                        clearInterval(checkAndRedirect);
                         const timeoutToken = localStorage.getItem('access_token');
                         const timeoutUserId = localStorage.getItem('userId');
                         
-                        if (timeoutToken && timeoutUserId) {
+                        if (timeoutToken && timeoutUserId && !redirectExecuted) {
                             saveLog('⏰ 타임아웃 후 리다이렉트 (저장 확인됨)');
-                            const urlParams = new URLSearchParams(window.location.search);
-                            const returnUrl = urlParams.get('returnUrl');
-                            
-                            if (returnUrl) {
-                                window.location.href = decodeURIComponent(returnUrl);
-                            } else {
-                                window.location.href = window.location.origin + '/index.html';
-                            }
-                        } else {
+                            executeRedirect();
+                        } else if (!timeoutToken || !timeoutUserId) {
                             saveLog('❌ 타임아웃: localStorage 저장 실패 - 리다이렉트하지 않음');
                             showError('로그인 정보 저장에 실패했습니다. 페이지를 새로고침해주세요.');
                         }
@@ -819,7 +837,7 @@
                         plan: data.user.plan || 'free'
                     });
                     
-                    showSuccess('로그인 성공! 이동합니다...');
+                    showSuccess('로그인 성공! 3초 후 이동합니다...');
                     
                     setTimeout(() => {
                         // returnUrl 파라미터 확인 (커뮤니티에서 온 경우)
@@ -839,7 +857,7 @@
                             console.log('🔗 홈으로 리다이렉트:', basePath);
                             window.location.href = basePath;
                         }
-                    }, 1000);
+                    }, 3000); // 3초 대기로 변경
                 } else {
                     console.error('❌ 로그인 실패:', data);
                     showError(data.error || '로그인에 실패했습니다');
@@ -1064,7 +1082,7 @@
                                             plan: loginData.user.plan || 'free'
                                         });
                                         
-                                        showSuccess('카카오 로그인 성공! 이동합니다...');
+                                        showSuccess('카카오 로그인 성공! 3초 후 이동합니다...');
                                         
                                         // 리다이렉트 (모든 작업 완료 후)
                                         setTimeout(() => {
@@ -1082,7 +1100,7 @@
                                                 console.log('🔗 홈으로 리다이렉트:', basePath);
                                                 window.location.href = basePath;
                                             }
-                                        }, 1500); // 1.5초로 증가하여 모든 작업 완료 보장
+                                        }, 3000); // 3초 대기로 변경
                                     } else {
                                         console.error('❌ 카카오 로그인 실패:', loginData);
                                         showError(loginData.error || '카카오 로그인에 실패했습니다');
