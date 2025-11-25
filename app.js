@@ -971,12 +971,34 @@ function renderStoryCarousel(activeIndex = 0) {
         setupCarouselScrollListener();
     }
     
-    // PC에서 3D 효과 업데이트
+    // PC에서 3D 효과 업데이트 및 중앙 정렬
     if (window.innerWidth > 1024) {
         setTimeout(() => {
             updateCarousel3D();
+            centerActiveCard();
         }, 100);
     }
+}
+
+// 활성 카드를 중앙에 배치하는 함수 (PC용)
+function centerActiveCard() {
+    const track = document.getElementById('carouselTrack');
+    if (!track || window.innerWidth <= 1024) return;
+    
+    const activeSlide = track.querySelector('.carousel-slide.active');
+    if (!activeSlide) return;
+    
+    const trackRect = track.getBoundingClientRect();
+    const slideRect = activeSlide.getBoundingClientRect();
+    const slideWidth = slideRect.width + 16; // gap 포함
+    
+    // 활성 카드가 중앙에 오도록 스크롤
+    const scrollLeft = activeSlide.offsetLeft - (trackRect.width / 2) + (slideWidth / 2);
+    
+    track.scrollTo({
+        left: scrollLeft,
+        behavior: 'smooth'
+    });
 }
 
 // PC용 3D 효과 업데이트 함수
@@ -1086,13 +1108,14 @@ function scrollCarousel(direction) {
     const isPC = window.innerWidth > 1024;
     
     if (nextIndex >= 0 && nextIndex < currentStories.length) {
-        // PC에서는 3D 효과만 업데이트
+        // PC에서는 3D 효과만 업데이트 및 중앙 정렬
         if (isPC) {
             activeSlide.classList.remove('active');
             const nextSlide = track.querySelector(`[data-index="${nextIndex}"]`);
             if (nextSlide) {
                 nextSlide.classList.add('active');
                 updateCarousel3D();
+                centerActiveCard();
                 updateCarouselIndicators();
             }
             return;
