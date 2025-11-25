@@ -546,6 +546,12 @@ function setupEventListeners() {
             const oldAnalysis = currentAnalysis;
             currentLevel = newLevel;
             
+            // ✅ 레벨 변경 시 동화 목록 다시 로드 (캐러셀 업데이트)
+            const storyListView = document.getElementById('storyListView');
+            if (storyListView && storyListView.style.display !== 'none') {
+                loadStories();
+            }
+            
             // ✅ 레벨 변경 시 분석 데이터 다시 로드
             if (currentStory && currentStory.id !== undefined) {
                 console.log(`🔄 레벨 변경: ${currentLevel} → 분석 데이터 다시 로드 (현재 탭: ${previousTab})`);
