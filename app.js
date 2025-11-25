@@ -4350,6 +4350,12 @@ async function playFullStoryAudio(storyId, buttonElement) {
     // 에러 처리 (파일 없음) - 0번 동화는 TTS로 fallback
     fullStoryAudio.addEventListener('error', async (e) => {
         console.error('❌ 오디오 로드 실패:', e);
+        console.error('❌ 오디오 경로:', audioPath);
+        console.error('❌ 오디오 에러 상세:', fullStoryAudio.error);
+        // 네트워크 에러인지 파일 없음인지 확인
+        if (fullStoryAudio.error && fullStoryAudio.error.code === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED) {
+            console.error('❌ 파일 형식이 지원되지 않거나 파일을 찾을 수 없습니다.');
+        }
         await fallbackToTTS();
     }, { once: true });
     

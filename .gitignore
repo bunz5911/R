@@ -89,7 +89,6 @@ Thumbs.db
 # Git LFS 관련 (Cloudflare Pages 배포를 위해 제외)
 .git/lfs/
 
-# 오디오 파일 (Git LFS 예산 초과 문제 해결을 위해 Git에서 제외)
-# 오디오 파일은 Cloudflare Pages 배포 시 필요하지 않음 (TTS로 실시간 생성 가능)
-audio/full-stories/*.mp3
+# 오디오 파일은 Git에 포함 (Cloudflare Pages에서 정적 파일로 서빙)
+# audio/full-stories/*.mp3
 
