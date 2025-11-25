@@ -835,15 +835,24 @@ async function loadStories() {
         const userPlan = currentUserPlan || 'free';
         currentStories = getFilteredAndSortedStories(currentLevel, userPlan);
         
+        console.log('📚 동화 필터링 결과:', {
+            레벨: currentLevel,
+            플랜: userPlan,
+            필터링된_동화수: currentStories.length,
+            전체_동화수: PRELOADED_STORIES.length,
+            레벨별_동화수: PRELOADED_STORIES.filter(s => s.level === currentLevel).length
+        });
+        
         // 4. 캐러셀 렌더링 (레벨 테스트가 없거나 완료된 경우)
-        if (currentStories.length > 0) {
+        if (currentStories && currentStories.length > 0) {
+            console.log('🎠 캐러셀 렌더링 시작:', currentStories.length, '개');
             renderStoryCarousel();
             console.log('✅ 동화 목록 렌더링 완료:', currentStories.length, '개 (레벨:', currentLevel + ')');
         } else {
-            console.warn('⚠️ 표시할 동화가 없습니다.');
+            console.warn('⚠️ 표시할 동화가 없습니다. 레벨:', currentLevel);
             const listEl = document.getElementById('storyList');
             if (listEl) {
-                listEl.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-secondary);"><p>표시할 동화가 없습니다.</p></div>';
+                listEl.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--text-secondary);"><p>${currentLevel} 레벨의 동화가 없습니다.</p></div>`;
             }
         }
     } catch (error) {
