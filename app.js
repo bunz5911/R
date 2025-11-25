@@ -1011,13 +1011,41 @@ window.addEventListener('resize', () => {
     }, 250);
 });
 
-// 캐러셀 스크롤 리스너 설정 (동적 카드 로딩)
+// 캐러셀 스크롤 리스너 설정 (터치 스와이프 및 동적 카드 로딩)
 function setupCarouselScrollListener() {
     const track = document.getElementById('carouselTrack');
     if (!track) return;
     
     let scrollTimeout;
+    let touchStartX = 0;
+    let touchEndX = 0;
     
+    // 모바일 터치 이벤트
+    track.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    
+    track.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, { passive: true });
+    
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = touchStartX - touchEndX;
+        
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0) {
+                // 왼쪽으로 스와이프 (다음 카드)
+                scrollCarousel(1);
+            } else {
+                // 오른쪽으로 스와이프 (이전 카드)
+                scrollCarousel(-1);
+            }
+        }
+    }
+    
+    // 스크롤 이벤트 (동적 카드 로딩)
     track.addEventListener('scroll', () => {
         clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(() => {
