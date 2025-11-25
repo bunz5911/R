@@ -931,18 +931,22 @@ function renderStoryCarousel(activeIndex = 0) {
                 <div class="carousel-track" id="carouselTrack">
     `;
     
-    // 동화 카드들 (렌더링 범위 내만)
+    // 동화 카드들 (렌더링 범위 내만) - Bootstrap 독립 지연 시간 적용
     cardsToRender.forEach((story, localIndex) => {
         const actualIndex = renderRange.start + localIndex;
         const isActive = actualIndex === activeIndex;
         const isCompleted = completedStoryIds.includes(story.id);
         const completedBadge = isCompleted ? '<div class="completed-badge">✓ 학습함</div>' : '';
         
-        // CSS 캐러셀을 위해 id 추가
+        // Bootstrap 독립 지연 시간: 첫 번째 카드는 10초, 나머지는 2초
+        const interval = actualIndex === 0 ? '10000' : '2000';
+        
+        // CSS 캐러셀을 위해 id 추가, Bootstrap data-bs-interval 추가
         carouselHTML += `
             <div class="carousel-slide ${isActive ? 'active' : ''}" 
                  data-story-id="${story.id}" 
                  data-index="${actualIndex}"
+                 data-bs-interval="${interval}"
                  id="story-${story.id}">
                 <div class="story-card-carousel" onclick="checkStoryAccess(${story.id})">
                     ${completedBadge}

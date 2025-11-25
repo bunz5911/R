@@ -348,7 +348,7 @@
             letter-spacing: var(--letter-spacing-normal);
         }
 
-        /* 캐러셀 스타일 - 깔끔한 2D 디자인 */
+        /* 캐러셀 스타일 - 깔끔한 2D 디자인, 중앙 정렬 */
         .story-carousel-container {
             width: 100%;
             max-width: 1400px;
@@ -359,6 +359,14 @@
             align-items: center;
             justify-content: center;
             box-sizing: border-box;
+        }
+        
+        /* 레벨 선택 버튼과 캐러셀 모두 중앙 정렬 보장 */
+        #storyList {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
         /* PC에서 컨테이너 최적화 */
@@ -1093,7 +1101,7 @@
             margin-bottom: var(--space-xl);
         }
         
-        /* 동화 목록 화면 */
+        /* 동화 목록 화면 - 중앙 정렬 */
         .story-list-view {
             padding: var(--space-lg);
             padding-bottom: var(--space-3xl);
@@ -1103,6 +1111,9 @@
             margin: 0 auto; /* 중앙 정렬 */
             width: 100%;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* 모든 자식 요소 중앙 정렬 */
         }
         
         /* PC에서 레이아웃 최적화 */
@@ -1648,6 +1659,9 @@
             gap: var(--space-md);
             margin-bottom: var(--space-lg);
             justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 100%;
         }
 
         .level-btn {
