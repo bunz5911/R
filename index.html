@@ -1168,6 +1168,32 @@
             min-height: 0; /* flex에서 크기 제한 제거 */
         }
         
+        /* "다른 스토리 더 보기" 카드가 가려지지 않도록 높은 z-index 부여 */
+        .carousel-slide.locked-slide {
+            z-index: 20 !important; /* 다른 카드들보다 항상 위에 표시 */
+            position: relative;
+        }
+        
+        /* PC/태블릿에서 "다른 스토리 더 보기" 카드가 항상 보이도록 */
+        @media (min-width: 769px) {
+            .carousel-slide.locked-slide {
+                z-index: 20 !important;
+            }
+            
+            /* 다른 카드들이 "다른 스토리 더 보기" 카드를 가리지 않도록 */
+            .carousel-slide:not(.locked-slide) {
+                z-index: auto;
+            }
+            
+            .carousel-slide:not(.locked-slide).active {
+                z-index: 10;
+            }
+            
+            .carousel-slide:not(.locked-slide):hover {
+                z-index: 15;
+            }
+        }
+        
         /* locked-card를 일반 카드 이미지의 30% 축소된 높이로 만들기 */
         .locked-card::before {
             content: '';
