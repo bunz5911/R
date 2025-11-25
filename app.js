@@ -1300,11 +1300,11 @@ function showLevelTestModal() {
         
         // 중급 수준 문제
         { id: 6, question: '"오늘 날씨가 좋네요"의 적절한 응답은?', options: ["네, 정말 좋아요", "안녕하세요", "감사합니다", "미안합니다"], correct: 0, level: 'intermediate' },
-        { id: 7, question: '"어제 뭐 했어요?'의 의미는?', options: ["What did you do yesterday?", "What will you do tomorrow?", "What are you doing now?", "What do you like?"], correct: 0, level: 'intermediate' },
-        { id: 8, question: '"시간이 없어서 서두르고 있어요'의 의미는?', options: ["I'm in a hurry because I don't have time", "I have plenty of time", "Time is slow", "I'm waiting"], correct: 0, level: 'intermediate' },
-        { id: 9, question: '"이 음식은 정말 맛있어요'의 의미는?', options: ["This food is really delicious", "This food is terrible", "I don't like this food", "This food is expensive"], correct: 0, level: 'intermediate' },
-        { id: 10, question: '"제가 도와드릴까요?'의 의미는?', options: ["Can I help you?", "Do you need help?", "I need help", "Help me please"], correct: 0, level: 'intermediate' },
-        { id: 11, question: '"내일 만날 수 있을까요?'의 의미는?', options: ["Can we meet tomorrow?", "Can we meet today?", "Can we meet next week?", "Can we meet yesterday?"], correct: 0, level: 'intermediate' },
+        { id: 7, question: '"어제 뭐 했어요?"의 의미는?', options: ["What did you do yesterday?", "What will you do tomorrow?", "What are you doing now?", "What do you like?"], correct: 0, level: 'intermediate' },
+        { id: 8, question: '"시간이 없어서 서두르고 있어요"의 의미는?', options: ["I'm in a hurry because I don't have time", "I have plenty of time", "Time is slow", "I'm waiting"], correct: 0, level: 'intermediate' },
+        { id: 9, question: '"이 음식은 정말 맛있어요"의 의미는?', options: ["This food is really delicious", "This food is terrible", "I don't like this food", "This food is expensive"], correct: 0, level: 'intermediate' },
+        { id: 10, question: '"제가 도와드릴까요?"의 의미는?', options: ["Can I help you?", "Do you need help?", "I need help", "Help me please"], correct: 0, level: 'intermediate' },
+        { id: 11, question: '"내일 만날 수 있을까요?"의 의미는?', options: ["Can we meet tomorrow?", "Can we meet today?", "Can we meet next week?", "Can we meet yesterday?"], correct: 0, level: 'intermediate' },
         
         // 고급 수준 문제
         { id: 12, question: '"그 일은 제가 처리하겠습니다"의 의미는?', options: ["I'll handle that matter", "I don't know about that", "That's not my problem", "I'll think about it"], correct: 0, level: 'advanced' },
