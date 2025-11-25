@@ -168,8 +168,7 @@
 
         .app-container {
             width: 100%;
-            min-width: 430px; /* iPhone 16 Pro 최소 */
-            max-width: 1200px; /* Desktop 최대 */
+            min-width: 320px; /* 최소 모바일 너비 */
             min-height: 100vh;
             min-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
             margin: 0 auto;
@@ -564,6 +563,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            aspect-ratio: 3 / 4; /* 카드 비율 고정 */
         }
         
         .lock-content {
@@ -598,11 +598,41 @@
             font-weight: 600;
             cursor: pointer;
             transition: all var(--transition-base);
+            width: 100%;
+            max-width: 200px;
         }
         
         .upgrade-btn-carousel:hover {
             background: var(--color-primary-dark);
             transform: scale(1.05);
+        }
+        
+        /* 모바일에서 잠금 카드 크기 조정 */
+        @media (max-width: 768px) {
+            .locked-card {
+                min-height: 250px;
+            }
+            
+            .lock-content {
+                padding: var(--space-md);
+            }
+            
+            .lock-icon {
+                font-size: 36px;
+            }
+            
+            .lock-content h3 {
+                font-size: var(--font-size-lg);
+            }
+            
+            .upgrade-btn-carousel {
+                padding: var(--space-sm) var(--space-md);
+                font-size: var(--font-size-sm);
+            }
+            
+            .upgrade-btn-carousel:hover {
+                transform: none;
+            }
         }
         
         /* 레벨 테스트 모달 */
