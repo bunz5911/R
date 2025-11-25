@@ -572,6 +572,147 @@
             width: 24px;
         }
         
+        /* ============================================
+           Chrome/Safari CSS 캐러셀 기능 (점진적 향상)
+           ============================================ */
+        
+        /* 브라우저 지원 체크 - Chrome 135+ 및 지원 브라우저 */
+        @supports (scroll-button: start) {
+            /* 스크롤 버튼 활성화 */
+            .carousel-track {
+                scroll-button: start end;
+            }
+            
+            /* 왼쪽 스크롤 버튼 스타일링 */
+            .carousel-track::scroll-button(start) {
+                position: absolute;
+                left: var(--space-md);
+                top: 50%;
+                transform: translateY(-50%);
+                width: 48px;
+                height: 48px;
+                background: var(--bg-secondary);
+                border: 2px solid var(--border-color);
+                border-radius: var(--border-radius-full);
+                box-shadow: var(--shadow-md);
+                backdrop-filter: blur(10px);
+                z-index: 20;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 24px;
+                color: var(--text-primary);
+                transition: all var(--transition-base);
+            }
+            
+            .carousel-track::scroll-button(start):hover {
+                background: var(--color-primary);
+                color: var(--text-inverse);
+                transform: translateY(-50%) scale(1.1);
+                box-shadow: var(--shadow-lg);
+            }
+            
+            .carousel-track::scroll-button(start):active {
+                transform: translateY(-50%) scale(0.95);
+            }
+            
+            .carousel-track::scroll-button(start)::before {
+                content: '‹';
+            }
+            
+            /* 오른쪽 스크롤 버튼 스타일링 */
+            .carousel-track::scroll-button(end) {
+                position: absolute;
+                right: var(--space-md);
+                top: 50%;
+                transform: translateY(-50%);
+                width: 48px;
+                height: 48px;
+                background: var(--bg-secondary);
+                border: 2px solid var(--border-color);
+                border-radius: var(--border-radius-full);
+                box-shadow: var(--shadow-md);
+                backdrop-filter: blur(10px);
+                z-index: 20;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 24px;
+                color: var(--text-primary);
+                transition: all var(--transition-base);
+            }
+            
+            .carousel-track::scroll-button(end):hover {
+                background: var(--color-primary);
+                color: var(--text-inverse);
+                transform: translateY(-50%) scale(1.1);
+                box-shadow: var(--shadow-lg);
+            }
+            
+            .carousel-track::scroll-button(end):active {
+                transform: translateY(-50%) scale(0.95);
+            }
+            
+            .carousel-track::scroll-button(end)::before {
+                content: '›';
+            }
+            
+            /* 스크롤 마커 활성화 (인디케이터) */
+            .carousel-track {
+                scroll-marker: start end;
+            }
+            
+            /* 스크롤 마커 스타일링 */
+            .carousel-track::scroll-marker(start) {
+                display: flex;
+                justify-content: center;
+                gap: var(--space-sm);
+                margin-top: var(--space-lg);
+            }
+            
+            .carousel-track::scroll-marker(start) > * {
+                width: 8px;
+                height: 8px;
+                border-radius: var(--border-radius-full);
+                background: var(--border-color);
+                cursor: pointer;
+                transition: all var(--transition-base);
+            }
+            
+            .carousel-track::scroll-marker(start) > *:hover,
+            .carousel-track::scroll-marker(start) > *:target {
+                background: var(--color-primary);
+                width: 24px;
+            }
+            
+            /* CSS 캐러셀 지원 시 JavaScript 버튼 숨기기 */
+            .carousel-btn {
+                display: none !important;
+            }
+            
+            /* CSS 캐러셀 지원 시 JavaScript 인디케이터 숨기기 */
+            .carousel-indicators {
+                display: none !important;
+            }
+            
+            /* 모바일에서도 CSS 버튼 숨기기 (터치 스와이프 사용) */
+            @media (max-width: 1024px) {
+                .carousel-track::scroll-button(start),
+                .carousel-track::scroll-button(end) {
+                    display: none;
+                }
+            }
+        }
+        
+        /* Safari 지원을 위한 추가 체크 */
+        @supports (-webkit-scroll-button: start) {
+            .carousel-track {
+                -webkit-scroll-button: start end;
+            }
+        }
+        
         .story-card-carousel {
             position: relative;
             background: var(--bg-secondary);

@@ -879,6 +879,12 @@ function getRenderRange(activeIndex, totalCards) {
     return { start, end };
 }
 
+// CSS 캐러셀 지원 여부 체크
+function supportsCSSScrollButtons() {
+    return CSS.supports('scroll-button', 'start') || 
+           CSS.supports('-webkit-scroll-button', 'start');
+}
+
 // 캐러셀 렌더링 함수
 function renderStoryCarousel(activeIndex = 0) {
     const listEl = document.getElementById('storyList');
@@ -889,6 +895,9 @@ function renderStoryCarousel(activeIndex = 0) {
     const totalInLevel = PRELOADED_STORIES.filter(s => s.level === currentLevel).length;
     const lockedCount = totalInLevel - currentStories.length;
     
+    // CSS 캐러셀 지원 여부 확인
+    const supportsCSS = supportsCSSScrollButtons();
+    
     // 렌더링할 카드 범위 계산
     const renderRange = getRenderRange(activeIndex, currentStories.length);
     renderedCardRange = renderRange;
@@ -897,6 +906,9 @@ function renderStoryCarousel(activeIndex = 0) {
     const cardsToRender = currentStories.slice(renderRange.start, renderRange.end);
     
     console.log(`📱 렌더링 범위: ${renderRange.start}-${renderRange.end} (총 ${cardsToRender.length}개, 활성: ${activeIndex})`);
+    if (supportsCSS) {
+        console.log('✨ CSS 캐러셀 기능 사용 중 (Chrome 135+ / Safari)');
+    }
     
     // 캐러셀 컨테이너 HTML
     let carouselHTML = `
@@ -909,7 +921,7 @@ function renderStoryCarousel(activeIndex = 0) {
                 </div>
             </div>
             <div class="carousel-wrapper">
-                <button class="carousel-btn carousel-btn-prev" onclick="scrollCarousel(-1)">‹</button>
+                ${!supportsCSS ? '<button class="carousel-btn carousel-btn-prev" onclick="scrollCarousel(-1)">‹</button>' : ''}
                 <div class="carousel-track" id="carouselTrack">
     `;
     
@@ -920,8 +932,12 @@ function renderStoryCarousel(activeIndex = 0) {
         const isCompleted = completedStoryIds.includes(story.id);
         const completedBadge = isCompleted ? '<div class="completed-badge">✓ 학습함</div>' : '';
         
+        // CSS 캐러셀을 위해 id 추가
         carouselHTML += `
-            <div class="carousel-slide ${isActive ? 'active' : ''}" data-story-id="${story.id}" data-index="${actualIndex}">
+            <div class="carousel-slide ${isActive ? 'active' : ''}" 
+                 data-story-id="${story.id}" 
+                 data-index="${actualIndex}"
+                 id="story-${story.id}">
                 <div class="story-card-carousel" onclick="checkStoryAccess(${story.id})">
                     ${completedBadge}
                     <div class="story-card-image">
@@ -955,27 +971,35 @@ function renderStoryCarousel(activeIndex = 0) {
     
     carouselHTML += `
                 </div>
-                <button class="carousel-btn carousel-btn-next" onclick="scrollCarousel(1)">›</button>
+                ${!supportsCSS ? '<button class="carousel-btn carousel-btn-next" onclick="scrollCarousel(1)">›</button>' : ''}
             </div>
-            <div class="carousel-indicators" id="carouselIndicators"></div>
+            ${!supportsCSS ? '<div class="carousel-indicators" id="carouselIndicators"></div>' : ''}
         </div>
     `;
     
     listEl.innerHTML = carouselHTML;
     
-    // 인디케이터 생성
-    updateCarouselIndicators();
-    
-    // 스크롤 이벤트 리스너 추가 (동적 로딩용 - 모바일만)
-    if (window.innerWidth <= 1024) {
-        setupCarouselScrollListener();
-    }
-    
-    // PC에서 중앙 정렬
-    if (window.innerWidth > 1024) {
-        setTimeout(() => {
-            centerActiveCard();
-        }, 100);
+    // CSS 캐러셀 미지원 시에만 JavaScript 기능 활성화
+    if (!supportsCSS) {
+        // 인디케이터 생성
+        updateCarouselIndicators();
+        
+        // 스크롤 이벤트 리스너 추가 (동적 로딩용 - 모바일만)
+        if (window.innerWidth <= 1024) {
+            setupCarouselScrollListener();
+        }
+        
+        // PC에서 중앙 정렬
+        if (window.innerWidth > 1024) {
+            setTimeout(() => {
+                centerActiveCard();
+            }, 100);
+        }
+    } else {
+        // CSS 캐러셀 지원 시에도 모바일 터치 스와이프는 유지
+        if (window.innerWidth <= 1024) {
+            setupCarouselScrollListener();
+        }
     }
 }
 
