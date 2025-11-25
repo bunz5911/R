@@ -4323,7 +4323,9 @@ async function playFullStoryAudio(storyId, buttonElement) {
     const fallbackToTTS = async () => {
         if (storyId !== 0 && storyId !== '0') {
             // 0번이 아니면 TTS fallback 없음
-            alert(`전체 듣기 오디오 파일이 없습니다.\n\n파일명: story-${storyId}.mp3\n경로: audio/full-stories/\n\nMP3 파일을 해당 폴더에 추가해 주세요.`);
+            const fullPath = `${window.location.origin}/audio/full-stories/story-${storyId}.mp3`;
+            alert(`전체 듣기 오디오 파일을 찾을 수 없습니다.\n\n파일명: story-${storyId}.mp3\n경로: ${fullPath}\n\n파일이 존재하는지 확인해 주세요.`);
+            console.error(`❌ 오디오 파일을 찾을 수 없음: ${fullPath}`);
             buttonElement.innerHTML = '▶';
             buttonElement.disabled = false;
             return;
