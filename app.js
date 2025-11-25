@@ -211,58 +211,65 @@ function renderCharacterImage(tabName) {
 // ============================================================================
 // 🚀 하드코딩된 동화 목록 (즉시 로딩용)
 // ============================================================================
+// 레벨 분류 함수 (동화 ID 기반)
+function getStoryLevel(storyId) {
+    if (storyId <= 16) return '초급';
+    if (storyId <= 33) return '중급';
+    return '고급';
+}
+
 const PRELOADED_STORIES = [
-    { id: 0, title: "도깨비키친", preview: "", image: "img/stories/story-0.jpg" },
-    { id: 1, title: "강아지닥스훈트의비밀", preview: "", image: "img/stories/story-1.jpg" },
-    { id: 2, title: "공룡발자국의비밀", preview: "", image: "img/stories/story-2.jpg" },
-    { id: 3, title: "기린의비밀", preview: "", image: "img/stories/story-3.jpg" },
-    { id: 4, title: "까치집의비밀", preview: "", image: "img/stories/story-4.jpg" },
-    { id: 5, title: "꿀벌의비밀", preview: "", image: "img/stories/story-5.jpg" },
-    { id: 6, title: "낡은노트의비밀", preview: "", image: "img/stories/story-6.jpg" },
-    { id: 7, title: "냉장고의비밀", preview: "", image: "img/stories/story-7.jpg" },
-    { id: 8, title: "대나무의비밀", preview: "", image: "img/stories/story-8.jpg" },
-    { id: 9, title: "독수리의비밀", preview: "", image: "img/stories/story-9.jpg" },
-    { id: 10, title: "막대자석의비밀", preview: "", image: "img/stories/story-10.jpg" },
-    { id: 11, title: "뭉게구름의비밀", preview: "", image: "img/stories/story-11.jpg" },
-    { id: 12, title: "밍크고래의비밀", preview: "", image: "img/stories/story-12.jpg" },
-    { id: 13, title: "박물관의비밀", preview: "", image: "img/stories/story-13.jpg" },
-    { id: 14, title: "반코팅장갑의비밀", preview: "", image: "img/stories/story-14.jpg" },
-    { id: 15, title: "블랙다이아몬드의비밀", preview: "", image: "img/stories/story-15.jpg" },
-    { id: 16, title: "빨간신호등의비밀", preview: "", image: "img/stories/story-16.jpg" },
-    { id: 17, title: "색과무늬의비밀", preview: "", image: "img/stories/story-17.jpg" },
-    { id: 18, title: "세탁소드라이클리너의비밀", preview: "", image: "img/stories/story-18.jpg" },
-    { id: 19, title: "수영장꽃무늬투명튜브의비밀", preview: "", image: "img/stories/story-19.jpg" },
-    { id: 20, title: "숫자2의비밀", preview: "", image: "img/stories/story-20.jpg" },
-    { id: 21, title: "숲의비밀", preview: "", image: "img/stories/story-21.jpg" },
-    { id: 22, title: "시간을파는자판기의비밀", preview: "", image: "img/stories/story-22.jpg" },
-    { id: 23, title: "시내버스의비밀", preview: "", image: "img/stories/story-23.jpg" },
-    { id: 24, title: "아기밥그릇의비밀", preview: "", image: "img/stories/story-24.jpg" },
-    { id: 25, title: "아기북극곰의비밀", preview: "", image: "img/stories/story-25.jpg" },
-    { id: 26, title: "애벌레의비밀", preview: "", image: "img/stories/story-26.jpg" },
-    { id: 27, title: "야구장빗자루의비밀", preview: "", image: "img/stories/story-27.jpg" },
-    { id: 28, title: "얼굴의비밀", preview: "", image: "img/stories/story-28.jpg" },
-    { id: 29, title: "엘리베이터의비밀", preview: "", image: "img/stories/story-29.jpg" },
-    { id: 30, title: "여자화장실의비밀", preview: "", image: "img/stories/story-30.jpg" },
-    { id: 31, title: "유리구슬의비밀", preview: "", image: "img/stories/story-31.jpg" },
-    { id: 32, title: "은수저의비밀", preview: "", image: "img/stories/story-32.jpg" },
-    { id: 33, title: "자동차바퀴의비밀", preview: "", image: "img/stories/story-33.jpg" },
-    { id: 34, title: "전기의비밀", preview: "", image: "img/stories/story-34.jpg" },
-    { id: 35, title: "전기+-의비밀", preview: "", image: "img/stories/story-35.jpg" },
-    { id: 36, title: "조개눈물의비밀", preview: "", image: "img/stories/story-36.jpg" },
-    { id: 37, title: "종이에이포의비밀", preview: "", image: "img/stories/story-37.jpg" },
-    { id: 38, title: "주방가위의비밀", preview: "", image: "img/stories/story-38.jpg" },
-    { id: 39, title: "청바지와스커트의비밀", preview: "", image: "img/stories/story-39.jpg" },
-    { id: 40, title: "칭찬스티커의비밀", preview: "", image: "img/stories/story-40.jpg" },
-    { id: 41, title: "케이크의비밀", preview: "", image: "img/stories/story-41.jpg" },
-    { id: 42, title: "쿠션의비밀", preview: "", image: "img/stories/story-42.jpg" },
-    { id: 43, title: "크레파스의비밀", preview: "", image: "img/stories/story-43.jpg" },
-    { id: 44, title: "크리스마스트리의비밀", preview: "", image: "img/stories/story-44.jpg" },
-    { id: 45, title: "택배상자의비밀", preview: "", image: "img/stories/story-45.jpg" },
-    { id: 46, title: "팬지꽃의비밀", preview: "", image: "img/stories/story-46.jpg" },
-    { id: 47, title: "풍차날개의비밀", preview: "", image: "img/stories/story-47.jpg" },
-    { id: 48, title: "허수아비의비밀", preview: "", image: "img/stories/story-48.jpg" },
-    { id: 49, title: "흔들바위의비밀", preview: "", image: "img/stories/story-49.jpg" },
-    { id: 50, title: "희망의비밀", preview: "", image: "img/stories/story-50.jpg" }
+    { id: 0, title: "도깨비키친", preview: "", image: "img/stories/story-0.jpg", level: "초급" },
+    { id: 1, title: "강아지닥스훈트의비밀", preview: "", image: "img/stories/story-1.jpg", level: "초급" },
+    { id: 2, title: "공룡발자국의비밀", preview: "", image: "img/stories/story-2.jpg", level: "초급" },
+    { id: 3, title: "기린의비밀", preview: "", image: "img/stories/story-3.jpg", level: "초급" },
+    { id: 4, title: "까치집의비밀", preview: "", image: "img/stories/story-4.jpg", level: "초급" },
+    { id: 5, title: "꿀벌의비밀", preview: "", image: "img/stories/story-5.jpg", level: "초급" },
+    { id: 6, title: "낡은노트의비밀", preview: "", image: "img/stories/story-6.jpg", level: "초급" },
+    { id: 7, title: "냉장고의비밀", preview: "", image: "img/stories/story-7.jpg", level: "초급" },
+    { id: 8, title: "대나무의비밀", preview: "", image: "img/stories/story-8.jpg", level: "초급" },
+    { id: 9, title: "독수리의비밀", preview: "", image: "img/stories/story-9.jpg", level: "초급" },
+    { id: 10, title: "막대자석의비밀", preview: "", image: "img/stories/story-10.jpg", level: "초급" },
+    { id: 11, title: "뭉게구름의비밀", preview: "", image: "img/stories/story-11.jpg", level: "초급" },
+    { id: 12, title: "밍크고래의비밀", preview: "", image: "img/stories/story-12.jpg", level: "초급" },
+    { id: 13, title: "박물관의비밀", preview: "", image: "img/stories/story-13.jpg", level: "초급" },
+    { id: 14, title: "반코팅장갑의비밀", preview: "", image: "img/stories/story-14.jpg", level: "초급" },
+    { id: 15, title: "블랙다이아몬드의비밀", preview: "", image: "img/stories/story-15.jpg", level: "초급" },
+    { id: 16, title: "빨간신호등의비밀", preview: "", image: "img/stories/story-16.jpg", level: "초급" },
+    { id: 17, title: "색과무늬의비밀", preview: "", image: "img/stories/story-17.jpg", level: "중급" },
+    { id: 18, title: "세탁소드라이클리너의비밀", preview: "", image: "img/stories/story-18.jpg", level: "중급" },
+    { id: 19, title: "수영장꽃무늬투명튜브의비밀", preview: "", image: "img/stories/story-19.jpg", level: "중급" },
+    { id: 20, title: "숫자2의비밀", preview: "", image: "img/stories/story-20.jpg", level: "중급" },
+    { id: 21, title: "숲의비밀", preview: "", image: "img/stories/story-21.jpg", level: "중급" },
+    { id: 22, title: "시간을파는자판기의비밀", preview: "", image: "img/stories/story-22.jpg", level: "중급" },
+    { id: 23, title: "시내버스의비밀", preview: "", image: "img/stories/story-23.jpg", level: "중급" },
+    { id: 24, title: "아기밥그릇의비밀", preview: "", image: "img/stories/story-24.jpg", level: "중급" },
+    { id: 25, title: "아기북극곰의비밀", preview: "", image: "img/stories/story-25.jpg", level: "중급" },
+    { id: 26, title: "애벌레의비밀", preview: "", image: "img/stories/story-26.jpg", level: "중급" },
+    { id: 27, title: "야구장빗자루의비밀", preview: "", image: "img/stories/story-27.jpg", level: "중급" },
+    { id: 28, title: "얼굴의비밀", preview: "", image: "img/stories/story-28.jpg", level: "중급" },
+    { id: 29, title: "엘리베이터의비밀", preview: "", image: "img/stories/story-29.jpg", level: "중급" },
+    { id: 30, title: "여자화장실의비밀", preview: "", image: "img/stories/story-30.jpg", level: "중급" },
+    { id: 31, title: "유리구슬의비밀", preview: "", image: "img/stories/story-31.jpg", level: "중급" },
+    { id: 32, title: "은수저의비밀", preview: "", image: "img/stories/story-32.jpg", level: "중급" },
+    { id: 33, title: "자동차바퀴의비밀", preview: "", image: "img/stories/story-33.jpg", level: "중급" },
+    { id: 34, title: "전기의비밀", preview: "", image: "img/stories/story-34.jpg", level: "고급" },
+    { id: 35, title: "전기+-의비밀", preview: "", image: "img/stories/story-35.jpg", level: "고급" },
+    { id: 36, title: "조개눈물의비밀", preview: "", image: "img/stories/story-36.jpg", level: "고급" },
+    { id: 37, title: "종이에이포의비밀", preview: "", image: "img/stories/story-37.jpg", level: "고급" },
+    { id: 38, title: "주방가위의비밀", preview: "", image: "img/stories/story-38.jpg", level: "고급" },
+    { id: 39, title: "청바지와스커트의비밀", preview: "", image: "img/stories/story-39.jpg", level: "고급" },
+    { id: 40, title: "칭찬스티커의비밀", preview: "", image: "img/stories/story-40.jpg", level: "고급" },
+    { id: 41, title: "케이크의비밀", preview: "", image: "img/stories/story-41.jpg", level: "고급" },
+    { id: 42, title: "쿠션의비밀", preview: "", image: "img/stories/story-42.jpg", level: "고급" },
+    { id: 43, title: "크레파스의비밀", preview: "", image: "img/stories/story-43.jpg", level: "고급" },
+    { id: 44, title: "크리스마스트리의비밀", preview: "", image: "img/stories/story-44.jpg", level: "고급" },
+    { id: 45, title: "택배상자의비밀", preview: "", image: "img/stories/story-45.jpg", level: "고급" },
+    { id: 46, title: "팬지꽃의비밀", preview: "", image: "img/stories/story-46.jpg", level: "고급" },
+    { id: 47, title: "풍차날개의비밀", preview: "", image: "img/stories/story-47.jpg", level: "고급" },
+    { id: 48, title: "허수아비의비밀", preview: "", image: "img/stories/story-48.jpg", level: "고급" },
+    { id: 49, title: "흔들바위의비밀", preview: "", image: "img/stories/story-49.jpg", level: "고급" },
+    { id: 50, title: "희망의비밀", preview: "", image: "img/stories/story-50.jpg", level: "고급" }
 ];
 
 // 전역 상태
@@ -273,6 +280,16 @@ let currentLevel = '초급';
 let currentTab = 'summary';
 let userDifficultyPreference = null;  // 사용자 난이도 선호도
 let PRECOMPUTED_ANALYSIS = {};  // 하드코딩된 분석 데이터 (즉시 로드용)
+let completedStoryIds = [];  // 사용자가 학습한 동화 ID 목록
+let recommendedLevel = null;  // AI 추천 레벨
+let hasTakenLevelTest = false;  // 레벨 테스트 완료 여부
+
+// 플랜별 최대 표시 개수
+const MAX_VISIBLE_STORIES = {
+    free: 2,
+    pro: 10,
+    premier: 30
+};
 
 // 사용자 정보
 // 사용자 ID 초기화 (localStorage에서 읽기, 없으면 기본값)
@@ -714,17 +731,88 @@ async function recordStudySession(data) {
 }
 
 // ============================================================================
-// [2] 동화 목록 로드 (하드코딩 데이터 즉시 표시)
+// [2] 동화 목록 로드 (캐러셀 방식, 레벨 필터링, 학습 기록 기반 정렬)
 // ============================================================================
+
+// 학습한 동화 목록 조회
+async function loadCompletedStories() {
+    if (!isAuthenticated || !currentUserId || currentUserId === '00000000-0000-0000-0000-000000000001') {
+        completedStoryIds = [];
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE}/user/${currentUserId}/completed-stories`);
+        const data = await response.json();
+        completedStoryIds = data.completed_story_ids || [];
+        console.log('✅ 학습한 동화 목록 로드:', completedStoryIds.length, '개');
+    } catch (error) {
+        console.warn('⚠️ 학습 기록 조회 실패:', error);
+        completedStoryIds = [];
+    }
+}
+
+// 레벨별 동화 필터링 및 정렬
+function getFilteredAndSortedStories(level, userPlan) {
+    // 1. 레벨 필터링
+    const levelFiltered = PRELOADED_STORIES.filter(story => story.level === level);
+    
+    // 2. 학습한 동화와 안 한 동화 분리
+    const completed = levelFiltered.filter(story => completedStoryIds.includes(story.id));
+    const notCompleted = levelFiltered.filter(story => !completedStoryIds.includes(story.id));
+    
+    // 3. 학습한 동화는 최근 학습 순으로 정렬 (나중에 구현 가능)
+    // const sortedCompleted = completed.sort((a, b) => {
+    //     const aIndex = completedStoryIds.indexOf(a.id);
+    //     const bIndex = completedStoryIds.indexOf(b.id);
+    //     return aIndex - bIndex;
+    // });
+    
+    // 4. 안 한 동화는 랜덤 셔플
+    const shuffledNotCompleted = shuffleArray([...notCompleted]);
+    
+    // 5. 학습한 동화 상단 + 안 한 동화
+    const combined = [...completed, ...shuffledNotCompleted];
+    
+    // 6. 플랜별 개수 제한
+    const maxVisible = MAX_VISIBLE_STORIES[userPlan] || MAX_VISIBLE_STORIES.free;
+    const visible = combined.slice(0, maxVisible);
+    
+    return visible;
+}
+
+// 배열 셔플 함수
+function shuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
 async function loadStories() {
     try {
-        // ✅ 즉시 하드코딩된 목록 표시 (0.1초 이내)
-        currentStories = PRELOADED_STORIES;
-        renderStoryList();
-        console.log('✅ 동화 목록 렌더링 완료:', currentStories.length, '개');
+        // 1. 학습 기록 로드 (로그인한 경우)
+        await loadCompletedStories();
+        
+        // 2. 레벨 테스트 확인 (첫 방문 시)
+        const storedLevelTest = localStorage.getItem('level_test_completed');
+        if (!storedLevelTest && isAuthenticated) {
+            // 레벨 테스트 모달 표시
+            showLevelTestModal();
+            return; // 테스트 완료 후 다시 로드
+        }
+        
+        // 3. 현재 레벨의 동화 필터링 및 정렬
+        const userPlan = currentUserPlan || 'free';
+        currentStories = getFilteredAndSortedStories(currentLevel, userPlan);
+        
+        // 4. 캐러셀 렌더링
+        renderStoryCarousel();
+        console.log('✅ 동화 목록 렌더링 완료:', currentStories.length, '개 (레벨:', currentLevel + ')');
     } catch (error) {
         console.error('❌ 동화 목록 렌더링 실패:', error);
-        // 에러 발생 시에도 로딩 상태 해제
         const listEl = document.getElementById('storyList');
         if (listEl) {
             listEl.innerHTML = '<div class="loading"><p>동화 목록을 불러올 수 없습니다. 페이지를 새로고침해주세요.</p></div>';
@@ -735,7 +823,6 @@ async function loadStories() {
     try {
         const response = await fetch(`${API_BASE}/stories`);
         const data = await response.json();
-        // 서버 데이터가 있으면 업데이트 (필요시)
         if (data.stories && data.stories.length > 0) {
             console.log('✅ 서버 동화 목록 동기화 완료');
         }
@@ -744,13 +831,40 @@ async function loadStories() {
     }
 }
 
-function renderStoryList() {
+// 캐러셀 렌더링 함수
+function renderStoryCarousel() {
     const listEl = document.getElementById('storyList');
-    listEl.innerHTML = currentStories.map(story => {
-        // 🔑 bunz5911@gmail.com은 모든 동화 잠금 해제
-        if (currentUserEmail === 'bunz5911@gmail.com') {
-            return `
-                <div class="story-card" onclick="checkStoryAccess(${story.id})">
+    if (!listEl) return;
+    
+    const userPlan = currentUserPlan || 'free';
+    const maxVisible = MAX_VISIBLE_STORIES[userPlan] || MAX_VISIBLE_STORIES.free;
+    const totalInLevel = PRELOADED_STORIES.filter(s => s.level === currentLevel).length;
+    const lockedCount = totalInLevel - currentStories.length;
+    
+    // 캐러셀 컨테이너 HTML
+    let carouselHTML = `
+        <div class="story-carousel-container">
+            <div class="carousel-header">
+                <h2 class="carousel-title">${currentLevel} 레벨 동화</h2>
+                <div class="carousel-info">
+                    <span class="story-count">${currentStories.length}개 표시</span>
+                    ${lockedCount > 0 ? `<span class="locked-count">🔒 ${lockedCount}개 더 보기</span>` : ''}
+                </div>
+            </div>
+            <div class="carousel-wrapper">
+                <button class="carousel-btn carousel-btn-prev" onclick="scrollCarousel(-1)">‹</button>
+                <div class="carousel-track" id="carouselTrack">
+    `;
+    
+    // 동화 카드들
+    currentStories.forEach((story, index) => {
+        const isCompleted = completedStoryIds.includes(story.id);
+        const completedBadge = isCompleted ? '<div class="completed-badge">✓ 학습함</div>' : '';
+        
+        carouselHTML += `
+            <div class="carousel-slide ${index === 0 ? 'active' : ''}" data-story-id="${story.id}">
+                <div class="story-card-carousel" onclick="checkStoryAccess(${story.id})">
+                    ${completedBadge}
                     <div class="story-card-image">
                         <img src="${story.image}" alt="${story.title}" onerror="this.style.display='none'">
                         <div class="story-card-overlay">
@@ -759,68 +873,235 @@ function renderStoryList() {
                         </div>
                     </div>
                 </div>
-            `;
-        }
-        
-        // 접근 권한 확인
-        let isLocked = false;
-        let lockMessage = '';
-        let isSeason2 = false;
-        
-        // 시즌 2 (21-50번)
-        if (story.id >= 21) {
-            isLocked = true;
-            isSeason2 = true;
-            lockMessage = '🔜 Season 2 - 2026년 2월';
-        }
-        // 비회원
-        else if (!isAuthenticated) {
-            if (story.id > 1) {
-                isLocked = true;
-                lockMessage = '🔒 로그인 필요';
-            }
-        }
-        // 로그인 상태 - 플랜별 제한
-        else {
-            if (currentUserPlan === 'free') {
-                // Free: 1-3번만
-                if (story.id > 3) {
-                    isLocked = true;
-                    lockMessage = '🔒 Pro 필요';
-                }
-            } else if (currentUserPlan === 'pro') {
-                // Pro: 1-10번만
-                if (story.id > 10) {
-                    isLocked = true;
-                    lockMessage = '🔒 Premier 필요';
-                }
-            } else if (currentUserPlan === 'premier') {
-                // Premier: 1-20번만
-                if (story.id > 20) {
-                    isLocked = true;
-                    lockMessage = '🔜 Season 2';
-                }
-            }
-        }
-        
-        const lockIcon = isLocked ? '<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 48px; z-index: 10;">🔒</div>' : '';
-        const lockedStyle = isLocked ? 'opacity: 0.6; cursor: pointer;' : '';
-        const clickHandler = isLocked ? (isSeason2 ? `showSeason2Modal()` : `checkStoryAccess(${story.id})`) : `selectStory(${story.id})`;
-        
-        return `
-            <div class="story-card" onclick="${clickHandler}" style="${lockedStyle}">
-                <div class="story-card-image">
-                    <img src="${story.image}" alt="${story.title}" onerror="this.style.display='none'">
-                    ${lockIcon}
-                    <div class="story-card-overlay">
-                        <div class="story-card-number">${story.id}</div>
-                        <h3 class="story-card-title-overlay">${story.title}</h3>
-                        ${isLocked ? `<div style="margin-top: 8px; font-size: 12px; background: rgba(255,255,255,0.9); color: #333; padding: 4px 8px; border-radius: 4px;">${lockMessage}</div>` : ''}
+            </div>
+        `;
+    });
+    
+    // 잠금 카드 추가 (플랜별)
+    if (lockedCount > 0) {
+        const nextPlan = getNextPlan(userPlan);
+        carouselHTML += `
+            <div class="carousel-slide locked-slide">
+                <div class="story-card-carousel locked-card">
+                    <div class="lock-content">
+                        <div class="lock-icon">🔒</div>
+                        <h3>${lockedCount}개 더 보기</h3>
+                        <p>${nextPlan ? `${nextPlan.toUpperCase()} 구독으로 더 많은 동화를 보세요!` : '시즌 2에서 더 많은 동화를 만나보세요!'}</p>
+                        ${nextPlan ? `<button class="upgrade-btn-carousel" onclick="showUpgradeModal('${nextPlan}')">구독하기</button>` : ''}
                     </div>
                 </div>
             </div>
         `;
-    }).join('');
+    }
+    
+    carouselHTML += `
+                </div>
+                <button class="carousel-btn carousel-btn-next" onclick="scrollCarousel(1)">›</button>
+            </div>
+            <div class="carousel-indicators" id="carouselIndicators"></div>
+        </div>
+    `;
+    
+    listEl.innerHTML = carouselHTML;
+    
+    // 인디케이터 생성
+    updateCarouselIndicators();
+}
+
+// 다음 플랜 가져오기
+function getNextPlan(currentPlan) {
+    const planOrder = { free: 'pro', pro: 'premier', premier: null };
+    return planOrder[currentPlan] || null;
+}
+
+// 캐러셀 스크롤 함수
+function scrollCarousel(direction) {
+    const track = document.getElementById('carouselTrack');
+    if (!track) return;
+    
+    const slides = track.querySelectorAll('.carousel-slide');
+    const activeSlide = track.querySelector('.carousel-slide.active');
+    if (!activeSlide) return;
+    
+    const currentIndex = Array.from(slides).indexOf(activeSlide);
+    const nextIndex = currentIndex + direction;
+    
+    if (nextIndex >= 0 && nextIndex < slides.length) {
+        activeSlide.classList.remove('active');
+        slides[nextIndex].classList.add('active');
+        
+        // 스크롤 애니메이션
+        const slideWidth = slides[0].offsetWidth + 16; // gap 포함
+        track.scrollTo({
+            left: nextIndex * slideWidth,
+            behavior: 'smooth'
+        });
+        
+        updateCarouselIndicators();
+    }
+}
+
+// 캐러셀 인디케이터 업데이트
+function updateCarouselIndicators() {
+    const track = document.getElementById('carouselTrack');
+    const indicators = document.getElementById('carouselIndicators');
+    if (!track || !indicators) return;
+    
+    const slides = track.querySelectorAll('.carousel-slide');
+    const activeIndex = Array.from(slides).findIndex(s => s.classList.contains('active'));
+    
+    indicators.innerHTML = '';
+    slides.forEach((slide, index) => {
+        const dot = document.createElement('div');
+        dot.className = `carousel-dot ${index === activeIndex ? 'active' : ''}`;
+        dot.onclick = () => {
+            slides.forEach(s => s.classList.remove('active'));
+            slide.classList.add('active');
+            const slideWidth = slide.offsetWidth + 16;
+            track.scrollTo({ left: index * slideWidth, behavior: 'smooth' });
+            updateCarouselIndicators();
+        };
+        indicators.appendChild(dot);
+    });
+}
+
+// 레벨 테스트 모달 표시
+function showLevelTestModal() {
+    const modal = document.createElement('div');
+    modal.className = 'level-test-modal';
+    modal.id = 'levelTestModal';
+    modal.innerHTML = `
+        <div class="level-test-content">
+            <h2>레벨 테스트</h2>
+            <p>당신에게 맞는 레벨을 추천해드리겠습니다.</p>
+            <div class="test-questions" id="testQuestions">
+                <!-- 테스트 문제들이 여기에 동적으로 추가됩니다 -->
+            </div>
+            <div class="test-actions">
+                <button class="btn-primary" onclick="submitLevelTest()">완료</button>
+                <button class="btn-secondary" onclick="skipLevelTest()">건너뛰기</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // 간단한 테스트 문제 생성 (실제로는 더 복잡한 문제 사용 가능)
+    const questions = [
+        { id: 1, question: "안녕하세요"의 의미는?", options: ["Hello", "Goodbye", "Thank you", "Sorry"], correct: 0 },
+        { id: 2, question: "감사합니다"의 의미는?", options: ["Hello", "Thank you", "Sorry", "Please"], correct: 1 },
+        { id: 3, question: "한국어를 얼마나 공부하셨나요?", options: ["1개월 미만", "1-6개월", "6개월-1년", "1년 이상"], correct: null }
+    ];
+    
+    const questionsEl = document.getElementById('testQuestions');
+    questionsEl.innerHTML = questions.map((q, idx) => `
+        <div class="test-question">
+            <p class="question-text">${q.question}</p>
+            <div class="question-options">
+                ${q.options.map((opt, optIdx) => `
+                    <label class="option-label">
+                        <input type="radio" name="question${q.id}" value="${optIdx}" data-correct="${optIdx === q.correct}">
+                        <span>${opt}</span>
+                    </label>
+                `).join('')}
+            </div>
+        </div>
+    `).join('');
+}
+
+// 레벨 테스트 제출
+async function submitLevelTest() {
+    const questions = document.querySelectorAll('.test-question');
+    const answers = [];
+    let score = 0;
+    let totalQuestions = 0;
+    
+    questions.forEach((q, idx) => {
+        const selected = q.querySelector('input[type="radio"]:checked');
+        if (selected) {
+            const isCorrect = selected.dataset.correct === 'true';
+            if (isCorrect !== null) {
+                totalQuestions++;
+                if (isCorrect) score++;
+            }
+            answers.push({
+                question: q.querySelector('.question-text').textContent,
+                answer: selected.value,
+                correct: isCorrect
+            });
+        }
+    });
+    
+    const totalScore = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 50;
+    
+    // AI 레벨 추천 요청
+    try {
+        const response = await fetch(`${API_BASE}/user/recommend-level`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: currentUserId,
+                test_results: {
+                    questions: answers,
+                    total_score: totalScore
+                }
+            })
+        });
+        
+        const data = await response.json();
+        recommendedLevel = data.recommended_level || '초급';
+        
+        // 레벨 적용
+        currentLevel = recommendedLevel;
+        document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector(`[data-level="${recommendedLevel}"]`)?.classList.add('active');
+        
+        // 성공 메시지 표시
+        const modal = document.getElementById('levelTestModal');
+        modal.innerHTML = `
+            <div class="level-test-content">
+                <h2>테스트 완료!</h2>
+                <p class="recommendation-message">${currentDisplayName || currentUserId}님에게 적합한 스토리를 추천합니다.</p>
+                <p class="recommended-level">추천 레벨: <strong>${recommendedLevel}</strong></p>
+                <button class="btn-primary" onclick="closeLevelTestModal()">시작하기</button>
+            </div>
+        `;
+        
+        // localStorage에 저장
+        localStorage.setItem('level_test_completed', 'true');
+        localStorage.setItem('recommended_level', recommendedLevel);
+        hasTakenLevelTest = true;
+        
+        // 동화 목록 다시 로드
+        setTimeout(() => {
+            closeLevelTestModal();
+            loadStories();
+        }, 2000);
+    } catch (error) {
+        console.error('레벨 추천 오류:', error);
+        closeLevelTestModal();
+        loadStories();
+    }
+}
+
+// 레벨 테스트 건너뛰기
+function skipLevelTest() {
+    localStorage.setItem('level_test_completed', 'true');
+    closeLevelTestModal();
+    loadStories();
+}
+
+// 레벨 테스트 모달 닫기
+function closeLevelTestModal() {
+    const modal = document.getElementById('levelTestModal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+// renderStoryList 함수 (캐러셀 버전 사용)
+function renderStoryList() {
+    renderStoryCarousel();
 }
 
 // ============================================================================

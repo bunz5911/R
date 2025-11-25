@@ -837,6 +837,92 @@ def save_user_progress():
         return jsonify({"error": str(e), "saved": False}), 500
 
 
+@app.route('/api/user/<user_id>/completed-stories', methods=['GET'])
+def get_completed_stories(user_id):
+    """
+    사용자가 학습한 동화 목록 조회
+    Returns: { "completed_story_ids": [1, 2, 3, ...] }
+    """
+    if not supabase_client:
+        return jsonify({"completed_story_ids": []}), 200
+    
+    try:
+        # learning_records에서 학습한 동화 ID 목록 조회
+        records = supabase_client.table('learning_records')\
+            .select('story_id')\
+            .eq('user_id', user_id)\
+            .execute()
+        
+        # 중복 제거하여 고유한 story_id 목록 반환
+        completed_ids = list(set([r['story_id'] for r in records.data if r.get('story_id') is not None]))
+        
+        return jsonify({
+            "completed_story_ids": completed_ids,
+            "total_completed": len(completed_ids)
+        })
+    except Exception as e:
+        print(f"학습 기록 조회 오류: {e}")
+        return jsonify({"completed_story_ids": [], "error": str(e)}), 200
+
+
+@app.route('/api/user/recommend-level', methods=['POST'])
+def recommend_level():
+    """
+    AI 기반 레벨 추천
+    POST body: {
+        "user_id": "user123",
+        "test_results": {
+            "questions": [
+                {"question": "...", "answer": "...", "correct": true},
+                ...
+            ],
+            "total_score": 85
+        }
+    }
+    Returns: { "recommended_level": "초급|중급|고급", "confidence": 0.85 }
+    """
+    if not client:
+        return jsonify({"error": "Gemini API가 설정되지 않았습니다"}), 503
+    
+    data = request.get_json() or {}
+    user_id = data.get('user_id')
+    test_results = data.get('test_results', {})
+    
+    try:
+        # 간단한 점수 기반 추천 (나중에 AI로 개선 가능)
+        total_score = test_results.get('total_score', 0)
+        questions = test_results.get('questions', [])
+        
+        # 점수 기반 레벨 추천
+        if total_score >= 80:
+            recommended_level = '고급'
+            confidence = min(0.9, 0.7 + (total_score - 80) / 100)
+        elif total_score >= 50:
+            recommended_level = '중급'
+            confidence = min(0.85, 0.6 + (total_score - 50) / 100)
+        else:
+            recommended_level = '초급'
+            confidence = min(0.8, 0.5 + total_score / 100)
+        
+        # AI를 사용한 더 정교한 추천 (선택사항)
+        # prompt = f"사용자의 테스트 결과를 분석하여 적합한 레벨을 추천해주세요..."
+        # ai_response = client.models.generate_content(...)
+        
+        return jsonify({
+            "recommended_level": recommended_level,
+            "confidence": round(confidence, 2),
+            "message": f"{user_id}님에게 적합한 스토리를 추천합니다."
+        })
+    except Exception as e:
+        print(f"레벨 추천 오류: {e}")
+        # 기본값 반환
+        return jsonify({
+            "recommended_level": "초급",
+            "confidence": 0.5,
+            "message": "기본 레벨을 추천합니다."
+        }), 200
+
+
 @app.route('/api/user/dashboard/<user_id>', methods=['GET'])
 def get_user_dashboard(user_id):
     """사용자 대시보드 데이터 조회"""
