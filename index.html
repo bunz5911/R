@@ -1019,28 +1019,50 @@
         /* 모바일에서 잠금 카드 크기 조정 */
         @media (max-width: 768px) {
             .locked-card {
-                min-height: 250px;
+                min-height: 200px; /* 250px → 200px로 축소 */
             }
             
             .lock-content {
-                padding: var(--space-md);
+                padding: var(--space-md); /* 패딩 유지 */
             }
             
             .lock-icon {
-                font-size: 36px;
+                font-size: 32px; /* 36px → 32px로 축소 */
+                margin-bottom: var(--space-sm);
             }
             
             .lock-content h3 {
-                font-size: var(--font-size-lg);
+                font-size: var(--font-size-lg); /* 폰트 크기 유지 */
+                margin-bottom: var(--space-xs);
+            }
+            
+            .lock-content p {
+                font-size: var(--font-size-xs); /* 폰트 크기 축소 */
+                margin-bottom: var(--space-md);
             }
             
             .upgrade-btn-carousel {
-                padding: var(--space-sm) var(--space-md);
-                font-size: var(--font-size-sm);
+                padding: var(--space-xs) var(--space-sm); /* 패딩 축소 */
+                font-size: var(--font-size-xs); /* 폰트 크기 축소 */
             }
             
             .upgrade-btn-carousel:hover {
                 transform: none;
+            }
+        }
+        
+        /* 작은 모바일에서 추가 최적화 */
+        @media (max-width: 480px) {
+            .locked-card {
+                min-height: 180px; /* 더 작은 화면에서는 더 축소 */
+            }
+            
+            .lock-icon {
+                font-size: 28px;
+            }
+            
+            .lock-content h3 {
+                font-size: var(--font-size-base);
             }
         }
         
