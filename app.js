@@ -423,11 +423,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 즉시 실행 (블로킹 없음) - 사용자가 즉시 볼 수 있는 것들
     // ============================================================================
     
-    // ✅ 1. 동화 목록 즉시 표시 (최우선)
-    loadStories();
+    // ✅ 1. 온보딩 체크 (첫 방문자) - 먼저 체크하여 리다이렉트 방지
+    const hasSeenOnboarding = localStorage.getItem('onboarding_complete');
+    if (!hasSeenOnboarding) {
+        // 온보딩 페이지로 리다이렉트
+        window.location.href = 'onboarding.html';
+        return; // 리다이렉트 후 초기화 중단
+    }
     
-    // ✅ 2. 온보딩 체크 (첫 방문자)
-    checkOnboarding();
+    // ✅ 2. 뷰 초기화 (온보딩 완료 후 메인 페이지 진입 시)
+    // 동화 목록 화면 표시, 학습 화면 숨김
+    const storyListView = document.getElementById('storyListView');
+    const learningView = document.getElementById('learningView');
+    if (storyListView) {
+        storyListView.style.display = 'block';
+    }
+    if (learningView) {
+        learningView.style.display = 'none';
+    }
+    
+    // ✅ 3. 동화 목록 즉시 표시 (온보딩 완료 후)
+    loadStories();
     
     // ✅ 3. 코인 로컬스토리지에서 즉시 표시 (캐시 우선)
     const cachedCoins = localStorage.getItem('userCoins');
