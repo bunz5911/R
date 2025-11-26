@@ -18,15 +18,33 @@ BEGIN
     END IF;
 END $$;
 
--- user_id 필드 추가 (없는 경우)
+-- user_id 필드 추가/수정 (없는 경우 추가, TEXT인 경우 UUID로 변환)
 DO $$ 
 BEGIN
+    -- 컬럼이 없는 경우 추가
     IF NOT EXISTS (
         SELECT 1 FROM information_schema.columns 
         WHERE table_name = 'learning_records' AND column_name = 'user_id'
     ) THEN
         ALTER TABLE public.learning_records 
         ADD COLUMN user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE;
+    ELSE
+        -- 컬럼이 있지만 TEXT 타입인 경우 UUID로 변환
+        IF EXISTS (
+            SELECT 1 FROM information_schema.columns 
+            WHERE table_name = 'learning_records' 
+            AND column_name = 'user_id' 
+            AND data_type = 'text'
+        ) THEN
+            -- TEXT를 UUID로 변환 (유효한 UUID만 변환)
+            ALTER TABLE public.learning_records
+            ALTER COLUMN user_id TYPE UUID USING user_id::UUID;
+            
+            -- 외래키 제약 조건 추가
+            ALTER TABLE public.learning_records
+            ADD CONSTRAINT fk_learning_records_user_id 
+            FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
+        END IF;
     END IF;
 END $$;
 
@@ -208,29 +226,30 @@ DROP POLICY IF EXISTS "Users can update own learning records" ON public.learning
 DROP POLICY IF EXISTS "Users can delete own learning records" ON public.learning_records;
 
 -- 사용자는 자신의 학습 기록만 볼 수 있음
+-- 타입 안전성을 위해 명시적 캐스팅 사용
 CREATE POLICY "Users can view own learning records"
 ON public.learning_records
 FOR SELECT
-USING (auth.uid() = user_id);
+USING (auth.uid()::text = user_id::text);
 
 -- 사용자는 자신의 학습 기록만 삽입할 수 있음
 CREATE POLICY "Users can insert own learning records"
 ON public.learning_records
 FOR INSERT
-WITH CHECK (auth.uid() = user_id);
+WITH CHECK (auth.uid()::text = user_id::text);
 
 -- 사용자는 자신의 학습 기록만 수정할 수 있음
 CREATE POLICY "Users can update own learning records"
 ON public.learning_records
 FOR UPDATE
-USING (auth.uid() = user_id)
-WITH CHECK (auth.uid() = user_id);
+USING (auth.uid()::text = user_id::text)
+WITH CHECK (auth.uid()::text = user_id::text);
 
 -- 사용자는 자신의 학습 기록만 삭제할 수 있음
 CREATE POLICY "Users can delete own learning records"
 ON public.learning_records
 FOR DELETE
-USING (auth.uid() = user_id);
+USING (auth.uid()::text = user_id::text);
 
 -- ============================================================================
 -- 4. updated_at 자동 업데이트 트리거 (선택사항)
