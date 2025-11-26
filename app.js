@@ -753,14 +753,28 @@ function updateCoinDisplay() {
 // [1-2] 학습 기록을 Supabase에 저장
 // ============================================================================
 async function recordStudySession(data) {
+    // 로그인하지 않은 경우 저장하지 않음
+    if (!isAuthenticated || !currentUserId || currentUserId === '00000000-0000-0000-0000-000000000001') {
+        return;
+    }
+    
     try {
+        // story_id와 story_title이 직접 전달된 경우 사용 (selectStory에서 호출 시)
+        const storyId = data.story_id || currentStory?.id;
+        const storyTitle = data.story_title || currentStory?.title;
+        
+        if (!storyId) {
+            console.warn('⚠️ story_id가 없어 학습 기록을 저장할 수 없습니다.');
+            return;
+        }
+        
         const response = await fetch(`${API_BASE}/user/record-study`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 user_id: currentUserId,
-                story_id: currentStory.id,
-                story_title: currentStory.title,
+                story_id: storyId,
+                story_title: storyTitle || PRELOADED_STORIES.find(s => s.id === storyId)?.title || '',
                 level: currentLevel,
                 paragraph_num: data.paragraph_num || null,
                 quiz_score: data.quiz_score || null,
