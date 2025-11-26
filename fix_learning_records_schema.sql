@@ -1,0 +1,262 @@
+-- ============================================================================
+-- learning_records 테이블 스키마 수정
+-- ============================================================================
+-- 이 스크립트는 learning_records 테이블에 필요한 필드를 추가하거나 수정합니다.
+
+-- 1. 필수 필드 추가 (없는 경우에만)
+-- ============================================================================
+
+-- id 필드 추가 (없는 경우)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'learning_records' AND column_name = 'id'
+    ) THEN
+        ALTER TABLE public.learning_records 
+        ADD COLUMN id UUID PRIMARY KEY DEFAULT uuid_generate_v4();
+    END IF;
+END $$;
+
+-- user_id 필드 추가 (없는 경우)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'learning_records' AND column_name = 'user_id'
+    ) THEN
+        ALTER TABLE public.learning_records 
+        ADD COLUMN user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE;
+    END IF;
+END $$;
+
+-- story_id 필드 추가 (없는 경우)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'learning_records' AND column_name = 'story_id'
+    ) THEN
+        ALTER TABLE public.learning_records 
+        ADD COLUMN story_id INT NOT NULL;
+    END IF;
+END $$;
+
+-- story_title 필드 추가 (없는 경우)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'learning_records' AND column_name = 'story_title'
+    ) THEN
+        ALTER TABLE public.learning_records 
+        ADD COLUMN story_title TEXT;
+    END IF;
+END $$;
+
+-- level 필드 추가 (없는 경우)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'learning_records' AND column_name = 'level'
+    ) THEN
+        ALTER TABLE public.learning_records 
+        ADD COLUMN level TEXT;
+    END IF;
+END $$;
+
+-- quiz_score 필드 추가 (없는 경우)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'learning_records' AND column_name = 'quiz_score'
+    ) THEN
+        ALTER TABLE public.learning_records 
+        ADD COLUMN quiz_score INT;
+    END IF;
+END $$;
+
+-- pronunciation_score 필드 추가 (없는 경우)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'learning_records' AND column_name = 'pronunciation_score'
+    ) THEN
+        ALTER TABLE public.learning_records 
+        ADD COLUMN pronunciation_score INT;
+    END IF;
+END $$;
+
+-- paragraph_num 필드 추가 (없는 경우)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'learning_records' AND column_name = 'paragraph_num'
+    ) THEN
+        ALTER TABLE public.learning_records 
+        ADD COLUMN paragraph_num INT;
+    END IF;
+END $$;
+
+-- session_type 필드 추가 (없는 경우)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'learning_records' AND column_name = 'session_type'
+    ) THEN
+        ALTER TABLE public.learning_records 
+        ADD COLUMN session_type TEXT DEFAULT 'reading';
+    END IF;
+END $$;
+
+-- completed 필드 추가 (없는 경우)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'learning_records' AND column_name = 'completed'
+    ) THEN
+        ALTER TABLE public.learning_records 
+        ADD COLUMN completed BOOLEAN DEFAULT false;
+    END IF;
+END $$;
+
+-- created_at 필드 추가 (없는 경우)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'learning_records' AND column_name = 'created_at'
+    ) THEN
+        ALTER TABLE public.learning_records 
+        ADD COLUMN created_at TIMESTAMP DEFAULT NOW();
+    END IF;
+END $$;
+
+-- updated_at 필드 추가 (없는 경우)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'learning_records' AND column_name = 'updated_at'
+    ) THEN
+        ALTER TABLE public.learning_records 
+        ADD COLUMN updated_at TIMESTAMP DEFAULT NOW();
+    END IF;
+END $$;
+
+-- study_date 필드 추가 (없는 경우, 선택사항)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'learning_records' AND column_name = 'study_date'
+    ) THEN
+        ALTER TABLE public.learning_records 
+        ADD COLUMN study_date TIMESTAMP;
+    END IF;
+END $$;
+
+-- completed_tabs 필드 추가 (없는 경우, 선택사항)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'learning_records' AND column_name = 'completed_tabs'
+    ) THEN
+        ALTER TABLE public.learning_records 
+        ADD COLUMN completed_tabs JSONB DEFAULT '[]'::jsonb;
+    END IF;
+END $$;
+
+-- ============================================================================
+-- 2. 인덱스 생성 (성능 향상)
+-- ============================================================================
+
+-- user_id 인덱스
+CREATE INDEX IF NOT EXISTS idx_learning_records_user_id 
+ON public.learning_records(user_id);
+
+-- story_id 인덱스
+CREATE INDEX IF NOT EXISTS idx_learning_records_story_id 
+ON public.learning_records(story_id);
+
+-- created_at 인덱스 (최근 학습 목록 조회용)
+CREATE INDEX IF NOT EXISTS idx_learning_records_created_at 
+ON public.learning_records(created_at DESC);
+
+-- user_id + story_id 복합 인덱스 (중복 체크용)
+CREATE INDEX IF NOT EXISTS idx_learning_records_user_story 
+ON public.learning_records(user_id, story_id);
+
+-- ============================================================================
+-- 3. RLS (Row Level Security) 정책 설정
+-- ============================================================================
+
+-- RLS 활성화
+ALTER TABLE public.learning_records ENABLE ROW LEVEL SECURITY;
+
+-- 기존 정책 삭제 (있는 경우)
+DROP POLICY IF EXISTS "Users can view own learning records" ON public.learning_records;
+DROP POLICY IF EXISTS "Users can insert own learning records" ON public.learning_records;
+DROP POLICY IF EXISTS "Users can update own learning records" ON public.learning_records;
+DROP POLICY IF EXISTS "Users can delete own learning records" ON public.learning_records;
+
+-- 사용자는 자신의 학습 기록만 볼 수 있음
+CREATE POLICY "Users can view own learning records"
+ON public.learning_records
+FOR SELECT
+USING (auth.uid() = user_id);
+
+-- 사용자는 자신의 학습 기록만 삽입할 수 있음
+CREATE POLICY "Users can insert own learning records"
+ON public.learning_records
+FOR INSERT
+WITH CHECK (auth.uid() = user_id);
+
+-- 사용자는 자신의 학습 기록만 수정할 수 있음
+CREATE POLICY "Users can update own learning records"
+ON public.learning_records
+FOR UPDATE
+USING (auth.uid() = user_id)
+WITH CHECK (auth.uid() = user_id);
+
+-- 사용자는 자신의 학습 기록만 삭제할 수 있음
+CREATE POLICY "Users can delete own learning records"
+ON public.learning_records
+FOR DELETE
+USING (auth.uid() = user_id);
+
+-- ============================================================================
+-- 4. updated_at 자동 업데이트 트리거 (선택사항)
+-- ============================================================================
+
+-- 트리거 함수 생성
+CREATE OR REPLACE FUNCTION update_learning_records_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 트리거 생성
+DROP TRIGGER IF EXISTS trigger_update_learning_records_updated_at ON public.learning_records;
+CREATE TRIGGER trigger_update_learning_records_updated_at
+BEFORE UPDATE ON public.learning_records
+FOR EACH ROW
+EXECUTE FUNCTION update_learning_records_updated_at();
+
+-- ============================================================================
+-- 완료 메시지
+-- ============================================================================
+DO $$ 
+BEGIN
+    RAISE NOTICE 'learning_records 테이블 스키마 수정 완료!';
+END $$;
+

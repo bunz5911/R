@@ -1038,8 +1038,10 @@ def record_study_session():
             'story_title': story_title,
             'level': level,
             'quiz_score': quiz_score,
-            'pronunciation_score': pronunciation_score
-            # study_date와 created_at은 Supabase에서 자동 생성 (DEFAULT NOW())
+            'pronunciation_score': pronunciation_score,
+            'paragraph_num': paragraph_num,
+            'session_type': session_type
+            # created_at은 Supabase에서 자동 생성 (DEFAULT NOW())
         }).execute()
         
         print(f"✅ 학습 기록 저장 완료: {story_title} ({session_type})", flush=True)
