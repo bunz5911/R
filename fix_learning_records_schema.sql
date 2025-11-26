@@ -208,6 +208,8 @@ DROP POLICY IF EXISTS "Users can delete own learning records" ON public.learning
 
 -- user_id 컬럼이 TEXT 타입인 경우 UUID로 변환
 DO $$ 
+DECLARE
+    invalid_count INTEGER;
 BEGIN
     IF EXISTS (
         SELECT 1 FROM information_schema.columns 
@@ -215,15 +217,36 @@ BEGIN
         AND column_name = 'user_id' 
         AND data_type = 'text'
     ) THEN
+        -- 유효하지 않은 UUID 값 확인 및 처리
+        SELECT COUNT(*) INTO invalid_count
+        FROM public.learning_records
+        WHERE user_id IS NOT NULL 
+        AND user_id !~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$';
+        
+        IF invalid_count > 0 THEN
+            RAISE NOTICE '유효하지 않은 UUID 값 %개 발견. NULL로 설정합니다.', invalid_count;
+            -- 유효하지 않은 UUID 값을 NULL로 설정 (또는 삭제)
+            UPDATE public.learning_records
+            SET user_id = NULL
+            WHERE user_id IS NOT NULL 
+            AND user_id !~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$';
+        END IF;
+        
         -- 기존 외래키 제약 조건 제거 (있는 경우)
         ALTER TABLE public.learning_records
         DROP CONSTRAINT IF EXISTS fk_learning_records_user_id;
         
-        -- TEXT를 UUID로 변환 (유효한 UUID만 변환)
+        -- TEXT를 UUID로 변환 (유효한 UUID만 변환, NULL은 그대로 유지)
         ALTER TABLE public.learning_records
-        ALTER COLUMN user_id TYPE UUID USING user_id::UUID;
+        ALTER COLUMN user_id TYPE UUID 
+        USING CASE 
+            WHEN user_id IS NULL THEN NULL
+            WHEN user_id ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' 
+            THEN user_id::UUID
+            ELSE NULL
+        END;
         
-        -- 외래키 제약 조건 추가
+        -- 외래키 제약 조건 추가 (NULL 값 허용)
         ALTER TABLE public.learning_records
         ADD CONSTRAINT fk_learning_records_user_id 
         FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
