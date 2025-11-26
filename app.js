@@ -1513,15 +1513,20 @@ function checkAndLoadMoreCards() {
     const maxRendered = getMaxRenderedCards();
     if (maxRendered === Infinity) return; // PC는 불필요
     
+    // 🔑 슈퍼바이저 또는 유료 사용자는 모바일에서도 전체 카드가 이미 렌더링되어 있으므로 불필요
+    const userPlan = currentUserPlan || 'free';
+    if (currentUserEmail === 'bunz5911@gmail.com' || userPlan !== 'free') {
+        return;
+    }
+    
     const activeSlide = track.querySelector('.carousel-slide.active');
     if (!activeSlide) return;
     
     const activeIndex = parseInt(activeSlide.dataset.index) || 0;
     const currentRange = renderedCardRange;
     
-    // 전체 스토리 수 가져오기
-    const userPlan = currentUserPlan || 'free';
-    const totalStories = userPlan !== 'free' ? allCarouselStories.length : currentStories.length;
+    // 전체 스토리 수 가져오기 (무료 사용자만)
+    const totalStories = currentStories.length;
     
     // 활성 카드가 범위 끝에 가까우면 확장
     const threshold = 1; // 범위 끝에서 1개 남았을 때
