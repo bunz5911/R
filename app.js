@@ -1076,12 +1076,18 @@ function getRenderRange(activeIndex, totalCards) {
         return { start: 0, end: totalCards };
     }
     
+    // 🔑 슈퍼바이저 또는 유료 사용자는 모바일에서도 전체 카드 렌더링
+    const userPlan = currentUserPlan || 'free';
+    if (currentUserEmail === 'bunz5911@gmail.com' || userPlan !== 'free') {
+        return { start: 0, end: totalCards };
+    }
+    
     // 태블릿/모바일: 활성 카드 주변만 렌더링
     if (maxRendered === Infinity) {
         return { start: 0, end: totalCards };
     }
     
-    // 모바일: 활성 카드 주변만 렌더링
+    // 모바일 무료 사용자: 활성 카드 주변만 렌더링
     const buffer = Math.floor(maxRendered / 2);
     const start = Math.max(0, activeIndex - buffer);
     const end = Math.min(totalCards, activeIndex + buffer + 1);
