@@ -857,7 +857,18 @@ function shuffleArray(array) {
 async function loadStories() {
     try {
         console.log('📚 loadStories() 시작');
-        console.log('📚 PRELOADED_STORIES 개수:', PRELOADED_STORIES ? PRELOADED_STORIES.length : 'undefined');
+        
+        // PRELOADED_STORIES 확인 (가장 먼저 체크)
+        if (typeof PRELOADED_STORIES === 'undefined' || !PRELOADED_STORIES || PRELOADED_STORIES.length === 0) {
+            console.error('❌ PRELOADED_STORIES가 정의되지 않았거나 비어있습니다!');
+            const listEl = document.getElementById('storyList');
+            if (listEl) {
+                listEl.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-secondary);"><p>동화 데이터를 불러올 수 없습니다. 페이지를 새로고침해주세요.</p></div>';
+            }
+            return;
+        }
+        
+        console.log('📚 PRELOADED_STORIES 개수:', PRELOADED_STORIES.length);
         console.log('📚 currentLevel:', currentLevel);
         console.log('📚 currentUserPlan:', currentUserPlan);
         console.log('📚 isAuthenticated:', isAuthenticated);
@@ -1103,23 +1114,6 @@ function renderStoryCarousel(activeIndex = 0) {
         }
     });
     
-    // 무료 사용자: "다른 스토리 더 보기" 카드 추가
-    if (userPlan === 'free' && currentStories.length < PRELOADED_STORIES.length) {
-        const remainingCount = PRELOADED_STORIES.length - currentStories.length;
-        carouselHTML += `
-            <div class="carousel-slide locked-slide upgrade-card" data-bs-interval="false" style="z-index: 20;">
-                <div class="story-card-carousel locked-card">
-                    <div class="lock-content">
-                        <div class="lock-icon">🔒</div>
-                        <h3>다른 스토리 더 보기</h3>
-                        <p>pro 또는 premire 구독으로 더 많은 스토리를 보세요</p>
-                        <button class="upgrade-btn-carousel" onclick="showUpgradeModal('pro')">구독하기</button>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-    
     carouselHTML += `
                 </div>
                 ${!supportsCSS ? `
@@ -1133,7 +1127,25 @@ function renderStoryCarousel(activeIndex = 0) {
         </div>
     `;
     
-    listEl.innerHTML = carouselHTML;
+    // 무료 사용자: "다른 스토리 더 보기" 카드를 캐러셀 밖으로 분리
+    let upgradeCardHTML = '';
+    if (userPlan === 'free' && currentStories.length < PRELOADED_STORIES.length) {
+        const remainingCount = PRELOADED_STORIES.length - currentStories.length;
+        upgradeCardHTML = `
+            <div class="upgrade-card-container">
+                <div class="upgrade-card-standalone">
+                    <div class="lock-content">
+                        <div class="lock-icon">🔒</div>
+                        <h3>다른 스토리 더 보기</h3>
+                        <p>pro 또는 premire 구독으로 더 많은 스토리를 보세요</p>
+                        <button class="upgrade-btn-carousel" onclick="showUpgradeModal('pro')">구독하기</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    listEl.innerHTML = carouselHTML + upgradeCardHTML;
     
     // PC에서 마우스 호버 시 활성 카드 업데이트 (십자선 이동)
     // DOM 렌더링 완료 후 이벤트 리스너 추가

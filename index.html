@@ -1230,28 +1230,142 @@
             }
         }
         
-        /* PC에서 특히 더보기 카드가 보이도록 */
+        /* "다른 스토리 더 보기" 카드를 캐러셀 밖으로 분리 */
+        .upgrade-card-container {
+            width: 100%;
+            max-width: 1400px;
+            margin: var(--space-xl) auto 0;
+            padding: 0 var(--space-lg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .upgrade-card-standalone {
+            width: 100%;
+            max-width: 300px;
+            background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-quaternary) 100%);
+            border-radius: var(--border-radius-lg);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-lg);
+            border: 2px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .upgrade-card-standalone .lock-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        .upgrade-card-standalone .lock-icon {
+            font-size: 48px;
+            margin-bottom: var(--space-md);
+        }
+        
+        .upgrade-card-standalone h3 {
+            font-size: var(--font-size-xl);
+            margin-bottom: var(--space-sm);
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+        
+        .upgrade-card-standalone p {
+            font-size: var(--font-size-base);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-lg);
+            line-height: 1.5;
+        }
+        
+        .upgrade-card-standalone .upgrade-btn-carousel {
+            padding: var(--space-md) var(--space-lg);
+            font-size: var(--font-size-base);
+            max-width: 200px;
+            width: 100%;
+        }
+        
+        /* 태블릿 사이즈 */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .upgrade-card-container {
+                margin-top: var(--space-2xl);
+                padding: 0 var(--space-xl);
+            }
+            
+            .upgrade-card-standalone {
+                max-width: 350px;
+                padding: var(--space-2xl);
+            }
+            
+            .upgrade-card-standalone .lock-icon {
+                font-size: 52px;
+            }
+            
+            .upgrade-card-standalone h3 {
+                font-size: var(--font-size-2xl);
+            }
+            
+            .upgrade-card-standalone p {
+                font-size: var(--font-size-lg);
+            }
+        }
+        
+        /* PC 사이즈 */
         @media (min-width: 1025px) {
-            .carousel-slide.locked-slide {
-                z-index: 40 !important; /* PC에서 더 높은 z-index */
-                opacity: 1 !important; /* 강제로 불투명도 1 */
-                visibility: visible !important; /* 강제로 보이기 */
-                display: block !important; /* 강제로 표시 */
-                position: relative !important; /* 위치 지정 */
+            .upgrade-card-container {
+                margin-top: var(--space-2xl);
+                padding: 0 var(--space-2xl);
             }
             
-            .carousel-slide.locked-slide.upgrade-card {
-                z-index: 45 !important; /* PC에서 upgrade-card는 더 높게 */
-                display: block !important; /* 강제로 표시 */
-                opacity: 1 !important;
-                visibility: visible !important;
+            .upgrade-card-standalone {
+                max-width: 400px;
+                padding: var(--space-2xl);
             }
             
-            /* PC에서 locked-card가 제대로 표시되도록 */
-            .carousel-slide.locked-slide .locked-card {
-                display: flex !important;
-                visibility: visible !important;
-                opacity: 1 !important;
+            .upgrade-card-standalone .lock-icon {
+                font-size: 56px;
+            }
+            
+            .upgrade-card-standalone h3 {
+                font-size: var(--font-size-2xl);
+            }
+            
+            .upgrade-card-standalone p {
+                font-size: var(--font-size-lg);
+            }
+        }
+        
+        /* 모바일 사이즈 */
+        @media (max-width: 768px) {
+            .upgrade-card-container {
+                margin-top: var(--space-lg);
+                padding: 0 var(--space-md);
+            }
+            
+            .upgrade-card-standalone {
+                max-width: 100%;
+                padding: var(--space-lg);
+            }
+            
+            .upgrade-card-standalone .lock-icon {
+                font-size: 40px;
+            }
+            
+            .upgrade-card-standalone h3 {
+                font-size: var(--font-size-lg);
+            }
+            
+            .upgrade-card-standalone p {
+                font-size: var(--font-size-sm);
             }
         }
         
