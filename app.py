@@ -881,10 +881,11 @@ def get_recent_stories(user_id):
     
     try:
         # learning_records에서 최근 학습한 동화 목록 조회 (최근 학습 시간순)
+        # created_at 필드를 사용 (study_date가 없으면 created_at 사용)
         records = supabase_client.table('learning_records')\
-            .select('story_id, story_title, study_date, completed')\
+            .select('story_id, story_title, created_at, completed')\
             .eq('user_id', user_id)\
-            .order('study_date', desc=True)\
+            .order('created_at', desc=True)\
             .limit(20)\
             .execute()
         
@@ -893,10 +894,12 @@ def get_recent_stories(user_id):
         for record in records.data:
             story_id = record.get('story_id')
             if story_id and story_id not in seen:
+                # created_at을 last_accessed로 사용
+                last_accessed = record.get('created_at') or record.get('study_date', '')
                 seen[story_id] = {
                     "story_id": story_id,
                     "story_title": record.get('story_title', ''),
-                    "last_accessed": record.get('study_date', ''),
+                    "last_accessed": last_accessed,
                     "completed": record.get('completed', False)
                 }
         

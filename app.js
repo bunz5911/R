@@ -2357,6 +2357,25 @@ async function selectStory(storyId) {
         return;
     }
     
+    // ✅ 동화 접근 시 즉시 학습 기록 저장 (로그인한 경우)
+    if (isAuthenticated && currentUserId && currentUserId !== '00000000-0000-0000-0000-000000000001') {
+        try {
+            // 동화 정보를 먼저 가져와서 기록 저장
+            const storyResponse = await fetch(`${API_BASE}/story/${storyId}`);
+            if (storyResponse.ok) {
+                const storyData = await storyResponse.json();
+                // 학습 기록 저장 (비동기, 블로킹하지 않음)
+                recordStudySession({
+                    story_id: storyId,
+                    story_title: storyData.title || PRELOADED_STORIES.find(s => s.id === storyId)?.title || '',
+                    session_type: 'reading'
+                }).catch(err => console.warn('학습 기록 저장 실패:', err));
+            }
+        } catch (error) {
+            console.warn('동화 정보 로드 실패 (학습 기록 저장 건너뜀):', error);
+        }
+    }
+    
     // ✅ 즉시 화면 전환 및 로딩 표시
     document.getElementById('storyListView').style.display = 'none';
     document.getElementById('learningView').style.display = 'flex';
