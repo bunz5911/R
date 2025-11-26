@@ -210,6 +210,7 @@ DROP POLICY IF EXISTS "Users can delete own learning records" ON public.learning
 DO $$ 
 DECLARE
     invalid_count INTEGER;
+    not_null_constraint_exists BOOLEAN;
 BEGIN
     IF EXISTS (
         SELECT 1 FROM information_schema.columns 
@@ -217,19 +218,46 @@ BEGIN
         AND column_name = 'user_id' 
         AND data_type = 'text'
     ) THEN
-        -- 유효하지 않은 UUID 값 확인 및 처리
+        -- NOT NULL 제약 조건 확인
+        SELECT EXISTS (
+            SELECT 1 FROM information_schema.table_constraints tc
+            JOIN information_schema.constraint_column_usage ccu 
+            ON tc.constraint_name = ccu.constraint_name
+            WHERE tc.table_name = 'learning_records'
+            AND tc.constraint_type = 'CHECK'
+            AND ccu.column_name = 'user_id'
+            AND tc.constraint_name LIKE '%user_id%not_null%'
+        ) INTO not_null_constraint_exists;
+        
+        -- NOT NULL 제약 조건이 있는지 확인 (is_nullable = 'NO')
+        SELECT NOT is_nullable INTO not_null_constraint_exists
+        FROM information_schema.columns
+        WHERE table_name = 'learning_records' 
+        AND column_name = 'user_id';
+        
+        -- 유효하지 않은 UUID 값 확인
         SELECT COUNT(*) INTO invalid_count
         FROM public.learning_records
         WHERE user_id IS NOT NULL 
         AND user_id !~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$';
         
         IF invalid_count > 0 THEN
-            RAISE NOTICE '유효하지 않은 UUID 값 %개 발견. NULL로 설정합니다.', invalid_count;
-            -- 유효하지 않은 UUID 값을 NULL로 설정 (또는 삭제)
+            RAISE NOTICE '유효하지 않은 UUID 값 %개 발견.', invalid_count;
+            
+            -- NOT NULL 제약 조건이 있으면 먼저 제거
+            IF not_null_constraint_exists THEN
+                RAISE NOTICE 'NOT NULL 제약 조건을 임시로 제거합니다.';
+                ALTER TABLE public.learning_records
+                ALTER COLUMN user_id DROP NOT NULL;
+            END IF;
+            
+            -- 유효하지 않은 UUID 값을 NULL로 설정
             UPDATE public.learning_records
             SET user_id = NULL
             WHERE user_id IS NOT NULL 
             AND user_id !~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$';
+            
+            RAISE NOTICE '유효하지 않은 UUID 값을 NULL로 설정했습니다.';
         END IF;
         
         -- 기존 외래키 제약 조건 제거 (있는 경우)
@@ -250,6 +278,10 @@ BEGIN
         ALTER TABLE public.learning_records
         ADD CONSTRAINT fk_learning_records_user_id 
         FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
+        
+        -- NOT NULL 제약 조건이 있었고, 유효하지 않은 값이 없었다면 다시 추가
+        -- 하지만 NULL 값이 있을 수 있으므로 추가하지 않음
+        -- 필요시 수동으로 추가: ALTER TABLE public.learning_records ALTER COLUMN user_id SET NOT NULL;
     END IF;
 END $$;
 
