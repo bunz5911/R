@@ -488,11 +488,12 @@
         /* PC에서 트랙 스타일 - 더 많은 카드 표시 */
         @media (min-width: 1025px) {
             .carousel-track {
-                justify-content: flex-start; /* 왼쪽부터 시작하여 더 많은 카드 표시 */
+                justify-content: center; /* 중앙 정렬로 변경 */
                 align-items: center;
                 padding: var(--space-lg) var(--space-xl); /* 좌우 패딩 추가 */
                 overflow-x: visible; /* 겹친 카드가 보이도록 */
                 max-width: 100%;
+                margin: 0 auto; /* 중앙 정렬 강화 */
                 /* PC에서 좌우 fade out 효과 강화 */
                 mask-image: linear-gradient(to right, 
                     transparent 0%, 
