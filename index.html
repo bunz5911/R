@@ -1236,10 +1236,22 @@
                 z-index: 40 !important; /* PC에서 더 높은 z-index */
                 opacity: 1 !important; /* 강제로 불투명도 1 */
                 visibility: visible !important; /* 강제로 보이기 */
+                display: block !important; /* 강제로 표시 */
+                position: relative !important; /* 위치 지정 */
             }
             
             .carousel-slide.locked-slide.upgrade-card {
                 z-index: 45 !important; /* PC에서 upgrade-card는 더 높게 */
+                display: block !important; /* 강제로 표시 */
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+            
+            /* PC에서 locked-card가 제대로 표시되도록 */
+            .carousel-slide.locked-slide .locked-card {
+                display: flex !important;
+                visibility: visible !important;
+                opacity: 1 !important;
             }
         }
         
@@ -1323,7 +1335,9 @@
         /* 태블릿에서 잠금 카드 스타일 */
         @media (min-width: 769px) and (max-width: 1024px) {
             .lock-content {
-                padding: var(--space-lg) var(--space-xl); /* 태블릿 패딩 추가 */
+                padding: var(--space-xl) var(--space-xl) !important; /* 태블릿 상하 패딩 증가 */
+                min-height: 100%; /* 전체 높이 사용 */
+                overflow-y: auto; /* 내용이 많을 경우 스크롤 가능 */
             }
             
             .lock-icon {
@@ -1345,13 +1359,19 @@
                 padding: var(--space-sm) var(--space-md);
                 font-size: var(--font-size-sm);
                 max-width: 180px;
+                margin-top: auto; /* 버튼을 하단에 배치 */
             }
         }
         
         /* PC에서 잠금 카드 스타일 */
         @media (min-width: 1025px) {
             .lock-content {
-                padding: var(--space-xl); /* PC 패딩 추가 */
+                padding: var(--space-xl) !important; /* PC 패딩 추가 */
+                min-height: 100%; /* 전체 높이 사용 */
+                display: flex !important; /* flex 레이아웃 강제 */
+                flex-direction: column !important;
+                justify-content: center !important; /* 수직 중앙 정렬 */
+                overflow-y: auto; /* 내용이 많을 경우 스크롤 가능 */
             }
             
             .lock-icon {
@@ -1373,6 +1393,7 @@
                 padding: var(--space-md) var(--space-lg);
                 font-size: var(--font-size-base);
                 max-width: 200px;
+                margin-top: auto; /* 버튼을 하단에 배치 */
             }
         }
         
