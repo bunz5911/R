@@ -298,6 +298,7 @@ let currentTab = 'summary';
 let userDifficultyPreference = null;  // 사용자 난이도 선호도
 let PRECOMPUTED_ANALYSIS = {};  // 하드코딩된 분석 데이터 (즉시 로드용)
 let completedStoryIds = [];  // 사용자가 학습한 동화 ID 목록
+let recentStories = [];  // 최근 학습한 동화 목록
 let recommendedLevel = null;  // AI 추천 레벨
 let hasTakenLevelTest = false;  // 레벨 테스트 완료 여부
 let renderedCardRange = { start: 0, end: 0 };  // 현재 렌더링된 카드 범위
@@ -771,6 +772,8 @@ async function recordStudySession(data) {
         if (response.ok) {
             const result = await response.json();
             console.log('✅ 학습 기록 저장 완료:', result);
+            // 학습 기록 저장 후 최근 목록 갱신
+            await loadRecentStories();
         } else {
             console.log('⚠️ 학습 기록 저장 실패 (Supabase 미설정 가능)');
         }
@@ -798,6 +801,85 @@ async function loadCompletedStories() {
     } catch (error) {
         console.warn('⚠️ 학습 기록 조회 실패:', error);
         completedStoryIds = [];
+    }
+}
+
+// 최근 학습한 동화 목록 로드
+async function loadRecentStories() {
+    if (!isAuthenticated || !currentUserId || currentUserId === '00000000-0000-0000-0000-000000000001') {
+        recentStories = [];
+        renderRecentStories(); // 빈 목록으로 렌더링 (섹션 숨김)
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE}/user/${currentUserId}/recent-stories`);
+        const data = await response.json();
+        recentStories = data.recent_stories || [];
+        console.log('✅ 최근 학습 목록 로드:', recentStories.length, '개');
+        
+        // UI 렌더링
+        renderRecentStories();
+    } catch (error) {
+        console.warn('⚠️ 최근 학습 목록 조회 실패:', error);
+        recentStories = [];
+        renderRecentStories(); // 빈 목록으로 렌더링 (섹션 숨김)
+    }
+}
+
+// 최근 학습 목록 렌더링
+function renderRecentStories() {
+    const listEl = document.getElementById('storyList');
+    if (!listEl) return;
+    
+    // 기존 "학습중인 목록" 섹션이 있으면 제거
+    const existingSection = document.getElementById('recentStoriesSection');
+    if (existingSection) {
+        existingSection.remove();
+    }
+    
+    // 로그인하지 않았거나 학습 기록이 없으면 표시하지 않음
+    if (!isAuthenticated || recentStories.length === 0) {
+        return;
+    }
+    
+    // "학습중인 목록" 섹션 HTML 생성
+    const recentStoriesHTML = `
+        <div id="recentStoriesSection" class="recent-stories-section">
+            <h3 class="recent-stories-title">학습중인 목록</h3>
+            <div class="recent-stories-list">
+                ${recentStories.map(story => {
+                    const storyData = PRELOADED_STORIES.find(s => s.id === story.story_id);
+                    if (!storyData) return '';
+                    
+                    const storyTitle = getStoryTitle(storyData);
+                    const completedClass = story.completed ? 'completed' : '';
+                    const completedBadge = story.completed ? '<span class="completed-indicator">✓</span>' : '';
+                    
+                    return `
+                        <div class="recent-story-item ${completedClass}" onclick="selectStory(${story.story_id})">
+                            <div class="recent-story-image">
+                                <img src="${storyData.image}" alt="${storyTitle}" onerror="this.style.display='none'">
+                                ${completedBadge}
+                            </div>
+                            <div class="recent-story-info">
+                                <h4 class="recent-story-title">${storyTitle}</h4>
+                                <p class="recent-story-meta">${story.completed ? '학습 완료' : '학습 중'}</p>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        </div>
+    `;
+    
+    // 캐러셀 컨테이너 다음에 삽입
+    const carouselContainer = listEl.querySelector('.story-carousel-container');
+    if (carouselContainer) {
+        carouselContainer.insertAdjacentHTML('afterend', recentStoriesHTML);
+    } else {
+        // 캐러셀이 없으면 맨 앞에 추가
+        listEl.insertAdjacentHTML('afterbegin', recentStoriesHTML);
     }
 }
 
@@ -926,6 +1008,9 @@ async function loadStories() {
             console.log('🎠 캐러셀 렌더링 시작:', currentStories.length, '개');
             renderStoryCarousel();
             console.log('✅ 동화 목록 렌더링 완료:', currentStories.length, '개 (레벨:', currentLevel + ')');
+            
+            // 최근 학습 목록 로드 (로그인한 경우)
+            await loadRecentStories();
         } else {
             console.warn('⚠️ 표시할 동화가 없습니다. 레벨:', currentLevel);
             const listEl = document.getElementById('storyList');

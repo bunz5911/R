@@ -865,6 +865,52 @@ def get_completed_stories(user_id):
         return jsonify({"completed_story_ids": [], "error": str(e)}), 200
 
 
+@app.route('/api/user/<user_id>/recent-stories', methods=['GET'])
+def get_recent_stories(user_id):
+    """
+    사용자가 최근 학습한 동화 목록 조회 (최근 학습 시간순)
+    Returns: { 
+        "recent_stories": [
+            {"story_id": 1, "story_title": "...", "last_accessed": "...", "completed": true},
+            ...
+        ]
+    }
+    """
+    if not supabase_client:
+        return jsonify({"recent_stories": []}), 200
+    
+    try:
+        # learning_records에서 최근 학습한 동화 목록 조회 (최근 학습 시간순)
+        records = supabase_client.table('learning_records')\
+            .select('story_id, story_title, study_date, completed')\
+            .eq('user_id', user_id)\
+            .order('study_date', desc=True)\
+            .limit(20)\
+            .execute()
+        
+        # 중복 제거 (같은 story_id 중 가장 최근 것만)
+        seen = {}
+        for record in records.data:
+            story_id = record.get('story_id')
+            if story_id and story_id not in seen:
+                seen[story_id] = {
+                    "story_id": story_id,
+                    "story_title": record.get('story_title', ''),
+                    "last_accessed": record.get('study_date', ''),
+                    "completed": record.get('completed', False)
+                }
+        
+        recent_stories = list(seen.values())[:10]  # 최대 10개만 반환
+        
+        return jsonify({
+            "recent_stories": recent_stories,
+            "total": len(recent_stories)
+        })
+    except Exception as e:
+        print(f"최근 학습 목록 조회 오류: {e}")
+        return jsonify({"recent_stories": [], "error": str(e)}), 200
+
+
 @app.route('/api/user/recommend-level', methods=['POST'])
 def recommend_level():
     """
