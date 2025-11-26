@@ -18,33 +18,16 @@ BEGIN
     END IF;
 END $$;
 
--- user_id 필드 추가/수정 (없는 경우 추가, TEXT인 경우 UUID로 변환)
+-- user_id 필드 추가 (없는 경우만 추가)
+-- 타입 변환은 RLS 정책 삭제 후 별도로 처리
 DO $$ 
 BEGIN
-    -- 컬럼이 없는 경우 추가
     IF NOT EXISTS (
         SELECT 1 FROM information_schema.columns 
         WHERE table_name = 'learning_records' AND column_name = 'user_id'
     ) THEN
         ALTER TABLE public.learning_records 
         ADD COLUMN user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE;
-    ELSE
-        -- 컬럼이 있지만 TEXT 타입인 경우 UUID로 변환
-        IF EXISTS (
-            SELECT 1 FROM information_schema.columns 
-            WHERE table_name = 'learning_records' 
-            AND column_name = 'user_id' 
-            AND data_type = 'text'
-        ) THEN
-            -- TEXT를 UUID로 변환 (유효한 UUID만 변환)
-            ALTER TABLE public.learning_records
-            ALTER COLUMN user_id TYPE UUID USING user_id::UUID;
-            
-            -- 외래키 제약 조건 추가
-            ALTER TABLE public.learning_records
-            ADD CONSTRAINT fk_learning_records_user_id 
-            FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
-        END IF;
     END IF;
 END $$;
 
@@ -213,46 +196,74 @@ CREATE INDEX IF NOT EXISTS idx_learning_records_user_story
 ON public.learning_records(user_id, story_id);
 
 -- ============================================================================
--- 3. RLS (Row Level Security) 정책 설정
+-- 3. user_id 컬럼 타입 변환 (TEXT -> UUID)
 -- ============================================================================
+-- RLS 정책이 있으면 컬럼 타입을 변경할 수 없으므로, 먼저 정책을 삭제해야 함
 
--- RLS 활성화
-ALTER TABLE public.learning_records ENABLE ROW LEVEL SECURITY;
-
--- 기존 정책 삭제 (있는 경우)
+-- 기존 RLS 정책 삭제 (타입 변환 전에 필수)
 DROP POLICY IF EXISTS "Users can view own learning records" ON public.learning_records;
 DROP POLICY IF EXISTS "Users can insert own learning records" ON public.learning_records;
 DROP POLICY IF EXISTS "Users can update own learning records" ON public.learning_records;
 DROP POLICY IF EXISTS "Users can delete own learning records" ON public.learning_records;
 
+-- user_id 컬럼이 TEXT 타입인 경우 UUID로 변환
+DO $$ 
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'learning_records' 
+        AND column_name = 'user_id' 
+        AND data_type = 'text'
+    ) THEN
+        -- 기존 외래키 제약 조건 제거 (있는 경우)
+        ALTER TABLE public.learning_records
+        DROP CONSTRAINT IF EXISTS fk_learning_records_user_id;
+        
+        -- TEXT를 UUID로 변환 (유효한 UUID만 변환)
+        ALTER TABLE public.learning_records
+        ALTER COLUMN user_id TYPE UUID USING user_id::UUID;
+        
+        -- 외래키 제약 조건 추가
+        ALTER TABLE public.learning_records
+        ADD CONSTRAINT fk_learning_records_user_id 
+        FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
+    END IF;
+END $$;
+
+-- ============================================================================
+-- 4. RLS (Row Level Security) 정책 설정
+-- ============================================================================
+
+-- RLS 활성화
+ALTER TABLE public.learning_records ENABLE ROW LEVEL SECURITY;
+
 -- 사용자는 자신의 학습 기록만 볼 수 있음
--- 타입 안전성을 위해 명시적 캐스팅 사용
 CREATE POLICY "Users can view own learning records"
 ON public.learning_records
 FOR SELECT
-USING (auth.uid()::text = user_id::text);
+USING (auth.uid() = user_id);
 
 -- 사용자는 자신의 학습 기록만 삽입할 수 있음
 CREATE POLICY "Users can insert own learning records"
 ON public.learning_records
 FOR INSERT
-WITH CHECK (auth.uid()::text = user_id::text);
+WITH CHECK (auth.uid() = user_id);
 
 -- 사용자는 자신의 학습 기록만 수정할 수 있음
 CREATE POLICY "Users can update own learning records"
 ON public.learning_records
 FOR UPDATE
-USING (auth.uid()::text = user_id::text)
-WITH CHECK (auth.uid()::text = user_id::text);
+USING (auth.uid() = user_id)
+WITH CHECK (auth.uid() = user_id);
 
 -- 사용자는 자신의 학습 기록만 삭제할 수 있음
 CREATE POLICY "Users can delete own learning records"
 ON public.learning_records
 FOR DELETE
-USING (auth.uid()::text = user_id::text);
+USING (auth.uid() = user_id);
 
 -- ============================================================================
--- 4. updated_at 자동 업데이트 트리거 (선택사항)
+-- 5. updated_at 자동 업데이트 트리거 (선택사항)
 -- ============================================================================
 
 -- 트리거 함수 생성
