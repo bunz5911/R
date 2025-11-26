@@ -218,19 +218,8 @@ BEGIN
         AND column_name = 'user_id' 
         AND data_type = 'text'
     ) THEN
-        -- NOT NULL 제약 조건 확인
-        SELECT EXISTS (
-            SELECT 1 FROM information_schema.table_constraints tc
-            JOIN information_schema.constraint_column_usage ccu 
-            ON tc.constraint_name = ccu.constraint_name
-            WHERE tc.table_name = 'learning_records'
-            AND tc.constraint_type = 'CHECK'
-            AND ccu.column_name = 'user_id'
-            AND tc.constraint_name LIKE '%user_id%not_null%'
-        ) INTO not_null_constraint_exists;
-        
-        -- NOT NULL 제약 조건이 있는지 확인 (is_nullable = 'NO')
-        SELECT NOT is_nullable INTO not_null_constraint_exists
+        -- NOT NULL 제약 조건 확인 (is_nullable = 'NO'인 경우)
+        SELECT (is_nullable = 'NO') INTO not_null_constraint_exists
         FROM information_schema.columns
         WHERE table_name = 'learning_records' 
         AND column_name = 'user_id';
