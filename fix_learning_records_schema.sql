@@ -263,6 +263,16 @@ BEGIN
             ELSE NULL
         END;
         
+        -- 외래키 제약 조건 추가 전에 존재하지 않는 user_id 처리
+        -- auth.users 테이블에 존재하지 않는 user_id를 NULL로 설정
+        UPDATE public.learning_records lr
+        SET user_id = NULL
+        WHERE lr.user_id IS NOT NULL
+        AND NOT EXISTS (
+            SELECT 1 FROM auth.users u 
+            WHERE u.id = lr.user_id
+        );
+        
         -- 외래키 제약 조건 추가 (NULL 값 허용)
         ALTER TABLE public.learning_records
         ADD CONSTRAINT fk_learning_records_user_id 
