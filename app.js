@@ -805,8 +805,16 @@ async function loadCompletedStories() {
 function getFilteredAndSortedStories(level, userPlan) {
     console.log('🔍 getFilteredAndSortedStories 호출:', { level, userPlan, PRELOADED_STORIES_length: PRELOADED_STORIES ? PRELOADED_STORIES.length : 'undefined' });
     
-    if (!PRELOADED_STORIES || PRELOADED_STORIES.length === 0) {
+    // PRELOADED_STORIES가 정의되지 않았거나 비어있는 경우 확인
+    if (typeof PRELOADED_STORIES === 'undefined' || !PRELOADED_STORIES || PRELOADED_STORIES.length === 0) {
         console.error('❌ PRELOADED_STORIES가 비어있거나 정의되지 않았습니다!');
+        console.error('❌ PRELOADED_STORIES 타입:', typeof PRELOADED_STORIES);
+        console.error('❌ PRELOADED_STORIES 값:', PRELOADED_STORIES);
+        // 빈 배열 반환 대신 에러 표시
+        const listEl = document.getElementById('storyList');
+        if (listEl) {
+            listEl.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-secondary);"><p>동화 데이터를 불러올 수 없습니다. 페이지를 새로고침해주세요.</p></div>';
+        }
         return [];
     }
     
