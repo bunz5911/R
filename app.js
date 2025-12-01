@@ -847,33 +847,43 @@ function renderWelcomeMessage() {
     const welcomeUserName = document.getElementById('welcomeUserName');
     const welcomeLastStory = document.getElementById('welcomeLastStory');
     
-    if (!welcomeSection || !welcomeUserName || !welcomeLastStory) return;
+    if (!welcomeSection || !welcomeUserName || !welcomeLastStory) {
+        console.warn('⚠️ 환영 메시지 요소를 찾을 수 없습니다');
+        return;
+    }
     
     // 로그인하지 않았으면 숨김
     if (!isAuthenticated || !currentUserId || currentUserId === '00000000-0000-0000-0000-000000000001') {
         welcomeSection.style.display = 'none';
+        console.log('ℹ️ 환영 메시지 숨김: 로그인하지 않음');
         return;
     }
     
     // 사용자 이름 설정
     const userName = currentDisplayName || currentUserId.substring(0, 8) || '사용자';
     welcomeUserName.textContent = userName;
+    console.log('✅ 환영 메시지 사용자 이름 설정:', userName);
     
     // 최근 학습한 스토리 찾기
     if (recentStories && recentStories.length > 0) {
         const lastStory = recentStories[0]; // 가장 최근 스토리
+        console.log('📖 최근 학습 스토리:', lastStory);
+        
         const storyData = PRELOADED_STORIES.find(s => s.id === lastStory.story_id);
         if (storyData) {
             const storyTitle = getStoryTitle(storyData);
             welcomeLastStory.textContent = storyTitle;
             welcomeSection.style.display = 'block';
+            console.log('✅ 환영 메시지 표시:', storyTitle);
         } else {
             welcomeLastStory.textContent = '없음';
             welcomeSection.style.display = 'block';
+            console.log('⚠️ 최근 스토리 데이터를 찾을 수 없음:', lastStory.story_id);
         }
     } else {
         welcomeLastStory.textContent = '없음';
         welcomeSection.style.display = 'block';
+        console.log('ℹ️ 최근 학습 기록이 없음');
     }
 }
 
