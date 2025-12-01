@@ -1072,8 +1072,11 @@ async function loadStories() {
             // 최근 학습 목록 로드 (로그인한 경우)
             await loadRecentStories();
             
-            // 환영 메시지 표시 (로그인한 경우)
-            renderWelcomeMessage();
+            // 환영 메시지 표시 (로그인한 경우) - loadRecentStories 완료 후 호출
+            // 약간의 지연을 두어 DOM이 완전히 렌더링된 후 실행
+            setTimeout(() => {
+                renderWelcomeMessage();
+            }, 100);
         } else {
             console.warn('⚠️ 표시할 동화가 없습니다. 레벨:', currentLevel);
             const listEl = document.getElementById('storyList');
