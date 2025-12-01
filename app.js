@@ -2279,13 +2279,13 @@ function showUpgradeModal(requiredPlan) {
     const planInfo = {
         pro: {
             name: 'Pro',
-            price: '$13.99/월',
+            price: '', // 가격 정보 숨김
             coins: '100코인',
             stories: '1-10번 동화'
         },
         premier: {
             name: 'Premier',
-            price: '$29.99/월',
+            price: '', // 가격 정보 숨김
             coins: '300코인',
             stories: '1-20번 동화'
         }
@@ -2327,7 +2327,7 @@ function showUpgradeModal(requiredPlan) {
             </div>
             
             <button onclick="location.href='pricing.html'" style="width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); margin-bottom: 12px;">
-                ${info.name} 시작하기 (${info.price})
+                ${info.name} 시작하기${info.price ? ` (${info.price})` : ''}
             </button>
             
             <button onclick="closeAccessModal()" style="width: 100%; padding: 12px; background: #f0f0f0; color: #666; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer;">
@@ -2366,7 +2366,7 @@ function showSeason2Modal() {
                 시즌 2가 <strong style="color: #667eea;">2026년 2월</strong>에 찾아옵니다!
             </p>
             
-            <div style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: white; padding: 20px; border-radius: 16px; margin-bottom: 24px;">
+            <div style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: white; padding: 20px; border-radius: 16px; margin-bottom: 24px; display: none;">
                 <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 8px;">🐦 Early Bird 특별가</h3>
                 <div style="font-size: 32px; font-weight: 800; margin-bottom: 8px;">$299.99/년</div>
                 <p style="font-size: 13px; opacity: 0.95;">정가 $359.88 대비 17% 할인</p>
