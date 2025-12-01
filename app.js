@@ -2037,6 +2037,19 @@ async function checkUserApprovalStatus() {
 
 // 동화 접근 권한 체크
 async function checkStoryAccess(storyId) {
+    // ✅ 접속 시도 기록 저장 (학습 완료 여부와 관계없이 접속 기록만 저장)
+    if (isAuthenticated && currentUserId && currentUserId !== '00000000-0000-0000-0000-000000000001') {
+        const storyData = PRELOADED_STORIES.find(s => s.id === storyId);
+        if (storyData) {
+            // 접속 기록만 저장 (비동기, 블로킹하지 않음)
+            recordStudySession({
+                story_id: storyId,
+                story_title: storyData.title,
+                session_type: 'access' // 접속 기록임을 명시
+            }).catch(err => console.warn('접속 기록 저장 실패:', err));
+        }
+    }
+    
     // 🔑 bunz5911@gmail.com은 모든 동화 무제한 접근
     if (currentUserEmail === 'bunz5911@gmail.com') {
         selectStory(storyId);
@@ -2476,6 +2489,8 @@ async function selectStory(storyId) {
     
     // ✅ 동화 접근 시 즉시 학습 기록 저장 (로그인한 경우)
     // PRELOADED_STORIES에서 바로 가져와서 기록 저장 (API 호출 없이 빠르게)
+    // 주의: checkStoryAccess에서 이미 접속 기록을 저장했지만, 
+    // selectStory에서도 저장하여 확실하게 기록 (중복 저장은 백엔드에서 처리)
     if (isAuthenticated && currentUserId && currentUserId !== '00000000-0000-0000-0000-000000000001') {
         const storyData = PRELOADED_STORIES.find(s => s.id === storyId);
         if (storyData) {

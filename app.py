@@ -960,29 +960,39 @@ def get_recent_stories(user_id):
     
     try:
         # learning_records에서 최근 학습한 동화 목록 조회 (최근 학습 시간순)
+        # 학습 완료 여부와 관계없이 단 한 번이라도 접속한 기록이 있으면 표시
         # created_at 필드를 사용 (study_date가 없으면 created_at 사용)
         records = supabase_client.table('learning_records')\
-            .select('story_id, story_title, created_at, completed')\
+            .select('story_id, story_title, created_at, completed, session_type')\
             .eq('user_id', user_id)\
             .order('created_at', desc=True)\
-            .limit(20)\
-            .execute()
+            .limit(50)\
+            .execute()  # 더 많은 레코드를 가져와서 중복 제거 후 정렬
         
         # 중복 제거 (같은 story_id 중 가장 최근 것만)
+        # 접속 기록(access)이든 학습 기록(reading)이든 모두 포함
         seen = {}
         for record in records.data:
             story_id = record.get('story_id')
             if story_id and story_id not in seen:
                 # created_at을 last_accessed로 사용
                 last_accessed = record.get('created_at') or record.get('study_date', '')
+                session_type = record.get('session_type', 'reading')
+                
                 seen[story_id] = {
                     "story_id": story_id,
                     "story_title": record.get('story_title', ''),
                     "last_accessed": last_accessed,
-                    "completed": record.get('completed', False)
+                    "completed": record.get('completed', False),
+                    "session_type": session_type  # 접속 기록인지 학습 기록인지 구분
                 }
         
-        recent_stories = list(seen.values())[:10]  # 최대 10개만 반환
+        # 최근 접속 시간순으로 정렬 (이미 created_at desc로 정렬되어 있지만 안전장치)
+        recent_stories = sorted(
+            list(seen.values()), 
+            key=lambda x: x.get('last_accessed', ''), 
+            reverse=True
+        )[:10]  # 최대 10개만 반환
         
         return jsonify({
             "recent_stories": recent_stories,
