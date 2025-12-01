@@ -834,9 +834,6 @@ async function loadRecentStories() {
         
         // UI 렌더링
         renderRecentStories();
-        
-        // 환영 메시지 업데이트
-        renderWelcomeMessage();
     } catch (error) {
         console.warn('⚠️ 최근 학습 목록 조회 실패:', error);
         recentStories = [];
