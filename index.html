@@ -11,33 +11,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Read Aloud Korean - 한국어 동화 학습</title>
     
-    <!-- Netlify 접속 원천 차단 및 즉시 Cloudflare로 리다이렉트 -->
-    <script>
-        (function() {
-            // Netlify 도메인 감지 (모든 netlify.app 도메인 차단)
-            const currentHost = window.location.hostname;
-            const netlifyPattern = /netlify\.app$/i;
-            
-            // Netlify 도메인으로 접속 시 즉시 차단 및 리다이렉트
-            if (netlifyPattern.test(currentHost)) {
-                // 현재 경로, 쿼리 파라미터, 해시 보존
-                const currentPath = window.location.pathname + window.location.search + window.location.hash;
-                const newUrl = 'https://rakorean.site' + currentPath;
-                
-                // 즉시 리다이렉트 (히스토리에 남기지 않음)
-                window.location.replace(newUrl);
-                
-                // 추가 안전장치: replace가 실패할 경우를 대비
-                setTimeout(function() {
-                    if (window.location.hostname.match(netlifyPattern)) {
-                        window.location.href = 'https://rakorean.site' + currentPath;
-                    }
-                }, 100);
-                
-                return; // 이후 코드 실행 방지
-            }
-        })();
-    </script>
     <style>
         /* ============================================================================
            🎨 현대적인 디자인 시스템 - CSS 변수

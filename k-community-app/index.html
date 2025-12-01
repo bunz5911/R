@@ -6,23 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RAKorean</title>
     
-    <!-- Netlify 접속 원천 차단 및 즉시 Cloudflare로 리다이렉트 -->
-    <script>
-        (function() {
-            const currentHost = window.location.hostname;
-            const netlifyPattern = /netlify\.app$/i;
-            if (netlifyPattern.test(currentHost)) {
-                const currentPath = window.location.pathname + window.location.search + window.location.hash;
-                window.location.replace('https://rakorean.site' + currentPath);
-                setTimeout(function() {
-                    if (window.location.hostname.match(netlifyPattern)) {
-                        window.location.href = 'https://rakorean.site' + currentPath;
-                    }
-                }, 100);
-                return;
-            }
-        })();
-    </script>
 
     <!-- Fonts (Simulating SF Pro with available web fonts) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
