@@ -831,9 +831,14 @@ async function loadRecentStories() {
         const data = await response.json();
         recentStories = data.recent_stories || [];
         console.log('✅ 최근 학습 목록 로드:', recentStories.length, '개');
+        console.log('📋 recentStories 데이터:', recentStories);
         
         // UI 렌더링
         renderRecentStories();
+        
+        // 환영 메시지도 여기서 업데이트 (loadStories의 setTimeout과 중복되지만 안전장치)
+        console.log('🔄 loadRecentStories 내부에서 renderWelcomeMessage 호출');
+        renderWelcomeMessage();
     } catch (error) {
         console.warn('⚠️ 최근 학습 목록 조회 실패:', error);
         recentStories = [];
@@ -1079,10 +1084,12 @@ async function loadStories() {
             
             // 최근 학습 목록 로드 (로그인한 경우)
             await loadRecentStories();
+            console.log('✅ loadRecentStories 완료, renderWelcomeMessage 호출 예정');
             
             // 환영 메시지 표시 (로그인한 경우) - loadRecentStories 완료 후 호출
             // 약간의 지연을 두어 DOM이 완전히 렌더링된 후 실행
             setTimeout(() => {
+                console.log('🔄 renderWelcomeMessage 호출 시작');
                 renderWelcomeMessage();
             }, 100);
         } else {
