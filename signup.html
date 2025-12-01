@@ -469,12 +469,20 @@
         // Supabase 초기화 (설정된 경우만)
         if (typeof CONFIG !== 'undefined' && CONFIG.SUPABASE_URL && CONFIG.SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
             // 현재 origin을 사용하여 리다이렉트 URL 설정
-            const currentOrigin = window.location.origin;
+            let currentOrigin = window.location.origin;
             const currentPath = window.location.pathname;
+            
+            // Netlify URL인 경우 Cloudflare URL로 변경
+            if (/netlify\.app$/i.test(window.location.hostname)) {
+                currentOrigin = 'https://rakorean.site';
+                console.log('⚠️ Netlify URL 감지, Cloudflare URL로 변경:', currentOrigin);
+            }
+            
             const redirectUrl = currentOrigin + currentPath;
             
             console.log('🔧 Supabase 클라이언트 초기화');
-            console.log('🌐 현재 origin:', currentOrigin);
+            console.log('🌐 현재 origin:', window.location.origin);
+            console.log('🌐 사용할 origin:', currentOrigin);
             console.log('📍 현재 pathname:', currentPath);
             console.log('🔗 리다이렉트 URL:', redirectUrl);
             
