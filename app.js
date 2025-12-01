@@ -834,10 +834,49 @@ async function loadRecentStories() {
         
         // UI 렌더링
         renderRecentStories();
+        
+        // 환영 메시지 업데이트
+        renderWelcomeMessage();
     } catch (error) {
         console.warn('⚠️ 최근 학습 목록 조회 실패:', error);
         recentStories = [];
         renderRecentStories(); // 빈 목록으로 렌더링 (섹션 숨김)
+    }
+}
+
+// 환영 메시지 렌더링
+function renderWelcomeMessage() {
+    const welcomeSection = document.getElementById('welcomeMessageSection');
+    const welcomeUserName = document.getElementById('welcomeUserName');
+    const welcomeLastStory = document.getElementById('welcomeLastStory');
+    
+    if (!welcomeSection || !welcomeUserName || !welcomeLastStory) return;
+    
+    // 로그인하지 않았으면 숨김
+    if (!isAuthenticated || !currentUserId || currentUserId === '00000000-0000-0000-0000-000000000001') {
+        welcomeSection.style.display = 'none';
+        return;
+    }
+    
+    // 사용자 이름 설정
+    const userName = currentDisplayName || currentUserId.substring(0, 8) || '사용자';
+    welcomeUserName.textContent = userName;
+    
+    // 최근 학습한 스토리 찾기
+    if (recentStories && recentStories.length > 0) {
+        const lastStory = recentStories[0]; // 가장 최근 스토리
+        const storyData = PRELOADED_STORIES.find(s => s.id === lastStory.story_id);
+        if (storyData) {
+            const storyTitle = getStoryTitle(storyData);
+            welcomeLastStory.textContent = storyTitle;
+            welcomeSection.style.display = 'block';
+        } else {
+            welcomeLastStory.textContent = '없음';
+            welcomeSection.style.display = 'block';
+        }
+    } else {
+        welcomeLastStory.textContent = '없음';
+        welcomeSection.style.display = 'block';
     }
 }
 
@@ -1025,6 +1064,9 @@ async function loadStories() {
             
             // 최근 학습 목록 로드 (로그인한 경우)
             await loadRecentStories();
+            
+            // 환영 메시지 표시 (로그인한 경우)
+            renderWelcomeMessage();
         } else {
             console.warn('⚠️ 표시할 동화가 없습니다. 레벨:', currentLevel);
             const listEl = document.getElementById('storyList');
@@ -8227,5 +8269,65 @@ function showMissionCompleteNotification(missionTitle, coins) {
             notification.remove();
         }, 300);
     }, 3000);
+}
+
+// 피드백 제출 함수
+async function submitFeedback() {
+    const feedbackInput = document.getElementById('feedbackInput');
+    const submitBtn = document.getElementById('feedbackSubmitBtn');
+    
+    if (!feedbackInput || !submitBtn) return;
+    
+    const feedbackText = feedbackInput.value.trim();
+    
+    // 입력 검증
+    if (!feedbackText) {
+        alert('피드백 내용을 입력해주세요.');
+        feedbackInput.focus();
+        return;
+    }
+    
+    if (feedbackText.length < 10) {
+        alert('피드백은 최소 10자 이상 입력해주세요.');
+        feedbackInput.focus();
+        return;
+    }
+    
+    // 버튼 비활성화
+    submitBtn.disabled = true;
+    submitBtn.textContent = '전송 중...';
+    
+    try {
+        const response = await fetch(`${API_BASE}/feedback`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user_id: currentUserId || null,
+                user_email: currentUserEmail || null,
+                user_name: currentDisplayName || null,
+                feedback: feedbackText,
+                page_url: window.location.href,
+                user_agent: navigator.userAgent
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok && data.success) {
+            alert('피드백이 전송되었습니다. 감사합니다!');
+            feedbackInput.value = '';
+        } else {
+            throw new Error(data.error || '피드백 전송에 실패했습니다.');
+        }
+    } catch (error) {
+        console.error('❌ 피드백 전송 오류:', error);
+        alert('피드백 전송 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+    } finally {
+        // 버튼 활성화
+        submitBtn.disabled = false;
+        submitBtn.textContent = '전송하기';
+    }
 }
 

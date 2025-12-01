@@ -2431,6 +2431,140 @@
             width: 100%;
             max-width: 100%;
         }
+        
+        /* 환영 메시지 섹션 */
+        .welcome-message-section {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto var(--space-lg) auto;
+            padding: var(--space-md) var(--space-lg);
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius-md);
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .welcome-text {
+            font-size: var(--font-size-md);
+            color: var(--text-primary);
+            margin: 0;
+            line-height: 1.6;
+        }
+        
+        .welcome-text #welcomeUserName {
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+        
+        .welcome-text #welcomeLastStory {
+            font-weight: 600;
+            color: var(--color-success);
+        }
+        
+        /* 피드백 섹션 */
+        .feedback-section {
+            width: 100%;
+            max-width: 1400px;
+            margin: var(--space-2xl) auto var(--space-lg) auto;
+            padding: var(--space-lg);
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .feedback-title {
+            font-size: var(--font-size-lg);
+            color: var(--text-primary);
+            margin: 0 0 var(--space-md) 0;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .feedback-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+        
+        .feedback-input {
+            width: 100%;
+            padding: var(--space-md);
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            font-family: var(--font-family-base);
+            resize: vertical;
+            min-height: 100px;
+            box-sizing: border-box;
+        }
+        
+        .feedback-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        .feedback-input::placeholder {
+            color: var(--text-tertiary);
+        }
+        
+        .feedback-submit-btn {
+            padding: var(--space-md) var(--space-xl);
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+            color: var(--text-inverse);
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: var(--font-size-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            box-shadow: var(--shadow-primary);
+            align-self: flex-end;
+            min-width: 120px;
+        }
+        
+        .feedback-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .feedback-submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .feedback-submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            .welcome-message-section {
+                padding: var(--space-sm) var(--space-md);
+                margin-bottom: var(--space-md);
+            }
+            
+            .welcome-text {
+                font-size: var(--font-size-sm);
+            }
+            
+            .feedback-section {
+                padding: var(--space-md);
+                margin-top: var(--space-lg);
+            }
+            
+            .feedback-title {
+                font-size: var(--font-size-md);
+            }
+            
+            .feedback-submit-btn {
+                width: 100%;
+                align-self: stretch;
+            }
+        }
 
         .level-btn {
             padding: var(--space-md) var(--space-xl);
@@ -3015,7 +3149,24 @@
                 <button id="levelIntermediate" class="level-btn" data-level="중급">중급</button>
                 <button id="levelAdvanced" class="level-btn" data-level="고급">고급</button>
             </div>
+            
+            <!-- 환영 메시지 섹션 -->
+            <div id="welcomeMessageSection" class="welcome-message-section" style="display: none;">
+                <p class="welcome-text">
+                    <span id="welcomeUserName"></span>님, 반갑습니다. 지난 번 학습목록은 <span id="welcomeLastStory"></span>입니다.
+                </p>
+            </div>
+            
             <div id="storyList"></div>
+            
+            <!-- 피드백 섹션 -->
+            <div class="feedback-section">
+                <p class="feedback-title">불편 사항이 있으면 언제든 연락주세요</p>
+                <div class="feedback-form">
+                    <textarea id="feedbackInput" class="feedback-input" placeholder="의견이나 불편사항을 입력해주세요..." rows="4"></textarea>
+                    <button id="feedbackSubmitBtn" class="feedback-submit-btn" onclick="submitFeedback()">전송하기</button>
+                </div>
+            </div>
         </div>
 
         <!-- 학습 화면 -->

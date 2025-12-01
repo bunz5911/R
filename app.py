@@ -3647,6 +3647,133 @@ def admin_update_user(user_id):
 
 
 # ============================================================================
+# 피드백 API
+# ============================================================================
+@app.route('/api/feedback', methods=['POST'])
+def submit_feedback():
+    """
+    사용자 피드백 저장 및 이메일 전송
+    POST body: {
+        "user_id": "user123",
+        "user_email": "user@example.com",
+        "user_name": "사용자 이름",
+        "feedback": "피드백 내용",
+        "page_url": "https://rakorean.site/index.html",
+        "user_agent": "Mozilla/5.0..."
+    }
+    """
+    if not supabase_client:
+        return jsonify({"error": "Supabase가 설정되지 않았습니다", "success": False}), 503
+    
+    data = request.get_json() or {}
+    feedback_text = data.get('feedback', '').strip()
+    user_id = data.get('user_id')
+    user_email = data.get('user_email')
+    user_name = data.get('user_name')
+    page_url = data.get('page_url', '')
+    user_agent = data.get('user_agent', '')
+    
+    # 입력 검증
+    if not feedback_text:
+        return jsonify({"error": "피드백 내용을 입력해주세요", "success": False}), 400
+    
+    if len(feedback_text) < 10:
+        return jsonify({"error": "피드백은 최소 10자 이상 입력해주세요", "success": False}), 400
+    
+    try:
+        # Supabase에 피드백 저장
+        feedback_data = {
+            'user_id': user_id,
+            'user_email': user_email,
+            'user_name': user_name,
+            'feedback': feedback_text,
+            'page_url': page_url,
+            'user_agent': user_agent,
+            'created_at': datetime.now().isoformat()
+        }
+        
+        result = supabase_client.table('user_feedback').insert(feedback_data).execute()
+        
+        print(f"✅ 피드백 저장 완료: user_id={user_id}, email={user_email}", flush=True)
+        
+        # 이메일 전송
+        email_subject = f"[RAKorean] 사용자 피드백 - {user_name or '익명'}"
+        email_html = f"""
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <style>
+                body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+                .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                .header {{ background: #6366f1; color: white; padding: 20px; border-radius: 8px 8px 0 0; }}
+                .content {{ background: #f9fafb; padding: 20px; border-radius: 0 0 8px 8px; }}
+                .info {{ background: white; padding: 15px; margin: 10px 0; border-radius: 4px; border-left: 4px solid #6366f1; }}
+                .feedback-box {{ background: white; padding: 20px; margin: 15px 0; border-radius: 4px; border: 1px solid #e5e7eb; }}
+                .footer {{ margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #6b7280; }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h2>📝 새로운 피드백이 도착했습니다</h2>
+                </div>
+                <div class="content">
+                    <div class="info">
+                        <strong>👤 사용자 정보:</strong><br>
+                        이름: {user_name or '익명'}<br>
+                        이메일: {user_email or '없음'}<br>
+                        사용자 ID: {user_id or '없음'}
+                    </div>
+                    
+                    <div class="feedback-box">
+                        <strong>💬 피드백 내용:</strong><br>
+                        <p style="white-space: pre-wrap; margin-top: 10px;">{feedback_text}</p>
+                    </div>
+                    
+                    <div class="info">
+                        <strong>🌐 접속 정보:</strong><br>
+                        페이지: {page_url or '없음'}<br>
+                        브라우저: {user_agent[:100] if user_agent else '없음'}
+                    </div>
+                    
+                    <div class="footer">
+                        <p>이 이메일은 RAKorean 앱의 피드백 시스템에서 자동으로 전송되었습니다.</p>
+                        <p>수신 시간: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+                    </div>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        email_sent = send_email(
+            to_email=SUPERVISOR_EMAIL,
+            subject=email_subject,
+            html_body=email_html
+        )
+        
+        if email_sent:
+            print(f"✅ 피드백 이메일 전송 완료: {SUPERVISOR_EMAIL}", flush=True)
+        else:
+            print(f"⚠️ 피드백 이메일 전송 실패 (데이터는 저장됨): {SUPERVISOR_EMAIL}", flush=True)
+        
+        return jsonify({
+            "success": True,
+            "message": "피드백이 전송되었습니다",
+            "email_sent": email_sent
+        })
+        
+    except Exception as e:
+        print(f"❌ 피드백 저장 오류: {e}", flush=True)
+        import traceback
+        print(traceback.format_exc(), flush=True)
+        return jsonify({
+            "error": "피드백 저장 중 오류가 발생했습니다",
+            "success": False
+        }), 500
+
+
+# ============================================================================
 # [3] 서버 시작
 # ============================================================================
 if __name__ == '__main__':
