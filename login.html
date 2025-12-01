@@ -944,9 +944,15 @@
             console.log('✅ Supabase 클라이언트 확인됨');
             
             // 현재 URL 검증
-            const currentOrigin = window.location.origin;
+            let currentOrigin = window.location.origin;
             const currentHostname = window.location.hostname;
             const currentPort = window.location.port;
+            
+            // Netlify URL인 경우 Cloudflare URL로 변경
+            if (/netlify\.app$/i.test(currentHostname)) {
+                currentOrigin = 'https://rakorean.site';
+                console.log('⚠️ Netlify URL 감지, Cloudflare URL로 변경:', currentOrigin);
+            }
             
             // localhost:3000인 경우 차단
             if (currentHostname === 'localhost' && currentPort === '3000') {
