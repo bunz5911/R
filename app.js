@@ -883,8 +883,16 @@ function renderWelcomeMessage() {
     } else {
         welcomeLastStory.textContent = '없음';
         welcomeSection.style.display = 'block';
-        console.log('ℹ️ 최근 학습 기록이 없음');
+        console.log('ℹ️ 최근 학습 기록이 없음 - 환영 메시지 표시 (스토리 없음)');
     }
+    
+    console.log('✅ renderWelcomeMessage 완료:', {
+        isAuthenticated,
+        currentUserId,
+        userName,
+        recentStoriesCount: recentStories ? recentStories.length : 0,
+        display: welcomeSection.style.display
+    });
 }
 
 // 최근 학습 목록 렌더링
