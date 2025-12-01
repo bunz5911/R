@@ -805,33 +805,112 @@ JSON 형식으로 응답:
 @app.route('/api/user/progress', methods=['POST'])
 def save_user_progress():
     """
-    사용자 학습 진행 상황 저장
+    사용자 학습 진행 상황 저장 및 코인 보상
     POST body: {
         "user_id": "user123",
         "story_id": 1,
         "completed_tabs": ["요약", "전체듣기"],
         "quiz_score": 85,
-        "pronunciation_score": 90
+        "pronunciation_score": 90,
+        "is_completed": true  # 목록 완주 여부
     }
     """
     if not supabase_client:
         return jsonify({"error": "Supabase가 설정되지 않았습니다", "saved": False}), 503
     
     data = request.get_json() or {}
+    user_id = data.get('user_id')
+    story_id = data.get('story_id')
+    quiz_score = data.get('quiz_score')
+    pronunciation_score = data.get('pronunciation_score')
+    is_completed = data.get('is_completed', False)
     
     try:
         result = supabase_client.table('learning_records').insert({
-            'user_id': data.get('user_id'),
-            'story_id': data.get('story_id'),
+            'user_id': user_id,
+            'story_id': story_id,
             'story_title': data.get('story_title'),
             'completed_tabs': data.get('completed_tabs', []),
-            'quiz_score': data.get('quiz_score'),
-            'pronunciation_score': data.get('pronunciation_score'),
+            'quiz_score': quiz_score,
+            'pronunciation_score': pronunciation_score,
             'study_date': datetime.now().isoformat(),
-            'level': data.get('level', '초급')
+            'level': data.get('level', '초급'),
+            'completed': is_completed
         }).execute()
         
-        return jsonify({"saved": True, "data": result.data})
+        # 코인 보상 지급
+        coins_awarded = []
+        
+        # 목록 완주 보상: +3코인
+        if is_completed:
+            try:
+                supabase_client.rpc('add_user_coins', {
+                    'p_user_id': user_id,
+                    'p_amount': 3,
+                    'p_type': 'story_completed',
+                    'p_description': f'목록 {story_id}번 완주'
+                }).execute()
+                coins_awarded.append({'type': 'story_completed', 'amount': 3})
+                print(f"✅ 목록 완주 코인 지급: user={user_id}, story={story_id}, +3코인", flush=True)
+            except Exception as e:
+                print(f"⚠️ 목록 완주 코인 지급 오류: {e}", flush=True)
+        
+        # 퀴즈 80점 이상 보상: +5코인
+        if quiz_score and quiz_score >= 80:
+            try:
+                # 중복 지급 방지: 오늘 이미 같은 목록에서 퀴즈 보상을 받았는지 확인
+                today = datetime.now().date().isoformat()
+                existing_reward = supabase_client.table('coin_transactions')\
+                    .select('id')\
+                    .eq('user_id', user_id)\
+                    .eq('type', 'quiz_bonus')\
+                    .eq('description', f'퀴즈 {quiz_score}점 달성 (목록 {story_id}번)')\
+                    .gte('created_at', today)\
+                    .execute()
+                
+                if not existing_reward.data:
+                    supabase_client.rpc('add_user_coins', {
+                        'p_user_id': user_id,
+                        'p_amount': 5,
+                        'p_type': 'quiz_bonus',
+                        'p_description': f'퀴즈 {quiz_score}점 달성 (목록 {story_id}번)'
+                    }).execute()
+                    coins_awarded.append({'type': 'quiz_bonus', 'amount': 5})
+                    print(f"✅ 퀴즈 보상 코인 지급: user={user_id}, story={story_id}, score={quiz_score}, +5코인", flush=True)
+            except Exception as e:
+                print(f"⚠️ 퀴즈 보상 코인 지급 오류: {e}", flush=True)
+        
+        # 발음 평가 90점 이상 보상: +5코인
+        if pronunciation_score and pronunciation_score >= 90:
+            try:
+                # 중복 지급 방지
+                today = datetime.now().date().isoformat()
+                existing_reward = supabase_client.table('coin_transactions')\
+                    .select('id')\
+                    .eq('user_id', user_id)\
+                    .eq('type', 'pronunciation_bonus')\
+                    .eq('description', f'발음 평가 {pronunciation_score}점 달성 (목록 {story_id}번)')\
+                    .gte('created_at', today)\
+                    .execute()
+                
+                if not existing_reward.data:
+                    supabase_client.rpc('add_user_coins', {
+                        'p_user_id': user_id,
+                        'p_amount': 5,
+                        'p_type': 'pronunciation_bonus',
+                        'p_description': f'발음 평가 {pronunciation_score}점 달성 (목록 {story_id}번)'
+                    }).execute()
+                    coins_awarded.append({'type': 'pronunciation_bonus', 'amount': 5})
+                    print(f"✅ 발음 평가 보상 코인 지급: user={user_id}, story={story_id}, score={pronunciation_score}, +5코인", flush=True)
+            except Exception as e:
+                print(f"⚠️ 발음 평가 보상 코인 지급 오류: {e}", flush=True)
+        
+        return jsonify({
+            "saved": True,
+            "data": result.data,
+            "coins_awarded": coins_awarded,
+            "total_coins": sum(c['amount'] for c in coins_awarded)
+        })
     except Exception as e:
         print(f"학습 기록 저장 오류: {e}")
         return jsonify({"error": str(e), "saved": False}), 500
@@ -2525,23 +2604,22 @@ def check_story_access(story_id):
         except Exception as e:
             print(f"⚠️ 승인 상태 확인 오류: {e}", flush=True)
     
-    # 21-50번은 시즌 2 (아직 미오픈)
-    if story_id >= 21:
+    # 0번과 1번 동화는 누구나 접근 가능 (무료 티어)
+    if story_id == 0 or story_id == 1:
+        return jsonify({
+            "access": True,
+            "reason": "free_story",
+            "coin_required": 0,
+            "message": "누구나 읽을 수 있는 동화입니다"
+        })
+    
+    # 31-50번: 접근 제한
+    if story_id >= 31 and story_id <= 50:
         return jsonify({
             "access": False,
-            "reason": "season_2",
-            "message": "시즌 2는 2026년 2월에 오픈됩니다",
-            "required_plan": "season_2"
+            "reason": "access_restricted",
+            "message": "이 목록은 현재 접근할 수 없습니다"
         }), 403
-    
-    # 0번과 1번 동화는 누구나 접근 가능 (무료 티어) - 승인 시스템 비활성화 시
-    if not SUPERVISOR_APPROVAL_ENABLED:
-        if story_id == 0 or story_id == 1:
-            return jsonify({
-                "access": True,
-                "reason": "free_story",
-                "message": "누구나 읽을 수 있는 동화입니다"
-            })
     
     # 비회원 또는 테스트 사용자
     if not user_id or user_id == '00000000-0000-0000-0000-000000000001':
@@ -2552,7 +2630,7 @@ def check_story_access(story_id):
             "required_plan": "free"
         }), 403
     
-    # 🚧 승인 시스템 비활성화 시 원래 로직 실행
+    # 🚧 승인 시스템 비활성화 시 코인 차감 시스템 적용
     if not SUPERVISOR_APPROVAL_ENABLED and supabase_client:
         try:
             profile_result = supabase_client.table('profiles')\
@@ -2563,23 +2641,44 @@ def check_story_access(story_id):
             if profile_result.data and len(profile_result.data) > 0:
                 plan = profile_result.data[0].get('plan', 'free')
                 
-                # 플랜별 접근 제한
+                # 무료 회원: 코인 차감 시스템
                 if plan == 'free':
-                    # Free 회원: 1-3번
-                    if story_id <= 3:
-                        return jsonify({"access": True, "reason": "free_member"})
+                    # 코인 필요량 계산
+                    if story_id >= 2 and story_id <= 10:
+                        coin_required = 20
+                    elif story_id >= 11 and story_id <= 30:
+                        coin_required = 30
                     else:
+                        coin_required = 0
+                    
+                    # 사용자 코인 확인
+                    try:
+                        coins_result = supabase_client.table('user_coins')\
+                            .select('total_coins')\
+                            .eq('user_id', user_id)\
+                            .execute()
+                        
+                        current_coins = coins_result.data[0]['total_coins'] if coins_result.data else 0
+                        
+                        return jsonify({
+                            "access": True,  # 코인 차감은 프론트엔드에서 처리
+                            "reason": "coin_required",
+                            "coin_required": coin_required,
+                            "current_coins": current_coins,
+                            "has_enough_coins": current_coins >= coin_required
+                        })
+                    except Exception as e:
+                        print(f"⚠️ 코인 조회 오류: {e}", flush=True)
                         return jsonify({
                             "access": False,
-                            "reason": "upgrade_required",
-                            "message": "Pro 플랜이 필요합니다",
-                            "required_plan": "pro"
-                        }), 403
+                            "reason": "error",
+                            "message": "코인 조회 중 오류가 발생했습니다"
+                        }), 500
                         
                 elif plan == 'pro':
-                    # Pro 회원: 1-10번
+                    # Pro 회원: 0-10번 무료
                     if story_id <= 10:
-                        return jsonify({"access": True, "reason": "pro_member"})
+                        return jsonify({"access": True, "reason": "pro_member", "coin_required": 0})
                     else:
                         return jsonify({
                             "access": False,
@@ -2589,9 +2688,9 @@ def check_story_access(story_id):
                         }), 403
                         
                 elif plan == 'premier':
-                    # Premier 회원: 1-20번
-                    if story_id <= 20:
-                        return jsonify({"access": True, "reason": "premier_member"})
+                    # Premier 회원: 0-30번 무료
+                    if story_id <= 30:
+                        return jsonify({"access": True, "reason": "premier_member", "coin_required": 0})
                     else:
                         return jsonify({
                             "access": False,
@@ -2602,16 +2701,19 @@ def check_story_access(story_id):
         except Exception as e:
             print(f"⚠️ 플랜 조회 오류: {e}", flush=True)
     
-    # 기본: Free 회원으로 처리 (1-3번)
-    if story_id <= 3:
-        return jsonify({"access": True, "reason": "default_free"})
+    # 기본: Free 회원으로 처리 (0-1번 무료)
+    if story_id <= 1:
+        return jsonify({"access": True, "reason": "default_free", "coin_required": 0})
     else:
+        # 코인 필요량 계산
+        coin_required = 20 if story_id <= 10 else 30
         return jsonify({
-            "access": False,
-            "reason": "upgrade_required",
-            "message": "Pro 플랜이 필요합니다",
-            "required_plan": "pro"
-        }), 403
+            "access": True,
+            "reason": "coin_required",
+            "coin_required": coin_required,
+            "current_coins": 0,
+            "has_enough_coins": False
+        })
 
 
 # ============================================================================
@@ -3138,6 +3240,7 @@ def complete_mission():
         
         # 완료 시 코인 지급
         coins_earned = 0
+        all_missions_completed = False
         if completed:
             coins_reward = mission.get('coins_reward', 5)
             
@@ -3150,6 +3253,39 @@ def complete_mission():
             
             coins_earned = coins_reward
             print(f"✅ 미션 완료: {mission.get('title')}, +{coins_reward}코인", flush=True)
+            
+            # 모든 일일 미션 완료 확인
+            today = datetime.now().date().isoformat()
+            all_missions = supabase_client.table('daily_missions')\
+                .select('completed')\
+                .eq('user_id', user_id)\
+                .eq('mission_date', today)\
+                .execute()
+            
+            if all_missions.data:
+                completed_count = sum(1 for m in all_missions.data if m.get('completed'))
+                total_count = len(all_missions.data)
+                
+                if completed_count == total_count and total_count > 0:
+                    # 모든 미션 완료 보상: +5코인 (중복 지급 방지)
+                    existing_bonus = supabase_client.table('coin_transactions')\
+                        .select('id')\
+                        .eq('user_id', user_id)\
+                        .eq('type', 'daily_mission_complete')\
+                        .eq('description', '일일 미션 모두 완료')\
+                        .gte('created_at', today)\
+                        .execute()
+                    
+                    if not existing_bonus.data:
+                        supabase_client.rpc('add_user_coins', {
+                            'p_user_id': user_id,
+                            'p_amount': 5,
+                            'p_type': 'daily_mission_complete',
+                            'p_description': '일일 미션 모두 완료'
+                        }).execute()
+                        coins_earned += 5
+                        all_missions_completed = True
+                        print(f"✅ 모든 일일 미션 완료 보상: user={user_id}, +5코인", flush=True)
         
         return jsonify({
             "success": True,
@@ -3157,6 +3293,7 @@ def complete_mission():
             "current_count": current_count,
             "target_count": target_count,
             "coins_earned": coins_earned,
+            "all_missions_completed": all_missions_completed,
             "message": "미션 완료!" if completed else "진행 중"
         })
         

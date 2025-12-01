@@ -1207,6 +1207,7 @@ function renderStoryCarousel(activeIndex = 0) {
             `;
         } else {
             // 일반 카드 (숫자 제거)
+            const coinBadge = getCoinBadge(story.id, userPlan);
             carouselHTML += `
                 <div class="carousel-slide ${isActive ? 'active' : ''}" 
                      data-story-id="${story.id}" 
@@ -1217,6 +1218,7 @@ function renderStoryCarousel(activeIndex = 0) {
                         ${completedBadge}
                         <div class="story-card-image">
                             <img src="${story.image}" alt="${story.title}" onerror="this.style.display='none'">
+                            ${coinBadge}
                             <div class="story-card-overlay">
                                 <h3 class="story-card-title-overlay">${getStoryTitle(story)}</h3>
                             </div>
@@ -2021,31 +2023,53 @@ async function checkStoryAccess(storyId) {
         return;
     }
     
-    // 로그인 상태 - 플랜별 체크 (승인 시스템 비활성화 시에만)
+    // 로그인 상태 - 코인 차감 시스템 (무료 회원만)
     if (currentUserPlan === 'free') {
-        if (storyId <= 3) {
+        // 0-1번: 무료 접근
+        if (storyId === 0 || storyId === 1) {
             selectStory(storyId);
-        } else {
-            showUpgradeModal('pro');
+            return;
+        }
+        
+        // 31-50번: 접근 제한
+        if (storyId >= 31 && storyId <= 50) {
+            showAccessRestrictedModal();
+            return;
+        }
+        
+        // 2-10번: 20코인 필요
+        if (storyId >= 2 && storyId <= 10) {
+            await accessStoryWithCoins(storyId, 20);
+            return;
+        }
+        
+        // 11-30번: 30코인 필요
+        if (storyId >= 11 && storyId <= 30) {
+            await accessStoryWithCoins(storyId, 30);
+            return;
         }
     } else if (currentUserPlan === 'pro') {
+        // Pro 회원: 기존 로직 유지 (0-10번 무료)
         if (storyId <= 10) {
             selectStory(storyId);
         } else {
             showUpgradeModal('premier');
         }
     } else if (currentUserPlan === 'premier') {
-        if (storyId <= 20) {
+        // Premier 회원: 기존 로직 유지 (0-30번 무료)
+        if (storyId <= 30) {
             selectStory(storyId);
         } else {
             showSeason2Modal();
         }
     } else {
         // 기본값: Free 플랜으로 처리
-        if (storyId <= 3) {
+        if (storyId === 0 || storyId === 1) {
             selectStory(storyId);
+        } else if (storyId >= 31) {
+            showAccessRestrictedModal();
         } else {
-            showUpgradeModal('pro');
+            await accessStoryWithCoins(storyId, storyId <= 10 ? 20 : 30);
         }
     }
 }
@@ -6305,6 +6329,25 @@ async function saveProgress(additionalData = {}) {
         const result = await response.json();
         if (result.saved) {
             console.log('✅ 학습 기록 저장 완료');
+            
+            // 코인 보상 알림 표시
+            if (result.coins_awarded && result.coins_awarded.length > 0) {
+                // 코인 업데이트
+                await loadUserCoins();
+                
+                // 각 보상 알림 표시
+                result.coins_awarded.forEach((reward, index) => {
+                    setTimeout(() => {
+                        const reasonMap = {
+                            'story_completed': '목록 완주',
+                            'quiz_bonus': '퀴즈 80점 달성',
+                            'pronunciation_bonus': '발음 평가 90점 달성'
+                        };
+                        const reason = reasonMap[reward.type] || '보상';
+                        showCoinEarnedNotification(reward.amount, reason, userCoins);
+                    }, index * 500); // 순차적으로 표시
+                });
+            }
         } else {
             console.log('⚠️ 학습 기록 미저장 (Supabase 미설정)');
         }
@@ -7340,6 +7383,241 @@ async function updateCoins(amount, type, description) {
     }
 }
 
+/**
+ * 코인으로 목록 접근
+ * @param {number} storyId - 목록 ID
+ * @param {number} requiredCoins - 필요 코인 수
+ */
+async function accessStoryWithCoins(storyId, requiredCoins) {
+    try {
+        // 현재 코인 확인
+        const currentCoins = userCoins || 0;
+        
+        if (currentCoins < requiredCoins) {
+            // 코인 부족 모달 표시
+            showCoinInsufficientModal(storyId, requiredCoins, currentCoins);
+            return;
+        }
+        
+        // 코인 차감 API 호출
+        const response = await fetch(`${API_BASE}/user/${currentUserId}/coins`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                amount: -requiredCoins,
+                type: 'story_access',
+                description: `목록 ${storyId}번 접근`,
+                story_id: storyId
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && data.coins !== undefined) {
+            // 코인 업데이트
+            userCoins = data.coins;
+            localStorage.setItem('userCoins', userCoins.toString());
+            updateCoinDisplay();
+            
+            // 목록 접근 허용
+            selectStory(storyId);
+            
+            // 코인 차감 알림
+            showCoinDeductedNotification(requiredCoins, data.coins);
+        } else {
+            alert('코인 차감 중 오류가 발생했습니다.');
+        }
+    } catch (error) {
+        console.error('코인 차감 오류:', error);
+        alert('코인 차감 중 오류가 발생했습니다.');
+    }
+}
+
+/**
+ * 코인 부족 모달 표시
+ */
+function showCoinInsufficientModal(storyId, requiredCoins, currentCoins) {
+    const modal = document.createElement('div');
+    modal.id = 'coinInsufficientModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.3s ease-out;
+    `;
+    
+    modal.innerHTML = `
+        <div style="background: white; border-radius: 16px; padding: 32px; max-width: 400px; width: 90%; text-align: center;">
+            <h2 style="font-size: 24px; margin-bottom: 16px; color: #333;">코인이 부족합니다! 💰</h2>
+            <p style="font-size: 16px; color: #666; margin-bottom: 24px;">
+                목록 ${storyId}번에 접근하려면 <strong>${requiredCoins}코인</strong>이 필요합니다.
+            </p>
+            <div style="background: #f5f5f5; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+                <div style="font-size: 14px; color: #999; margin-bottom: 8px;">현재 코인</div>
+                <div style="font-size: 32px; font-weight: bold; color: #f59e0b;">${currentCoins}코인</div>
+                <div style="font-size: 14px; color: #999; margin-top: 8px;">필요 코인: ${requiredCoins}코인</div>
+            </div>
+            <div style="text-align: left; margin-bottom: 24px;">
+                <h3 style="font-size: 16px; margin-bottom: 12px; color: #333;">코인 획득 방법:</h3>
+                <ul style="list-style: none; padding: 0; margin: 0;">
+                    <li style="padding: 8px 0; border-bottom: 1px solid #eee;">✓ 출석 체크: +2코인</li>
+                    <li style="padding: 8px 0; border-bottom: 1px solid #eee;">✓ 목록 완주: +3코인</li>
+                    <li style="padding: 8px 0; border-bottom: 1px solid #eee;">✓ 퀴즈 80점: +5코인</li>
+                    <li style="padding: 8px 0; border-bottom: 1px solid #eee;">✓ 발음 평가 90점: +5코인</li>
+                    <li style="padding: 8px 0;">✓ 일일 미션 완료: +5코인</li>
+                </ul>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button onclick="this.closest('#coinInsufficientModal').remove()" 
+                        style="flex: 1; padding: 12px; background: #e5e7eb; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
+                    닫기
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+/**
+ * 접근 제한 모달 표시 (31-50번)
+ */
+function showAccessRestrictedModal() {
+    const modal = document.createElement('div');
+    modal.id = 'accessRestrictedModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    `;
+    
+    modal.innerHTML = `
+        <div style="background: white; border-radius: 16px; padding: 32px; max-width: 400px; width: 90%; text-align: center;">
+            <h2 style="font-size: 24px; margin-bottom: 16px; color: #333;">접근 제한 🚫</h2>
+            <p style="font-size: 16px; color: #666; margin-bottom: 24px;">
+                이 목록은 현재 접근할 수 없습니다.
+            </p>
+            <button onclick="this.closest('#accessRestrictedModal').remove()" 
+                    style="width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
+                확인
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+/**
+ * 코인 획득 알림 표시
+ */
+function showCoinEarnedNotification(amount, reason, totalCoins) {
+    const notification = document.createElement('div');
+    notification.className = 'coin-notification';
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 16px 24px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10001;
+        animation: slideInRight 0.3s ease-out;
+    `;
+    
+    notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 24px;">💰</span>
+            <div>
+                <div style="font-size: 18px; font-weight: bold;">+${amount}코인 획득!</div>
+                <div style="font-size: 12px; opacity: 0.9;">${reason}</div>
+                <div style="font-size: 12px; margin-top: 4px;">보유 코인: ${totalCoins}코인</div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // 3초 후 자동 제거
+    setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease-out';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+/**
+ * 목록별 코인 배지 생성
+ */
+function getCoinBadge(storyId, userPlan) {
+    // 무료 회원만 코인 배지 표시
+    if (userPlan !== 'free') {
+        return '';
+    }
+    
+    if (storyId === 0 || storyId === 1) {
+        return '<span class="coin-badge free">무료</span>';
+    } else if (storyId >= 2 && storyId <= 10) {
+        return '<span class="coin-badge required">20코인</span>';
+    } else if (storyId >= 11 && storyId <= 30) {
+        return '<span class="coin-badge required">30코인</span>';
+    } else if (storyId >= 31 && storyId <= 50) {
+        return '<span class="coin-badge restricted">접근 제한</span>';
+    }
+    return '';
+}
+
+/**
+ * 코인 차감 알림 표시
+ */
+function showCoinDeductedNotification(amount, remainingCoins) {
+    const notification = document.createElement('div');
+    notification.className = 'coin-notification';
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #f59e0b;
+        color: white;
+        padding: 16px 24px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10001;
+        animation: slideInRight 0.3s ease-out;
+    `;
+    
+    notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 24px;">💸</span>
+            <div>
+                <div style="font-size: 18px; font-weight: bold;">-${amount}코인 사용</div>
+                <div style="font-size: 12px; margin-top: 4px;">보유 코인: ${remainingCoins}코인</div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease-out';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
 
 // ============================================================================
 // [11] 유틸리티
@@ -7869,6 +8147,13 @@ async function checkMissionProgress(missionType, count = 1) {
             
             // 코인 업데이트
             await loadUserCoins();
+            
+            // 모든 미션 완료 보상 알림
+            if (completeData.all_missions_completed) {
+                setTimeout(() => {
+                    showCoinEarnedNotification(5, '일일 미션 모두 완료', userCoins);
+                }, 1000);
+            }
         }
         
     } catch (error) {

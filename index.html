@@ -1194,6 +1194,57 @@
             }
         }
         
+        /* 코인 배지 스타일 */
+        .coin-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 10;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .coin-badge.free {
+            background: #10b981;
+            color: white;
+        }
+
+        .coin-badge.required {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .coin-badge.restricted {
+            background: #ef4444;
+            color: white;
+        }
+
+        /* 코인 알림 애니메이션 */
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
         .completed-badge {
             position: absolute;
             top: var(--space-sm);
