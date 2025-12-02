@@ -1037,9 +1037,24 @@ async function loadStories() {
         console.log('📚 isAuthenticated:', isAuthenticated);
         console.log('📚 currentUserId:', currentUserId);
         
-        // 1. 학습 기록 로드 (로그인한 경우)
-        await loadCompletedStories();
-        console.log('📚 학습 기록 로드 완료, completedStoryIds:', completedStoryIds.length, '개');
+        // ✅ 성능 최적화: 학습 기록 로드를 백그라운드로 이동 (블로킹 제거)
+        // 초기 렌더링은 학습 기록 없이 먼저 표시하여 로딩 속도 개선
+        const completedStoriesPromise = loadCompletedStories().then(() => {
+            console.log('📚 학습 기록 로드 완료, completedStoryIds:', completedStoryIds.length, '개');
+            // 학습 기록 로드 완료 후 완료 표시 업데이트
+            updateCompletedBadges();
+            
+            // 유료 사용자나 슈퍼바이저의 경우 정렬 업데이트 (무료 사용자는 0,1번만 보이므로 불필요)
+            const userPlan = currentUserPlan || 'free';
+            if (userPlan !== 'free' || currentUserEmail === 'bunz5911@gmail.com') {
+                // 정렬 업데이트를 위해 다시 렌더링 (선택사항 - 사용자 경험 고려)
+                // 주석 처리: 전체 재렌더링은 성능에 영향이 있으므로 완료 배지만 업데이트
+                // currentStories = getFilteredAndSortedStories(currentLevel, userPlan);
+                // renderStoryCarousel();
+            }
+        }).catch(error => {
+            console.warn('⚠️ 학습 기록 로드 실패:', error);
+        });
         
         // 2. 레벨 테스트 확인 (첫 방문 시) - 로그인한 경우에만
         const storedLevelTest = localStorage.getItem('level_test_completed');
@@ -1050,7 +1065,7 @@ async function loadStories() {
             return; // 테스트 완료 후 다시 로드
         }
         
-        // 3. 현재 레벨의 동화 필터링 및 정렬
+        // 3. 현재 레벨의 동화 필터링 및 정렬 (학습 기록 로드 대기 없이 즉시 실행)
         const userPlan = currentUserPlan || 'free';
         console.log('📚 getFilteredAndSortedStories 호출 전:', { level: currentLevel, userPlan });
         currentStories = getFilteredAndSortedStories(currentLevel, userPlan);
@@ -1076,22 +1091,23 @@ async function loadStories() {
             전체_캐러셀_스토리수: allCarouselStories.length
         });
         
-        // 4. 캐러셀 렌더링 (레벨 테스트가 없거나 완료된 경우)
+        // 4. 캐러셀 렌더링 (학습 기록 로드 대기 없이 즉시 렌더링)
         if (currentStories && currentStories.length > 0) {
-            console.log('🎠 캐러셀 렌더링 시작:', currentStories.length, '개');
+            console.log('🎠 캐러셀 렌더링 시작 (빠른 초기 렌더링):', currentStories.length, '개');
             renderStoryCarousel();
             console.log('✅ 동화 목록 렌더링 완료:', currentStories.length, '개 (레벨:', currentLevel + ')');
             
-            // 최근 학습 목록 로드 (로그인한 경우)
-            await loadRecentStories();
-            console.log('✅ loadRecentStories 완료, renderWelcomeMessage 호출 예정');
-            
-            // 환영 메시지 표시 (로그인한 경우) - loadRecentStories 완료 후 호출
-            // 약간의 지연을 두어 DOM이 완전히 렌더링된 후 실행
-            setTimeout(() => {
-                console.log('🔄 renderWelcomeMessage 호출 시작');
-                renderWelcomeMessage();
-            }, 100);
+            // ✅ 최근 학습 목록 로드도 백그라운드로 이동 (블로킹 제거)
+            loadRecentStories().then(() => {
+                console.log('✅ loadRecentStories 완료, renderWelcomeMessage 호출 예정');
+                // 환영 메시지 표시 (로그인한 경우) - loadRecentStories 완료 후 호출
+                setTimeout(() => {
+                    console.log('🔄 renderWelcomeMessage 호출 시작');
+                    renderWelcomeMessage();
+                }, 100);
+            }).catch(error => {
+                console.warn('⚠️ 최근 학습 목록 로드 실패:', error);
+            });
         } else {
             console.warn('⚠️ 표시할 동화가 없습니다. 레벨:', currentLevel);
             const listEl = document.getElementById('storyList');
@@ -1116,6 +1132,42 @@ async function loadStories() {
         }
     } catch (error) {
         console.log('⚠️ 서버 연결 실패, 로컬 데이터 사용 중:', error.message);
+    }
+}
+
+/**
+ * 완료 배지 업데이트 함수
+ * 학습 기록 로드 완료 후 호출되어 완료 표시를 업데이트
+ * 전체 재렌더링 없이 DOM 조작으로만 업데이트하여 성능 최적화
+ */
+function updateCompletedBadges() {
+    if (!completedStoryIds || completedStoryIds.length === 0) {
+        return;
+    }
+    
+    // 캐러셀 슬라이드에서 완료 배지 업데이트
+    const slides = document.querySelectorAll('.carousel-slide');
+    let updatedCount = 0;
+    
+    slides.forEach(slide => {
+        const storyId = parseInt(slide.getAttribute('data-story-id'));
+        if (completedStoryIds.includes(storyId)) {
+            // 완료 배지가 없으면 추가
+            const card = slide.querySelector('.story-card-carousel');
+            if (card && !card.querySelector('.completed-badge')) {
+                const badge = document.createElement('div');
+                badge.className = 'completed-badge';
+                badge.textContent = '✓ 학습함';
+                badge.style.cssText = 'position: absolute; top: 8px; right: 8px; background: #22c55e; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; z-index: 10;';
+                card.style.position = 'relative';
+                card.insertBefore(badge, card.firstChild);
+                updatedCount++;
+            }
+        }
+    });
+    
+    if (updatedCount > 0) {
+        console.log('✅ 완료 배지 업데이트 완료:', updatedCount, '개');
     }
 }
 
