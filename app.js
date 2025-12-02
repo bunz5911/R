@@ -1371,7 +1371,7 @@ function renderStoryCarousel(activeIndex = 0) {
                     <div class="lock-content">
                         <div class="lock-icon">🔒</div>
                         <h3>다른 스토리 더 보기</h3>
-                        <p>pro 또는 premire 구독으로 더 많은 스토리를 보세요</p>
+                        <p>2026년 1월 1일부터<br>포인트 구입 후 확인할 수 있습니다.</p>
                         <button class="upgrade-btn-carousel" onclick="showUpgradeModal('pro')">구독하기</button>
                     </div>
                 </div>
@@ -2406,25 +2406,8 @@ function showLoginModal(storyId) {
     document.body.appendChild(modal);
 }
 
-// 업그레이드 필요 모달 표시 (Free → Pro, Pro → Premier)
+// 업그레이드 필요 모달 표시 (코인 구입 안내)
 function showUpgradeModal(requiredPlan) {
-    const planInfo = {
-        pro: {
-            name: 'Pro',
-            price: '', // 가격 정보 숨김
-            coins: '100코인',
-            stories: '1-10번 동화'
-        },
-        premier: {
-            name: 'Premier',
-            price: '', // 가격 정보 숨김
-            coins: '300코인',
-            stories: '1-20번 동화'
-        }
-    };
-    
-    const info = planInfo[requiredPlan];
-    
     const modal = document.createElement('div');
     modal.id = 'accessModal';
     modal.style.cssText = `
@@ -2443,23 +2426,14 @@ function showUpgradeModal(requiredPlan) {
     
     modal.innerHTML = `
         <div style="background: white; border-radius: 24px; padding: 40px; max-width: 420px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: slideUp 0.3s;">
-            <div style="font-size: 64px; margin-bottom: 20px;">⬆️</div>
-            <h2 style="font-size: 24px; font-weight: 800; color: #333; margin-bottom: 12px;">${info.name} 플랜이 필요합니다</h2>
+            <div style="font-size: 64px; margin-bottom: 20px;">🟡</div>
+            <h2 style="font-size: 24px; font-weight: 800; color: #333; margin-bottom: 12px;">코인 구입 후 목록을 확인할 수 있습니다</h2>
             <p style="font-size: 15px; color: #666; line-height: 1.6; margin-bottom: 24px;">
-                이 동화는 ${info.name} 플랜에서 이용할 수 있습니다.
+                이 동화는 코인 구입 후 학습할 수 있습니다.
             </p>
             
-            <div style="background: #f8f9fa; border-radius: 16px; padding: 20px; margin-bottom: 24px; text-align: left;">
-                <h3 style="font-size: 16px; font-weight: 700; color: #333; margin-bottom: 12px;">${info.name} 혜택</h3>
-                <ul style="list-style: none; padding: 0;">
-                    <li style="font-size: 14px; color: #666; margin-bottom: 8px;">✓ ${info.coins} 지급</li>
-                    <li style="font-size: 14px; color: #666; margin-bottom: 8px;">✓ ${info.stories} 학습</li>
-                    <li style="font-size: 14px; color: #666; margin-bottom: 8px;">✓ K-콘텐츠 무제한</li>
-                </ul>
-            </div>
-            
-            <button onclick="location.href='pricing.html'" style="width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); margin-bottom: 12px;">
-                ${info.name} 시작하기${info.price ? ` (${info.price})` : ''}
+            <button onclick="location.href='coin-shop.html'" style="width: 100%; padding: 16px; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4); margin-bottom: 12px;">
+                코인 구매하기
             </button>
             
             <button onclick="closeAccessModal()" style="width: 100%; padding: 12px; background: #f0f0f0; color: #666; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer;">
