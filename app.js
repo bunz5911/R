@@ -1372,7 +1372,7 @@ function renderStoryCarousel(activeIndex = 0) {
                         <div class="lock-icon">🔒</div>
                         <h3>다른 스토리 더 보기</h3>
                         <p>2026년 1월 1일부터<br>포인트 구입 후 확인할 수 있습니다.</p>
-                        <button class="upgrade-btn-carousel" onclick="showUpgradeModal('pro')">구독하기</button>
+                        <button class="upgrade-btn-carousel" onclick="showUpgradeModal('pro')">포인트샵으로</button>
                     </div>
                 </div>
             </div>
