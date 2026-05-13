@@ -1,0 +1,1759 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
+
+<!-- 전역 타이포: Pretendard (한글·라틴 통합) -->
+<link as="style" crossorigin="" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet"/>
+<style>
+        body {
+            margin: 0;
+            background: #fff;
+            color: #1a2421;
+            font-family:
+                "Pretendard",
+                -apple-system,
+                BlinkMacSystemFont,
+                system-ui,
+                Roboto,
+                "Helvetica Neue",
+                "Segoe UI",
+                "Apple SD Gothic Neo",
+                "Noto Sans KR",
+                "Malgun Gothic",
+                sans-serif;
+            overflow-x: clip;
+        }
+
+        /* 가로 스크롤·노치: 작은 화면에서 레이아웃 깨짐 방지 */
+        html {
+            overflow-x: clip;
+        }
+
+        @supports not (overflow: clip) {
+            html,
+            body {
+                overflow-x: hidden;
+            }
+        }
+
+        /* 고정 네비 아래로 앵커 이동 시 제목이 가리지 않도록 */
+        #first-section,
+        #dual-track-section,
+        #lab-section,
+        #book-intro-section,
+        #library-section,
+        #site-footer {
+            scroll-margin-top: calc(4.25rem + env(safe-area-inset-top, 0px));
+        }
+
+        /* 상단 섹션 점프 네비게이션 */
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding-top: env(safe-area-inset-top, 0px);
+            background: rgba(255, 255, 255, 0.94);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+            box-sizing: border-box;
+        }
+
+        .site-nav {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 0.35rem 0.75rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0.55rem clamp(0.75rem, 2vw, 1.25rem);
+            box-sizing: border-box;
+        }
+
+        /* 언어 선택: KOR / ENG 두 버튼(토글 아님), 연보라 톤 — 네비 첫 그룹 */
+        .lang-switch {
+            display: inline-flex;
+            flex-shrink: 0;
+            align-items: center;
+            gap: 0.28rem;
+            margin-right: 0.35rem;
+            padding: 2px;
+            border-radius: 10px;
+            background: rgba(179, 157, 219, 0.14);
+            border: 1px solid rgba(142, 119, 188, 0.22);
+            box-sizing: border-box;
+        }
+
+        .lang-btn {
+            padding: 0.34rem 0.62rem;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            color: #5e4d86;
+            background: linear-gradient(180deg, #ede6fa 0%, #d8c8f0 100%);
+            border: 1px solid rgba(142, 119, 188, 0.45);
+            border-radius: 7px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition:
+                background 0.15s ease,
+                color 0.15s ease,
+                box-shadow 0.15s ease,
+                transform 0.12s ease;
+            box-shadow: 0 1px 2px rgba(74, 61, 107, 0.08);
+        }
+
+        .lang-btn:hover {
+            background: linear-gradient(180deg, #f3ecfc 0%, #e2d4f5 100%);
+            color: #3d3358;
+        }
+
+        .lang-btn:active {
+            transform: scale(0.97);
+        }
+
+        /* 링크형 KOR/ENG: 밑줄 제거·버튼과 동일 정렬 */
+        a.lang-btn {
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+
+        .lang-btn:focus-visible {
+            outline: 2px solid #9c7ad9;
+            outline-offset: 2px;
+        }
+
+        /* 현재 페이지 언어와 일치하는 버튼 */
+        .lang-btn.lang-btn--active {
+            color: #fff;
+            background: linear-gradient(180deg, #a995dd 0%, #8b73c9 100%);
+            border-color: rgba(107, 84, 156, 0.85);
+            box-shadow:
+                0 1px 3px rgba(74, 61, 107, 0.22),
+                inset 0 1px 0 rgba(255, 255, 255, 0.25);
+        }
+
+        .lang-btn.lang-btn--active:hover {
+            color: #fff;
+            background: linear-gradient(180deg, #b39ddb 0%, #9575cd 100%);
+        }
+
+        .site-nav a {
+            font-size: 0.8rem;
+            font-weight: 650;
+            letter-spacing: -0.02em;
+            color: #1a2421;
+            text-decoration: none;
+            padding: 0.35rem 0.5rem;
+            border-radius: 6px;
+            white-space: nowrap;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+
+        .site-nav a:hover {
+            background: rgba(179, 157, 219, 0.2);
+            color: #5e4d86;
+        }
+
+        .site-nav a:focus-visible {
+            outline: 2px solid #b39ddb;
+            outline-offset: 2px;
+        }
+
+        @media (max-width: 720px) {
+            .site-nav {
+                justify-content: flex-start;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: thin;
+                gap: 0.25rem 0.5rem;
+            }
+
+            .lang-switch {
+                min-height: 2.75rem;
+                align-self: center;
+                padding: 3px;
+            }
+
+            .lang-btn {
+                min-height: 2.05rem;
+                padding: 0.35rem 0.58rem;
+                font-size: 0.68rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .site-nav a {
+                font-size: 0.76rem;
+                flex-shrink: 0;
+                min-height: 2.75rem;
+                box-sizing: border-box;
+                display: inline-flex;
+                align-items: center;
+                padding: 0.4rem 0.6rem;
+            }
+
+            /* Reading Period / Lab: 좁은 화면에서 여백·타이포·목록 간격 조정 */
+            #first-section,
+            #lab-section {
+                padding: calc(env(safe-area-inset-top, 0px) + 5.5rem + 0.75rem) max(1rem, env(safe-area-inset-right, 0px))
+                    max(1.25rem, env(safe-area-inset-bottom, 0px)) max(1rem, env(safe-area-inset-left, 0px));
+            }
+
+            #first-section .content,
+            #lab-section .content {
+                padding-left: 0;
+                max-width: 100%;
+            }
+
+            #first-section .first-section__eyebrow {
+                font-size: 0.74rem;
+                margin-bottom: 0.45rem;
+            }
+
+            #first-section h1,
+            #lab-section h1 {
+                margin-bottom: 1.25rem;
+            }
+
+            #first-section h2,
+            #lab-section h2 {
+                margin: 1.65rem 0 0.45rem;
+            }
+
+            #first-section .content > h2:first-of-type {
+                margin-top: 1.1rem;
+            }
+
+            #lab-section > .content > h2:first-of-type {
+                margin-top: 0.65rem;
+            }
+
+            #first-section p,
+            #lab-section p {
+                margin-bottom: 1.15rem;
+                font-size: 1rem;
+                line-height: 1.76;
+            }
+
+            #first-section ul {
+                margin-bottom: 1.65rem;
+            }
+
+            #first-section li {
+                margin: 0.85rem 0;
+                font-size: 0.98rem;
+                line-height: 1.72;
+            }
+
+            .dual-track__hero-inner {
+                padding-left: max(1rem, env(safe-area-inset-left, 0px));
+                padding-right: max(1rem, env(safe-area-inset-right, 0px));
+            }
+
+            .dual-track__lead {
+                max-width: 100%;
+            }
+
+            .dual-track__middle,
+            .dual-track__process {
+                padding-left: max(1.25rem, env(safe-area-inset-left, 0px));
+                padding-right: max(1.25rem, env(safe-area-inset-right, 0px));
+            }
+
+            .book-intro__inner,
+            .library__inner {
+                padding-left: max(1rem, env(safe-area-inset-left, 0px));
+                padding-right: max(1rem, env(safe-area-inset-right, 0px));
+            }
+
+            .book-intro__copy {
+                padding: clamp(1.1rem, 3vw, 2rem) 0;
+            }
+
+            .site-footer {
+                padding-left: max(0.65rem, env(safe-area-inset-left, 0px));
+                padding-right: max(0.65rem, env(safe-area-inset-right, 0px));
+                padding-bottom: max(0.55rem, env(safe-area-inset-bottom, 0px));
+            }
+        }
+
+        html {
+            background: #fff;
+            color-scheme: light;
+            scroll-behavior: smooth;
+            scroll-padding-top: calc(4.25rem + env(safe-area-inset-top, 0px));
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            font-family:
+                "Pretendard",
+                -apple-system,
+                BlinkMacSystemFont,
+                system-ui,
+                Roboto,
+                "Helvetica Neue",
+                "Segoe UI",
+                "Apple SD Gothic Neo",
+                "Noto Sans KR",
+                "Malgun Gothic",
+                sans-serif;
+        }
+
+        #lab-v-zone,
+        #v-zone {
+            position: relative;
+            padding-bottom: clamp(1rem, 6vh, 5rem);
+            /* Lab 본문의 음수 마진 등으로 다음 섹션이 위로 당겨지지 않도록 BFC */
+            display: flow-root;
+        }
+
+        /* Lab: 본문이 짧아도 스크롤 구간이 확보되도록 최소 높이는 스크립트가 영상 길이 기준으로 설정 */
+
+        #v-wrap,
+        #lab-v-wrap {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 0;
+            overflow: hidden;
+            background: #000;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(1.1);
+            display: block;
+        }
+
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        /* 섹션 & 텍스트(영상 위에 올려 첫 화면부터 문구가 보이도록) */
+        section {
+            position: relative;
+            z-index: 1;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 10%;
+        }
+
+        .content {
+            max-width: 650px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: 0.8s;
+        }
+
+        #first-section,
+        #lab-section {
+            margin-top: -100vh;
+            height: auto;
+            min-height: 100vh;
+            align-items: flex-start;
+            justify-content: center;
+            padding: calc(env(safe-area-inset-top, 0px) + 144px + 2rem) 10% 3rem;
+            box-sizing: border-box;
+        }
+
+        #first-section .content,
+        #lab-section .content {
+            opacity: 1;
+            transform: none;
+            transition: none;
+            margin: 0;
+            padding: 0 0 0 15px;
+            max-width: 42rem;
+            width: 100%;
+            text-align: left;
+            box-sizing: border-box;
+        }
+
+        /* Reading Period: 본문보다 작은 포인트·연노랑, 메인 타이틀 위 라인 */
+        #first-section .first-section__eyebrow {
+            margin: 0 0 0.55rem;
+            padding: 0;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            line-height: 1.35;
+            text-align: left;
+            color: #f5e8a8;
+        }
+
+        #first-section h1,
+        #lab-section h1 {
+            margin: 0 0 2rem;
+            padding: 0;
+            line-height: 1.15;
+            font-size: clamp(2.15rem, 9.5vw, 4.5rem);
+            letter-spacing: -0.02em;
+            text-align: left;
+            color: #b7e4c7;
+        }
+
+        #first-section h2,
+        #lab-section h2 {
+            margin: 3rem 0 0.55rem;
+            padding: 0;
+            font-size: clamp(1.2rem, 2.8vw, 1.45rem);
+            font-weight: 700;
+            line-height: 1.4;
+            color: #f5e8a8;
+            text-align: left;
+        }
+
+        /* Lab: 첫 소제목은 인트로 직후라 위쪽 간격만 더 타이트 */
+        #lab-section > .content > h2:first-of-type {
+            margin-top: 1rem;
+        }
+
+        /* Reading Period: 첫 소제목은 메인 타이틀·인트로와 한 덩어리로 보이도록 위 간격만 완화 */
+        #first-section .content > h2:first-of-type {
+            margin-top: 2rem;
+        }
+
+        #first-section p,
+        #lab-section p {
+            margin: 0 0 1.35rem;
+            font-size: 1.05rem;
+            line-height: 1.82;
+            color: #e8e8e8;
+            text-align: left;
+            word-break: keep-all;
+        }
+
+        #first-section p {
+            word-break: normal;
+            overflow-wrap: break-word;
+            hyphens: auto;
+        }
+
+        #lab-section p {
+            word-break: normal;
+            overflow-wrap: break-word;
+            hyphens: auto;
+        }
+
+        #first-section .content > ul:last-of-type {
+            margin-bottom: 0;
+        }
+
+        #first-section p:last-child,
+        #lab-section p:last-child {
+            margin-bottom: 0;
+        }
+
+        #first-section ul {
+            margin: 0 0 2.25rem;
+            padding: 0 0 0 1.15rem;
+        }
+
+        #first-section li {
+            margin: 0.95rem 0;
+            font-size: 1.05rem;
+            line-height: 1.75;
+            color: #e8e8e8;
+            word-break: normal;
+            overflow-wrap: break-word;
+            hyphens: auto;
+        }
+
+        #first-section ul strong {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* 영상 구역 이후: 정적 이미지 + 캡션(이미지 파일은 images/ 에 두면 됨) */
+        #image-sections {
+            position: relative;
+            z-index: 10;
+            background: #fff;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ---------- The Dual-Track (인포그래픽형 랜딩) ---------- */
+        .dual-track {
+            --dt-forest: #134b3a;
+            --dt-forest-deep: #0f3d2f;
+            --dt-accent: #1fa463;
+            --dt-accent-soft: #b7e4c7;
+            --dt-paper: #f7faf8;
+            --dt-ink: #1a2421;
+            --dt-muted: #5c6f66;
+            color: var(--dt-ink);
+            font-family:
+                "Pretendard",
+                -apple-system,
+                BlinkMacSystemFont,
+                system-ui,
+                Roboto,
+                "Helvetica Neue",
+                "Segoe UI",
+                "Apple SD Gothic Neo",
+                "Noto Sans KR",
+                "Malgun Gothic",
+                sans-serif;
+            background-color: #fff;
+        }
+
+        .dual-track * {
+            box-sizing: border-box;
+        }
+
+        .dual-track__hero {
+            background: #fff;
+            overflow-x: visible;
+        }
+
+        .dual-track__hero-inner {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(1.5rem, 4vw, 3.5rem);
+            align-items: center;
+            max-width: 1180px;
+            margin: 0 auto;
+            /* 히어로 상단 여백(Reading 블록보다 타이트하게, 과도한 빈 공간 방지) */
+            padding: calc(env(safe-area-inset-top, 0px) + 72px + 1rem) clamp(1.25rem, 5vw, 3rem)
+                clamp(5rem, 14vw, 9.5rem);
+            position: relative;
+            background-color: #fff;
+        }
+
+        /* Reading. Period.와 동일한 메인 타이틀 스케일·색상 */
+        .dual-track__main-title {
+            margin: 0 0 1.25rem;
+            padding: 0;
+            line-height: 1.05;
+            font-size: clamp(2.15rem, 9.5vw, 4.5rem);
+            letter-spacing: -0.02em;
+            text-align: left;
+            color: #b7e4c7;
+            font-weight: 800;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        /* 빈 줄(한국어 2줄 제목 등)은 레이아웃에서 제거 */
+        .dual-track__main-title > span:empty {
+            display: none;
+        }
+
+        .dual-track__headline {
+            margin: 0 0 1.25rem;
+            font-size: clamp(1.85rem, 4.2vw, 2.75rem);
+            font-weight: 800;
+            line-height: 1.12;
+            letter-spacing: -0.03em;
+            color: var(--dt-ink);
+        }
+
+        .dual-track__headline-accent {
+            color: var(--dt-accent);
+            display: inline-block;
+            margin-top: 0.15em;
+        }
+
+        .dual-track__lead {
+            margin: 0;
+            font-size: clamp(1rem, 2vw, 1.15rem);
+            line-height: 1.65;
+            color: var(--dt-muted);
+            max-width: 26rem;
+        }
+
+        .dual-track__hero-text {
+            position: relative;
+            z-index: 2;
+        }
+
+        .dual-track__hero-visual {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            background-color: #fff;
+            position: relative;
+            z-index: 1;
+            overflow: visible;
+        }
+
+        /* 합성 이미지: 그리드 열 너비 한계를 넘어 시각적으로 약 2배(원점 우측 기준 스케일) */
+        .dual-track__hero-nottoo {
+            display: block;
+            width: 100%;
+            max-width: min(100%, 540px);
+            height: auto;
+            margin: 0 0 0 auto;
+            transform: scale(1.4);
+            transform-origin: right center;
+        }
+
+        .dual-track img {
+            background-color: transparent !important;
+            background-image: none !important;
+        }
+
+        .dual-track__feature-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            background: linear-gradient(180deg, var(--dt-forest) 0%, var(--dt-forest-deep) 100%);
+            color: #fff;
+        }
+
+        .dual-track__feature-item {
+            padding: clamp(1.25rem, 3vw, 1.85rem) clamp(1rem, 2.5vw, 1.5rem);
+            border-right: 1px solid rgba(255, 255, 255, 0.12);
+            text-align: center;
+        }
+
+        .dual-track__feature-item:last-child {
+            border-right: none;
+        }
+
+        .dual-track__feature-icon {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 0.75rem;
+            opacity: 0.95;
+        }
+
+        .dual-track__feature-item h3 {
+            margin: 0 0 0.45rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            line-height: 1.25;
+        }
+
+        .dual-track__feature-item p {
+            margin: 0;
+            font-size: 0.78rem;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.88);
+        }
+
+        /* 5포인트 + 일러스트: 일러스트가 왼쪽 텍스트 아래로 깔리고, 레퍼런스처럼 하단 문구가 그림 위에 겹침 */
+        .dual-track__middle {
+            position: relative;
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.25rem, 5vw, 3rem);
+            /* 절대 배치 일러스트가 흐름 높이에 안 잡혀 아래로 삐져나옴 → 하단 패딩으로 프로세스 섹션과 겹침 방지 */
+            padding-bottom: clamp(6rem, 20vw, 12rem);
+            background-color: #fff;
+            overflow: visible;
+            min-height: clamp(480px, 50vw, 675px);
+        }
+
+        .dual-track__middle-art {
+            position: absolute;
+            z-index: 0;
+            right: clamp(0rem, 1.5vw, 1rem);
+            top: 55%;
+            transform: translateY(-50%);
+            width: min(76%, 840px);
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            pointer-events: none;
+            margin: 0;
+            background: transparent;
+            isolation: auto;
+        }
+
+        .dual-track__middle-art img {
+            width: 135%;
+            max-width: none;
+            height: auto;
+            display: block;
+            object-fit: contain;
+            object-position: left center;
+            margin-left: -32%;
+            border-radius: 0;
+            mix-blend-mode: normal;
+        }
+
+        .dual-track__middle-list {
+            position: relative;
+            z-index: 2;
+            max-width: min(100%, 58%);
+            padding-right: 0.5rem;
+        }
+
+        .dual-track__point {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 1rem;
+            align-items: start;
+            border-bottom: 1px dotted rgba(19, 75, 58, 0.28);
+            padding-bottom: clamp(1rem, 2vw, 1.6rem);
+            margin-bottom: clamp(1rem, 2vw, 1.6rem);
+        }
+
+        .dual-track__point:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        /* 초록 배경 위로 올라가는 하단 항목 가독성 */
+        .dual-track__middle-list .dual-track__point:nth-child(n + 4) h3,
+        .dual-track__middle-list .dual-track__point:nth-child(n + 4) p {
+            text-shadow:
+                0 0 10px rgba(255, 255, 255, 0.95),
+                0 0 20px rgba(255, 255, 255, 0.75),
+                0 1px 2px rgba(255, 255, 255, 0.9);
+        }
+
+        .dual-track__point-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid rgba(31, 164, 99, 0.42);
+            color: var(--dt-forest);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            flex-shrink: 0;
+        }
+
+        .dual-track__point h3 {
+            margin: 0 0 0.4rem;
+            font-size: clamp(1rem, 2vw, 1.12rem);
+            font-weight: 800;
+            line-height: 1.25;
+            color: var(--dt-forest);
+        }
+
+        .dual-track__point p {
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.65;
+            color: var(--dt-muted);
+        }
+
+        .dual-track__process {
+            background: #fff;
+            padding: clamp(2.5rem, 6vw, 4rem) clamp(1.25rem, 5vw, 3rem);
+            margin-top: clamp(1.25rem, 3vw, 2.75rem);
+        }
+
+        .dual-track__process-inner {
+            max-width: 1180px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1.35fr;
+            gap: clamp(1.5rem, 4vw, 3rem);
+            align-items: start;
+        }
+
+        .dual-track__em {
+            color: var(--dt-accent);
+            font-weight: 700;
+        }
+
+        .dual-track__process-intro h2 {
+            margin: 0 0 1rem;
+            font-size: clamp(1.65rem, 3.5vw, 2.25rem);
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+            color: var(--dt-ink);
+        }
+
+        .dual-track__process-intro p {
+            margin: 0;
+            font-size: 0.98rem;
+            line-height: 1.7;
+            color: var(--dt-muted);
+        }
+
+        .dual-track__steps {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: stretch;
+            gap: 0.5rem 0.25rem;
+        }
+
+        .dual-track__step {
+            flex: 1 1 140px;
+            min-width: 120px;
+            text-align: center;
+            padding: 0.5rem 0.35rem;
+        }
+
+        .dual-track__step-ring {
+            width: 52px;
+            height: 52px;
+            margin: 0 auto 0.65rem;
+            border: 2px solid var(--dt-forest);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .dual-track__step h3 {
+            margin: 0 0 0.35rem;
+            font-size: 0.88rem;
+            font-weight: 800;
+            line-height: 1.2;
+            color: var(--dt-ink);
+        }
+
+        .dual-track__step p {
+            margin: 0;
+            font-size: 0.72rem;
+            line-height: 1.45;
+            color: var(--dt-muted);
+        }
+
+        .dual-track__chev {
+            flex: 0 0 auto;
+            align-self: center;
+            color: #c5d5ce;
+            font-size: 1.25rem;
+            font-weight: 300;
+            padding: 0 0.1rem;
+            user-select: none;
+        }
+
+        .dual-track__footer-strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            background: linear-gradient(180deg, var(--dt-forest) 0%, var(--dt-forest-deep) 100%);
+            color: rgba(255, 255, 255, 0.95);
+            padding: clamp(1.35rem, 3vw, 2rem) 0;
+        }
+
+        .dual-track__footer-item {
+            padding: 0.75rem clamp(0.75rem, 2vw, 1.25rem);
+            text-align: center;
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 0.78rem;
+            line-height: 1.5;
+        }
+
+        .dual-track__footer-item:last-child {
+            border-right: none;
+        }
+
+        @media (max-width: 900px) {
+            .dual-track__hero-inner,
+            .dual-track__process-inner {
+                grid-template-columns: 1fr;
+            }
+
+            .dual-track__hero-inner {
+                padding-bottom: clamp(4rem, 14vw, 8.5rem);
+            }
+
+            /* 중단: 좁은 화면에서는 일러스트를 텍스트 아래로 내려 겹침·잘림 방지 */
+            .dual-track__middle {
+                min-height: unset;
+                padding-bottom: clamp(3rem, 10vw, 5rem);
+            }
+
+            .dual-track__middle-list {
+                max-width: 100%;
+            }
+
+            .dual-track__middle-art {
+                position: relative;
+                z-index: 0;
+                right: auto;
+                top: auto;
+                transform: none;
+                width: 100%;
+                max-width: min(100%, 728px);
+                margin: clamp(1.5rem, 4vw, 2.5rem) auto 0;
+                justify-content: center;
+                pointer-events: auto;
+            }
+
+            .dual-track__middle-art img {
+                width: 100%;
+                max-width: 100%;
+                margin-left: 0;
+            }
+
+            .dual-track__middle-list .dual-track__point:nth-child(n + 4) h3,
+            .dual-track__middle-list .dual-track__point:nth-child(n + 4) p {
+                text-shadow: none;
+            }
+
+            .dual-track__hero-visual {
+                justify-content: center;
+            }
+
+            .dual-track__hero-nottoo {
+                margin: 0 auto;
+                max-width: min(100%, 480px);
+                transform: scale(1.16);
+                transform-origin: center center;
+            }
+
+            .dual-track__feature-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .dual-track__feature-item {
+                border-right: 1px solid rgba(255, 255, 255, 0.12);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            }
+
+            .dual-track__feature-item:nth-child(2n) {
+                border-right: none;
+            }
+
+            .dual-track__steps {
+                justify-content: center;
+            }
+
+            .dual-track__chev {
+                display: none;
+            }
+
+            .dual-track__step {
+                flex: 1 1 45%;
+            }
+
+            .dual-track__footer-strip {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .dual-track__footer-item {
+                border-right: 1px solid rgba(255, 255, 255, 0.08);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            }
+
+            .dual-track__footer-item:nth-child(2n) {
+                border-right: none;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .dual-track__feature-bar {
+                grid-template-columns: 1fr;
+            }
+
+            .dual-track__feature-item {
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            }
+
+            .dual-track__feature-item:last-child {
+                border-bottom: none;
+            }
+
+            .dual-track__point {
+                grid-template-columns: 1fr;
+                gap: 0.65rem;
+            }
+
+            .dual-track__point-icon {
+                margin: 0 auto;
+            }
+
+            .dual-track__footer-strip {
+                grid-template-columns: 1fr;
+            }
+
+            .dual-track__footer-item {
+                border-right: none;
+            }
+
+            .dual-track__footer-item:not(:last-child) {
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            }
+
+            .dual-track__footer-item:last-child {
+                border-bottom: none;
+            }
+        }
+
+        .image-panel {
+            margin: 0 auto 3.5rem;
+            max-width: 52rem;
+            padding: 0 clamp(1rem, 4vw, 2rem);
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 720px) {
+            .image-panel {
+                margin-bottom: 2.5rem;
+            }
+        }
+
+        /* 듀얼트랙 아래 나머지 패널 영역 */
+        /* 교재 안내: Lab / Dual-Track과 DOM·레이어 분리(#image-sections 밖) */
+        .book-intro {
+            --book-intro-accent: #b39ddb;
+            --book-intro-body: #3d4d46;
+            background: #f6f7f8;
+            padding: clamp(2.5rem, 6vw, 4rem) 0 clamp(3rem, 8vw, 5.5rem);
+            position: relative;
+            z-index: 12;
+            isolation: isolate;
+            border-top: 1px solid rgba(0, 0, 0, 0.07);
+            /* 전역 section{ display:flex; height:100vh; … } 무력화 — 없으면 본문이 뷰포트 한 장에만 갇혀 Lab 영상과 겹쳐 보임 */
+            display: block;
+            height: auto;
+            min-height: 0;
+            max-height: none;
+            align-items: stretch;
+            justify-content: flex-start;
+            box-sizing: border-box;
+        }
+
+        /* 라이브러리 섹션과 같은 읽기 폭 → 본문 왼쪽 시작선 통일 */
+        .book-intro__inner {
+            max-width: min(42rem, 100%);
+            margin: 0 auto;
+            padding: 0 clamp(1rem, 4vw, 2rem);
+            box-sizing: border-box;
+        }
+
+        .book-intro__heading {
+            margin: 0 0 clamp(1.75rem, 4vw, 2.75rem);
+            font-size: clamp(1.75rem, 3.5vw, 2.35rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.2;
+            text-align: left;
+            color: var(--book-intro-accent);
+        }
+
+        .book-intro__pair {
+            display: grid;
+            /* 이미지 상단 · 본문 하단(한 열) */
+            grid-template-columns: minmax(0, 1fr);
+            gap: 0;
+            align-items: stretch;
+            margin-bottom: clamp(2rem, 4vw, 3rem);
+            background: #fff;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(19, 75, 58, 0.07);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .book-intro__pair:last-child {
+            margin-bottom: 0;
+        }
+
+        .book-intro__media {
+            margin: 0;
+            background: #eceff1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 0;
+            padding: clamp(0.75rem, 2vw, 1.5rem);
+            box-sizing: border-box;
+        }
+
+        .book-intro__media img {
+            width: 100%;
+            max-width: min(920px, 100%);
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            object-fit: contain;
+            object-position: center center;
+        }
+
+        /* 카드 본문 좌우는 라이브러리·도서 소개 제목과 같은 기준선(중복 들여쓰기 방지) */
+        .book-intro__copy {
+            background: #fff;
+            padding: clamp(1.35rem, 3.5vw, 2.5rem) 0;
+            display: block;
+        }
+
+        .book-intro__copy h3 {
+            margin: 0 0 0.85rem;
+            padding: 0;
+            font-size: clamp(1.12rem, 2.1vw, 1.38rem);
+            font-weight: 800;
+            line-height: 1.3;
+            text-align: left;
+            color: var(--book-intro-accent);
+        }
+
+        .book-intro__copy p {
+            margin: 0;
+            font-size: 1.02rem;
+            line-height: 1.78;
+            text-align: left;
+            color: var(--book-intro-body);
+            word-break: normal;
+            overflow-wrap: break-word;
+        }
+
+        /* The Library: Book Introduction 이후 마지막 정적 섹션(구매·습관 안내) */
+        .library {
+            --library-accent: #b39ddb;
+            --library-body: #3d4d46;
+            --library-ink: #1a2421;
+            background: #fff;
+            padding: clamp(2.5rem, 6vw, 4rem) 0 clamp(3.25rem, 8vw, 5rem);
+            position: relative;
+            z-index: 12;
+            isolation: isolate;
+            border-top: 1px solid rgba(0, 0, 0, 0.07);
+            display: block;
+            height: auto;
+            min-height: 0;
+            max-height: none;
+            align-items: stretch;
+            justify-content: flex-start;
+            box-sizing: border-box;
+        }
+
+        .library__inner {
+            max-width: min(42rem, 100%);
+            margin: 0 auto;
+            padding: 0 clamp(1rem, 4vw, 2rem);
+            box-sizing: border-box;
+        }
+
+        .library__title {
+            margin: 0 0 1.25rem;
+            font-size: clamp(1.65rem, 3.2vw, 2.05rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.2;
+            text-align: left;
+            color: var(--library-ink);
+        }
+
+        .library__lead {
+            margin: 0 0 clamp(2rem, 4vw, 2.75rem);
+            font-size: 1.02rem;
+            line-height: 1.78;
+            color: var(--library-body);
+            text-align: left;
+        }
+
+        .library__block {
+            margin-bottom: clamp(1.75rem, 3.5vw, 2.5rem);
+        }
+
+        .library__block:last-child {
+            margin-bottom: 0;
+        }
+
+        .library__subtitle {
+            margin: 0 0 0.65rem;
+            font-size: clamp(1.08rem, 2vw, 1.28rem);
+            font-weight: 800;
+            line-height: 1.3;
+            text-align: left;
+            color: var(--library-accent);
+        }
+
+        .library__text {
+            margin: 0 0 0.85rem;
+            font-size: 1.02rem;
+            line-height: 1.78;
+            text-align: left;
+            color: var(--library-body);
+        }
+
+        .library__text:last-child {
+            margin-bottom: 0;
+        }
+
+        /* 샵·유튜브: 나중에 href만 바꿔 쓰기 위한 링크 버튼 */
+        .library__btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.35rem;
+            min-height: 2.75rem;
+            padding: 0.62rem 1.35rem;
+            font-weight: 700;
+            font-size: 0.94rem;
+            letter-spacing: 0.01em;
+            border-radius: 10px;
+            border: 2px solid var(--library-accent);
+            color: #6a4f9e;
+            background: #fff;
+            text-decoration: none;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .library__btn:hover {
+            background: rgba(179, 157, 219, 0.18);
+            color: #4a356f;
+        }
+
+        .library__btn:focus-visible {
+            outline: 2px solid var(--library-accent);
+            outline-offset: 2px;
+        }
+
+        .library__btn--primary {
+            background: var(--library-accent);
+            color: #fff;
+            border-color: var(--library-accent);
+        }
+
+        .library__btn--primary:hover {
+            background: #9575cd;
+            border-color: #9575cd;
+            color: #fff;
+        }
+
+        /* 사이트 푸터: 최소 높이로 정보만 감싸는 다크 바 */
+        .site-footer {
+            background: #252320;
+            color: rgba(255, 255, 255, 0.88);
+            padding: clamp(0.6rem, 1.8vw, 0.85rem) clamp(0.65rem, 2.5vw, 1rem);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            box-sizing: border-box;
+        }
+
+        .site-footer__inner {
+            max-width: min(40rem, 100%);
+            margin: 0 auto;
+            text-align: center;
+            box-sizing: border-box;
+            padding: 0;
+        }
+
+        .site-footer__logo {
+            display: block;
+            width: auto;
+            max-width: min(75px, 22vw);
+            height: auto;
+            margin: 0 auto 0.4rem;
+        }
+
+        .site-footer__meta-line {
+            margin: 0 0 0.35rem;
+            font-size: clamp(0.52rem, 1.65vw, 0.62rem);
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.66);
+            text-align: center;
+            white-space: normal;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            max-width: 100%;
+        }
+
+        .site-footer__contact-line {
+            margin: 0;
+            font-size: clamp(0.52rem, 1.65vw, 0.62rem);
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.62);
+            text-align: center;
+            white-space: normal;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            max-width: 100%;
+        }
+
+        .site-footer__contact-line a {
+            color: rgba(255, 255, 255, 0.88);
+            text-decoration: none;
+        }
+
+        .site-footer__contact-line a:hover {
+            text-decoration: underline;
+        }
+
+        .image-panel:last-child {
+            margin-bottom: 0;
+        }
+
+        .image-panel figure {
+            margin: 0;
+        }
+
+        .image-panel img {
+            display: block;
+            width: 100%;
+            height: auto;
+            background: transparent;
+            border-radius: 12px;
+        }
+
+        .image-panel figcaption {
+            margin-top: 1rem;
+            font-size: clamp(0.95rem, 2.8vw, 1.02rem);
+            line-height: 1.75;
+            color: #3d4a44;
+            text-align: left;
+            word-break: normal;
+            overflow-wrap: break-word;
+        }
+
+        .image-panel .image-panel__label {
+            display: block;
+            font-weight: 700;
+            color: #1a2421;
+            margin-bottom: 0.35rem;
+        }
+
+        .active {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 8vw, 5rem);
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+<header class="site-header">
+<nav aria-label="페이지 주요 섹션" class="site-nav" id="site-nav">
+<div aria-label="언어 선택" class="lang-switch" role="navigation"><a aria-current="page" aria-label="한국어" class="lang-btn lang-btn--active" href="index-ko.html">KOR</a><a aria-label="English" class="lang-btn" href="index.html">ENG</a></div>
+<a href="#first-section">리딩 피리어드</a>
+<a href="#dual-track-section">듀얼 트랙</a>
+<a href="#lab-section">랩 솔루션</a>
+<a href="#book-intro-section">도서 소개</a>
+<a href="#library-section">라이브러리</a>
+<a href="#site-footer">회사 정보</a>
+</nav>
+</header>
+<div id="v-zone">
+<div id="v-wrap">
+<!-- 스크롤로만 재생 시점 이동(자동 재생 없음). 첫 프레임은 정지 상태로 표시 -->
+<video id="v" muted="" playsinline="" preload="auto" src="bg.mp4"></video>
+<div class="overlay"></div>
+</div>
+<section id="first-section" lang="ko">
+<div class="content">
+<p class="first-section__eyebrow">Read Aloud Korean.</p>
+<h1>읽기가 정답이다.</h1>
+<p>사람들은 한국어가 '읽기 쉽다'고들 하죠. 하지만 그게 진짜 무슨 뜻일까요? 읽기 쉽다고 조각난 정보만 계속 받아들이면, 어느 날 아침 눈을 떴을 때 갑자기 모든 단어와 문법을 완벽하게 알게 되는 마법 같은 일이 일어날까요?</p>
+<p>이렇게 해보는 건 어떨까요? 매일 아침 딱 10분, 커피 한 잔 마시는 시간 동안 가벼운 이야기책을 펼치듯 한국어를 읽어보는 거예요. 단어장을 붙잡고 씨름하는 대신, 진짜 이야기를 읽으며 자연스럽게 언어에 익숙해지는 거죠. '읽기'의 힘이 당신의 몸속에 잠들어 있는, 진짜 쓸모 있는 한국어를 깨워줄 거예요.</p>
+<h2>한국 문화를 제대로 즐기기 위한 튼튼한 기초</h2>
+<ul>
+<li><strong>오래 달릴 수 있는 체력:</strong> 유행어만 쫓고 기본을 건너뛰면 금방 지치기 마련입니다. 뿌리가 단단해야 당신이 사랑하는 문화를 오해 없이 끝까지 즐길 수 있습니다.</li>
+<li><strong>진짜 한국어의 소리:</strong> 매끄럽게 다듬어진 노래 가사 말고, 한국어 특유의 자연스러운 리듬과 호흡을 배웁니다.</li>
+<li><strong>단단한 밑거름:</strong> 가장 신뢰할 수 있는 방법으로 한국 문화를 이해하는 힘을 기르세요.</li>
+</ul>
+<h2>매일 아침 10분—커피가 식기 전에 느끼는 변화</h2>
+<ul>
+<li><strong>매일 맛보는 완독의 기쁨:</strong> 딱 열 줄, 10분이면 책 한 권을 다 읽은 기분이 듭니다. 모든 단어를 다 몰라도 괜찮아요. 그 성취감이 당신을 포기하지 않게 합니다.</li>
+<li><strong>오래가는 습관:</strong> 끝없는 문법 숙제 대신, 재미있는 이야기로 기분 좋게 아침을 시작하세요. 당신의 한국어는 책상 앞이 아니라 커피 향과 함께 자라날 거예요.</li>
+<li><strong>사전 없이 타는 흐름:</strong> 초보자도 막힘없이 끝까지 읽을 수 있도록 문장을 아주 쉽게 다듬었습니다. 흐름을 타는 재미를 느껴보세요.</li>
+</ul>
+<h2>일상 이야기로 자연스럽게 배우기</h2>
+<ul>
+<li><strong>맥락으로 이해하는 언어:</strong> 이야기를 따라가다 보면 한국어 문장이 어떻게 구성되는지 자연스럽게 보이게 됩니다.</li>
+<li><strong>따뜻한 사람의 온기:</strong> 배려와 겸손이 담긴 이야기를 통해 한국인이 세상을 보고 느끼는 방식을 배웁니다.</li>
+<li><strong>입으로 기억하는 연습:</strong> 직접 소리 내어 읽어보세요. 어느 순간 드라마나 예능 속 대사들이 신기할 정도로 귀에 익숙하게 들릴 거예요.</li>
+</ul>
+</div>
+</section>
+</div>
+<!-- 영상 스크럽 구역 이후 -->
+<div id="image-sections">
+<article aria-labelledby="dual-track-title" class="dual-track" id="dual-track-section" lang="ko">
+<!-- 히어로: 카피 + 장식 배경 + 책 목업 + 4개 강점 바 -->
+<div class="dual-track__hero">
+<div class="dual-track__hero-inner">
+<div class="dual-track__hero-text">
+<h2 class="dual-track__main-title" id="dual-track-title">
+<span>듀얼</span>
+<span>트랙</span>
+<span></span>
+</h2>
+<h3 class="dual-track__headline">
+<span>너무 어렵지도 않게.</span><br/>
+<span>너무 유치하지도 않게.</span><br/>
+<span class="dual-track__headline-accent">당신에게 딱 맞게.</span>
+</h3>
+<p class="dual-track__lead">읽기 쉬우면서도 제대로 즐길 깊이가 있는 한국어 이야기입니다. 학습자에게 쉽게, 어른에게는 활용가치가 있게.</p>
+</div>
+<div class="dual-track__hero-visual">
+<img alt="듀얼 트랙 — 흰 배경에 한글과 악표가 있는 책 표지 이미지" class="dual-track__hero-nottoo" decoding="async" height="1024" src="assets/nottoo.jpg" width="1024"/>
+</div>
+</div>
+<div class="dual-track__feature-bar">
+<div class="dual-track__feature-item">
+<svg aria-hidden="true" class="dual-track__feature-icon" fill="none" viewbox="0 0 24 24">
+<path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke="currentColor" stroke-linecap="round" stroke-width="1.25"></path>
+</svg>
+<h3>완벽한 중간 지점.</h3>
+<p>다가가기에 부담 없고, 실력을 늘리기에는 충분합니다.</p>
+</div>
+<div class="dual-track__feature-item">
+<svg aria-hidden="true" class="dual-track__feature-icon" fill="none" viewbox="0 0 24 24">
+<path d="M12 14l9-5-9-5-9 5 9 5z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.25"></path>
+<path d="M12 14l6.16-3.422a12 12 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12 12 0 01.665-6.479L12 14z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.25"></path>
+</svg>
+<h3>교사가 만듭니다.</h3>
+<p>한국 고등학교 교사들이 여러분의 수준과 속도에 맞춰 문장 하나하나를 다시 구성했습니다.</p>
+</div>
+<div class="dual-track__feature-item">
+<svg aria-hidden="true" class="dual-track__feature-icon" fill="none" viewbox="0 0 24 24">
+<path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke="currentColor" stroke-linecap="round" stroke-width="1.25"></path>
+</svg>
+<h3>진짜 이야기, 진짜 감정.</h3>
+<p>원작의 따뜻함과 유머를 살렸습니다.</p>
+</div>
+<div class="dual-track__feature-item">
+<svg aria-hidden="true" class="dual-track__feature-icon" fill="none" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.25"></circle>
+<path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01" stroke="currentColor" stroke-linecap="round" stroke-width="1.25"></path>
+</svg>
+<h3>부담 없이.</h3>
+<p>「공부」라고 생각하지 마세요. 그냥 읽고 즐기면 성장은 따라옵니다.</p>
+</div>
+</div>
+</div>
+<!-- 중단: 5포인트 + 일러스트 -->
+<div class="dual-track__middle">
+<div class="dual-track__middle-list">
+<div class="dual-track__point">
+<div aria-hidden="true" class="dual-track__point-icon">
+<svg fill="none" height="22" viewbox="0 0 24 24" width="22">
+<circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.4"></circle>
+<path d="M20 20l-4-4" stroke="currentColor" stroke-linecap="round" stroke-width="1.4"></path>
+</svg>
+</div>
+<div>
+<h3>어려운 소설은 엄두가 안 나고, 동화책은 유치한가요?</h3>
+<p>소설은 사전을 찾느라 지칩니다. 동화책은 흥미를 오래 붙잡기엔 너무 단순합니다. 이 책은 그중간입니다—자연스럽고 재미 있으며 성인 독자에게 딱 맞습니다.</p>
+</div>
+</div>
+<div class="dual-track__point">
+<div aria-hidden="true" class="dual-track__point-icon">
+<svg fill="none" height="22" viewbox="0 0 24 24" width="22">
+<path d="M4 6h16M4 12h10M4 18h16" stroke="currentColor" stroke-linecap="round" stroke-width="1.4"></path>
+</svg>
+</div>
+<div>
+<h3>벽을 허물었습니다.</h3>
+<p>아름다운 이야기를 읽고 싶지만 너무 어렵고, 어린이 책은 읽기 싫었죠. 그 간극을 여러분 수준에 맞춘 이야기로 메웠습니다.</p>
+</div>
+</div>
+<div class="dual-track__point">
+<div aria-hidden="true" class="dual-track__point-icon">
+<svg fill="none" height="22" viewbox="0 0 24 24" width="22">
+<path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" stroke="currentColor" stroke-linecap="round" stroke-width="1.25"></path>
+</svg>
+</div>
+<div>
+<h3>현직 교사가 다시 썼습니다.</h3>
+<p>단순히 쉽게 줄인 것이 아니라 정성껏 각색했습니다. 일상에서 자주 쓰는 단어만 사용해 사전 없이도 매끄럽게 읽을 수 있습니다.</p>
+</div>
+</div>
+<div class="dual-track__point">
+<div aria-hidden="true" class="dual-track__point-icon">
+<svg fill="none" height="22" viewbox="0 0 24 24" width="22">
+<path d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" stroke="currentColor" stroke-linecap="round" stroke-width="1.25"></path>
+</svg>
+</div>
+<div>
+<h3>한국어 본연의 「맛」.</h3>
+<p>실제 쓰지 않는 말은 걷어냈지만 마음과 감정은 고스란히 남겨두었습니다. 소리내어 읽으며 살아있는 한국어의 리듬을 느껴보세요.</p>
+</div>
+</div>
+<div class="dual-track__point">
+<div aria-hidden="true" class="dual-track__point-icon">
+<svg fill="none" height="22" viewbox="0 0 24 24" width="22">
+<path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.15"></path>
+</svg>
+</div>
+<div>
+<h3>공부하는 것 같지 않을 거예요.</h3>
+<p>이야기 끝까지 따라가 보세요. 책을 덮을 때 「한국어로 책 한 권을 다 읽었다!」는 생각이 들 겁니다. 그 성취감이 진짜 실력으로 이어집니다.</p>
+</div>
+</div>
+</div>
+<div class="dual-track__middle-art">
+<img alt="이야기 세계의 빗자루와 돌 캐릭터 일러스트" decoding="async" height="800" loading="lazy" src="assets/dual-track-middle-overlap.png" width="1200"/>
+</div>
+</div>
+<!-- 프로세스: 실력 문구 + 4스텝 -->
+<div class="dual-track__process">
+<div class="dual-track__process-inner">
+<div class="dual-track__process-intro">
+<h2>이것이 당신의 진짜 한국어 실력이 될 거예요.</h2>
+<p>"큰소리로 읽기"를 통해 RM의 가사와 드라마 대사가 훨씬 가까이 느껴질 겁니다. 유행어 몇개 보다 한 편의 이야기를 처음부터 끝까지 읽는 힘이 더 크거든요. 진짜 실력은 거기서 시작됩니다.</p>
+</div>
+<div class="dual-track__steps" role="list">
+<div class="dual-track__step" role="listitem">
+<div aria-hidden="true" class="dual-track__step-ring">
+<svg fill="none" height="22" viewbox="0 0 24 24" width="22">
+<path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke="currentColor" stroke-linecap="round" stroke-width="1.15"></path>
+</svg>
+</div>
+<h3>자신 있게 읽기.</h3>
+<p>시작하기 쉽고, 끝내기도 쉽습니다.</p>
+</div>
+<span aria-hidden="true" class="dual-track__chev">›</span>
+<div class="dual-track__step" role="listitem">
+<div aria-hidden="true" class="dual-track__step-ring">
+<svg fill="none" height="22" viewbox="0 0 24 24" width="22">
+<path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.15"></path>
+</svg>
+</div>
+<h3>자연스럽게 이해하기.</h3>
+<p>사전은 필요 없습니다. 흐름을 즐기세요.</p>
+</div>
+<span aria-hidden="true" class="dual-track__chev">›</span>
+<div class="dual-track__step" role="listitem">
+<div aria-hidden="true" class="dual-track__step-ring">
+<svg fill="none" height="22" viewbox="0 0 24 24" width="22">
+<path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" stroke="currentColor" stroke-width="1.1"></path>
+</svg>
+</div>
+<h3>진짜 실력 쌓기.</h3>
+<p>어휘와 문법은 자연스럽게 당신 것이 됩니다.</p>
+</div>
+<span aria-hidden="true" class="dual-track__chev">›</span>
+<div class="dual-track__step" role="listitem">
+<div aria-hidden="true" class="dual-track__step-ring">
+<svg fill="none" height="22" viewbox="0 0 24 24" width="22">
+<path d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" stroke="currentColor" stroke-linecap="round" stroke-width="1.15"></path>
+</svg>
+</div>
+<h3>현실 세계와 연결하기.</h3>
+<p>노래, 드라마, 대화가 그 어느 때보다 가까워집니다.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- 하단 다크 스트립 -->
+<div class="dual-track__footer-strip">
+<div class="dual-track__footer-item">원작 한국 이야기<br/>정성껏 각색</div>
+<div class="dual-track__footer-item">전 세계 성인 학습자를 위해</div>
+<div class="dual-track__footer-item">즐겁게 배우고<br/>자연스럽게 성장</div>
+<div class="dual-track__footer-item">작은 이야기<br/>큰 성취</div>
+</div>
+</article>
+<!-- Lab Solution: Reading Period와 동일 패턴(스크롤로 bookread.mp4 시점 이동) -->
+<div id="lab-v-zone">
+<div id="lab-v-wrap">
+<video id="v-lab" muted="" playsinline="" preload="auto" src="bookread.mp4"></video>
+<div class="overlay"></div>
+</div>
+<section aria-labelledby="lab-section-title" id="lab-section" lang="ko">
+<div class="content">
+<h1 id="lab-section-title">왜 한국인 앞에만 서면 입이 얼어버릴까요?</h1>
+<p>문법은 잘 아는데 말이 안 나오는 건, 한국어의 '리듬'을 연습하지 않았기 때문입니다. 말하기는 머릿속에서 단어를 맞추는 퍼즐이 아니라, 입 근육이 흐름을 기억하는 과정이에요.</p>
+<h2>조립하지 말고 그냥 읽으세요</h2>
+<p>머릿속에서 단어를 하나하나 맞추려 하지 마세요. 이야기의 흐름을 따라가며 감정을 느껴보세요. 그게 진짜 한국어의 '맛'을 배우는 가장 빠른 길입니다.</p>
+<h2>입 근육을 훈련하세요</h2>
+<p>운동처럼 입도 연습이 필요합니다. 소리 내어 읽다 보면 우리 몸이 한국어의 리듬을 저절로 익히게 됩니다. 가장 빨리 한국어에 익숙해지는 비결이죠.</p>
+<h2>말할 수 있으면 들립니다</h2>
+<p>내 입이 문장을 기억하면, 신기하게도 귀가 그 문장을 알아챕니다. 자막 없이 넷플릭스를 이해하는 놀라운 경험을 하게 될 거예요.</p>
+<h2>당신만의 속도로 즐기세요</h2>
+<p>서두를 필요 없습니다. 아침 커피 한 잔 마시는 10분이면 충분합니다. 매일 아침 몇 분의 낭독이 당신의 한국어를 진짜로 만듭니다.</p>
+<h2>함께하겠습니다.</h2>
+<p>유튜브 채널에서 만나요. 듣고 따라 읽고 즐기기만 하면 됩니다. 지금은 책 다섯 권이 준비되어 있고, 앞으로도 여러분만을 위한 이야기를 더 쓸 예정입니다.</p>
+</div>
+</section>
+</div>
+</div>
+<!-- 교재 안내: Lab Solution(#image-sections) 밖의 독립 섹션 — 스크롤·레이어가 Lab과 겹치지 않음 -->
+<section aria-labelledby="book-intro-heading" class="book-intro" id="book-intro-section" lang="ko">
+<div class="book-intro__inner">
+<h2 class="book-intro__heading" id="book-intro-heading">도서 소개</h2>
+<div class="book-intro__pair">
+<figure class="book-intro__media">
+<img alt="동화로 배우는 한국어 — 대나무의 비밀, 책 표지" decoding="async" height="675" loading="lazy" src="assets/book-bamboo.png" width="1200"/>
+</figure>
+<div class="book-intro__copy">
+<h3>대나무의 비밀</h3>
+<p>갈대밭의 갈대들은 어린 대나무 순을 늘 비웃었습니다. "넌 도대체 언제 자랄 거니? 몇 년째 그대로잖아!" 하지만 대나무 순은 담담하게 대답했죠. "무슨 소리야? 난 매일매일 자라고 있어." 갈대들이 아무리 놀려도 대나무 순은 기죽지 않았습니다. 그러던 어느 날, 비가 며칠 동안 쏟아졌습니다. 비가 그치자 갈대들은 믿기 힘든 광경을 보았습니다. 눈앞에 아주 높고 튼튼한 대나무가 우뚝 서 있었거든요. 갈대들이 물었습니다. "누구세요?" 대나무가 말했습니다. "내가 바로 당신들이 늘 비웃던 그 대나무 순입니다." 갈대들은 부끄러움에 고개를 들 수 없었습니다.</p>
+</div>
+</div>
+<div class="book-intro__pair">
+<figure class="book-intro__media">
+<img alt="동화로 배우는 한국어 — 자동차 바퀴의 비밀, 책 표지" decoding="async" height="675" loading="lazy" src="assets/book-car-wheels.png" width="1200"/>
+</figure>
+<div class="book-intro__copy">
+<h3>자동차 바퀴의 비밀</h3>
+<p>앞바퀴와 뒷바퀴는 늘 함께 여행했습니다. 어디를 가든 나란히 달렸고, 불평 한마디 없이 즐겁게 지냈죠. 그런데 어느 날, 갑자기 진흙탕이 나타났습니다. 앞바퀴는 얼른 방향을 틀어 진흙탕을 피했지만, 뒷바퀴에게는 아무런 말도 해주지 않았습니다. 결국 뒷바퀴는 진흙탕에 깊이 빠지고 말았습니다. 기분이 엉망이 된 뒷바퀴는 생각했습니다. ‘앞바퀴가 "조심해!"라고 한마디만 해줬어도 이렇게 되지는 않았을 텐데.’ 그날 이후 뒷바퀴는 화가 났고, 앞바퀴를 골탕 먹이기 시작했습니다. 이제 이 두 바퀴는 어떻게 될까요?</p>
+</div>
+</div>
+<div class="book-intro__pair">
+<figure class="book-intro__media">
+<img alt="동화로 배우는 한국어 — 작업 장갑의 비밀, 책 표지" decoding="async" height="675" loading="lazy" src="assets/book-half-glove.png" width="1200"/>
+</figure>
+<div class="book-intro__copy">
+<h3>작업 장갑의 비밀</h3>
+<p>낡고 먼지 쌓인 반코팅 장갑이 오케스트라 지휘자가 되고 싶다고 말하자, 클라리넷과 피콜로는 깜짝 놀랐습니다. "네 모습을 봐. 그 꿈이 너한테 어울린다고 생각해?" 피콜로가 비웃었습니다. 하지만 장갑은 포기하지 않았습니다. "그건 당신들 생각일 뿐이야. 나에게는 꿈이 있고, 다른 사람의 말은 내 꿈을 바꿀 수 없어." 그 후로 망치와 장갑은 별말이 없었습니다. 그저 묵묵히 커다란 문을 계속 만들었습니다. 아마 그 문은 내일로 향하는 문이었을지도 모릅니다. 아마도요.</p>
+</div>
+</div>
+<div class="book-intro__pair">
+<figure class="book-intro__media">
+<img alt="동화로 배우는 한국어 — 야구장 빗자루의 비밀, 책 표지" decoding="async" height="675" loading="lazy" src="assets/book-broom.png" width="1200"/>
+</figure>
+<div class="book-intro__copy">
+<h3>야구장 빗자루의 비밀</h3>
+<p>야구 경기가 끝나면 경기장은 아주 조용해집니다. 조금 전까지만 해도 사람들 소리로 가득했던 곳에 정적만 남죠. 그 고요한 경기장에서 한 빗자루가 경기를 떠올리며 미소 짓습니다. 빗자루의 꿈은 멋진 타자가 되는 것입니다. 언젠가 홈런을 치고 싶어서 매일 열심히 연습하죠. 하지만 혼자 연습하는 건 쉽지 않았습니다. 그때, 오랫동안 빗자루를 지켜보던 신문지 뭉치가 말을 걸었습니다. "친구야, 내가 공이 되어줄까? 나를 동그랗게 말아서 사용해 봐." 드디어 빗자루에게도 도와줄 친구가 생겼습니다. 빗자루와 신문지 공 사이에 어떤 일이 벌어질까요? 우리 함께 상상해 보아요.</p>
+</div>
+</div>
+<div class="book-intro__pair">
+<figure class="book-intro__media">
+<img alt="꿀벌의 비밀, 책 표지" decoding="async" height="675" loading="lazy" src="assets/book-honeybees.png" width="1200"/>
+</figure>
+<div class="book-intro__copy">
+<h3>꿀벌의 비밀</h3>
+<p>방방이와 봉봉이는 여왕벌의 명령을 받고 꿀을 찾으러 나갔습니다. 그런데 돌아왔을 때 이상한 일이 벌어졌습니다. 방방이는 꿀을 가득 가져왔는데, 봉봉이는 빈손이었거든요. 대장벌은 깜짝 놀라 물었습니다. "어떻게 된 거니? 너희 둘 다 똑같은 곳에 간 게 맞니?" "네, 맞아요." 둘은 대답했습니다. 대장벌이 다시 물었습니다. "똑같은 곳에 갔는데, 왜 결과가 이렇게 다르지?" 정말 이상한 일이죠? 두 벌에게 진짜 무슨 일이 있었던 걸까요?</p>
+</div>
+</div>
+</div>
+</section>
+<!-- The Library: 구매 채널·습관 안내(독립 정적 섹션) -->
+<section aria-labelledby="library-title" class="library" id="library-section" lang="ko">
+<div class="library__inner">
+<h2 class="library__title" id="library-title">진짜 한국어로 향하는 첫걸음</h2>
+<p class="library__lead">두껍고 무거운 교재는 필요 없습니다. 당신의 마음을 울리는 작은 이야기 하나면 충분합니다. 종이책의 따뜻한 질감이든, 디지털 파일의 빠른 편리함이든 당신에게 꼭 맞는 버전을 선택하세요. 오늘부터 하나씩 이야기를 모으다 보면, 당신의 한국어 실력이 눈에 띄게 자라는 것을 느끼게 될 거예요. 인생의 큰 변화를 위한 가장 작은 투자, 지금 시작하세요.</p>
+<div class="library__block">
+<h3 class="library__subtitle">아마존 (종이책)</h3>
+<p class="library__text">종이의 따뜻한 감촉과 고화질 삽화를 즐겨보세요. 책장에 소장하기 좋고, 화면에서 벗어나 독서에만 집중하고 싶은 분들에게 완벽합니다. 전 세계 어디든 배송됩니다.</p>
+<a aria-label="아마존 스토어 열기 (링크 추후 연결)" class="library__btn" href="#">Amazon</a>
+</div>
+<div class="library__block">
+<h3 class="library__subtitle">엣시 (디지털 PDF)</h3>
+<p class="library__text">결제 후 1분 안에 읽기를 시작할 수 있습니다. 태블릿이나 휴대폰에 저장해 카페, 기차, 혹은 자기 전 침대 위에서 언제든 이야기를 꺼내 보세요.</p>
+<a aria-label="엣시 스토어 열기 (링크 추후 연결)" class="library__btn" href="#">Etsy</a>
+</div>
+<div class="library__block">
+<h3 class="library__subtitle">더 많은 이야기가 옵니다.</h3>
+<p class="library__text">지금 특별한 이야기 다섯 편이 준비되어 있지만, 이건 시작에 불과합니다. 매일 새 이야기를 써서 읽을 거리가 끊기지 않게 하겠습니다.</p>
+</div>
+<div class="library__block">
+<h3 class="library__subtitle">아침 10분의 습관을 만드세요.</h3>
+<p class="library__text">공부하기 '완벽한 때'를 기다리지 마세요. 내일 아침, 첫 번째 책을 펼치고 커피 한 잔을 마시며 그냥 읽으세요. 더 나은 한국어 실력을 갖기 위해 필요한 건 그것뿐입니다.</p>
+<a class="library__btn library__btn--primary" href="https://www.youtube.com/@ReadAloudKorean" rel="noopener noreferrer" target="_blank"><span>유튜브 — Read Aloud Korean</span></a>
+</div>
+</div>
+</section>
+<footer class="site-footer" id="site-footer" lang="ko" role="contentinfo">
+<div class="site-footer__inner">
+<img alt="STORY N.A.R.A." class="site-footer__logo" decoding="async" height="30" loading="lazy" src="assets/storynara-logo.png" width="130"/>
+<p class="site-footer__meta-line">© 2026 스토리나라 주식회사. 무단 복제 금지. · 서울 금천구 가산디지털1로 168 우림라이온스밸리 B동 B110호</p>
+<p class="site-footer__contact-line"><span>저작권 문의:</span> <a href="mailto:bomsokhong@gmail.com">bomsokhong@gmail.com</a> · <span>일반 문의:</span> <a href="mailto:bunz5911@gmail.com">bunz5911@gmail.com</a></p>
+</div>
+</footer>
+
+<script>
+        const scrubConfigs = [
+            { video: document.getElementById('v'), zone: document.getElementById('v-zone') },
+            { video: document.getElementById('v-lab'), zone: document.getElementById('lab-v-zone') },
+        ];
+
+        /**
+         * 요소의 문서 기준 상단 위치(offsetParent 중첩과 무관하게 스크럽 구간 정렬에 사용)
+         */
+        function getDocumentTop(el) {
+            return el.getBoundingClientRect().top + window.pageYOffset;
+        }
+
+        /** Lab 존: 텍스트가 짧으면 스크럽 구간(zone 높이 − 뷰포트)이 줄어 영상 끝까지 못 돌아감 → duration에 비례한 최소 높이 보장 */
+        const LAB_SCRUB_PX_PER_SECOND = 48;
+
+        function updateLabZoneMinHeight() {
+            const zone = document.getElementById('lab-v-zone');
+            const video = document.getElementById('v-lab');
+            if (!zone || !video || !video.duration || Number.isNaN(video.duration)) return;
+
+            zone.style.minHeight = '';
+            void zone.offsetHeight;
+            const naturalHeight = zone.offsetHeight;
+            const minScrollRange = video.duration * LAB_SCRUB_PX_PER_SECOND;
+            const target = Math.max(naturalHeight, window.innerHeight + minScrollRange);
+            zone.style.minHeight = `${target}px`;
+        }
+
+        /**
+         * 각 스크럽 존: 해당 구간의 스크롤 진행도에 맞춰 영상 시점만 이동(자동 재생 없음).
+         * 존을 벗어나면 0 또는 마지막 프레임에 고정.
+         */
+        function scrub() {
+            scrubConfigs.forEach(({ video, zone }) => {
+                if (!video || !zone) return;
+                video.pause();
+                const zoneTop = getDocumentTop(zone);
+                const zoneHeight = Math.max(1, zone.offsetHeight - window.innerHeight);
+                const scrollPos = window.pageYOffset;
+                const raw = (scrollPos - zoneTop) / zoneHeight;
+                const fraction = Math.max(0, Math.min(1, raw));
+                if (video.duration && !Number.isNaN(video.duration)) {
+                    try {
+                        video.currentTime = video.duration * fraction;
+                    } catch (e) {
+                        /* seek 실패 시 무시(코덱/로딩 타이밍) */
+                    }
+                }
+            });
+
+            document.querySelectorAll('#v-zone .content, #lab-v-zone .content').forEach((el) => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight * 0.7) el.classList.add('active');
+            });
+        }
+
+        /**
+         * 메타데이터 준비 후: 일시정지 + 스크롤 기준 시점 반영.
+         */
+        function lockFirstFrame(video) {
+            return () => {
+                if (video.id === 'v-lab') updateLabZoneMinHeight();
+                video.pause();
+                scrub();
+            };
+        }
+
+        window.addEventListener('scroll', scrub, { passive: true });
+        window.addEventListener('resize', () => {
+            updateLabZoneMinHeight();
+            scrub();
+        });
+
+        scrubConfigs.forEach(({ video }) => {
+            if (!video) return;
+            const lock = lockFirstFrame(video);
+            video.addEventListener('loadedmetadata', lock);
+            video.addEventListener('loadeddata', scrub);
+            if (video.readyState >= 1) lock();
+        });
+
+        updateLabZoneMinHeight();
+        scrub();
+    </script>
+</body>
+</html>
