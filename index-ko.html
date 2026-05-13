@@ -330,17 +330,30 @@
             background: #000;
         }
 
+        /* iOS Safari: video 요소에 filter를 주면 레이어 합성 버그로 영상이 검게 나오는 경우가 있음 → 톤 보정은 래퍼 위 오버레이로 대체 */
+        #v-wrap::before,
+        #lab-v-wrap::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
         video {
+            position: relative;
+            z-index: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: brightness(1.1);
             display: block;
         }
 
         .overlay {
             position: absolute;
             inset: 0;
+            z-index: 2;
             background: rgba(0, 0, 0, 0.4);
         }
 
@@ -1353,7 +1366,7 @@
 <div id="v-zone">
 <div id="v-wrap">
 <!-- 스크롤로만 재생 시점 이동(자동 재생 없음). 첫 프레임은 정지 상태로 표시 -->
-<video id="v" muted="" playsinline="" preload="auto" src="bg.mp4"></video>
+<video id="v" muted="" playsinline="" webkit-playsinline="" preload="auto" src="bg.mp4"></video>
 <div class="overlay"></div>
 </div>
 <section id="first-section" lang="ko">
@@ -1564,7 +1577,7 @@
 <!-- Lab Solution: Reading Period와 동일 패턴(스크롤로 bookread.mp4 시점 이동) -->
 <div id="lab-v-zone">
 <div id="lab-v-wrap">
-<video id="v-lab" muted="" playsinline="" preload="auto" src="bookread.mp4"></video>
+<video id="v-lab" muted="" playsinline="" webkit-playsinline="" preload="auto" src="bookread.mp4"></video>
 <div class="overlay"></div>
 </div>
 <section aria-labelledby="lab-section-title" id="lab-section" lang="ko">
@@ -1728,13 +1741,28 @@
         }
 
         /**
-         * 메타데이터 준비 후: 일시정지 + 스크롤 기준 시점 반영.
+         * 모바일 WebKit 등: 자동 재생 없이 seek만 하면 첫 프레임이 표시되지 않는 경우가 있어,
+         * muted 재생 허용 직후 한 번 재생→즉시 정지로 디코딩 표면을 깨운 뒤 스크럽을 적용한다.
          */
         function lockFirstFrame(video) {
             return () => {
                 if (video.id === 'v-lab') updateLabZoneMinHeight();
-                video.pause();
-                scrub();
+                video.muted = true;
+                const applyScrubAfterPause = () => {
+                    video.pause();
+                    scrub();
+                };
+                if (video.dataset.surfaceWoken === '1') {
+                    applyScrubAfterPause();
+                    return;
+                }
+                video.dataset.surfaceWoken = '1';
+                const playTry = video.play();
+                if (playTry !== undefined) {
+                    playTry.then(applyScrubAfterPause).catch(applyScrubAfterPause);
+                } else {
+                    applyScrubAfterPause();
+                }
             };
         }
 
