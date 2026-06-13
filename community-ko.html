@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
+    <title>커뮤니티 — Storynara</title>
+    <link as="style" crossorigin="" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet"/>
+    <link href="assets/community.css" rel="stylesheet"/>
+</head>
+<body class="community-page">
+<header class="site-header">
+    <nav aria-label="커뮤니티 내비게이션" class="site-nav" id="site-nav">
+        <div aria-label="언어 선택" class="lang-switch" role="navigation">
+            <a aria-current="page" aria-label="한국어" class="lang-btn lang-btn--active" href="community-ko.html">KOR</a>
+            <a aria-label="English" class="lang-btn" href="community.html">ENG</a>
+        </div>
+        <a href="index-ko.html">홈</a>
+        <a class="nav-link--active" href="community-ko.html">커뮤니티</a>
+    </nav>
+</header>
+
+<main class="community-main">
+    <header class="community-hero">
+        <h1>커뮤니티</h1>
+        <p>일상생활 한국어, 고민, 정보를 나누고 서로 연결하세요. 글 읽기는 누구나 가능하고, 글쓰기는 로그인 후 이용할 수 있습니다.</p>
+    </header>
+
+    <div class="community-alert community-alert--error" hidden id="community-alert"></div>
+
+    <div class="community-auth-bar">
+        <p class="community-auth-status" id="auth-status">불러오는 중…</p>
+        <div class="community-auth-actions">
+            <button class="cm-btn cm-btn--ghost" id="btn-login" type="button">로그인</button>
+            <button class="cm-btn cm-btn--outline" id="btn-signup" type="button">회원가입</button>
+            <button class="cm-btn cm-btn--outline" hidden id="btn-logout" type="button">로그아웃</button>
+            <button class="cm-btn cm-btn--primary" id="btn-write" type="button">글쓰기</button>
+        </div>
+    </div>
+
+    <div class="community-categories" id="category-tabs"></div>
+
+    <section aria-labelledby="board-category-title" class="community-board">
+        <div class="community-board-header">
+            <h2 id="board-category-title">게시글</h2>
+        </div>
+        <ul class="post-list" id="post-list"></ul>
+    </section>
+</main>
+
+<div class="cm-modal-overlay" hidden id="modal-overlay">
+    <div aria-labelledby="modal-title" aria-modal="true" class="cm-modal cm-modal--wide" role="dialog">
+        <div class="cm-modal__header">
+            <h3 id="modal-title"></h3>
+            <button aria-label="닫기" class="cm-modal__close" id="modal-close" type="button">×</button>
+        </div>
+        <div class="cm-modal__body" id="modal-body"></div>
+        <div class="cm-modal__footer" id="modal-footer"></div>
+    </div>
+</div>
+
+<script src="assets/supabase-config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/community.js"></script>
+</body>
+</html>

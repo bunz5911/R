@@ -1,0 +1,593 @@
+/* 커뮤니티 게시판 — 메인 랜딩과 동일한 Pretendard·연보라 톤 */
+
+:root {
+    --cm-bg: #faf9fc;
+    --cm-surface: #ffffff;
+    --cm-text: #1a2421;
+    --cm-muted: #5c6670;
+    --cm-border: rgba(0, 0, 0, 0.08);
+    --cm-accent: #8b73c9;
+    --cm-accent-soft: rgba(179, 157, 219, 0.22);
+    --cm-accent-deep: #5e4d86;
+    --cm-danger: #c0392b;
+    --cm-radius: 12px;
+    --cm-header-offset: calc(4.25rem + env(safe-area-inset-top, 0px));
+}
+
+body.community-page {
+    margin: 0;
+    background: var(--cm-bg);
+    color: var(--cm-text);
+    font-family:
+        "Pretendard",
+        -apple-system,
+        BlinkMacSystemFont,
+        system-ui,
+        Roboto,
+        "Helvetica Neue",
+        "Segoe UI",
+        "Apple SD Gothic Neo",
+        "Noto Sans KR",
+        "Malgun Gothic",
+        sans-serif;
+    overflow-x: clip;
+}
+
+/* 상단 네비 — 메인 랜딩과 동일 */
+.community-page .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding-top: env(safe-area-inset-top, 0px);
+    background: rgba(255, 255, 255, 0.94);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    box-sizing: border-box;
+}
+
+.community-page .site-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.35rem 0.75rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.55rem clamp(0.75rem, 2vw, 1.25rem);
+    box-sizing: border-box;
+}
+
+.community-page .lang-switch {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 0.28rem;
+    margin-right: 0.35rem;
+    padding: 2px;
+    border-radius: 10px;
+    background: rgba(179, 157, 219, 0.14);
+    border: 1px solid rgba(142, 119, 188, 0.22);
+    box-sizing: border-box;
+}
+
+.community-page .lang-btn {
+    padding: 0.34rem 0.62rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: #5e4d86;
+    background: linear-gradient(180deg, #ede6fa 0%, #d8c8f0 100%);
+    border: 1px solid rgba(142, 119, 188, 0.45);
+    border-radius: 7px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+        background 0.15s ease,
+        color 0.15s ease,
+        box-shadow 0.15s ease,
+        transform 0.12s ease;
+    box-shadow: 0 1px 2px rgba(74, 61, 107, 0.08);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.community-page .lang-btn:hover {
+    background: linear-gradient(180deg, #f3ecfc 0%, #e2d4f5 100%);
+    color: #3d3358;
+}
+
+.community-page .lang-btn.lang-btn--active {
+    color: #fff;
+    background: linear-gradient(180deg, #a995dd 0%, #8b73c9 100%);
+    border-color: rgba(107, 84, 156, 0.85);
+}
+
+.community-page .site-nav a {
+    font-size: 0.8rem;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    color: #1a2421;
+    text-decoration: none;
+    padding: 0.35rem 0.5rem;
+    border-radius: 6px;
+    white-space: nowrap;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.community-page .site-nav a:hover {
+    background: rgba(179, 157, 219, 0.2);
+    color: #5e4d86;
+}
+
+.community-page .site-nav a:focus-visible,
+.community-page .lang-btn:focus-visible {
+    outline: 2px solid #b39ddb;
+    outline-offset: 2px;
+}
+
+@media (max-width: 720px) {
+    .community-page .site-nav {
+        justify-content: flex-start;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        gap: 0.25rem 0.5rem;
+    }
+
+    .community-page .site-nav a {
+        font-size: 0.76rem;
+        flex-shrink: 0;
+        min-height: 2.75rem;
+        box-sizing: border-box;
+        display: inline-flex;
+        align-items: center;
+        padding: 0.4rem 0.6rem;
+    }
+}
+
+.community-page .site-nav a.nav-link--active {
+    background: var(--cm-accent-soft);
+    color: var(--cm-accent-deep);
+}
+
+.community-main {
+    max-width: 920px;
+    margin: 0 auto;
+    padding:
+        calc(var(--cm-header-offset) + 1.5rem)
+        clamp(1rem, 3vw, 1.5rem)
+        3rem;
+    box-sizing: border-box;
+}
+
+.community-hero {
+    margin-bottom: 1.75rem;
+}
+
+.community-hero h1 {
+    margin: 0 0 0.5rem;
+    font-size: clamp(1.65rem, 4vw, 2.1rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+}
+
+.community-hero p {
+    margin: 0;
+    color: var(--cm-muted);
+    font-size: 0.95rem;
+    line-height: 1.55;
+}
+
+/* 설정 오류 배너 */
+.community-alert {
+    padding: 0.85rem 1rem;
+    margin-bottom: 1rem;
+    border-radius: var(--cm-radius);
+    font-size: 0.88rem;
+    line-height: 1.5;
+}
+
+.community-alert--error {
+    background: #fdecea;
+    color: #922b21;
+    border: 1px solid #f5c6cb;
+}
+
+.community-alert--info {
+    background: #eef6ff;
+    color: #1a5276;
+    border: 1px solid #c8dff5;
+}
+
+.community-alert[hidden] {
+    display: none;
+}
+
+/* 인증 영역 */
+.community-auth-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 1rem 1.15rem;
+    margin-bottom: 1.25rem;
+    background: var(--cm-surface);
+    border: 1px solid var(--cm-border);
+    border-radius: var(--cm-radius);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.community-auth-status {
+    font-size: 0.9rem;
+    color: var(--cm-muted);
+}
+
+.community-auth-status strong {
+    color: var(--cm-text);
+}
+
+.community-auth-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+/* 버튼 */
+.cm-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.5rem 0.95rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    transition:
+        background 0.15s ease,
+        color 0.15s ease,
+        border-color 0.15s ease,
+        transform 0.1s ease;
+    box-sizing: border-box;
+    white-space: nowrap;
+}
+
+.cm-btn:active {
+    transform: scale(0.97);
+}
+
+.cm-btn:focus-visible {
+    outline: 2px solid var(--cm-accent);
+    outline-offset: 2px;
+}
+
+.cm-btn--primary {
+    color: #fff;
+    background: linear-gradient(180deg, #a995dd 0%, #8b73c9 100%);
+    border-color: rgba(107, 84, 156, 0.85);
+}
+
+.cm-btn--primary:hover {
+    background: linear-gradient(180deg, #b39ddb 0%, #9575cd 100%);
+}
+
+.cm-btn--ghost {
+    color: var(--cm-accent-deep);
+    background: var(--cm-accent-soft);
+    border-color: rgba(142, 119, 188, 0.35);
+}
+
+.cm-btn--ghost:hover {
+    background: rgba(179, 157, 219, 0.32);
+}
+
+.cm-btn--outline {
+    color: var(--cm-text);
+    background: var(--cm-surface);
+    border-color: var(--cm-border);
+}
+
+.cm-btn--outline:hover {
+    background: #f3f4f6;
+}
+
+.cm-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* 카테고리 탭 */
+.community-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-bottom: 1.25rem;
+}
+
+.category-tab {
+    padding: 0.48rem 0.85rem;
+    font-size: 0.8rem;
+    font-weight: 650;
+    color: var(--cm-muted);
+    background: var(--cm-surface);
+    border: 1px solid var(--cm-border);
+    border-radius: 999px;
+    cursor: pointer;
+    transition:
+        background 0.15s ease,
+        color 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.category-tab:hover {
+    color: var(--cm-accent-deep);
+    border-color: rgba(142, 119, 188, 0.4);
+}
+
+.category-tab.is-active {
+    color: #fff;
+    background: linear-gradient(180deg, #a995dd 0%, #8b73c9 100%);
+    border-color: rgba(107, 84, 156, 0.85);
+}
+
+.category-tab:focus-visible {
+    outline: 2px solid var(--cm-accent);
+    outline-offset: 2px;
+}
+
+/* 게시글 목록 */
+.community-board {
+    background: var(--cm-surface);
+    border: 1px solid var(--cm-border);
+    border-radius: var(--cm-radius);
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.community-board-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.85rem 1.15rem;
+    border-bottom: 1px solid var(--cm-border);
+    background: rgba(179, 157, 219, 0.08);
+}
+
+.community-board-header h2 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 750;
+    letter-spacing: -0.02em;
+}
+
+.post-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.post-list__empty {
+    padding: 2.5rem 1.15rem;
+    text-align: center;
+    color: var(--cm-muted);
+    font-size: 0.92rem;
+}
+
+.post-item {
+    border-bottom: 1px solid var(--cm-border);
+}
+
+.post-item:last-child {
+    border-bottom: none;
+}
+
+.post-item__link {
+    display: block;
+    padding: 0.95rem 1.15rem;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.12s ease;
+}
+
+.post-item__link:hover {
+    background: rgba(179, 157, 219, 0.1);
+}
+
+.post-item__link:focus-visible {
+    outline: 2px solid var(--cm-accent);
+    outline-offset: -2px;
+}
+
+.post-item__title {
+    margin: 0 0 0.35rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.35;
+}
+
+.post-item__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.75rem;
+    font-size: 0.78rem;
+    color: var(--cm-muted);
+}
+
+/* 모달 */
+.cm-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(15, 20, 18, 0.45);
+    box-sizing: border-box;
+}
+
+.cm-modal-overlay[hidden] {
+    display: none;
+}
+
+.cm-modal {
+    width: min(100%, 440px);
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+    background: var(--cm-surface);
+    border-radius: var(--cm-radius);
+    border: 1px solid var(--cm-border);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+    box-sizing: border-box;
+}
+
+.cm-modal--wide {
+    width: min(100%, 640px);
+}
+
+.cm-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 1rem 1.15rem 0.5rem;
+}
+
+.cm-modal__header h3 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.cm-modal__close {
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    font-size: 1.25rem;
+    line-height: 1;
+    color: var(--cm-muted);
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.cm-modal__close:hover {
+    background: #f0f0f0;
+    color: var(--cm-text);
+}
+
+.cm-modal__body {
+    padding: 0.5rem 1.15rem 1.15rem;
+}
+
+.cm-modal__footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding: 0 1.15rem 1.15rem;
+}
+
+/* 폼 */
+.cm-field {
+    margin-bottom: 0.85rem;
+}
+
+.cm-field label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 650;
+    color: var(--cm-muted);
+}
+
+.cm-field input,
+.cm-field textarea {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    font-size: 0.92rem;
+    font-family: inherit;
+    color: var(--cm-text);
+    background: #fff;
+    border: 1px solid var(--cm-border);
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+.cm-field input:focus,
+.cm-field textarea:focus {
+    outline: none;
+    border-color: var(--cm-accent);
+    box-shadow: 0 0 0 3px rgba(139, 115, 201, 0.18);
+}
+
+.cm-field textarea {
+    min-height: 140px;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+.cm-form-error {
+    margin: 0 0 0.75rem;
+    font-size: 0.82rem;
+    color: var(--cm-danger);
+}
+
+.cm-form-error[hidden] {
+    display: none;
+}
+
+/* 글 상세 */
+.post-detail__meta {
+    margin: 0 0 1rem;
+    font-size: 0.82rem;
+    color: var(--cm-muted);
+}
+
+.post-detail__content {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+@media (max-width: 720px) {
+    .community-auth-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .community-auth-actions {
+        justify-content: flex-end;
+    }
+
+    .community-categories {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        padding-bottom: 0.25rem;
+    }
+
+    .category-tab {
+        flex-shrink: 0;
+    }
+}

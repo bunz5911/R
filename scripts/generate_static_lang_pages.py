@@ -183,6 +183,10 @@ def build_ko(html_raw: str, ko: dict[str, str]) -> str:
     if foot:
         foot["lang"] = "ko"
 
+    comm = soup.select_one("a[href='community.html']")
+    if comm:
+        comm["href"] = "community-ko.html"
+
     out = str(soup)
     return inject_lang_link_styles(out)
 
