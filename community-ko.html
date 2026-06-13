@@ -39,6 +39,21 @@
 
     <div class="community-categories" id="category-tabs"></div>
 
+    <section aria-labelledby="supervisor-panel-title" class="supervisor-panel" hidden id="supervisor-panel">
+        <div class="supervisor-panel__header">
+            <h2 id="supervisor-panel-title">회원 관리</h2>
+            <p class="supervisor-panel__desc">회원 승인, 거절, 강제 퇴거를 처리합니다.</p>
+        </div>
+        <div class="supervisor-panel__section">
+            <h3 id="pending-members-title">승인 대기</h3>
+            <ul class="member-list" id="pending-members"></ul>
+        </div>
+        <div class="supervisor-panel__section">
+            <h3 id="all-members-title">전체 회원</h3>
+            <ul class="member-list" id="all-members"></ul>
+        </div>
+    </section>
+
     <section aria-labelledby="board-category-title" class="community-board">
         <div class="community-board-header">
             <h2 id="board-category-title">게시글</h2>

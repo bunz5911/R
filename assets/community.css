@@ -569,6 +569,140 @@ body.community-page {
     word-break: break-word;
 }
 
+/* 슈퍼바이저 회원 관리 */
+.supervisor-panel {
+    margin-bottom: 1.25rem;
+    padding: 1.15rem;
+    background: var(--cm-surface);
+    border: 1px solid var(--cm-border);
+    border-radius: var(--cm-radius);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.supervisor-panel[hidden] {
+    display: none;
+}
+
+.supervisor-panel__header h2 {
+    margin: 0 0 0.35rem;
+    font-size: 1.05rem;
+    font-weight: 800;
+}
+
+.supervisor-panel__desc {
+    margin: 0 0 1rem;
+    font-size: 0.85rem;
+    color: var(--cm-muted);
+}
+
+.supervisor-panel__section h3 {
+    margin: 0 0 0.65rem;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--cm-accent-deep);
+}
+
+.member-list {
+    list-style: none;
+    margin: 0 0 1rem;
+    padding: 0;
+    border: 1px solid var(--cm-border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.member-list__empty {
+    padding: 1rem;
+    font-size: 0.85rem;
+    color: var(--cm-muted);
+    text-align: center;
+}
+
+.member-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 0.75rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--cm-border);
+}
+
+.member-item:last-child {
+    border-bottom: none;
+}
+
+.member-item__info {
+    min-width: 0;
+}
+
+.member-item__name {
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.member-item__email {
+    font-size: 0.78rem;
+    color: var(--cm-muted);
+}
+
+.member-item__status {
+    display: inline-block;
+    margin-top: 0.25rem;
+    padding: 0.15rem 0.45rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    border-radius: 999px;
+    background: var(--cm-accent-soft);
+    color: var(--cm-accent-deep);
+}
+
+.member-item__status--pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.member-item__status--approved {
+    background: #d4edda;
+    color: #155724;
+}
+
+.member-item__status--rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.member-item__status--banned {
+    background: #fdecea;
+    color: #922b21;
+}
+
+.member-item__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.cm-btn--danger {
+    color: #fff;
+    background: #c0392b;
+    border-color: #a93226;
+}
+
+.cm-btn--danger:hover {
+    background: #a93226;
+}
+
+.cm-btn--success {
+    color: #fff;
+    background: #27ae60;
+    border-color: #219a52;
+}
+
+.cm-btn--success:hover {
+    background: #219a52;
+}
+
 @media (max-width: 720px) {
     .community-auth-bar {
         flex-direction: column;

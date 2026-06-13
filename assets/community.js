@@ -1,10 +1,15 @@
 /**
  * Storynara 커뮤니티 게시판
  * - 비로그인: 글 읽기 가능
- * - 로그인: 글 작성 가능
+ * - 로그인 + 승인: 글 작성 가능
+ * - 슈퍼바이저(bunz5911@gmail.com): 회원 승인·거절·강제 퇴거
  */
 (function () {
     "use strict";
+
+    const SUPERVISOR_EMAIL = (
+        window.COMMUNITY_SUPERVISOR_EMAIL || "bunz5911@gmail.com"
+    ).toLowerCase();
 
     const CATEGORIES = [
         { id: "daily_korean", labelKey: "catDaily" },
@@ -29,7 +34,7 @@
             emptyPosts: "No posts yet. Be the first to share!",
             loadError: "Could not load posts. Please try again later.",
             configError:
-                "Community is not configured yet. Set SUPABASE_URL and SUPABASE_ANON_KEY in assets/supabase-config.js, then run the SQL migration.",
+                "Community is not configured yet. Set SUPABASE_URL and SUPABASE_ANON_KEY in assets/supabase-config.js.",
             loginTitle: "Log in",
             signupTitle: "Sign up",
             writeTitle: "Write a post",
@@ -44,13 +49,31 @@
             submitSignup: "Create account",
             submitWrite: "Publish",
             authRequired: "Please log in to write a post.",
-            signupSuccess: "Account created. Check your email if confirmation is required, then log in.",
+            signupPending:
+                "Sign-up complete. Your account is awaiting supervisor approval. You will be able to log in after approval.",
             writeSuccess: "Your post has been published.",
             genericError: "Something went wrong. Please try again.",
             invalidCredentials: "Invalid email or password.",
             close: "Close",
             by: "by",
             at: "·",
+            pendingLogin: "Your account is awaiting supervisor approval. You cannot log in yet.",
+            rejectedLogin: "Your membership request was not approved.",
+            bannedLogin: "Your access has been removed from the community.",
+            supervisorTitle: "Member management",
+            supervisorDesc: "Approve, reject, or remove community members.",
+            pendingMembers: "Pending approval",
+            allMembers: "All members",
+            noPending: "No members waiting for approval.",
+            noMembers: "No members found.",
+            approve: "Approve",
+            reject: "Reject",
+            ban: "Remove",
+            statusPending: "Pending",
+            statusApproved: "Approved",
+            statusRejected: "Rejected",
+            statusBanned: "Removed",
+            memberUpdated: "Member status updated.",
         },
         ko: {
             catDaily: "일상생활 한국어",
@@ -67,7 +90,7 @@
             emptyPosts: "아직 글이 없습니다. 첫 글을 남겨보세요!",
             loadError: "게시글을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.",
             configError:
-                "커뮤니티 설정이 필요합니다. assets/supabase-config.js에 Supabase URL·키를 넣고 SQL 마이그레이션을 실행하세요.",
+                "커뮤니티 설정이 필요합니다. assets/supabase-config.js를 확인하세요.",
             loginTitle: "로그인",
             signupTitle: "회원가입",
             writeTitle: "글쓰기",
@@ -82,24 +105,40 @@
             submitSignup: "가입하기",
             submitWrite: "등록",
             authRequired: "글을 쓰려면 로그인이 필요합니다.",
-            signupSuccess: "가입이 완료되었습니다. 이메일 확인이 필요하면 메일을 확인 후 로그인하세요.",
+            signupPending:
+                "가입이 완료되었습니다. 슈퍼바이저 승인 후 로그인할 수 있습니다.",
             writeSuccess: "글이 등록되었습니다.",
             genericError: "오류가 발생했습니다. 다시 시도해 주세요.",
             invalidCredentials: "이메일 또는 비밀번호가 올바르지 않습니다.",
             close: "닫기",
             by: "작성자",
             at: "·",
+            pendingLogin: "승인 대기 중입니다. 슈퍼바이저 승인 후 로그인할 수 있습니다.",
+            rejectedLogin: "회원 가입이 승인되지 않았습니다.",
+            bannedLogin: "커뮤니티 이용이 제한되었습니다.",
+            supervisorTitle: "회원 관리",
+            supervisorDesc: "회원 승인, 거절, 강제 퇴거를 처리합니다.",
+            pendingMembers: "승인 대기",
+            allMembers: "전체 회원",
+            noPending: "승인 대기 회원이 없습니다.",
+            noMembers: "등록된 회원이 없습니다.",
+            approve: "승인",
+            reject: "거절",
+            ban: "강제 퇴거",
+            statusPending: "대기",
+            statusApproved: "승인",
+            statusRejected: "거절",
+            statusBanned: "퇴거",
+            memberUpdated: "회원 상태가 변경되었습니다.",
         },
     };
 
     const lang = document.documentElement.lang === "ko" ? "ko" : "en";
 
-    /** UI 문자열 반환 */
     function t(key) {
         return STRINGS[lang][key] || key;
     }
 
-    /** 카테고리 라벨 */
     function categoryLabel(categoryId) {
         const cat = CATEGORIES.find(function (c) {
             return c.id === categoryId;
@@ -107,7 +146,6 @@
         return cat ? t(cat.labelKey) : categoryId;
     }
 
-    /** ISO 날짜를 로케일 문자열로 */
     function formatDate(iso) {
         try {
             return new Date(iso).toLocaleString(lang === "ko" ? "ko-KR" : "en-US", {
@@ -122,11 +160,33 @@
         }
     }
 
+    function escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+    }
+
+    function isSupervisorUser(user) {
+        return user && String(user.email || "").toLowerCase() === SUPERVISOR_EMAIL;
+    }
+
+    function statusLabel(status) {
+        const map = {
+            pending: "statusPending",
+            approved: "statusApproved",
+            rejected: "statusRejected",
+            banned: "statusBanned",
+        };
+        return t(map[status] || status);
+    }
+
     let supabaseClient = null;
     let currentUser = null;
+    let currentProfile = null;
     let activeCategory = "daily_korean";
 
-  // DOM
     const alertBox = document.getElementById("community-alert");
     const authStatus = document.getElementById("auth-status");
     const btnLogin = document.getElementById("btn-login");
@@ -136,6 +196,9 @@
     const categoryContainer = document.getElementById("category-tabs");
     const boardTitle = document.getElementById("board-category-title");
     const postList = document.getElementById("post-list");
+    const supervisorPanel = document.getElementById("supervisor-panel");
+    const pendingMembersList = document.getElementById("pending-members");
+    const allMembersList = document.getElementById("all-members");
 
     const modalOverlay = document.getElementById("modal-overlay");
     const modalTitle = document.getElementById("modal-title");
@@ -143,7 +206,6 @@
     const modalFooter = document.getElementById("modal-footer");
     const modalClose = document.getElementById("modal-close");
 
-    /** 알림 배너 표시 */
     function showAlert(message, type) {
         if (!alertBox) return;
         alertBox.hidden = false;
@@ -151,12 +213,10 @@
         alertBox.className = "community-alert community-alert--" + (type || "info");
     }
 
-    /** 알림 배너 숨김 */
     function hideAlert() {
         if (alertBox) alertBox.hidden = true;
     }
 
-    /** 모달 열기 */
     function openModal(title, bodyHtml, footerHtml) {
         modalTitle.textContent = title;
         modalBody.innerHTML = bodyHtml;
@@ -165,7 +225,6 @@
         document.body.style.overflow = "hidden";
     }
 
-    /** 모달 닫기 */
     function closeModal() {
         modalOverlay.hidden = true;
         modalBody.innerHTML = "";
@@ -173,10 +232,63 @@
         document.body.style.overflow = "";
     }
 
-    /** 로그인 UI 갱신 */
+    /** 회원 프로필(승인 상태) 조회 */
+    async function fetchProfile(userId) {
+        const { data, error } = await supabaseClient
+            .from("community_profiles")
+            .select("id, email, display_name, status, created_at")
+            .eq("id", userId)
+            .maybeSingle();
+
+        if (error) return null;
+        return data;
+    }
+
+    /** 승인되지 않은 회원은 즉시 로그아웃 */
+    async function enforceMemberAccess(user) {
+        if (!user) {
+            currentProfile = null;
+            return true;
+        }
+
+        if (isSupervisorUser(user)) {
+            currentProfile = await fetchProfile(user.id);
+            if (!currentProfile) {
+                currentProfile = {
+                    id: user.id,
+                    status: "approved",
+                    display_name: user.user_metadata?.display_name || user.email,
+                    email: user.email,
+                };
+            }
+            return true;
+        }
+
+        const profile = await fetchProfile(user.id);
+        currentProfile = profile;
+
+        if (!profile || profile.status !== "approved") {
+            await supabaseClient.auth.signOut();
+            currentUser = null;
+            currentProfile = null;
+
+            if (!profile || profile.status === "pending") {
+                showAlert(t("pendingLogin"), "info");
+            } else if (profile.status === "rejected") {
+                showAlert(t("rejectedLogin"), "error");
+            } else {
+                showAlert(t("bannedLogin"), "error");
+            }
+            return false;
+        }
+
+        return true;
+    }
+
     function updateAuthUI(user) {
         currentUser = user;
         const isLoggedIn = Boolean(user);
+        const isApproved = currentProfile && currentProfile.status === "approved";
 
         if (isLoggedIn) {
             const name =
@@ -188,7 +300,7 @@
             btnLogin.hidden = true;
             btnSignup.hidden = true;
             btnLogout.hidden = false;
-            btnWrite.hidden = false;
+            btnWrite.hidden = !isApproved;
         } else {
             authStatus.textContent = t("guestStatus");
             btnLogin.hidden = false;
@@ -196,18 +308,31 @@
             btnLogout.hidden = true;
             btnWrite.hidden = false;
         }
+
+        if (supervisorPanel) {
+            const showPanel = isSupervisorUser(user);
+            supervisorPanel.hidden = !showPanel;
+            if (showPanel) {
+                loadSupervisorMembers();
+            }
+        }
     }
 
-    /** HTML 이스케이프 */
-    function escapeHtml(str) {
-        return String(str)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;");
+    async function handleAuthUser(user) {
+        if (!user) {
+            currentProfile = null;
+            updateAuthUI(null);
+            return;
+        }
+
+        const allowed = await enforceMemberAccess(user);
+        if (allowed) {
+            updateAuthUI(user);
+        } else {
+            updateAuthUI(null);
+        }
     }
 
-    /** 카테고리 탭 렌더 */
     function renderCategoryTabs() {
         categoryContainer.innerHTML = "";
         CATEGORIES.forEach(function (cat) {
@@ -226,7 +351,6 @@
         boardTitle.textContent = categoryLabel(activeCategory);
     }
 
-    /** 게시글 목록 로드 */
     async function loadPosts() {
         if (!supabaseClient) return;
 
@@ -278,7 +402,6 @@
         });
     }
 
-    /** 글 상세 보기 */
     async function showPostDetail(postId) {
         const { data, error } = await supabaseClient
             .from("community_posts")
@@ -305,7 +428,7 @@
             escapeHtml(formatDate(data.created_at));
 
         openModal(
-            escapeHtml(data.title),
+            data.title,
             "<p class='post-detail__meta'>" +
                 meta +
                 "</p>" +
@@ -320,7 +443,6 @@
         document.getElementById("modal-close-footer").addEventListener("click", closeModal);
     }
 
-    /** 로그인 모달 */
     function openLoginModal() {
         openModal(
             t("loginTitle"),
@@ -343,15 +465,13 @@
         document.getElementById("modal-submit").addEventListener("click", handleLogin);
     }
 
-    /** 로그인 처리 */
     async function handleLogin() {
         const email = document.getElementById("login-email").value.trim();
         const password = document.getElementById("login-password").value;
         const errEl = document.getElementById("form-error");
-
         errEl.hidden = true;
 
-        const { error } = await supabaseClient.auth.signInWithPassword({
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
             email,
             password,
         });
@@ -363,11 +483,17 @@
             return;
         }
 
+        const allowed = await enforceMemberAccess(data.user);
+        if (!allowed) {
+            closeModal();
+            return;
+        }
+
         closeModal();
         hideAlert();
+        updateAuthUI(data.user);
     }
 
-    /** 회원가입 모달 */
     function openSignupModal() {
         openModal(
             t("signupTitle"),
@@ -393,13 +519,24 @@
         document.getElementById("modal-submit").addEventListener("click", handleSignup);
     }
 
-    /** 회원가입 처리 */
+    async function notifySupervisor(userId) {
+        try {
+            await supabaseClient.functions.invoke("notify-supervisor", {
+                body: {
+                    user_id: userId,
+                    community_url: window.location.href,
+                },
+            });
+        } catch (_e) {
+            /* 이메일 실패 시에도 가입은 유지 */
+        }
+    }
+
     async function handleSignup() {
         const displayName = document.getElementById("signup-name").value.trim();
         const email = document.getElementById("signup-email").value.trim();
         const password = document.getElementById("signup-password").value;
         const errEl = document.getElementById("form-error");
-
         errEl.hidden = true;
 
         if (!displayName) {
@@ -408,11 +545,18 @@
             return;
         }
 
-        const { error } = await supabaseClient.auth.signUp({
+        const redirectUrl =
+            window.COMMUNITY_SITE_URL
+                ? window.COMMUNITY_SITE_URL.replace(/\/?$/, "/") +
+                  (lang === "ko" ? "community-ko.html" : "community.html")
+                : window.location.origin + window.location.pathname;
+
+        const { data, error } = await supabaseClient.auth.signUp({
             email,
             password,
             options: {
                 data: { display_name: displayName },
+                emailRedirectTo: redirectUrl,
             },
         });
 
@@ -422,15 +566,21 @@
             return;
         }
 
+        if (data.user) {
+            await supabaseClient.auth.signOut();
+            if (String(email).toLowerCase() !== SUPERVISOR_EMAIL) {
+                await notifySupervisor(data.user.id);
+            }
+        }
+
         closeModal();
-        showAlert(t("signupSuccess"), "info");
+        showAlert(t("signupPending"), "info");
     }
 
-    /** 글쓰기 모달 */
     function openWriteModal() {
-        if (!currentUser) {
+        if (!currentUser || !currentProfile || currentProfile.status !== "approved") {
             showAlert(t("authRequired"), "info");
-            openLoginModal();
+            if (!currentUser) openLoginModal();
             return;
         }
 
@@ -455,12 +605,10 @@
         document.getElementById("modal-submit").addEventListener("click", handleWrite);
     }
 
-    /** 글 등록 처리 */
     async function handleWrite() {
         const title = document.getElementById("write-title").value.trim();
         const content = document.getElementById("write-content").value.trim();
         const errEl = document.getElementById("form-error");
-
         errEl.hidden = true;
 
         if (!title || !content) {
@@ -493,23 +641,149 @@
         await loadPosts();
     }
 
-    /** 로그아웃 */
     async function handleLogout() {
         await supabaseClient.auth.signOut();
+        currentProfile = null;
         hideAlert();
     }
 
-    /** 글쓰기 버튼 — 비로그인 시 로그인 유도 */
     function handleWriteClick() {
         if (!currentUser) {
             showAlert(t("authRequired"), "info");
             openLoginModal();
             return;
         }
+        if (!currentProfile || currentProfile.status !== "approved") {
+            showAlert(t("pendingLogin"), "info");
+            return;
+        }
         openWriteModal();
     }
 
-    /** 초기화 */
+    function renderMemberItem(member, options) {
+        const li = document.createElement("li");
+        li.className = "member-item";
+        li.dataset.memberId = member.id;
+
+        const isSelf = currentUser && member.id === currentUser.id;
+
+        let actionsHtml = "";
+        if (!isSelf) {
+            if (member.status === "pending") {
+                actionsHtml +=
+                    "<button type='button' class='cm-btn cm-btn--success' data-action='approve'>" +
+                    escapeHtml(t("approve")) +
+                    "</button>" +
+                    "<button type='button' class='cm-btn cm-btn--outline' data-action='reject'>" +
+                    escapeHtml(t("reject")) +
+                    "</button>";
+            }
+            if (member.status === "approved") {
+                actionsHtml +=
+                    "<button type='button' class='cm-btn cm-btn--danger' data-action='ban'>" +
+                    escapeHtml(t("ban")) +
+                    "</button>";
+            }
+            if (member.status === "rejected" || member.status === "banned") {
+                actionsHtml +=
+                    "<button type='button' class='cm-btn cm-btn--success' data-action='approve'>" +
+                    escapeHtml(t("approve")) +
+                    "</button>";
+            }
+        }
+
+        li.innerHTML =
+            "<div class='member-item__info'>" +
+            "<div class='member-item__name'>" +
+            escapeHtml(member.display_name) +
+            "</div>" +
+            "<div class='member-item__email'>" +
+            escapeHtml(member.email) +
+            "</div>" +
+            "<span class='member-item__status member-item__status--" +
+            escapeHtml(member.status) +
+            "'>" +
+            escapeHtml(statusLabel(member.status)) +
+            "</span>" +
+            "</div>" +
+            (actionsHtml
+                ? "<div class='member-item__actions'>" + actionsHtml + "</div>"
+                : "");
+
+        li.addEventListener("click", function (e) {
+            const btn = e.target.closest("[data-action]");
+            if (!btn) return;
+            const action = btn.getAttribute("data-action");
+            let newStatus = "approved";
+            if (action === "reject") newStatus = "rejected";
+            if (action === "ban") newStatus = "banned";
+            updateMemberStatus(member.id, newStatus);
+        });
+
+        return li;
+    }
+
+    async function updateMemberStatus(memberId, status) {
+        const { error } = await supabaseClient
+            .from("community_profiles")
+            .update({
+                status,
+                reviewed_at: new Date().toISOString(),
+                reviewed_by: currentUser.id,
+            })
+            .eq("id", memberId);
+
+        if (error) {
+            showAlert(t("genericError"), "error");
+            return;
+        }
+
+        showAlert(t("memberUpdated"), "info");
+        await loadSupervisorMembers();
+    }
+
+    async function loadSupervisorMembers() {
+        if (!isSupervisorUser(currentUser) || !pendingMembersList || !allMembersList) return;
+
+        const { data, error } = await supabaseClient
+            .from("community_profiles")
+            .select("id, email, display_name, status, created_at")
+            .order("created_at", { ascending: false });
+
+        if (error) {
+            pendingMembersList.innerHTML =
+                "<li class='member-list__empty'>" + escapeHtml(t("loadError")) + "</li>";
+            allMembersList.innerHTML =
+                "<li class='member-list__empty'>" + escapeHtml(t("loadError")) + "</li>";
+            return;
+        }
+
+        const members = data || [];
+        const pending = members.filter(function (m) {
+            return m.status === "pending";
+        });
+
+        pendingMembersList.innerHTML = "";
+        if (pending.length === 0) {
+            pendingMembersList.innerHTML =
+                "<li class='member-list__empty'>" + escapeHtml(t("noPending")) + "</li>";
+        } else {
+            pending.forEach(function (m) {
+                pendingMembersList.appendChild(renderMemberItem(m, { pending: true }));
+            });
+        }
+
+        allMembersList.innerHTML = "";
+        if (members.length === 0) {
+            allMembersList.innerHTML =
+                "<li class='member-list__empty'>" + escapeHtml(t("noMembers")) + "</li>";
+        } else {
+            members.forEach(function (m) {
+                allMembersList.appendChild(renderMemberItem(m));
+            });
+        }
+    }
+
     async function init() {
         const url = window.SUPABASE_URL;
         const key = window.SUPABASE_ANON_KEY;
@@ -533,10 +807,14 @@
         supabaseClient = window.supabase.createClient(url, key);
 
         const { data: sessionData } = await supabaseClient.auth.getSession();
-        updateAuthUI(sessionData.session ? sessionData.session.user : null);
+        if (sessionData.session) {
+            await handleAuthUser(sessionData.session.user);
+        } else {
+            updateAuthUI(null);
+        }
 
-        supabaseClient.auth.onAuthStateChange(function (_event, session) {
-            updateAuthUI(session ? session.user : null);
+        supabaseClient.auth.onAuthStateChange(async function (_event, session) {
+            await handleAuthUser(session ? session.user : null);
         });
 
         renderCategoryTabs();
